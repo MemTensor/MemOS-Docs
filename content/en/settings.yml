@@ -45,3 +45,4 @@ nav:
     - "(ri:flask-line) Writing Tests": contribution/writing_tests.md
 
   - "(ri:file-code-line) API Reference": docs/api/info
+
