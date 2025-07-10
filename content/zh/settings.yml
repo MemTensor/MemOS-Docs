@@ -1,0 +1,47 @@
+nav:
+  # You can include icons using the syntax `(ri:icon-name)`.
+  # The frontend will render these as actual icons.
+  # You can find available icons at https://icones.js.org/
+
+  - "(ri:home-line) 首页":
+    - "(ri:eye-line) 概览": home/overview.md
+    - "(ri:information-line) 什么是 MemOS？": home/memos_intro.md
+    - "(ri:lightbulb-line) 核心概念": home/core_concepts.md
+    - "(ri:building-2-line) 架构设计": home/architecture.md
+
+  - "(ri:rocket-line) 快速入门":
+    - "(ri:play-line) 快速启动": getting_started/quick_start.md
+    - "(ri:bookmark-line) 创建你的第一个记忆": getting_started/your_first_memory.md
+    - "(ri:code-line) 示例": getting_started/examples.md
+
+  - "(ri:cpu-line) MOS":
+    - "(ri:eye-line) 概览": modules/mos/overview.md
+    - "(ri:team-line) 用户管理": modules/mos/users.md
+    - "(ri:settings-3-line) 用户配置": modules/mos/users_configurations.md
+    - "(ri:checkbox-multiple-blank-line) 记忆立方": modules/mem_cube.md
+    - "(ri:book-open-line) 记忆读取": modules/mem_reader.md
+    - "(ri:calendar-line) 记忆调度": modules/mem_scheduler.md
+
+  - "(ri:brain-line) 记忆系统":
+    - "(ri:database-2-line) 键值缓存记忆": modules/memories/kv_cache_memory.md
+    - "(ri:book-2-line) 明文记忆":
+      - "(ri:file-text-line) 通用文本记忆": modules/memories/general_textual_memory.md
+      - "(ri:tree-line) 树状文本记忆": modules/memories/tree_textual_memory.md
+      - "(ri:database-line) Neo4j 图数据库": modules/memories/neo4j_graph_db.md
+    - "(ri:cpu-line) 参数记忆": modules/memories/parametric_memory.md
+
+  - "(ri:star-line) 最佳实践":
+    - "(ri:speed-line) 性能调优": best_practice/performance_tuning.md
+    - "(ri:building-3-line) 记忆结构设计": best_practice/memory_structure_design.md
+    - "(ri:wifi-line) 网络环境适配": best_practice/network_workarounds.md
+    - "(ri:error-warning-line) 常见错误与解决方案": best_practice/common_errors_solutions.md
+
+  - "(ri:heart-line) 贡献指南":
+    - "(ri:eye-line) 总览": contribution/overview.md
+    - "(ri:tools-line) 环境配置": contribution/setting_up.md
+    - "(ri:git-branch-line) 开发流程": contribution/development_workflow.md
+    - "(ri:git-commit-line) 提交规范": contribution/commit_guidelines.md
+    - "(ri:article-line) 文档编写": contribution/writing_docs.md
+    - "(ri:flask-line) 测试编写": contribution/writing_tests.md
+
+  - "(ri:file-code-line) API 参考文档": docs/api/info
