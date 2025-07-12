@@ -52,7 +52,7 @@ ScheduleMessageItem:
 | `user_id`     | `str`                | Identifier for the associated user            |
 | `mem_cube_id` | `str`                | Identifier for the memory cube                |
 | `label`       | `str`                | Message label (e.g., `QUERY_LABEL`, `ANSWER_LABEL`) |
-| `mem_cube`    | `GeneralMemCube | str` | Memory cube object or reference               |
+| `mem_cube`    | `GeneralMemCube｜str` | Memory cube object or reference               |
 | `content`     | `str`                | Message content                               |
 | `timestamp`   | `datetime`           | Time when the message was submitted           |
 

@@ -1,6 +1,6 @@
 ---
 title: MemReader 入门
-desc: 本指南将带您了解如何使用 `SimpleStructMemReader` 通过 LLMs 和嵌入模型从对话和文档中提取结构化记忆。它非常适合构建记忆感知的对话 AI、知识库和语义搜索系统。
+desc: 本指南将带您逐步了解如何使用 `SimpleStructMemReader`——借助大语言模型（LLMs）和嵌入模型，从对话和文档中提取结构化记忆。它非常适合用于构建具备记忆能力的对话式 AI、知识库和语义搜索系统。
 ---
 
 ##  初始化 `SimpleStructMemReader`

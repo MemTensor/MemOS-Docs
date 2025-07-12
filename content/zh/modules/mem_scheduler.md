@@ -1,19 +1,19 @@
 ---
 title: "MemScheduler: 记忆组织调度器"
-desc: "`MemScheduler` 是一个与 MemOS 系统并行运行的并发记忆管理系统，它协调 AI 系统中工作记忆、长期记忆和激活记忆之间的记忆操作。它通过事件驱动调度处理记忆检索、更新和压缩。<br/> 该系统特别适合需要动态记忆管理的对话代理和推理系统。"
+desc: "`MemScheduler` 是一个与 MemOS 系统并行运行的并发记忆管理系统，它协调 AI 系统中工作记忆、长时记忆和激活记忆之间的记忆操作。它通过事件驱动调度处理记忆检索、更新和压缩。<br/> 该系统特别适合需要动态记忆管理的对话代理和推理系统。"
 ---
 # 记忆调度器概述
 
 ![Memory Management](https://img.shields.io/badge/Component-Memory_Management-blue)
 ![Event-Driven](https://img.shields.io/badge/Architecture-Event_Driven-green)
 
-`MemScheduler` 是一个与 MemOS 并行工作的并发记忆管理系统，协调 AI 系统中工作记忆、长期记忆和激活记忆之间的记忆操作。专为对话代理和推理系统设计，它通过事件驱动调度提供动态记忆管理。
+`MemScheduler` 是一个与 MemOS 并行工作的并发记忆管理系统，协调 AI 系统中工作记忆、长时记忆和激活记忆之间的记忆操作。专为对话代理和推理系统设计，它通过事件驱动调度提供动态记忆管理。
 
 ## 主要特性
 
 - 🚀 **与 MemOS 系统并发操作**
-- 🧠 **多记忆协调** (工作/长期/用户记忆)
-- ⚡ **事件驱动调度** 用于记忆操作
+- 🧠 **多记忆协调** (工作/长时/用户记忆)
+- ⚡ **事件驱动调度** 用于记忆分配
 - 🔍 **高效检索** 相关记忆项
 - 📊 **全面监控** 记忆使用情况
 - 📝 **详细日志记录** 用于调试和分析
@@ -23,10 +23,10 @@ desc: "`MemScheduler` 是一个与 MemOS 系统并行运行的并发记忆管理
 `MemScheduler` 系统围绕几个关键组件构建：
 
 1. **消息处理**: 通过带有标记处理器的调度器处理传入消息
-2. **记忆管理**: 管理不同的记忆类型 (工作、长期、用户)
+2. **记忆管理**: 管理不同的记忆类型 (工作、长时、用户)
 3. **检索系统**: 基于上下文高效检索相关记忆项
 4. **监控**: 跟踪记忆使用、频率和触发更新
-5. **调度器 (路由器)**: 通过检查来自 MemOS 系统的消息触发不同的记忆重组策略。
+5. **调度器 (路由器)**: 通过检查来自 MemOS 系统的消息触发不同的记忆重分配策略。
 6. **日志记录**: 维护记忆操作日志用于调试和分析
 
 ## 消息处理
@@ -52,7 +52,7 @@ ScheduleMessageItem:
 | `user_id`     | `str`                | 关联用户的标识符            |
 | `mem_cube_id` | `str`                | mem cube 的标识符                |
 | `label`       | `str`                | 消息标签 (例如，`QUERY_LABEL`、`ANSWER_LABEL`) |
-| `mem_cube`    | `GeneralMemCube | str` | mem cube 对象或引用               |
+| `mem_cube`    | `GeneralMemCube｜str` | mem cube 对象或引用               |
 | `content`     | `str`                | 消息内容                               |
 | `timestamp`   | `datetime`           | 消息提交时间           |
 

@@ -6,7 +6,7 @@ desc: "`MemCube` 是 MemOS 中的核心组织单元，专为封装和管理用�
 
 **MemCube** 是一个容器，捆绑了三种主要类型的记忆：
 
-- **文本记忆** (例如，`GeneralTextMemory`、`TreeTextMemory`): 用于存储和检索非结构化或结构化文本知识。
+- **明文记忆** (例如，`GeneralTextMemory`、`TreeTextMemory`): 用于存储和检索非结构化或结构化文本知识。
 - **激活记忆** (例如，`KVCacheMemory`): 用于存储键值缓存以加速 LLM 推理和上下文重用。
 - **参数化记忆** (例如，`LoRAMemory`): 用于存储模型适应参数（如 LoRA 权重）。
 
@@ -14,7 +14,7 @@ desc: "`MemCube` 是 MemOS 中的核心组织单元，专为封装和管理用�
 
 ## 结构
 
-MemCube 由配置定义（参见 `GeneralMemCubeConfig`），该配置为每种记忆类型指定后端和设置。典型结构是：
+MemCube 由配置定义（参见 `GeneralMemCubeConfig`），该配置为每种记忆类型指定后端和配置。典型结构是：
 
 ```
 MemCube
@@ -28,7 +28,7 @@ MemCube
 - `mem_cube.act_mem`
 - `mem_cube.para_mem`
 
-## API 摘要 (`GeneralMemCube`)
+## API 总结 (`GeneralMemCube`)
 
 ### 初始化
 ```python
@@ -41,7 +41,7 @@ mem_cube = GeneralMemCube(config)
 | --------------| ------------------------------------------------ |
 | `load(dir)`   | 从目录加载所有记忆                |
 | `dump(dir)`   | 将所有记忆保存到目录                  |
-| `text_mem`    | 访问文本记忆模块                  |
+| `text_mem`    | 访问明文记忆模块                  |
 | `act_mem`     | 访问激活记忆模块               |
 | `para_mem`    | 访问参数化记忆模块               |
 | `init_from_dir(dir)` | 从目录加载 MemCube            |
@@ -51,7 +51,7 @@ mem_cube = GeneralMemCube(config)
 
 MemCube 目录包含：
 - `config.json` (MemCube 配置)
-- `textual_memory.json` (文本记忆)
+- `textual_memory.json` (明文记忆)
 - `activation_memory.pickle` (激活记忆)
 - `parametric_memory.adapter` (参数化记忆)
 
