@@ -1,6 +1,7 @@
 ---
-标题: Graph Memory Backend图记忆后端
-描述: "该模块为记忆增强系统（如RAG、认知代理或个人内存助手）提供基于图结构的记忆存储和查询. <br/>它定义了一个干净的抽象类(`BaseGraphDB`)，并使用**Neo4j**实现了一个可用于生产环境的实现。"
+标题: 基于图的明文记忆后端
+描述: "该模块为记忆增强系统（如RAG、认知代理或个人内存助手）提供基于图结构的记忆存储和查询。 <br/>它定义了一个干净的抽象类(`BaseGraphDB`)，并使用**Neo4j**实现了一个可用于生产环境的实现。
+"
 ---
 
 ## 为什么记忆需要图存储?
@@ -25,9 +26,9 @@
 ```
 
 src/memos/graph_dbs/
-├── base.py            # Abstract interface: BaseGraphDB
-├── factory.py         # Factory to instantiate GraphDB from config
-├── neo4j.py           # Neo4jGraphDB: production implementation
+├── base.py            # BaseGraphDB的抽象接口
+├── factory.py         # 工厂从配置中实例化GraphDB
+├── neo4j.py           # Neo4jGraphDB的产品实现
 
 ````
 
@@ -37,7 +38,7 @@ src/memos/graph_dbs/
 from memos.graph_dbs.factory import GraphStoreFactory
 from memos.configs.graph_db import GraphDBConfigFactory
 
-# Step 1: Build factory config
+# 步骤1：构建工厂配置
 config = GraphDBConfigFactory(
     backend="neo4j",
     config={
@@ -50,10 +51,10 @@ config = GraphDBConfigFactory(
     }
 )
 
-# Step 2: Instantiate the graph store
+# 步骤2：实例化图存储
 graph = GraphStoreFactory.from_config(config)
 
-# Step 3: Add memory
+# 步骤3：增加记忆
 graph.add_node(
     id="node-001",
     content="Today I learned about retrieval-augmented generation.",

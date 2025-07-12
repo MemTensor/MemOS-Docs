@@ -1,30 +1,30 @@
 ---
-标题: "TreeTextMemory: 结构化分层文本记忆"
+标题: "TreeTextMemory: 分层结构的明文记忆"
 ---
 
-让我们在MemOS中构建你的第一个**基于图的、树状结构的记忆**！
+让我们在MemOS中构建你的第一个**基于图的、树形明文记忆**！
 
-**TreeTextMemory** 帮助你用丰富的上下文和可解释性来组织、链接和检索记忆
+**TreeTextMemory** 支持以结构化方式组织、关联并检索记忆，同时保留丰富的上下文信息与良好的可解释性。
 
-[Neo4j](/modules/memories/neo4j_graph_db) 当前的后端存储，计划在未来支持更多的图存储。
+当前使用[Neo4j](/modules/memories/neo4j_graph_db)作为后端，未来计划支持更多图数据库。
 
 
 ## 你将学习到:
 
 在本指南的最后，你会:
-- 从原始文本或对话中提取结构化记忆.
-- 在图数据库中存储他们作为**节点**.
-- 将记忆链接成**层次结构**和语义图.
-- 使用**向量相似度+图遍历**进行搜索.
+- 从原始文本或对话中提取结构化记忆
+- 在图数据库中存储他们作为**节点**
+- 将记忆链接成**层次结构**和语义图
+- 使用**向量相似度+图遍历**进行搜索
 
 ## 如何工作
 
 ### 记忆结构
 
 每个节点在`TreeTextMemory` 是一个 `TextualMemoryItem`:
-- `id`: 唯一记忆ID（如果省略则自动生成）.
-- `memory`: 主要文本.
-- `metadata`: 包括层次结构信息、嵌入、标签、实体、源和状态.
+- `id`: 唯一记忆ID（如果省略则自动生成）
+- `memory`: 主要文本
+- `metadata`: 包括层次结构信息、嵌入、标签、实体、源和状态
 
 ### 元数据字段 (`TreeNodeTextualMemoryMetadata`)
 
@@ -67,7 +67,7 @@
 
 
 ::注意
-**提示**<br>图形链接有助于检索纯向量搜索可能遗漏的上下文!
+**提示**<br>图链接有助于检索纯向量搜索可能遗漏的上下文!
 ::
 
 ## API总结(`TreeTextMemory`)
@@ -116,7 +116,7 @@ TreeTextMemory(config: TreeTextMemoryConfig)
 定义:
 - 你的嵌入（创建向量）,
 - 你的图数据库后端(Neo4j),
-- 提取器LLM（可选）.
+- 记忆抽取器（基于LLM）（可选）.
 
 ```python
 from memos.configs.memory import TreeTextMemoryConfig
@@ -135,7 +135,7 @@ tree_memory = TreeTextMemory(config)
 
 ### 抽取结构化记忆
 
-使用提取器将对话、文件或文档解析为多个`TextualMemoryItem`.
+使用记忆抽取器将对话、文件或文档解析为多个`TextualMemoryItem`.
 
 ```python
 from memos.mem_reader.simple_struct import SimpleStructMemReader
@@ -174,7 +174,7 @@ tree_memory.replace_working_memory(
 ```
 
 ### 备份与恢复
-将整个树结构转储到磁盘并随时重新加载:
+支持树结构的持久化存储与随时重载:
 ```python
 tree_memory.dump("tmp/tree_memories")
 tree_memory.load("tmp/tree_memories")
@@ -185,7 +185,7 @@ tree_memory.load("tmp/tree_memories")
 
 ### 完整代码
 
-这将上面的所有步骤合并到一个端到端示例中——复制并运行！
+该示例整合了上述所有步骤，提供一个端到端的完整流程 —— 复制即可运行！
 
 ```python
 from memos.configs.embedder import EmbedderConfigFactory
@@ -195,25 +195,25 @@ from memos.embedders.factory import EmbedderFactory
 from memos.mem_reader.simple_struct import SimpleStructMemReader
 from memos.memories.textual.tree import TreeTextMemory
 
-# Setup Embedder
+# 嵌入设置
 embedder_config = EmbedderConfigFactory.model_validate({
     "backend": "ollama",
     "config": {"model_name_or_path": "nomic-embed-text:latest"}
 })
 embedder = EmbedderFactory.from_config(embedder_config)
 
-# Create TreeTextMemory
+# 创建TreeTextMemory
 tree_config = TreeTextMemoryConfig.from_json_file("examples/data/config/tree_config.json")
 my_tree_textual_memory = TreeTextMemory(tree_config)
 my_tree_textual_memory.delete_all()
 
-# Setup Reader
+# 阅读器设置
 reader_config = SimpleStructMemReaderConfig.from_json_file(
     "examples/data/config/simple_struct_reader_config.json"
 )
 reader = SimpleStructMemReader(reader_config)
 
-# Extract from conversation
+# 从对话中抽取
 scene_data = [[
     {
         "role": "user",
@@ -228,7 +228,7 @@ memory = reader.get_memory(scene_data, type="chat", info={"user_id": "1234", "se
 for m_list in memory:
     my_tree_textual_memory.add(m_list)
 
-# Search
+# 搜索
 results = my_tree_textual_memory.search(
     "Talk about the user's childhood story?",
     top_k=10
@@ -236,7 +236,7 @@ results = my_tree_textual_memory.search(
 for i, r in enumerate(results):
     print(f"{i}'th result: {r.memory}")
 
-# [Optional] Add from documents
+# 从文档添加[可选项]
 doc_paths = ["./text1.txt", "./text2.txt"]
 doc_memory = reader.get_memory(
   doc_paths, "doc", info={
@@ -247,7 +247,7 @@ doc_memory = reader.get_memory(
 for m_list in doc_memory:
     my_tree_textual_memory.add(m_list)
 
-# [Optional] Dump & Drop
+# 转储和丢弃[可选项]
 my_tree_textual_memory.dump("tmp/my_tree_textual_memory")
 my_tree_textual_memory.drop()
 ```

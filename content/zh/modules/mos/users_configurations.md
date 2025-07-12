@@ -25,7 +25,7 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 ## MOS配置
 
-编排所有组件的主要MOS配置
+用于协调所有组件的主 MOS 配置
 
 ### MOSConfig 字段
 
@@ -38,7 +38,7 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 | `mem_scheduler` | SchedulerFactory | 非必填 | 调度器配置 |
 | `max_turns_window` | int | 15 | 最大对话次数保持 |
 | `top_k` | int | 5 | 每个查询要检索的最大记忆 |
-| `enable_textual_memory` | bool | True | 启用文本记忆 |
+| `enable_textual_memory` | bool | True | 启用明文记忆 |
 | `enable_activation_memory` | bool | False | 启用激活记忆 |
 | `enable_parametric_memory` | bool | False | 启用参数记忆 |
 | `enable_mem_scheduler` | bool | False | 启用记忆调度 |
@@ -98,7 +98,7 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 ## LLM配置
 
-不同LLM后端的配置。
+不同LLM后端的配置
 
 ### 基本的LLM字段
 
@@ -227,21 +227,21 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 ## MemCube配置
 
-记忆立方体组件配置.
+记忆立方组件配置
 
 ### GeneralMemCubeConfig字段
 
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
 | `user_id` | str | "default_user" | 用户IDMemCube |
-| `cube_id` | str | 自动生成UUID | MemCube的立方体ID |
-| `text_mem` | MemoryConfigFactory | 必填 | 文本记忆配置 |
+| `cube_id` | str | 自动生成UUID | MemCube的立方ID |
+| `text_mem` | MemoryConfigFactory | 必填 | 明文记忆配置 |
 | `act_mem` | MemoryConfigFactory | 必填 | 激活记忆配置 |
 | `para_mem` | MemoryConfigFactory | 必填 | 参数记忆配置 |
 
 ### 允许的后端
 
-- **文本记忆**: `naive_text`, `general_text`, `tree_text`, `uninitialized`
+- **明文记忆**: `naive_text`, `general_text`, `tree_text`, `uninitialized`
 - **激活记忆**: `kv_cache`, `uninitialized`
 - **参数记忆**: `lora`, `uninitialized`
 
@@ -293,34 +293,34 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 ## 记忆配置
 
-配置不同类型的记忆系统.
+配置不同类型的记忆系统
 
-### 基本记忆字段
+### 基础记忆字段
 
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
-| `cube_id` | str | None | 唯一的MemCube标识符可以是cube_name或path作为默认值|
+| `cube_id` | str | None | 唯一的 MemCube 标识符默认可以是 cube_name 或 path|
 
-### 文本记忆配置
+### 明文记忆配置
 
-#### 基本文本记忆
+#### 基础明文记忆
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
 | `memory_filename` | str | "textual_memory.json" |  存储记忆的文件名 |
 
-#### 原生文本记忆
+#### 纯明文记忆（仅文本）
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
 | `extractor_llm` | LLMConfigFactory | 必填 | LLM用于记忆提取 |
 
-#### 通用文本记忆
+#### 通用明文记忆（带向量索引）
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
 | `extractor_llm` | LLMConfigFactory | 必填 | LLM用于记忆提取 |
 | `vector_db` | VectorDBConfigFactory | 必填 | 向量数据库配置 |
 | `embedder` | EmbedderConfigFactory | 必填 | 嵌入器配置 |
 
-#### 树形文本记忆
+#### 树形明文记忆
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
 | `extractor_llm` | LLMConfigFactory | 必填 | LLM用于记忆提取 |
@@ -330,7 +330,7 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 ### 激活记忆配置
 
-#### 基本激活记忆
+#### 基础激活记忆
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
 | `memory_filename` | str | "activation_memory.pickle" | 存储记忆的文件名 |
@@ -342,7 +342,7 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 ### 参数记忆配置
 
-#### Base Parametric Memory
+#### 基础参数记忆
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
 | `memory_filename` | str | "parametric_memory.adapter" | 存储记忆的文件名 |
@@ -355,7 +355,7 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 ### 记忆配置样例
 
 ```json
-// Tree Text Memory
+// 树形明文记忆
 {
   "backend": "tree_text",
   "config": {
@@ -417,13 +417,13 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 |-------|------|---------|-------------|
 | `api_base` | str | "http://localhost:11434" | Ollama API base URL |
 
-#### 句子Transformer嵌入
+#### Sentence Transformer 嵌入器
 除了基本配置之外没有其他字段。
 
 ### 嵌入器配置样例
 
 ```json
-// Ollama Embedder
+// Ollama 嵌入器
 {
   "backend": "ollama",
   "config": {
@@ -432,7 +432,7 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
   }
 }
 
-// Sentence Transformer Embedder
+// Sentence Transformer 嵌入器
 {
   "backend": "sentence_transformer",
   "config": {
@@ -446,13 +446,13 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 配置向量数据库
 
-### 基本向量数据库字段
+### 基础向量数据库字段
 
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
 | `collection_name` | str | 必填 | 集合名称 |
 | `vector_dimension` | int | None | 向量维度 |
-| `distance_metric` | str | None | 距离测量 (cosine, euclidean, dot) |
+| `distance_metric` | str | None | 距离度量 (余弦, 欧式, 点积) |
 
 ### Qdrant向量数据库字段
 
@@ -478,9 +478,9 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 ## 图数据库配置
 
-配置图数据库.
+配置图数据库
 
-### 基本图数据库字段
+### 基础图数据库字段
 
 | Field | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
@@ -514,13 +514,13 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 
 ## 调度器配置
 
-用于管理记忆检索和激活的记忆调度系统的配置。
+用于管理记忆检索和激活的记忆调度系统的配置
 
 ### 基本调度器字段
 
 | 字段 | 类型 | 默认值 | 描述 |
 |-------|------|---------|-------------|
-| `top_k` | int | 10 | 在初始检索中要考虑的顶级候选数 |
+| `top_k` | int | 10 | 在初始检索中要考虑的候选记忆数 |
 | `top_n` | int | 5 | 处理后返回的最终结果数 |
 | `enable_parallel_dispatch` | bool | True | 是否使用线程池启用并行消息处理 |
 | `thread_pool_max_workers` | int | 5 | 线程池中的最大线程数(1-20) |
@@ -532,8 +532,8 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 |-------|------|---------|-------------|
 | `act_mem_update_interval` | int | 300 | 更新激活记忆的时间间隔（秒） |
 | `context_window_size` | int | 5 | 对话历史记录的上下文窗口的大小 |
-| `activation_mem_size` | int | 5 | 激活记忆的最大尺寸 |
-| `act_mem_dump_path` | str | 自动生成 | 转储激活记忆的文件路径 |
+| `activation_mem_size` | int | 5 | 激活记忆的大小 |
+| `act_mem_dump_path` | str | 自动生成 | 用于激活记忆存储的文件路径 |
 
 ### 后端类型
 
@@ -564,7 +564,7 @@ MemOS使用具有不同后端工厂模式的分层配置系统。每个组件都
 ```python
 from memos.configs.mem_os import MOSConfig
 
-# Load configuration from JSON file
+# 从JSON文件加载配置
 mos_config = MOSConfig.from_json_file("path/to/config.json")
 ```
 
@@ -573,7 +573,7 @@ mos_config = MOSConfig.from_json_file("path/to/config.json")
 ```python
 from memos.configs.mem_os import MOSConfig
 
-# Create configuration from dictionary
+# 从字典创建配置
 config_dict = {
     "user_id": "root",
     "chat_model": {
@@ -594,7 +594,7 @@ mos_config = MOSConfig(**config_dict)
 ```python
 from memos.configs.llm import LLMConfigFactory
 
-# Create LLM configuration using factory
+# 使用工厂模式创建LLM配置
 llm_config = LLMConfigFactory(
     backend="huggingface",
     config={
@@ -612,18 +612,18 @@ llm_config = LLMConfigFactory(
 from memos.configs.mem_os import MOSConfig
 from memos.mem_os.main import MOS
 
-# Load configuration
+# 加载配置
 mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
 
-# Initialize MOS
+# 初始化MOS
 mos = MOS(mos_config)
 
-# Create user and register cube
+# 创建用户和注册立方
 user_id = "user_123"
 mos.create_user(user_id=user_id)
 mos.register_mem_cube("path/to/mem_cube", user_id=user_id)
 
-# Use MOS
+# 使用MOS
 response = mos.chat("Hello, how are you?", user_id=user_id)
 ```
 
@@ -632,7 +632,7 @@ response = mos.chat("Hello, how are you?", user_id=user_id)
 ```python
 from memos.configs.memory import MemoryConfigFactory
 
-# Create tree memory configuration
+# 创建树形记忆配置
 tree_memory_config = MemoryConfigFactory(
     backend="tree_text",
     config={
@@ -679,7 +679,7 @@ tree_memory_config = MemoryConfigFactory(
 ```python
 from memos.configs.llm import LLMConfigFactory
 
-# OpenAI configuration
+# OpenAI 配置
 openai_config = LLMConfigFactory(
     backend="openai",
     config={
@@ -691,7 +691,7 @@ openai_config = LLMConfigFactory(
     }
 )
 
-# Ollama configuration
+# Ollama 配置
 ollama_config = LLMConfigFactory(
     backend="ollama",
     config={
@@ -702,7 +702,7 @@ ollama_config = LLMConfigFactory(
     }
 )
 
-# HuggingFace configuration
+# HuggingFace 配置
 hf_config = LLMConfigFactory(
     backend="huggingface",
     config={
