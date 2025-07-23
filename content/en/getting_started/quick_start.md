@@ -13,7 +13,7 @@ By the end, you'll be able to **store, retrieve, and update simple memories** fo
 
 ### Install MemOS
 
-Before starting, please follow our [Installation Guide](/getting_started/installation) to install MemOS and any dependencies you might need.
+Before starting, please follow our [installation guide](/getting_started/installation) to install MemOS and any dependencies you might need.
 
 ### Create a Minimal Config
 

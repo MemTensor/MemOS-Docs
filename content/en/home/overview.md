@@ -34,7 +34,7 @@ As large language models (LLMs) evolve to tackle advanced tasks—such as multi-
 
 ## Installation
 
-Please refer to our [Installation Guide](/getting_started/installation) for complete installation instructions, including basic installation, optional dependencies, and external dependencies.
+Please refer to our [installation guide](/getting_started/installation) for complete installation instructions, including basic installation, optional dependencies, and external dependencies.
 
 ## Contributing
 
