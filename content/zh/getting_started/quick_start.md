@@ -13,43 +13,7 @@ title: "快速开始：启动并运行MemOS"
 
 ### 安装 MemOS
 
-::note
-**平台兼容性警告**<br>MemOS 兼容 Linux、Windows 和 macOS。但是，如果您使用的是 macOS，请注意可能存在难以解决的依赖问题。例如，与 macOS 13 Ventura 的兼容性目前具有挑战性。
-::
-
-#### 通过 pip 安装
-
-```bash
-pip install MemoryOS
-```
-
-#### 开发安装
-
-要为 MemOS 做出贡献，请克隆仓库并以可编辑模式安装：
-
-```bash
-git clone https://github.com/MemTensor/MemOS.git
-cd MemOS
-make install
-```
-
-#### 可选依赖
-
-::note
-**Ollama 支持**<br>要将 MemOS 与 [Ollama](https://ollama.com/) 一起使用，请先安装 Ollama CLI：<br>`curl -fsSL https://ollama.com/install.sh | sh`
-::
-
-::note
-**Transformers 支持**<br>要使用基于 `transformers` 库的功能，请确保已安装 [PyTorch](https://pytorch.org/get-started/locally/)（建议使用 CUDA 版本以实现 GPU 加速）。
-::
-
-::note
-**下载示例**<br>要下载示例代码、数据和配置，请运行以下命令：<br>`memos download_examples`
-::
-
-::note
-**Neo4j Desktop 要求**<br>如果你计划使用 Neo4j 作为图记忆，安装 Neo4j Desktop（社区版支持即将推出！）
-::
+开始之前，请按照我们的 [安装指南](/getting_started/installation) 安装 MemOS 和您可能需要的任何依赖。
 
 ### 创建最简配置
 

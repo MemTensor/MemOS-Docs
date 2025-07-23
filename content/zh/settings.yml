@@ -10,6 +10,7 @@ nav:
     - "(ri:building-2-line) 架构设计": home/architecture.md
 
   - "(ri:rocket-line) 快速入门":
+    - "(ri:install-line) 安装指南": getting_started/installation.md
     - "(ri:play-line) 快速启动": getting_started/quick_start.md
     - "(ri:bookmark-line) 创建你的第一个记忆": getting_started/your_first_memory.md
     - "(ri:file-code-line) REST API 服务": getting_started/rest_api_server.md

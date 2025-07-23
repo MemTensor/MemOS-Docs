@@ -10,6 +10,7 @@ nav:
     - "(ri:building-2-line) Architecture": home/architecture.md
 
   - "(ri:rocket-line) Getting Started":
+    - "(ri:install-line) Installation": getting_started/installation.md
     - "(ri:play-line) Quick Start": getting_started/quick_start.md
     - "(ri:bookmark-line) Your First Memory": getting_started/your_first_memory.md
     - "(ri:file-code-line) REST API Server": getting_started/rest_api_server.md

@@ -34,39 +34,7 @@ As large language models (LLMs) evolve to tackle advanced tasks—such as multi-
 
 ## Installation
 
-::note
-**Platform Compatibility Warning**<br>MemOS is compatible with Linux, Windows, and macOS. However, if you're using macOS, please note that there may be dependency issues that are difficult to resolve. For example, compatibility with macOS 13 Ventura is currently challenging.
-::
-
-### Install via pip
-
-```bash
-pip install MemoryOS
-```
-
-### Development Install
-
-To contribute to MemOS, clone the repository and install it in editable mode:
-
-```bash
-git clone https://github.com/MemTensor/MemOS.git
-cd MemOS
-make install
-```
-
-### Optional Dependencies
-
-::note
-**Ollama Support**<br>To use MemOS with [Ollama](https://ollama.com/), first install the Ollama CLI:<br>`curl -fsSL https://ollama.com/install.sh | sh`
-::
-
-::note
-**Transformers Support**<br>To use functionalities based on the `transformers` library, ensure you have [PyTorch](https://pytorch.org/get-started/locally/) installed (CUDA version recommended for GPU acceleration).
-::
-
-::note
-**Download Examples**<br>To download example code, data and configurations, run the following command:<br>`memos download_examples`
-::
+Please refer to our [Installation Guide](/getting_started/installation) for complete installation instructions, including basic installation, optional dependencies, and external dependencies.
 
 ## Contributing
 
