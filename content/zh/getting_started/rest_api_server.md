@@ -16,7 +16,6 @@ desc: MemOS 提供了一个使用 FastAPI 编写的 REST API 服务。用户可�
 - 搜索记忆：为指定用户搜索其记忆内容。
 - 与 MemOS 对话：与 MemOS 进行对话，返回 SSE 流式响应。
 
-
 ## 本地运行
 
 ### 使用 Docker Compose
