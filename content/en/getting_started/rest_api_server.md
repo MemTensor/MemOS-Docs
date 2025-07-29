@@ -6,7 +6,6 @@ desc: MemOS provides a REST API server (written using FastAPI). Users can perfor
 ![MemOS Architecture](https://statics.memtensor.com.cn/memos/openapi.png)
 <div style="text-align: center; margin-top: 10px">APIs supported by MemOS REST API Server</div>
 
-
 ### Features
 - Register a new user: Register a new user with configuration and default cube.
 - Get suggestion queries: Get suggestion queries for a specific user.
