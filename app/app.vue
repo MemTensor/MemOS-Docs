@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
+// 初始化全局路由守卫
+useLocaleGuard()
 const route = useRoute()
 
 const { locale } = useI18n()
