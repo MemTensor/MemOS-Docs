@@ -2,7 +2,7 @@
 
 ### Real-Time Conversation Sync
 
-Use the API to append messages in real time whenever the user receives a model response. This ensures conversations between the user and the assistant are always in sync with MemOS. MemOS continuously updates the user’s memory in the backend as new messages are added.
+Use the API to append messages in real time whenever the user receives a model response. This ensures conversations between the user and the assistant are always in sync with MemOS. MemOS continuously updates the user’s memory in the backend as new messages are added.The total token limit for the message being added is 8k.
 
 ```python
 import os
