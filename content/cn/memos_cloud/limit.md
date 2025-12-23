@@ -6,7 +6,7 @@ desc: 注册登录即享有免费额度，便于快速体验和验证记忆功�
 
 ## 1. 额度说明
 
-![image.png](https://cdn.memtensor.com.cn/img/额度与限制_compressed.png)
+![image.png](https://cdn.memtensor.com.cn/img/1766481509513_5d4x8o_compressed.png)
 
 MemOS 云服务目前为所有开发者提供了从免费版到企业版的多种定价方案，满足不同规模团队的需求。目前，所有版本限时免费，欢迎前往[MemOS 官网-价格](https://memos.openmem.net/cn/pricing)，申请符合你需求的版本。
 立即行动，享受 MemOS 云服务带来的无限可能，助力你的项目快速成长！
