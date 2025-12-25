@@ -86,7 +86,7 @@ CHAT_MODEL_LIST=[{"backend": "deepseek", "api_base": "http://xxx:3000/v1", "api_
 ```
 
 
-### 方式一：Dodcker 使用仓库依赖包镜像启动(推荐使用)
+### 方式一：Docker 使用仓库依赖包镜像启动(推荐使用)
 ::steps{level="4"}
 
 #### 参考上方配置环境变量，已经好配置.env文件
