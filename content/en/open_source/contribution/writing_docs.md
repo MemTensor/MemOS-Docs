@@ -88,74 +88,92 @@ Use `steps` to create step-by-step guides from document headings. The `steps` co
 class: "[&>div]:*:w-full"
 ---
   :::steps{level="4"}
-  #### Install MemOS
-  
-  ```bash
-  pip install MemoryOS
-  ```
-  
-  #### Create a Minimal Config
-  
-  For this Quick Start, we'll use the built-in GeneralTextMemory.
-  
-  ```python
-  from memos.configs.mem_os import MOSConfig
-  
-  # init MOSConfig
-  mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
-  ```
-  
-  #### Create a User & Register a MemCube
-  
-  ```python
-  import uuid
-  from memos.mem_os.main import MOS
-  
-  mos = MOS(mos_config)
-  
-  # Generate a unique user ID
-  user_id = str(uuid.uuid4())
-  
-  # Create the user
-  mos.create_user(user_id=user_id)
-  ```
-  :::
+
+#### Fork & Clone the Repository
+
+Set up the repository on your local machine:
+
+- Fork the repository on GitHub
+- Clone your fork to your local machine:
+    ```bash
+    git clone https://github.com/YOUR-USERNAME/MemOS.git
+    cd MemOS
+    ```
+- Add the upstream repository as a remote:
+    ```bash
+    git remote add upstream https://github.com/MemTensor/MemOS.git
+    ```
+
+#### Install Poetry
+
+Install Poetry for dependency management:
+
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+Or follow the [official instructions](https://python-poetry.org/docs/#installing-with-the-official-installer).
+
+Verify installation:
+```bash
+poetry --version
+```
+
+#### Install Dependencies and Set Up Pre-commit Hooks
+
+Install all project dependencies and development tools:
+
+```bash
+make install
+```
+
+As the environment changes across commit history, you may need to **re-run `make install`** time to time to ensure all dependencies are up-to-date.
+
+::
 
 #code
 ````mdc
 ::steps{level="4"}
 
-#### Install MemOS
+#### Fork & Clone the Repository
+
+Set up the repository on your local machine:
+
+- Fork the repository on GitHub
+- Clone your fork to your local machine:
+    ```bash
+    git clone https://github.com/YOUR-USERNAME/MemOS.git
+    cd MemOS
+    ```
+- Add the upstream repository as a remote:
+    ```bash
+    git remote add upstream https://github.com/MemTensor/MemOS.git
+    ```
+
+#### Install Poetry
+
+Install Poetry for dependency management:
 
 ```bash
-pip install MemoryOS
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-#### Create a Minimal Config
+Or follow the [official instructions](https://python-poetry.org/docs/#installing-with-the-official-installer).
 
-For this Quick Start, we'll use the built-in GeneralTextMemory.
-
-```python
-from memos.configs.mem_os import MOSConfig
-
-# init MOSConfig
-mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
+Verify installation:
+```bash
+poetry --version
 ```
 
-#### Create a User & Register a MemCube
+#### Install Dependencies and Set Up Pre-commit Hooks
 
-```python
-import uuid
-from memos.mem_os.main import MOS
+Install all project dependencies and development tools:
 
-mos = MOS(mos_config)
-
-# Generate a unique user ID
-user_id = str(uuid.uuid4())
-
-# Create the user
-mos.create_user(user_id=user_id)
+```bash
+make install
 ```
+
+As the environment changes across commit history, you may need to **re-run `make install`** time to time to ensure all dependencies are up-to-date.
 
 ::
 ````
@@ -446,13 +464,15 @@ Available icons can be found at: [https://icones.js.org/](https://icones.js.org/
 
 ## Local Preview
 
-To preview the documentation locally, run the following command from the project root:
+To preview the documentation locally, run the following commands from the project root.
 
+First, install the dependencies:
 
 ```bash
-## Make sure to install the dependencies:
 pnpm install
 ```
+
+Then, start the development server:
 
 ```bash
 pnpm dev
@@ -480,5 +500,5 @@ This project uses Nuxt Content and supports rich Typography components and style
 ::
 
 ::card{title="Quick Reference"}
-Remember to test your documentation locally before submitting. Use `npm run dev` to preview your changes and ensure all components render correctly.
+Remember to test your documentation locally before submitting. Use `pnpm dev` to preview your changes and ensure all components render correctly.
 ::

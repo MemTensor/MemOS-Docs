@@ -41,6 +41,13 @@ make test
 
 #### Commit Your Changes
 
+Before committing or creating a PR, rebase to the latest upstream/dev:
+
+```bash
+git fetch upstream
+git rebase upstream/dev      # Replay your feat branch on top of the latest dev
+```
+
 Follow the project's commit guidelines (see [Commit Guidelines](./commit_guidelines.md)) when committing your changes.
 
 #### Push to Your Fork
