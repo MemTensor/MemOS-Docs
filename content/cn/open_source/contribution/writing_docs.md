@@ -43,7 +43,7 @@ links:
     target: _blank
     icon: i-simple-icons-github
 ---
-````
+```
 
 ### 编写内容
 使用 Markdown 语法和 MDC 组件撰写文档内容。利用已有组件构建结构清晰、交互友好、内容丰富的文档。
@@ -88,75 +88,134 @@ links:
 class: "[&>div]:*:w-full"
 ---
   :::steps{level="4"}
-#### 安装 MemOS
+#### Fork 并克隆仓库
+
+在本地设置项目仓库：
+
+- 在 GitHub 上 fork 仓库
+- 将你的 fork 克隆到本地：
+
+  ```bash
+  git clone https://github.com/YOUR-USERNAME/MemOS.git
+  cd MemOS
+  ```
+
+- 添加上游仓库作为远程源：
+
+  ```bash
+  git remote add upstream https://github.com/MemTensor/MemOS.git
+  ```
+
+#### 准备开发依赖
+
+确保本地已安装：
+
+- Git
+- Python 3.9+
+- Make
+
+验证 Python：
 
 ```bash
-pip install MemoryOS
+python3 --version
 ```
 
-#### 创建最小配置
+#### 安装 Poetry
 
-本快速开始使用内置的 GeneralTextMemory。
+MemOS 使用 Poetry 管理 Python 依赖。推荐使用官方安装脚本：
 
-```python
-from memos.configs.mem_os import MOSConfig
-
-# 初始化 MOSConfig
-mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-#### 创建用户 & 注册记忆立方
+验证安装是否成功：
 
-```python
-import uuid
-from memos.mem_os.main import MOS
-
-mos = MOS(mos_config)
-
-# 生成唯一用户 ID
-user_id = str(uuid.uuid4())
-
-# 创建用户
-mos.create_user(user_id=user_id)
+```bash
+poetry --version
 ```
-  :::
+
+如果提示 `poetry: command not found`，请将安装器输出中提示的 Poetry 可执行文件目录加入 PATH，然后重新打开终端再验证。
+
+更多安装选项参考：[官方安装指南](https://python-poetry.org/docs/#installing-with-the-official-installer)。
+
+#### 安装依赖并设置 Pre-commit 钩子
+
+在仓库根目录安装所有依赖与开发工具：
+
+```bash
+make install
+```
+
+提示：
+
+- 如果你切换分支或依赖发生变化，可能需要**重新运行 `make install`** 以保持环境一致
+:::
 
 #code
 ````mdc
 ::steps{level="4"}
 
-#### 安装 MemOS
+#### Fork 并克隆仓库
+
+在本地设置项目仓库：
+
+- 在 GitHub 上 fork 仓库
+- 将你的 fork 克隆到本地：
+
+  ```bash
+  git clone https://github.com/YOUR-USERNAME/MemOS.git
+  cd MemOS
+  ```
+
+- 添加上游仓库作为远程源：
+
+  ```bash
+  git remote add upstream https://github.com/MemTensor/MemOS.git
+  ```
+
+#### 准备开发依赖
+
+确保本地已安装：
+
+- Git
+- Python 3.9+
+- Make
+
+验证 Python：
 
 ```bash
-pip install MemoryOS
+python3 --version
 ```
 
-#### 创建一个最小配置
+#### 安装 Poetry
 
-本快速开始将使用内置的 GeneralTextMemory。
+MemOS 使用 Poetry 管理 Python 依赖。推荐使用官方安装脚本：
 
-```python
-from memos.configs.mem_os import MOSConfig
-
-# 初始化 MOSConfig
-mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-#### 创建用户并注册一个 MemCube
+验证安装是否成功：
 
-```python
-import uuid
-from memos.mem_os.main import MOS
-
-mos = MOS(mos_config)
-
-# 生成一个唯一的用户 ID
-user_id = str(uuid.uuid4())
-
-# 创建该用户
-mos.create_user(user_id=user_id)
+```bash
+poetry --version
 ```
 
+如果提示 `poetry: command not found`，请将安装器输出中提示的 Poetry 可执行文件目录加入 PATH，然后重新打开终端再验证。
+
+更多安装选项参考：[官方安装指南](https://python-poetry.org/docs/#installing-with-the-official-installer)。
+
+#### 安装依赖并设置 Pre-commit 钩子
+
+在仓库根目录安装所有依赖与开发工具：
+
+```bash
+make install
+```
+
+提示：
+
+- 如果你切换分支或依赖发生变化，可能需要**重新运行 `make install`** 以保持环境一致
 ::
 ````
 ::
@@ -447,13 +506,15 @@ to: /open_source/getting_started/examples#example-4-hybrid
 
 ## 本地预览
 
-若需本地预览文档，可在项目根目录下执行以下命令：
+若需本地预览文档，可在项目根目录下执行以下命令。
 
+首先安装依赖：
 
 ```bash
-## 请先安装依赖：
 pnpm install
 ```
+
+启动开发服务器：
 
 ```bash
 pnpm dev
@@ -481,6 +542,6 @@ pnpm dev
 ::
 
 ::card{title="Quick Reference"}
-提交前请先本地测试你的文档效果。运行 `npm run dev` 以预览你的变更并确保所有组件正确渲染。
+提交前请先本地测试你的文档效果。运行 `pnpm dev` 以预览你的变更并确保所有组件正确渲染。
 ::
 

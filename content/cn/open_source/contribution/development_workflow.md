@@ -15,7 +15,7 @@ git checkout dev        # 切换到 dev 分支
 git fetch upstream      # 获取上游仓库的最新更改
 git pull upstream dev   # 将更改合并到本地 dev 分支
 git push origin dev     # 将合并后的代码推送到你自己的 fork
-````
+```
 
 #### 创建功能分支
 
@@ -40,6 +40,13 @@ make test
 ```
 
 #### 提交更改
+
+在提交前或 PR 前，rebase 到最新 upstream/dev：
+
+```bash
+git fetch upstream
+git rebase upstream/dev      # 把你的 feat 分支基于最新 dev 重放
+```
 
 提交更改时请遵循项目的提交规范（参见 [提交规范](commit_guidelines.md)）。
 
