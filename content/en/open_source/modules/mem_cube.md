@@ -1,23 +1,26 @@
 ---
-title: MemCube Overview
-desc: "`MemCube` is the core organizational unit in MemOS, designed to encapsulate and manage all types of memory for a user or agent. It provides a unified interface for loading, saving, and operating on multiple memory modules, making it easy to build, share, and deploy memory-augmented applications."
+title: MemCube
+desc: "`MemCube` is your memory container that manages three types of memories: textual memory, activation memory, and parametric memory. It provides a simple interface for loading, saving, and operating on multiple memory modules, making it easy to build, save, and share memory-augmented applications."
 ---
-## What is a MemCube?
 
-A **MemCube** is a container that bundles three major types of memory:
+## What is MemCube?
 
-- **Textual Memory** (e.g., `GeneralTextMemory`, `TreeTextMemory`): For storing and retrieving unstructured or structured text knowledge.
-- **Activation Memory** (e.g., `KVCacheMemory`): For storing key-value caches to accelerate LLM inference and context reuse.
-- **Parametric Memory** (e.g., `LoRAMemory`): For storing model adaptation parameters (like LoRA weights).
+**MemCube** contains three major types of memory:
 
-Each memory type is independently configurable and can be swapped or extended as needed.
+- **Textual Memory**: Stores text knowledge, supporting semantic search and knowledge management.
+- **Activation Memory**: Stores intermediate reasoning results, accelerating LLM responses.
+- **Parametric Memory**: Stores model adaptation weights, used for personalization.
+
+Each memory type can be independently configured and flexibly combined based on application needs.
 
 ## Structure
 
-A MemCube is defined by a configuration (see `GeneralMemCubeConfig`), which specifies the backend and settings for each memory type. The typical structure is:
+MemCube is defined by a configuration (see `GeneralMemCubeConfig`), which specifies the backend and settings for each memory type. The typical structure is:
 
 ```
 MemCube
+ ├── user_id
+ ├── cube_id
  ├── text_mem: TextualMemory
  ├── act_mem: ActivationMemory
  └── para_mem: ParametricMemory
@@ -35,7 +38,7 @@ Starting from MemOS 2.0, runtime operations (add/search) should go through the *
 
 ### SingleCubeView
 
-Operates on a single MemCube. Use when you have one logical memory space.
+Use this to manage a single MemCube. When you only need one memory space.
 
 ```python
 from memos.multi_mem_cube.single_cube import SingleCubeView
@@ -59,7 +62,7 @@ view.search_memories(search_request)
 
 ### CompositeCubeView
 
-Operates on multiple MemCubes. Fan-out operations to multiple SingleCubeViews and aggregate results.
+Use this to manage multiple MemCubes. When you need unified operations across multiple memory spaces.
 
 ```python
 from memos.multi_mem_cube.composite_cube import CompositeCubeView
@@ -76,15 +79,19 @@ results = composite.search_memories(search_request)
 # Results contain cube_id field to identify source
 ```
 
-### API Request Fields
+## API Request Fields
 
-| Field                 | Description                                                        |
-| --------------------- | ------------------------------------------------------------------ |
-| `writable_cube_ids` | Target cubes for add operations                                    |
-| `readable_cube_ids` | Target cubes for search operations                                 |
-| `async_mode`        | `"async"` (scheduler enabled) or `"sync"` (scheduler disabled) |
+When using the View architecture for add/search operations, specify these parameters:
 
-## API Summary (`GeneralMemCube`)
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `writable_cube_ids` | `list[str]` | Target cubes for add operations. Can specify multiple; the system will write to all targets in parallel. |
+| `readable_cube_ids` | `list[str]` | Target cubes for search operations. Can search across multiple cubes; results include source information. |
+| `async_mode` | `str` | Execution mode: `"sync"` for synchronous processing (wait for results), `"async"` for asynchronous processing (push to background queue, return task ID immediately). |
+
+## Core Methods (`GeneralMemCube`)
+
+**GeneralMemCube** is the standard implementation of MemCube, managing all system memories through a unified interface. Here are the main methods to complete memory lifecycle management.
 
 ### Initialization
 
@@ -95,23 +102,23 @@ mem_cube = GeneralMemCube(config)
 
 ### Static Data Operations
 
-| Method                                    | Description                                               |
-| ----------------------------------------- | --------------------------------------------------------- |
-| `init_from_dir(dir)`                    | Load a MemCube from a local directory                     |
-| `init_from_remote_repo(repo, base_url)` | Load a MemCube from remote repo (e.g., Hugging Face)      |
-| `load(dir)`                             | Load all memories from a directory into existing instance |
-| `dump(dir)`                             | Save all memories to a directory for persistence          |
+| Method | Description |
+| :--- | :--- |
+| `init_from_dir(dir)` | Load a MemCube from a local directory |
+| `init_from_remote_repo(repo, base_url)` | Load a MemCube from a remote repository (e.g., Hugging Face) |
+| `load(dir)` | Load all memories from a directory into the existing instance |
+| `dump(dir)` | Save all memories to a directory for persistence |
 
-## File Storage
+## File Structure
 
-A MemCube directory contains:
+A MemCube directory contains the following files, with each file corresponding to a memory type:
 
 - `config.json` (MemCube configuration)
 - `textual_memory.json` (textual memory)
 - `activation_memory.pickle` (activation memory)
 - `parametric_memory.adapter` (parametric memory)
 
-## Example Usage
+## Usage Examples
 
 ### Export Example (dump_cube.py)
 
@@ -156,15 +163,15 @@ result = view.add_memories(APIADDRequest(
 ))
 print(f"✓ Added {len(result)} memories")
 
-# 4. Export specific cube_id data
+# 4. Export data for the specific cube_id
 output_dir = "tmp/mem_cube_dump"
 if os.path.exists(output_dir):
     shutil.rmtree(output_dir)
 os.makedirs(output_dir, exist_ok=True)
 
-# Export graph data (only data for current cube_id)
+# Export graph data (only data for the current cube_id)
 json_data = naive.text_mem.graph_store.export_graph(
-    include_embedding=True,  # Include embeddings for semantic search
+    include_embedding=True,  # Include embeddings to support semantic search
     user_name=EXAMPLE_CUBE_ID,  # Filter by cube_id
 )
 
@@ -187,7 +194,7 @@ print(f"✓ Saved to: {memory_file}")
 
 ### Import and Search Example (load_cube.py)
 
-> **Note on Embeddings**: The sample data uses **bge-m3** model with **1024 dimensions**. If your environment uses a different embedding model or dimension, semantic search after import may be inaccurate or fail. Ensure your `.env` configuration matches the embedding settings used during export.
+> **Embedding Compatibility Note**: The sample data uses the **bge-m3** model with **1024 dimensions**. If your environment uses a different embedding model or dimension, semantic search after import may be inaccurate or fail. Ensure your `.env` configuration matches the embedding settings used during export.
 
 ```python
 import json
@@ -273,6 +280,6 @@ The old approach of directly calling `mem_cube.text_mem.get_all()` is deprecated
 
 ## Developer Notes
 
-* MemCube enforces schema consistency for safe loading/dumping
-* Each memory type is pluggable and independently tested
-* See `/tests/mem_cube/` for integration tests and usage patterns
+* MemCube enforces schema consistency to ensure safe loading and dumping
+* Each memory type can be independently configured, tested, and extended
+* See `/tests/mem_cube/` for integration tests and usage examples
