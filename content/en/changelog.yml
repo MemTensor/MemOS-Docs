@@ -1,4 +1,27 @@
 versions:
+  - name: v2.0.3
+    date: 2026-01-22
+    changedInfo:
+      New Features:
+        - type: Documentation
+          changedInfo:
+            - Open-source project documentation: Fixed formatting issues, improved example descriptions, resolved Chinese-English inconsistencies, and added practical usage tips.
+        - type: Dashboard
+          changedInfo:
+            - Knowledge base now supports more file types: JSON, MD, XML.
+        - type: GitHub Repository
+          changedInfo:
+            - Adjusted the startup approach (introduced a new server router class) and removed the reference to src/memos/product_api.py.
+      Improvements:
+        - type: Open Source
+          changedInfo:
+            - Optimized text and image memory addition by processing both types of information together as a single message.
+            - Knowledge base search now supports the 'all' field.
+      Bug Fixes:
+        - type: Open Source
+          changedInfo:
+            - Fixed an exception that occurred when the search input text was too long.
+
   - name: v2.0.2
     date: 2026-01-15
     changedInfo:

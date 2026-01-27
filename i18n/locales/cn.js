@@ -93,5 +93,12 @@ export default {
     response: '响应体',
     showChildAttrs: '展示属性',
     hideChildAttrs: '隐藏属性'
+  },
+  assistant: {
+    title: '助手',
+    suggestions: '参考问题',
+    inputPlaceholder: '请输入你想了解的问题...',
+    welcome: 'Hi，我是MemOS知识库助手小忆，您有什么问题可以直接向我提问！',
+    systemError: '系统繁忙，请稍后再试'
   }
 }

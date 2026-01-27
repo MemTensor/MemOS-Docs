@@ -21,7 +21,7 @@ desc: "该模块为记忆增强系统（如RAG、认知代理或个人内存助�
 - 支持向量增强检索(`search_by_embedding`)
 - 模块化、可插拔和可测试
 - [v0.2.1 新特性] 支持**多租户图存储架构**（单库多用户）
-- [v0.2.1 新特性] 兼容\*\*Neo4j 社区版（Community Edition）
+- [v0.2.1 新特性] 兼容**Neo4j** 社区版（Community Edition）
 
 ## 目录结构
 
@@ -170,7 +170,7 @@ config = GraphDBConfigFactory(
 ```
 
 ::note
-**示例参考**<br>话不多说，都在代码里了`examples/basic_modules
+**示例参考**<br>`examples/basic_modules
 /neo4j_example.example_complex_shared_db(db_name="paper", 
 community=True)`
 ::

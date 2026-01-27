@@ -6,7 +6,7 @@ title: "TreeTextMemory: 分层结构的明文记忆"
 
 **TreeTextMemory** 支持以结构化方式组织、关联并检索记忆，同时保留丰富的上下文信息与良好的可解释性。
 
-当前使用[Neo4j](/open_source/modules/memories/neo4j_graph_db)作为后端，未来计划支持更多图数据库。
+MemOS当前使用[Neo4j](/open_source/modules/memories/neo4j_graph_db)作为后端，未来计划支持更多图数据库。
 
 ## 目录
 
@@ -175,7 +175,7 @@ for m_list in memories:
 
 #### 使用 MultiModalStructMemReader（高级）
 
-`MultiModalStructMemReader` 支持处理多模态内容（文本、图片、URL、文件等），能够智能路由到不同的解析器：
+`MultiModalStructMemReader` 支持处理多模态内容（文本、图片、URL、文件等），能够自动感知（智能路由）到不同的解析器：
 
 ```python
 from memos.configs.mem_reader import MultiModalStructMemReaderConfig
@@ -493,7 +493,7 @@ my_tree_textual_memory.drop()
 - **语义搜索+图扩展:** 结合向量和图形的优点。
 - **可解释性:** 追踪记忆是如何连接、合并或随时间演变的.
 
-::注意
+::note
 **尝试一下**<br>从文档或web内容中添加记忆节点。手动链接它们或自动合并类似的节点！
 ::
 
@@ -504,4 +504,4 @@ my_tree_textual_memory.drop()
 - **探索图推理:** 为多跳检索和答案合成构建工作流。
 - **更进一步:** 为高级应用检查 [API Reference](/api-reference/search-memories), 或者在 `examples/`运行更多的示例.
 
-现在你的代理不仅能记住事实，还能记住它们之间的联系！
+现在你的Agent不仅能记住事实，还能记住它们之间的联系！

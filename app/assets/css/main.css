@@ -54,6 +54,14 @@ img[alt="MemOS Banner"] {
   display: none;
 }
 
+.mdc-live p {
+  margin: 6px !important;
+  line-height: 1.5;
+}
+.mdc-live code {
+  word-break: break-word;
+}
+
 html {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */

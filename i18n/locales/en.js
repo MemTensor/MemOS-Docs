@@ -93,5 +93,12 @@ export default {
     response: 'Response',
     showChildAttrs: 'Show child attributes',
     hideChildAttrs: 'Hide child attributes'
+  },
+  assistant: {
+    title: 'Assistant',
+    suggestions: 'Suggestions',
+    inputPlaceholder: 'Type your messages here...',
+    welcome: 'Hi, I\'m Xiao Yi, your MemOS Knowledge Base Assistant. Feel free to ask me anything you\'d like to know!',
+    systemError: 'System is busy, please try again later'
   }
 }

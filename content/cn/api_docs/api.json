@@ -751,7 +751,7 @@
                       "properties": {
                         "file_data": {
                           "type": "string",
-                          "description": "可访问的文件URL或者base64, 只支持四种类型txt / pdf / doc / docx， 单文件不超过100MB、200页，总数不超过20个。type为file时必填。"
+                          "description": "可访问的文件URL或者base64, 只支持四种类型txt / pdf / doc / docx / json / md / xml， 单文件不超过100MB、200页，总数不超过20个。type为file时必填。"
                         }
                       }
                     }
@@ -1070,7 +1070,7 @@
             "items": {
               "type": "string"
             },
-            "description": "该字段用于限制当次搜索可访问的知识库范围，默认为空（即不检索任何知识库）。"
+            "description": "该字段用于限制当次搜索可访问的知识库范围，默认为空（即不检索任何知识库）。传入具体知识库 ID，则可检索指定的知识库；传入all，则可检索该项目下所有关联知识库。"
           },
           "memory_limit_number": {
             "type": "integer",
@@ -2010,7 +2010,7 @@
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "文档内容输入方式支持 URL 或 Base64 编码，可上传的文档类型包括：PDF、DOCX、DOC、TXT。"
+                  "description": "文档内容输入方式支持 URL 或 Base64 编码，可上传的文档类型包括：PDF、DOCX、DOC、TXT、JSON、MD、XML。"
                 }
               }
             }

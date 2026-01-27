@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs'
+import { writeFileSync, readFileSync, existsSync } from 'fs'
 import fetch from 'node-fetch'
 
 function processReleases(data) {
@@ -87,6 +87,18 @@ async function fetchReleases() {
     }, null, 2)
 
     const targetPath = new URL('../content/releases.json', import.meta.url)
+
+    // Check if there are any new versions or changes
+    if (existsSync(targetPath)) {
+      const existingContent = readFileSync(targetPath, 'utf8')
+      const existingContentObj = JSON.parse(existingContent)
+
+      if (existingContentObj.versions[0].name === processedData[0].name) {
+        console.log(`current version is ${existingContentObj.versions[0].name}, No new versions or changes detected. Skipping write.`)
+        return
+      }
+    }
+
     writeFileSync(targetPath, changelogContent)
 
     console.log('Successfully generated releases data at content/releases.json')

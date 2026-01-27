@@ -1,11 +1,10 @@
 ---
 title: "PolarDB 图数据库"
-desc: "MemOS 框架中 PolarDB 图数据库的配置与使用"
+desc: "MemOS 支持使用 **PolarDB**（基于 Apache AGE 扩展）作为图数据库后端，用于存储和检索知识图谱式的记忆数据。PolarDB 结合了 PostgreSQL 的强大功能和图数据库的灵活性，特别适合需要同时进行关系型和图数据查询的场景。
+"
 ---
 
-# PolarDB 图数据库
 
-MemOS 支持使用 **PolarDB**（基于 Apache AGE 扩展）作为图数据库后端，用于存储和检索知识图谱式的记忆数据。PolarDB 结合了 PostgreSQL 的强大功能和图数据库的灵活性，特别适合需要同时进行关系型和图数据查询的场景。
 
 
 ## 功能特性

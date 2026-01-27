@@ -1,11 +1,11 @@
 ---
-title: 你的第一个记忆
-desc: "动手实战！我们将带你使用 **SimpleStructMemReader** 从对话中提取记忆，并把它存进 **TreeTextMemory** 里。"
+title: 您的第一个记忆
+desc: "动手实战！我们将带您使用 **SimpleStructMemReader** 从对话中提取记忆，并把它存进 **TreeTextMemory** 进行管理与检索。"
 ---
 
-## 你将学到什么
+## 学习目标
 
-通过这个实战指南，你将掌握 MemOS 的核心“三板斧”：
+本教程将引导您完成 MemOS 的核心工作流，掌握以下能力：
 
 1.  **读 (Read)**：怎么用 `SimpleStructMemReader` 把乱七八糟的聊天记录变成结构化的记忆。
 2.  **存 (Add)**：怎么把提取出来的记忆存进 `TreeTextMemory`（图数据库）。
@@ -13,14 +13,32 @@ desc: "动手实战！我们将带你使用 **SimpleStructMemReader** 从对话�
 
 ---
 
+## 核心组件简介
+
+在开始实战前，先了解我们将要使用的两个关键组件：
+
+### SimpleStructMemReader（结构化记忆提取器）
+
+这是一个基于 LLM 的智能信息提取模块，能够：
+ - 自动分析对话、文档等非结构化数据
+ - 识别用户偏好、事实陈述、行为模式等关键信息
+ - 输出标准化的结构化记忆单元
+
+### TreeTextMemory（树状文本记忆库）
+
+这是一个基于图数据库的记忆管理系统，能够：
+ - 以树状结构组织记忆，支持层级关系
+ - 建立记忆间的语义关联
+ - 支持高效的语义检索和图遍历
+ - 底层兼容 Neo4j 等图数据库
+
 ## 动手试试
 
-下面的代码展示了如何处理一段“网球打不好”的对话。我们会从中提取关键信息，存起来，然后再搜出来。
+我们将通过一个具体案例演示：如何从用户关于"网球状态不佳"的对话中提取关键信息，建立可检索的记忆系统。
 
 ### 1. 导入模块
 
 ```python
-import time
 from memos import log
 from memos.configs.mem_reader import SimpleStructMemReaderConfig
 from memos.configs.memory import TreeTextMemoryConfig
@@ -32,14 +50,9 @@ logger = log.get_logger(__name__)
 
 ### 2. 初始化核心组件
 
-我们需要两个帮手：一个负责“看”，一个负责“记”。
-
-*   **TreeTextMemory**: 你的记忆仓库。它底层连着图数据库（比如 Neo4j），负责把记忆存得井井有条。
-*   **SimpleStructMemReader**: 你的速记员。它负责读懂对话，把重要的信息（比如用户的喜好、经历）摘录下来。
-
 ```python
-# 1. 启动记忆仓库 (TreeTextMemory)
-# 加载配置文件，告诉它数据库在哪
+
+# 1. 初始化 TreeTextMemory（记忆仓库）
 tree_config = TreeTextMemoryConfig.from_json_file(
     "examples/data/config/tree_config_shared_database.json"
 )
@@ -48,8 +61,7 @@ my_tree_textual_memory = TreeTextMemory(tree_config)
 # ⚠️ 注意：这里为了演示方便清空了旧数据。生产环境千万别这么干！
 my_tree_textual_memory.delete_all()
 
-# 2. 雇佣速记员 (SimpleStructMemReader)
-# 加载配置，告诉它用哪个 LLM (比如 GPT-4o) 来理解对话
+# 2. 初始化 SimpleStructMemReader（信息提取器）
 reader_config = SimpleStructMemReaderConfig.from_json_file(
     "examples/data/config/simple_struct_reader_config.json"
 )
@@ -58,7 +70,7 @@ reader = SimpleStructMemReader(reader_config)
 
 ### 3. 准备一段对话
 
-假设这是用户和 AI 的一段聊天记录。用户在吐槽最近打网球状态不对，感觉身体被掏空。
+以下是一段用户与 AI 的对话，用户表达了打网球时的状态问题：
 
 ```python
 scene_data = [
@@ -85,7 +97,7 @@ scene_data = [
 
 ### 4. 提取并存储
 
-这是最神奇的一步：Reader 会自动分析对话，提取出“用户最近压力大”、“睡眠不足”、“网球表现下降”等关键记忆点，然后存入数据库。
+**SimpleStructMemReader** 会自动分析对话，提取出“用户最近压力大”、“睡眠不足”、“网球表现下降”等关键记忆点，然后存入数据库。
 
 ```python
 # 1. 提取 (Extract)
@@ -110,14 +122,13 @@ for m_list in memory:
 
 ### 5. 检索记忆
 
-记忆存好了，怎么用呢？当然是搜出来！
-
 **基础搜索 (Search):**
 
 就像用搜索引擎一样，直接问它。
 
 ```python
 # 稍微等一下索引构建
+import time
 time.sleep(2)
 
 init_time = time.time()
@@ -142,7 +153,7 @@ print(f"搜索耗时: {round(time.time() - init_time)}s")
 
 **高级搜索 (Fine Mode):**
 
-如果你想要更聪明一点的搜索结果（比如让 LLM 帮你总结一下搜到的内容），可以开启 `mode="fine"`。
+如果您想要更聪明一点的搜索结果（比如让 LLM 帮您总结一下搜到的内容），可以开启 `mode="fine"`。
 
 ```python
 # 开启 Fine 模式
@@ -167,11 +178,11 @@ for i, r in enumerate(results_fine_search):
 
 ### 6. 进阶：多模态与工具 (Modality & Tools)
 
-MemOS 的 Reader 不仅仅能读文字聊天，还能处理文档、工具调用甚至图片（多模态）。
+MemOS 的能力不仅限于文本对话处理，还支持多模态输入和高级功能。
 
 #### 1. 读取文档 (Documents)
 
-Reader 可以直接读取本地文件内容，将其转化为记忆。这对于建立知识库非常有用。
+可直接读取本地文档并转化为记忆：
 
 ```python
 # 构造文档数据
@@ -200,7 +211,7 @@ for m in doc_memories:
 
 #### 2. 工具调用 (Tools)
 
-当 Agent 使用工具（如搜索、计算器）时，Reader 能解析工具的输入输出，记录下“用户查询了天气”、“计算结果是50”等事实。
+当 Agent 使用工具（如搜索、计算器）时，MemOS 能解析工具的输入输出，记录下“用户查询了天气”、“计算结果是50”等事实。
 
 ```python
 tool_scene = [
@@ -233,7 +244,6 @@ from memos.memories.textual.simple_preference import SimplePreferenceTextMemory
 # pref_memory = SimplePreferenceTextMemory(...)
 
 # 从对话中自动提取偏好
-# 比如用户说："I prefer dark mode."
 pref_memories = pref_memory.get_memory(chat_data, type="chat", info=...)
 
 # 存入偏好
@@ -273,17 +283,17 @@ feedback_module.process_feedback({
 
 ### 总结
 
-现在你已经掌握了 MemOS 的核心工作流：
-1.  **Reader**: 从 Chat/Doc/Tool 中提取信息。
-2.  **Memory**: 用 TreeTextMemory 存事实，PreferenceMemory 存偏好。
-3.  **Search**: 随时检索记忆增强 LLM。
-4.  **Feedback**: 允许用户修正记忆，保持准确。
+通过本教程，您已经掌握了 MemOS 的核心工作流：
+1.  **信息提取**: 使用 Reader 从各种数据源提取结构化信息
+2.  **记忆存储**: 使用 TreeTextMemory 管理事实记忆，PreferenceMemory 管理用户偏好
+3.  **智能检索**: 通过自然语言查询获取相关记忆
+4.  **持续优化**: 通过反馈机制保持记忆的准确性和时效性
 
-下一步，你可以尝试运行 `examples/mem_os/simple_memos.py`，体验一个整合了所有这些功能的完整 Agent！
+下一步，您可以尝试运行 `examples/mem_os/simple_memos.py`，体验一个整合了所有这些功能的完整 Agent！
 
 ### 7. 收尾
 
-测试做完了，记得清理战场。
+测试完成后，建议进行以下清理操作：
 
 ```python
 # 关闭后台线程
@@ -306,7 +316,7 @@ my_tree_textual_memory.drop()
 - **深入学习：** 查看 [API Reference](/api-reference/search-memories) 和 [Examples](/open_source/getting_started/examples) 了解高级工作流程。
 
 
-接下来，你可以去看看更高级的玩法：
+接下来，您可以去看看更高级的玩法：
 - **[MemReader](/open_source/modules/mem_reader)**：其实它还能读图片和 PDF。
 - **[MemFeedback](/open_source/modules/mem_feedback)**：如果有记忆记错了，怎么让 AI 自动修正？
 - **[MemCube](/open_source/modules/mem_cube)**：怎么把各种记忆能力打包在一起，做一个真正的全能大脑。

@@ -155,7 +155,7 @@ MemOS 目前支持以下的媒体类型：
 
 1.  **图片** - JPG、PNG 及其他常见图片格式
     
-2.  **文档** - PDF、DOCX、 DOC、 TXT
+2.  **文档** - PDF、DOCX、DOC、TXT、JSON、MD、XML
     
 
 ## 3. 文件上传限制

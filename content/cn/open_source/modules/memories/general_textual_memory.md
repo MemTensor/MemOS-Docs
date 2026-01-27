@@ -1,6 +1,6 @@
 ---
-title: "GeneralTextMemory: 通用文本的记忆"
-desc: "`GeneralTextMemory` 是MemOS中一个灵活的、基于向量的明文记忆模块，用于存储、搜索和管理非结构化知识。它适用于会话代理、个人助理和任何需要语义记忆检索的系统。"
+title: "GeneralTextMemory: 通用文本记忆"
+desc: "`GeneralTextMemory` 是MemOS中一个灵活的、基于向量的明文记忆模块，用于存储、搜索和管理非结构化知识。如果说 Naive 模块是‘关键词匹配’，那么 GeneralTextMemory 就是‘理解意思’的智能索引，它适用于会话代理、个人助理和任何需要语义记忆检索的系统。"
 ---
 ## 目录
 
@@ -41,6 +41,20 @@ desc: "`GeneralTextMemory` 是MemOS中一个灵活的、基于向量的明文记
 | `updated_at`  | `str`                                              | 最近更新时间戳 (ISO 8601)    |
 
 所有的值都经过验证，无效的值将引发错误。
+
+## 搜索机制
+
+与前文提到的`NaiveTextMemory` 使用**关键词匹配算法**不同，`GeneralNaiveTextMemory` 使用**向量语义搜索**。
+
+**与NaiveTextMemory的算法特点对比**
+
+| 特性           | 关键词匹配  | 向量语义搜索 |
+| -------------- | ---------------------------- | -------------------------------- |
+| **理解语义**   | ❌ 不理解同义词               | ✅ 理解相似概念                   |
+| **资源占用**   | ✅ 极低                       | ⚠️ 需要嵌入模型和向量数据库       |
+| **执行速度**   | ✅ 快速（O(n)）               | ⚠️ 较慢（索引构建+查询）          |
+| **适用规模**   | < 1K 条记忆                  | 10K - 100K 条记忆                |
+| **可预测性**   | ✅ 结果直观                   | ⚠️ 黑盒模型                       |
 
 ## API总结 (`GeneralTextMemory`)
 
@@ -91,14 +105,14 @@ config = MemoryConfigFactory(
 )
 m = MemoryFactory.from_config(config)
 
-# Extract and add memories
+# 提取并添加记忆
 memories = m.extract([
     {"role": "user", "content": "I love tomatoes."},
     {"role": "assistant", "content": "Great! Tomatoes are delicious."},
 ])
 m.add(memories)
 
-# Add a manually created memory item
+# 通过id手动创建并添加一个记忆
 memory_id = "xxx"
 m.add(
   [
@@ -110,27 +124,27 @@ m.add(
     ]  
 )
 
-# Search
+# 检索记忆
 results = m.search("Tell me more about the user", top_k=2)
 
-# Update
+# 更新记忆
 m.update(memory_id, {"memory": "User is Canadian.", ...})
 
-# Delete
+# 删除记忆
 m.delete([memory_id])
 
-# Dump/load
+# 将所有记忆序列化到目录中的JSON文件/从存储的文件中加载记忆
 m.dump("tmp/mem")
 m.load("tmp/mem")
 ```
 
-::alert{type="info"}
+::note
 **扩展：互联网检索**<br>
 GeneralTextMemory 可以与互联网检索结合使用，从网页提取内容并添加到记忆库。<br>
 查看示例：[从互联网检索记忆](./tree_textual_memory#从互联网检索记忆可选)
 ::
 
-::alert{type="info"}
+::note
 **进阶：使用 MultiModal Reader**<br>
 如果需要处理图片、URL、文件等多模态内容，可以使用 `MultiModalStructMemReader`。<br>
 查看完整示例：[使用 MultiModalStructMemReader](./tree_textual_memory#使用-multimodalstructmemreader高级)

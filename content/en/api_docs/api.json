@@ -818,7 +818,7 @@
                       "properties": {
                         "file_data": {
                           "type": "string",
-                          "description": "Accessible file URL or base64. Supports txt / pdf / doc / docx. Single file max 100MB, 200 pages, total max 20 files. Required when type is file."
+                          "description": "Accessible file URL or base64. Supports txt / pdf / doc / docx / json / md / xml. Single file max 100MB, 200 pages, total max 20 files. Required when type is file."
                         }
                       }
                     }
@@ -1056,7 +1056,7 @@
             "items": {
               "type": "string"
             },
-            "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched."
+            "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched.Pass specific Knowledgebase IDs to search within that designated repository; pass "all" to search across all associated knowledgebases within the project."
           },
           "memory_limit_number": {
             "type": "integer",
@@ -1996,7 +1996,7 @@
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "The file content input supports URL or Base64 encoding, and the supported document types include PDF, DOCX, DOC, and TXT."
+                  "description": "The file content input supports URL or Base64 encoding, and the supported document types include PDF, DOCX, DOC, TXT, JSON, MD and XML."
                 }
               }
             }

@@ -151,7 +151,7 @@ Relevant functions will be restored after usage is adjusted to within the capaci
 
 ### Document Limits
 
-1.  Supported document types: PDF, DOCX, DOC, TXT
+1.  Supported document types: PDF, DOCX, DOC, TXT, JSON, MD, XML
 
 2.  Single file size limit: Not exceeding 100 MB, 500 pages
 

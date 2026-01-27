@@ -10,7 +10,7 @@ title: Error Codes
 | 40002 | Required field cannot be empty | Provide missing required fields |
 | 40003 | Field is empty | Check if the provided list or object is empty |
 | 40006 | Unsupported type | Check the value of the 'type' field |
-| 40007 | Unsupported file type | Only upload allowed formats (.pdf, .docx, .doc, .txt) |
+| 40007 | Unsupported file type | Only upload allowed formats (.pdf, .docx, .doc, .txt, .json, .md, .xml) |
 | 40008 | Invalid Base64 content | Check if the Base64 string contains illegal characters |
 | 40009 | Invalid Base64 format | Check if the Base64 encoding format is correct |
 | 40010 | User ID too long | user_id length cannot exceed 100 characters |

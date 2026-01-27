@@ -58,6 +58,7 @@ function gotoHome() {
         base: 'w-90 h-10 text-[#94A3B8] rounded-lg ring-slate-600'
       }"
     />
+    <AssistantCollapse class="ml-2.5" />
 
     <template #right>
       <LanguageSwitcher />

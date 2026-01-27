@@ -1,5 +1,5 @@
 ---
-title: "PreferenceTextMemory: 表示用户偏好的明文记忆"
+title: "PreferenceTextMemory: 存储和管理用户偏好的明文记忆"
 desc: "`PreferenceTextMemory` 是MemOS中用于存储和管理用户偏好的明文记忆模块。它适用于需要根据用户偏好进行记忆检索的场景。"
 ---
 
@@ -50,8 +50,8 @@ desc: "`PreferenceTextMemory` 是MemOS中用于存储和管理用户偏好的明
 ::
 
 ::alert{type="info"}
-**适用场景**<br>
-当你需要构建能够"记住"用户喜好并据此提供个性化服务的系统时，`PreferenceTextMemory` 是最佳选择。
+
+总结来说，当你需要构建能够"记住"用户喜好并据此提供个性化服务的系统时，`PreferenceTextMemory` 是最佳选择。
 ::
 
 ## 核心概念与工作流程
@@ -198,7 +198,7 @@ preference_memory.load("tmp/pref_memories")
 
 ### 完整代码示例
 
-该示例整合了上述所有步骤，提供一个端到端的完整流程 —— 复制即可运行！
+该示例整合了上述所有步骤，提供一个端到端的完整流程，以Milvus为例 —— 复制即可运行！
 
 ```python
 from memos.configs.memory import PreferenceTextMemoryConfig

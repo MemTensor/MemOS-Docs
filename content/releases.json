@@ -1,6 +1,76 @@
 {
   "versions": [
     {
+      "releaseUrl": "https://github.com/MemTensor/MemOS/releases/tag/v2.0.3",
+      "name": "v2.0.3",
+      "date": "2026-01-23",
+      "changedInfo": [
+        {
+          "type": "feat",
+          "description": "refactor & reorganize examples with unified structure and updated demos",
+          "author": "CaralHsi",
+          "pr": 903,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/903"
+        },
+        {
+          "type": "fix",
+          "description": "refine config for rerank input is too long",
+          "author": "whipser030",
+          "pr": 920,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/920"
+        },
+        {
+          "type": "fix",
+          "description": "modifying api examples",
+          "author": "CaralHsi",
+          "pr": 917,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/917"
+        },
+        {
+          "type": "fix",
+          "description": "component_init initialize scheduler every time",
+          "author": "tangg555",
+          "pr": 915,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/915"
+        },
+        {
+          "type": "fix",
+          "description": "parse in sim-struct chat-data; unify image analysis prompt with context injection & improve LLM robustness",
+          "author": "CaralHsi",
+          "pr": 913,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/913"
+        },
+        {
+          "type": "fix",
+          "description": "json loads error",
+          "author": "whipser030",
+          "pr": 937,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/937"
+        },
+        {
+          "type": "feat",
+          "description": "sync main",
+          "author": "CaralHsi",
+          "pr": 944,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/944"
+        },
+        {
+          "type": "feat",
+          "description": "model error traceback",
+          "author": "CarltonXiang",
+          "pr": 942,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/942"
+        },
+        {
+          "type": "feat",
+          "description": "delete_time && delete_record_id for neo4j,polardb,neo4j_community",
+          "author": "wustzdy",
+          "pr": 945,
+          "prUrl": "https://github.com/MemTensor/MemOS/pull/945"
+        }
+      ]
+    },
+    {
       "releaseUrl": "https://github.com/MemTensor/MemOS/releases/tag/v2.0.2",
       "name": "v2.0.2",
       "date": "2026-01-16",

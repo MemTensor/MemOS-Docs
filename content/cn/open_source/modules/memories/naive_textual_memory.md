@@ -5,7 +5,7 @@ desc: "MemOS 中最轻量级的记忆模块，专为快速原型开发和简单�
 
 # NaiveTextMemory: 简单明文记忆
 
-让我们从最简单的方式开始使用 MemOS 记忆系统！
+让我们用最简单的方式开始使用 MemOS 记忆系统！
 
 `NaiveTextMemory` 是一个轻量级、基于内存的明文记忆模块，将记忆存储在内存列表中，使用关键词匹配进行检索。它是学习 MemOS 的最佳起点，也适用于演示、测试和小规模应用。
 
@@ -62,10 +62,11 @@ desc: "MemOS 中最轻量级的记忆模块，专为快速原型开发和简单�
 - 关键词搜索场景（查询与记忆直接匹配）
 ::
 
-::alert{type="warning"}
+::note
 **性能提示**<br>
 当记忆数量超过 1000 条时，建议升级到 [GeneralTextMemory](/open_source/modules/memories/general_textual_memory)，它使用向量搜索，性能更优。
 ::
+
 
 ## 核心概念
 
@@ -123,7 +124,7 @@ memory = NaiveTextMemory(config: NaiveTextMemoryConfig)
 
 ### 搜索机制
 
-与 `GeneralTextMemory` 的向量语义搜索不同，`NaiveTextMemory` 使用**关键词匹配算法**：
+`NaiveTextMemory` 使用**关键词匹配算法**：
 
 ::steps{}
 
@@ -141,21 +142,13 @@ memory = NaiveTextMemory(config: NaiveTextMemoryConfig)
 
 ::
 
-**算法特点对比**
 
-| 特性           | 关键词匹配 (NaiveTextMemory) | 向量语义搜索 (GeneralTextMemory) |
-| -------------- | ---------------------------- | -------------------------------- |
-| **理解语义**   | ❌ 不理解同义词               | ✅ 理解相似概念                   |
-| **资源占用**   | ✅ 极低                       | ⚠️ 需要嵌入模型和向量数据库       |
-| **执行速度**   | ✅ 快速（O(n)）               | ⚠️ 较慢（索引构建+查询）          |
-| **适用规模**   | < 1K 条记忆                  | 10K - 100K 条记忆                |
-| **可预测性**   | ✅ 结果直观                   | ⚠️ 黑盒模型                       |
 
 ::alert{type="info"}
 **示例对比**<br>
 查询："猫咪" <br>
 - **关键词匹配**：只匹配包含"猫"、"猫咪"的记忆<br>
-- **语义搜索**：还能匹配"宠物"、"小猫"、"喵星人"等相关记忆
+- **语义搜索**：还能匹配"宠物"、"小猫"、"喵星人"等相关记忆（稍后我们将在“通用明文记忆”文章中学习）
 ::
 
 ### 配置参数
@@ -332,7 +325,7 @@ if memories:
 # memory.delete_all()
 ```
 
-::alert{type="info"}
+::note
 **扩展：互联网检索**<br>
 NaiveTextMemory 专注于本地记忆管理。如需从互联网检索信息并添加到记忆库，请查看：<br>
 [从互联网检索记忆](./tree_textual_memory#从互联网检索记忆可选)
@@ -369,7 +362,7 @@ NaiveTextMemory 专注于本地记忆管理。如需从互联网检索信息并�
 
 使用 `load(dir)` 可以完整恢复所有记忆数据。
 
-::alert{type="warning"}
+::note
 **重要提示**<br>
 记忆存储在内存中，进程重启后会丢失。请定期调用 `dump()` 保存数据！
 ::
