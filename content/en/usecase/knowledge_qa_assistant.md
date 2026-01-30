@@ -69,7 +69,7 @@ From the scenario above, you can clearly see three core advantages of MemOS over
     RAG is good at retrieving knowledge semantically related to a query, but it is stateless—each query stands alone, with no understanding of the user or context. Users must repeat their background every time.
     
     MemOS can understand relationships, time, and preferences. It knows “who you are” and “what you’re doing.” You can simply ask your question, and MemOS will fill in the missing context automatically—no need to repeat things like “my dog doesn’t eat chicken” or “my computer has an Intel chip.”
-    
+
 2. **Personalization: remembers habits and preferences**
     
     Users in different roles and work styles need different service approaches. MemOS can remember:
@@ -81,7 +81,7 @@ From the scenario above, you can clearly see three core advantages of MemOS over
     "You asked about reimbursement policy last time—do you want to proceed with the application flow now?"
     
     This personalization makes an AI application truly “your” assistant, not just a generic tool.
-    
+
 3. **Knowledge evolution: keeps learning from interactions**
 
 When a real process contains “experience rules” that aren’t documented, MemOS can distill them into new memories, continuously filling gaps and improving the knowledge system. As end users keep using it, MemOS evolves and updates memory based on conversations—so the knowledge base becomes part of “memory,” not just a static document store.
@@ -368,7 +368,7 @@ pip install OpenAI && pip install datetime
 
 ##### Get the key (API_KEY)
 
-Log into the [console](https://memos-dashboard.openmem.net/cn/apikeys/) and copy the key.
+Log in to the [Console](https://memos-dashboard.openmem.net/cn/apikeys/) and copy the secret key
 
 ![image.png](https://cdn.memtensor.com.cn/img/1768481468406_q51iqx_compressed.png)
 
@@ -401,6 +401,7 @@ os.environ["KNOWLEDGE_BASE_IDS"] = json.dumps([
 ```
 
 ##### Execute the code
+
 ```python
 python knowledge_qa_assistant.py
 ```
@@ -428,5 +429,3 @@ python knowledge_qa_assistant.py
 *   Call `add_message` to store the user query and model answer as long-term memory.
 
 *   Return the model answer.
-
-
