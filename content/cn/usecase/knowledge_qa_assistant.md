@@ -369,7 +369,7 @@ pip install OpenAI && pip install datetime
 
 ##### 获取秘钥(API\_KEY)
 
-登录控制台[https://memos-dashboard.openmem.net/cn/apikeys/](https://memos-dashboard.openmem.net/cn/apikeys/)，复制秘钥
+登录[控制台](https://memos-dashboard.openmem.net/cn/apikeys/)，复制秘钥
 
 ![image.png](https://cdn.memtensor.com.cn/img/1768481468406_q51iqx_compressed.png)
 

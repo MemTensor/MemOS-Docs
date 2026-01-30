@@ -368,7 +368,7 @@ pip install OpenAI && pip install datetime
 
 ##### Get the key (API_KEY)
 
-Log into the console at [https://memos-dashboard.openmem.net/cn/apikeys/](https://memos-dashboard.openmem.net/cn/apikeys/) and copy the key.
+Log into the [console](https://memos-dashboard.openmem.net/cn/apikeys/) and copy the key.
 
 ![image.png](https://cdn.memtensor.com.cn/img/1768481468406_q51iqx_compressed.png)
 

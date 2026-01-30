@@ -210,7 +210,10 @@ const qrcodeData = computed(() => [
               </span>
             </div>
           </div>
-          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4 sm:mt-7.5 mt-5">
+          <div
+            v-if="!isIntl()"
+            class="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4 sm:mt-7.5 mt-5"
+          >
             <p class="text-copyright sm:text-base text-xs leading-5.5 whitespace-nowrap">
               {{ $t('footer.icpFilingNumber') }}
             </p>
