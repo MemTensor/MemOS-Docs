@@ -115,7 +115,7 @@ const config: NuxtConfig = {
                 'https://memos-playground.openmem.net': envConfig.playgroundUrl,
                 'https://memos-dashboard.openmem.net': envConfig.dashboardUrl,
                 'https://memos.openmem.net': envConfig.homeDomain,
-                'https://memos.memtensor.cn': envConfig.baseUrl
+                'https://memos.memtensor.cn/api': envConfig.baseUrl
               }
             }
           }
