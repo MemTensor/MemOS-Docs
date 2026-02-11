@@ -22,6 +22,7 @@ nav:
       - "(ri:message-3-line) Add Message": memos_cloud/mem_operations/add_message.md
       - "(ri:search-2-line) Search Memory": memos_cloud/mem_operations/search_memory.md
       - "(ri:delete-bin-line) Delete Memory": memos_cloud/mem_operations/delete_memory.md
+      - "(ri:feedback-line)Add Feedback": memos_cloud/mem_operations/add_feedback.md
 
     - "(ri:function-line) Features":
       - "(ri:flag-line) Basic Features":
