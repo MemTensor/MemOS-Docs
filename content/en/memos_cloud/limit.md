@@ -21,12 +21,13 @@ Take action now and use MemOS Cloud Services to support the growth of your proje
 
 To ensure service stability and security, MemOS Cloud Services imposes the following limits on core API calls, calculated per account:
 
-| **API Name**   | **Single Input Limit** | **Single Output Limit** |
-|----------------|------------------------|-------------------------|
-| addMessage     | 20,000 token           | -                       |
-| searchMemory   | 20,000 token           | Fact Memory: 25 items<br>Preference Memory: 25 items<br>Tool Memory: 25 items |
+| **API Name**    | **Single Input Limit**  | **Single Output Limit** |
+|-----------------|------------------------|-------------------------|
+| addMessage      | 20,000 tokens          | -                       |
+| searchMemory    | 20,000 tokens          | Fact Memory: 25 items<br>Preference Memory: 25 items<br>Tool Memory: 25 items<br>Skills: 25 items |
 
-Document upload features are currently limited to a maximum of 500 pages. For higher-level or special requirements, please contact the project team.
+In addition, the document upload feature for the knowledge base currently has the following limitations: each file must not exceed 100MB, 500 pages, or 20,000 tokens, and a maximum of 20 files can be uploaded at one time.
+If you have higher-level or special requirements, please contact the project team for further discussion.
 
 ::note
 **Note**
