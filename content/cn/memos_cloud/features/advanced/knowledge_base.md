@@ -1,5 +1,5 @@
 ---
-title: 知识库
+title: 知识库Knowledgebase
 desc: 创建项目关联的知识库，检索时结合记忆与知识库。
 ---
 ::warning
