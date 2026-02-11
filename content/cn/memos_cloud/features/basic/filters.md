@@ -1,5 +1,5 @@
 ---
-title: 记忆过滤器
+title: 记忆过滤器Filter
 desc: 检索记忆时使用记忆过滤器，可以按照指定智能体、元信息、时间范围等条件进行过滤。
 ---
 
@@ -81,8 +81,8 @@ desc: 检索记忆时使用记忆过滤器，可以按照指定智能体、元�
 
 | 字段名 | 数据类型 | 操作符 | 示例 |
 | --- | --- | --- | --- |
-| create\_time | str | `lt`, `gt`, `lte`, `gte` | `{"create_time": {"gte": "2025-12-10"}}` |
-| update\_time | str | `lt`, `gt`, `lte`, `gte` | `{"update_time": {"lte": "2025-12-10"}}` |
+| create\_time | str | `lt`, `gt`, `lte`, `gte` | `{"create_time": {"gte": "2025-12-10"}}`<br>`{"create_time": {"gt": "2025-12-10 15:00:00"}}`|
+| update\_time | str | `lt`, `gt`, `lte`, `gte` | `{"update_time": {"lte": "2025-12-10"}}`<br>`{"update_time": {"lt": "2025-12-10 23:00:00"}}`| |
 
 ## 5. 使用示例
 
