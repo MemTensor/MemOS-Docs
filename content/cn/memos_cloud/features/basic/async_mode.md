@@ -1,5 +1,5 @@
 ---
-title: 异步模式
+title: 异步模式AsyncMode
 desc: 添加消息时使用异步模式，接口请求立即返回，而实际处理在MemOS后台排队完成。
 ---
 ::warning
