@@ -520,8 +520,8 @@
           "memory_limit_number": {
             "type": "integer",
             "title": "Memory Limit Number",
-            "description": "限定返回的事实记忆条数，用于控制召回的事实记忆个数。默认值： 6，最大值：25。",
-            "default": 6
+            "description": "召回的事实记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -532,8 +532,16 @@
           "preference_limit_number": {
             "type": "integer",
             "title": "Preference Limit Number",
-            "description": "限定返回的偏好记忆条数，用于控制召回的偏好记忆个数，仅在include_preference=true 时生效 默认值： 6，最大值：25",
-            "default": 6
+            "description": "召回的偏好记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
+            "default": 9
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "召回记忆的相关性阈值（0~1）。用于过滤低相关记忆，并与限定返回的事实、偏好记忆最大条数，共同约束最终返回结果。不传时使用系统默认阈值，取值为0时表示不进行相关性过滤。",
+            "default": 0
           },
           "model_name": {
             "type": "string",
@@ -751,7 +759,7 @@
                       "properties": {
                         "file_data": {
                           "type": "string",
-                          "description": "可访问的文件URL或者base64, 只支持四种类型txt / pdf / doc / docx / json / md / xml， 单文件不超过100MB、200页，总数不超过20个。type为file时必填。"
+                          "description": "可访问的文件URL或者base64, 只支持七种类型txt / pdf / doc / docx / json / md / xml， 单文件不超过100MB、500页，总数不超过20个。type为file时必填。注意：该接口的总输入上限为20,000 Tokens。"
                         }
                       }
                     }
@@ -1076,8 +1084,8 @@
             "type": "integer",
             "format": "int32",
             "title": "Memory Limit Number",
-            "description": "限定返回的事实记忆条数，用于控制事实记忆片段的长度，不传时使用系统默认值6，最大值为25。",
-            "default": 6
+            "description": "召回的记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -1089,8 +1097,8 @@
             "type": "integer",
             "format": "int32",
             "title": "Preference Limit Number",
-            "description": "限定返回的偏好记忆条数，用于控制偏好记忆片段的长度，仅在 include_preference=true 时生效。不传时使用系统默认值6，最大值为25。",
-            "default": 6
+            "description": "召回的偏好记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
+            "default": 9
           },
           "include_tool_memory": {
             "type": "boolean",
@@ -1114,6 +1122,14 @@
             "type": "number",
             "title": "Include Skill",
             "description": "限定返回的技能（Skill）条数，用于控制召回的技能个数,仅在 include_skill=true 时生效。不传时使用系统默认值6，最大值为25。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "召回记忆的相关性阈值（0~1）。用于过滤低相关记忆，并与限定返回的事实、偏好记忆最大条数，共同约束最终返回结果。不传时使用系统默认阈值，取值为0时表示不进行相关性过滤。",
+            "default": 0
           }
         },
         "title": "SearchMemoryRequest"
@@ -1249,6 +1265,14 @@
             "type": "string",
             "title": "Update Time",
             "description": "偏好记忆最后一次被修改或更新的时间，通常为 ISO 8601 格式。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "查询内容与该偏好记忆的相关性分数，范围 0~1，数值越接近 1 表示越相关。",
+            "example": 0.87
           }
         },
         "title": "PreferenceDetail"
@@ -2151,7 +2175,7 @@
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "文档内容输入方式支持 URL 或 Base64 编码，可上传的文档类型包括：PDF、DOCX、DOC、TXT、JSON、MD、XML。"
+                  "description": "文档内容输入方式支持 URL 或 Base64 编码，可上传的文档类型包括：PDF、DOCX、DOC、TXT、JSON、MD、XML。支持单次上传最多20个文档，单个文档不超过100MB、500页、20,000 Token数。"
                 }
               }
             }
