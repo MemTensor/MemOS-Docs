@@ -1,5 +1,5 @@
 ---
-title: 技能
+title: 技能Skills
 desc: 添加用户对话消息，生成可被Agent复用的技能文件。
 ---
 
