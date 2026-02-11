@@ -502,8 +502,8 @@
           "memory_limit_number": {
             "type": "integer",
             "title": "Memory Limit Number",
-            "description": "Limits the number of returned fact memories, controlling the count of recalled fact memories. Default: 6, Max: 25.",
-            "default": 6
+            "description": "Maximum number of memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -514,8 +514,16 @@
           "preference_limit_number": {
             "type": "integer",
             "title": "Preference Limit Number",
-            "description": "Limits the number of returned preference memories, controlling the count of recalled preference memories. Effective only when include_preference=true. Default: 6, Max: 25.",
-            "default": 6
+            "description": "Maximum number of preferred memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many preference memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering.",
+            "default": 0
           },
           "model_name": {
             "type": "string",
@@ -818,7 +826,7 @@
                       "properties": {
                         "file_data": {
                           "type": "string",
-                          "description": "Accessible file URL or base64. Supports txt / pdf / doc / docx / json / md / xml. Single file max 100MB, 200 pages, total max 20 files. Required when type is file."
+                          "description": "Accessible file URL or base64. Supports txt / pdf / doc / docx / json / md / xml. Single file max 100MB, 500 pages, total max 20 files. Required when type is file."
                         }
                       }
                     }
@@ -1062,8 +1070,8 @@
             "type": "integer",
             "format": "int32",
             "title": "Memory Limit Number",
-            "description": "Limits the number of fact memory items returned, controlling the length of fact memory. Defaults to 6 if not provided. The maximum allowed value is 25.",
-            "default": 6
+            "description": "Maximum number of memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -1075,8 +1083,8 @@
             "type": "integer",
             "format": "int32",
             "title": "Preference Limit Number",
-            "description": "Limits the number of preference memory items returned, controlling the length of fact memory. Defaults to 6 if not provided. The maximum allowed value is 25.",
-            "default": 6
+            "description": "Maximum number of preference memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many preferred memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_tool_memory": {
             "type": "boolean",
@@ -1100,6 +1108,14 @@
             "type": "number",
             "title": "Include Skill",
             "description": "Limits the number of returned Skills, controlling the count of recalled skills. Effective only when `include_skill=true`. Default is 6 if not provided, max is 25."
+          },
+         "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering.",
+            "default": 0
           }
         },
         "title": "SearchMemoryRequest"
@@ -1305,6 +1321,14 @@
             "type": "string",
             "title": "Update Time",
             "description": "Last modification or update time of preference memory, usually in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance score of preference memory to the query, ranging from 0 to 1. Higher values indicate stronger relevance.",
+            "example": 0.87
           }
         },
         "title": "PreferenceDetail"
@@ -2137,7 +2161,7 @@
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "The file content input supports URL or Base64 encoding, and the supported document types include PDF, DOCX, DOC, TXT, JSON, MD and XML."
+                  "description": "The file content input supports URL or Base64 encoding, and the supported document types include PDF, DOCX, DOC, TXT, JSON, MD and XML.Supports uploading up to 20 documents at a time; each document must be no larger than 100 MB, 500 pages, or 20,000 tokens."
                 }
               }
             }
