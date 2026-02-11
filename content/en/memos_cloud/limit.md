@@ -1,42 +1,42 @@
 ---
-title: Limits
-desc: Register and log in to enjoy free quota, facilitating quick experience and verification of memory functions.
+title: 配额和限制
+desc: 注册登录即享有免费额度，便于快速体验和验证记忆功能。
 ---
 
 
-## 1. Quota
+## 1. 额度说明
 
-![image.png](https://cdn.memtensor.com.cn/img/1766630472243_emn5fx_compressed.png)
+![image.png](https://cdn.memtensor.com.cn/img/1766481509513_5d4x8o_compressed.png)
 
-MemOS Cloud Services currently provides multiple pricing plans, from the free tier to the enterprise tier, to meet the needs of teams of different sizes. All plans are currently free for a limited time. Visit [MemOS Pricing page](https://memos.openmem.net/en/pricing) to apply for the plan that fits your needs.
-Take action now and use MemOS Cloud Services to support the growth of your projects.
-
-::note
-**Note**
-- The free quota is provided per **developer account** and is shared across all projects under that account.
-- Failed requests (authentication failure, parameter error, exceeding limits, etc.) **do not consume quota**.
-::
-
-## 2. Resource Limits
-
-To ensure service stability and security, MemOS Cloud Services imposes the following limits on core API calls, calculated per account:
-
-| **API Name**    | **Single Input Limit**  | **Single Output Limit** |
-|-----------------|------------------------|-------------------------|
-| addMessage      | 20,000 tokens          | -                       |
-| searchMemory    | 20,000 tokens          | Factual Memory: 25 items<br>Preference Memory: 25 items<br>Tool Memory: 25 items<br>Skills: 25 items |
-
-In addition, the document upload feature for the knowledge base currently has the following limitations: each file must not exceed 100MB, 500 pages, or 20,000 tokens, and a maximum of 20 files can be uploaded at one time.
-If you have higher-level or special requirements, please contact the project team for further discussion.
+MemOS 云服务目前为所有开发者提供了从免费版到企业版的多种定价方案，满足不同规模团队的需求。目前，所有版本限时免费，欢迎前往[MemOS 官网-价格](https://memos.openmem.net/cn/pricing)，申请符合你需求的版本。
+立即行动，享受 MemOS 云服务带来的无限可能，助力你的项目快速成长！
 
 ::note
-**Note**
-- Requests exceeding the per-call limit will return the corresponding error code without deducting quota.
-- Additionally, we recommend a maximum QPS ≤ 50 (i.e., up to 50 requests per second). This is not a strict limit, but high concurrency may be affected by platform capacity, so control request frequency according to actual needs.
+**注意**
+- 使用额度由每个开发者账号下的所有项目共同累计。
+- 请求失败（鉴权失败、参数错误、超额限制等）**不消耗额度**。
 ::
 
-## 3. Usage Monitoring
+## 2. 资源限制
 
-You can view the remaining quota for each API through the **API Console**, with filters for project, API key, and date to facilitate tracking and managing usage.
+为保证服务稳定与安全，MemOS 云服务对核心接口调用有如下限制，按照账号维度计算：
 
-<img width="3024" height="1890" alt="image" src="https://cdn.memtensor.com.cn/img/1766632428696_iufnrl_compressed.png" />
+| **接口名称**       | **单次输入上限**     | **单次输出上限** |
+|----------------|------------------|--------------|
+| addMessage     | 20,000 token     | -            |
+| searchMemory   | 20,000 token     | 事实记忆：25 条<br>偏好记忆：25 条<br>工具记忆：25 条<br>技能：25 条 |
+
+另外，知识库文档上传相关功能目前统一限制为单文件不超过100MB、500页、20,000tokens，单次上传总数不超过20个。
+如有更高阶或特殊需求，请联系项目组沟通。
+
+::note
+**注意**
+- 当请求超出单次上限时，系统直接返回对应错误码，不会扣减调用次数。
+- 另外，我们建议最大 QPS ≤ 50（即每秒最多 50 次请求），此非严格限制，但高并发请求可能会受到平台处理能力影响，请根据实际需求合理控制调用频率。
+::
+
+## 3. 用量监控
+
+您可通过**API 控制台**查看各接口的剩余额度，并支持按项目、接口密钥和日期进行筛选，方便跟踪和管理调用情况。
+
+![image.png](https://cdn.memtensor.com.cn/img/1766632358212_mxan3a_compressed.png)
