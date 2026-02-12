@@ -1,4 +1,18 @@
 versions:
+  - name: v2.0.6
+    date: 2026-02-12
+    changedInfo:
+      New Features:
+        - type: Retrieval Optimization
+          changedInfo:
+            - 'Added keyword-based search in the search phase, while relativity continues to use cosine similarity of embeddings.'
+            - 'Added a relativity output field to the Chat API, allowing users to control the retrieval threshold during conversations using relativity.'
+      Bug Fixes:
+        - type: Fixes
+          changedInfo:
+            - 'Fixed an issue where an incorrect field was used in preference memory threshold filtering.'
+            - 'Fixed an issue that caused failures or hanging when calling the get_memory API with the filter parameter containing both field conditions and logical operators such as AND/OR/NOT.'
+            - 'Fixed issues related to passing extra body parameters to LLMs, ensuring compatibility with the enable thinking parameter input'
   - name: v2.0.5
     date: 2026-02-10
     changedInfo:

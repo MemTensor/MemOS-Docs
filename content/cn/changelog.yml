@@ -1,4 +1,18 @@
 versions:
+  - name: v2.0.6
+    date: 2026-02-12
+    changedInfo:
+      New Features:
+        - type: 检索优化
+          changedInfo:
+            - search 阶段新增关键词检索，并且 relativity 仍使用 embedding 的余弦相似度
+            - Chat 接口加入 relativity 输出字段，用户可以使用 relativity 来控制聊天中的检索阈值
+      Bug Fixes:
+        - type: 问题修复
+          changedInfo:
+            - 修复偏好记忆阈值筛选使用字段错误的问题
+            - 修复了一个导致调用 get_memory 接口时 filter 参数同时传入 field condition 和 AND/OR/NOT 等逻辑操作符时会发生调用失败或卡顿的问题
+            - 修复一些 LLM extra body 传入问题，兼容 LLM 的 enable thinking 参数输入
   - name: v2.0.5
     date: 2026-02-10
     changedInfo:
