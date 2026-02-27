@@ -89,6 +89,9 @@ nav:
     - "(ri:robot-line) Agent Development":
       - "(ri:book-open-line) Guide": mcp_agent/agent/guide.md
 
+    - "(ri:robot-line) Openclaw Configuration":
+      - "(ri:book-open-line) Guide": mcp_agent/openclaw/guide.md
+
   - "(ri:file-code-line) API Documentation":
     - "(ri:rocket-line) Get Started":
       - "(ri:eye-line) Overview": api_docs/start/overview.md
