@@ -53,6 +53,7 @@ export default {
     title: 'Don\'t let your AI forget again, Empower it with MemOS!',
     description: 'Here, you\'ll find everything to quickly integrate MemOS into your AI applications and deploy it in production',
     buttonText: 'Get Started Now',
+    openclawButton: 'OpenClaw Configuration',
     items: [
       {
         title: 'MemOS Cloud',
