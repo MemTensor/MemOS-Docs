@@ -40,9 +40,12 @@ mkdir -p ~/.openclaw && echo "MEMOS_API_KEY=mpg-..." > ~/.openclaw/.env
 ##### 2.3.1 Install
 
 ```bash
-openclaw plugins install github:MemTensor/MemOS-Cloud-OpenClaw-Plugin
+openclaw plugins install @memtensor/memos-cloud-openclaw-plugin
 openclaw gateway restart
 ```
+
+* [npm package](https://www.npmjs.com/package/@memtensor/memos-cloud-openclaw-plugin)
+* [Github](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin)
 
 ##### 2.3.2 Plugin Will Automatically Start Running
 
