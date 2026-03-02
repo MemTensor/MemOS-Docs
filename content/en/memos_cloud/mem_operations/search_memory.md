@@ -32,8 +32,7 @@ Memory retrieval refers to how MemOS, upon receiving a user's query, returns the
 
 *   **Memory Filter (filter)**: Logic conditions in JSON format to filter on agent, create_time, tags, info, and other fields, narrowing the scope of memory retrieval. For example, retrieve only "memories from the last 30 days".
 
-*   **Relevance Threshold (relativity)**: Relevance refers to the semantic match between recalled memories and the user's query. The higher the relevance, the more related the memory is to the question. The threshold constrains how closely retrieved memories must match.
-
+*   **Relevance Threshold (relativity)**: Relevance refers to the semantic similarity between retrieved memories and the user's query; the higher the relevance score, the more closely the memory matches the current question. The relevance threshold controls the minimum matching level for retrieval. Default is 0.45, and memories below this value will be filtered out.
 
 ## 3. How It Works
 
