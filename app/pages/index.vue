@@ -42,7 +42,7 @@ const items = computed(() => localeItems.value.map((item, index) => ({
         </BaseButton>
         <BaseButton
           trailing-icon="ri:arrow-right-line"
-          to="/mcp_agent/openclaw/guide"
+          to="/openclaw/guide"
         >
           {{ $t('homepage.openclawButton') }}
         </BaseButton>

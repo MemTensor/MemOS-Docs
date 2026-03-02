@@ -89,8 +89,8 @@ nav:
     - "(ri:robot-line) Agent开发":
       - "(ri:book-open-line) 使用指南": mcp_agent/agent/guide.md
 
-    - "(ri:robot-line) Openclaw 配置安装":
-      - "(ri:book-open-line) 使用指南": mcp_agent/openclaw/guide.md
+  - "(ri:robot-line) Openclaw":
+    - "(ri:book-open-line) OpenClaw 插件": openclaw/guide.md
 
   - "(ri:file-code-line) API文档":
     - "(ri:rocket-line) 开始使用":
