@@ -143,9 +143,9 @@ openclaw onboard
 
 #### **2.1 Get your Key**
 
-Log in to or register with MemOS Cloud to get your API Key  🔗 [MemOS Cloud](https://memos-dashboard.openmem.net/cn/apikeys/)
+Log in to or register with MemOS Cloud to get your API Key  🔗 [MemOS Cloud](https://memos-dashboard.openmem.net/apikeys/)
 
-![image.png](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/eYVOL5jvL1X0Llpz/img/800b990d-9633-4935-9fd3-c89525ded23c.png)
+![image.png](https://cdn.memtensor.com.cn/img/1772443326905_kkxve6_compressed.webp)
 
 #### **2.2 Set Variables**
 

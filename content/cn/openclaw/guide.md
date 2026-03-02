@@ -143,7 +143,7 @@ openclaw onboard
 
 登陆/注册 MemOS Cloud 获取你的 API Key 🔗 [MemOS Cloud](https://memos-dashboard.openmem.net/cn/apikeys/)
 
-![image.png](https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/eYVOL5jvL1X0Llpz/img/800b990d-9633-4935-9fd3-c89525ded23c.png)
+![image.png](https://cdn.memtensor.com.cn/img/1772443326905_kkxve6_compressed.webp)
 
 #### **2.2 设置变量**
 
