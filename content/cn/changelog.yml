@@ -1,4 +1,14 @@
 versions:
+  - name: v2.0.7
+    date: 2026-02-27
+    changedInfo:
+      Improvements:
+        - type: 参数优化
+          changedInfo:
+            - search接口和chat接口的参数relativity，用于通过相关性分数来筛选召回的记忆，本次优化将相关性阈值默认值都设置为 0.45
+        - type: 日志优化
+          changedInfo:
+            - 拦截部分日志报错，对部分日志级别进行调整
   - name: v2.0.6
     date: 2026-02-12
     changedInfo:

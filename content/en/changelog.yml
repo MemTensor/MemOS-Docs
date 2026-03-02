@@ -1,4 +1,14 @@
 versions:
+  - name: v2.0.7
+    date: 2026-02-27
+    changedInfo:
+      Improvements:
+        - type: Parameter optimization
+          changedInfo:
+            - 'The search and chat APIs have the relativity parameter for filtering recalled memories by relevance score. This update sets the default relevance threshold to 0.45.'
+        - type: Log optimization
+          changedInfo:
+            - 'Intercept some log errors and adjust the log level for certain logs.'
   - name: v2.0.6
     date: 2026-02-12
     changedInfo:
