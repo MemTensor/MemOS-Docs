@@ -9,6 +9,7 @@ export default {
       welcome: 'Welcome',
       cloud: 'MemOS Cloud',
       openSource: 'Open Source',
+      openclaw: 'OpenClaw',
       mcpAgent: 'MCP & Agent Framework',
       apiDocs: 'API Documentation',
       samples: 'Sample Projects',

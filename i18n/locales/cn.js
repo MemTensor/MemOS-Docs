@@ -9,6 +9,7 @@ export default {
       welcome: '欢迎',
       cloud: 'MemOS Cloud',
       openSource: '开源项目',
+      openclaw: 'OpenClaw',
       mcpAgent: 'MCP与Agent框架支持',
       apiDocs: 'API接口文档',
       samples: '示例项目',
