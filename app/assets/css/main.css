@@ -242,3 +242,8 @@ html::-webkit-scrollbar {
     }
   }
 }
+
+/* Nuxt Content may render an extra <br> after horizontal rules in prose pages. */
+hr + br {
+  display: none;
+}
