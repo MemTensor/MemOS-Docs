@@ -62,19 +62,7 @@ OpenClaw 的记忆系统依赖模型自身记录信息，而非自动记录。�
 
 **核心哲学：文件即真理** — 摒弃不透明的向量数据库，选择 Markdown 文件作为记忆的核心载体。
 
-<pre class="ascii-tree">
-📁 ~/.openclaw/workspace
-│
-├── 📄 MEMORY.md <b>【持久记忆】</b>Curated，精心维护。存储用户偏好、长期目标。Agent 需筛选写入。                        
-│
-├── 📁 memory/   <b>【临时记忆】</b>Append-only / 只追加。流水账、会议纪要。系统启动时加载今日和昨日。
-│   │                       
-│   └── 📄 2026-02-06.md              
-│
-└── 📁 sessions/ <b>【会话记忆】</b>完整的对话转录，支持基于时间的追溯。
-    │                               
-    └── 📄 2026-02-06-project-analysis.md
-</pre>
+![OpenClaw记忆方案](https://cdn.memtensor.com.cn/img/1772677320227_19v8ke_compressed.png)
 
 #### 记忆检索方案：双引擎驱动
 
@@ -95,7 +83,7 @@ OpenClaw 的记忆系统依赖模型自身记录信息，而非自动记录。�
 
 ### OpenClaw + MemOS 的记忆方案
 
-![MemOS-OpenClaw](https://cdn.memtensor.com.cn/img/1772607938318_kfk90j_compressed.png)
+![MemOS-OpenClaw](https://cdn.memtensor.com.cn/img/1772627912577_gvwyaz_compressed.png)
 
 #### 三大核心效果
 

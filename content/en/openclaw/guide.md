@@ -62,21 +62,7 @@ OpenClaw's memory system relies on the model to log information itself, rather t
 
 **Core Philosophy: File is Truth** — Abandoning opaque vector databases in favor of Markdown files as the core carrier of memory.
 
-<pre class="ascii-tree">
-📁 ~/.openclaw/workspace
-│
-├── 📄 MEMORY.md <b>[Persistent]</b> Curated, carefully maintained. Stores user preferences,
-│                             long-term goals. Agent needs to filter and write.
-│
-├── 📁 memory/   <b>[Temporary]</b> Append-only. Daily logs, meeting minutes. Loads today 
-│   │                        and yesterday on startup.
-│   │                       
-│   └── 📄 2026-02-06.md              
-│
-└── 📁 sessions/ <b>[Session]</b> Complete conversation transcripts, supporting time-based tracing.
-    │                               
-    └── 📄 2026-02-06-project-analysis.md
-</pre>
+![Memory Storage Solution](https://cdn.memtensor.com.cn/img/1772679460269_oezvwz_compressed.png)
 
 
 #### Memory Retrieval Solution: Dual-Engine Drive
@@ -98,7 +84,7 @@ OpenClaw's memory system relies on the model to log information itself, rather t
 
 ### OpenClaw + MemOS Memory Solution
 
-![MemOS-OpenClaw](https://cdn.memtensor.com.cn/img/1772607938318_kfk90j_compressed.png)
+![MemOS-OpenClaw](https://cdn.memtensor.com.cn/img/1772679552943_lsuh81_compressed.png)
 
 #### Three Core Effects
 
