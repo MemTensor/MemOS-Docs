@@ -62,7 +62,7 @@ OpenClaw's memory system relies on the model to log information itself, rather t
 
 **Core Philosophy: File is Truth** — Abandoning opaque vector databases in favor of Markdown files as the core carrier of memory.
 
-![Memory Storage Solution](https://cdn.memtensor.com.cn/img/1772679460269_oezvwz_compressed.png)
+![Memory Storage Solution](https://cdn.memtensor.com.cn/img/1772697758585_b155tx_compressed.png)
 
 
 #### Memory Retrieval Solution: Dual-Engine Drive
