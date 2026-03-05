@@ -21,7 +21,9 @@ OpenClaw 近期备受关注，但在实际使用中，用户普遍会遇到两�
 - **显著降低 Token 消耗** — 智能检索相关记忆，而非无差别加载全部历史
 - **让记忆真正有用** — 专业级记忆分类与管理，记住该记的，遗忘该忘的
 - **保留 OpenClaw 的核心优势** — 跨设备控制、主动交互、类人体验保持不变
+
 ---
+
 ## 为什么 OpenClaw 成了"Token 杀手"🥷？
 
 ### OpenClaw 的问题
@@ -60,8 +62,7 @@ OpenClaw 的记忆系统依赖模型自身记录信息，而非自动记录。�
 
 **核心哲学：文件即真理** — 摒弃不透明的向量数据库，选择 Markdown 文件作为记忆的核心载体。
 
-![OpenClaw Memory](https://cdn.memtensor.com.cn/img/1772271590684_0b565v_compressed.png)
-
+![OpenClaw记忆方案](https://cdn.memtensor.com.cn/img/1772698365666_utw5a2_compressed.png)
 
 #### 记忆检索方案：双引擎驱动
 
@@ -82,7 +83,7 @@ OpenClaw 的记忆系统依赖模型自身记录信息，而非自动记录。�
 
 ### OpenClaw + MemOS 的记忆方案
 
-![MemOS-OpenClaw](https://cdn.memtensor.com.cn/img/1772271402644_2qn3xo_compressed.png)
+![MemOS-OpenClaw](https://cdn.memtensor.com.cn/img/1772627912577_gvwyaz_compressed.png)
 
 #### 三大核心效果
 
