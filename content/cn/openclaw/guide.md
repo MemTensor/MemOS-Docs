@@ -62,7 +62,7 @@ OpenClaw 的记忆系统依赖模型自身记录信息，而非自动记录。�
 
 **核心哲学：文件即真理** — 摒弃不透明的向量数据库，选择 Markdown 文件作为记忆的核心载体。
 
-![OpenClaw记忆方案](https://cdn.memtensor.com.cn/img/1772677320227_19v8ke_compressed.png)
+![OpenClaw记忆方案](https://cdn.memtensor.com.cn/img/1772698365666_utw5a2_compressed.png)
 
 #### 记忆检索方案：双引擎驱动
 
