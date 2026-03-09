@@ -3,24 +3,34 @@ versions:
     date: 2026-03-05
     changedInfo:
       New Features:
-        - type:  New Features
+        - type: New Features
           changedInfo:
             - When adding memories, conflicting/duplicate memories are automatically detected, merged, and archived. The latest memory content is retained, while the old memory content is placed in the history field.
       Improvements:
-        - type: Improvements
+        - type: Preference memories migrated to graph database
           changedInfo:
             - Preference memories have been migrated to the graph database, unifying them with other memory types.
+        - type: memory versioning optimization
+          changedInfo:
             - Memory retrieval reduces redundant calls to get_by_metadata, decreasing retrieval latency.
-            - Memory versioning functionality has been fully migrated to asynchronous execution, which no longer impacts the addMessage interface latency when async_mode=true.
-            - Memory versioning now, under concurrent add scenarios (receiving multiple related add requests within a time frame shorter than the add interface latency), will sequentially merge and process them in chronological order instead of falling back to no processing.
+        - type: database optimization
+          changedInfo:
             - Implemented fine-grained concurrent rate limiting using semaphores, combined with automatic faulty connection removal and thread lifecycle management, to enhance system stability under high concurrency.
             - Optimized log levels and content, retaining key execution traces while reducing the impact of log writing on database performance.
             - Implemented trigger-based preheating to load hot data into the cache, avoiding high latency caused by cold starts.
       Bug Fixes:
-        - type: Bug Fixes
+        - type: bug in fast memory addition
           changedInfo:
             - Fixed an issue where, when adding memories with MultiModalStruct selected, embedding operations were not performed in some cases under fast mode, causing memories in fast mode to be unsearchable.
+        - type: bug in multimodal memory
+          changedInfo:
             - Fixed a bug where the image content was not being separately interpreted for image-based memories.
+        - type: Memory Retrieval
+          changedInfo:
+            - Reduced redundant calls to get_by_metadata during memory retrieval, decreasing retrieval latency.
+        - type: Memory Versioning Concurrency Fix
+          changedInfo:
+            - Memory versioning now, under concurrent add scenarios (receiving multiple related add requests within a time frame shorter than the add interface latency), will sequentially merge and process them in chronological order instead of falling back to no processing.
   - name: v2.0.7
     date: 2026-02-27
     changedInfo:
@@ -422,5 +432,3 @@ versions:
         - type: Playground Progress
           changedInfo:
             - Completed engineering, front-end, and algorithm end-to-end connection, and bug fixing and optimization in progress
-
-
