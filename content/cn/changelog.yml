@@ -1,4 +1,36 @@
 versions:
+  - name: v2.0.8
+    date: 2026-03-05
+    changedInfo:
+      New Features:
+        - type: 新功能
+          changedInfo:
+            - 添加记忆时，会自动对冲突/重复记忆进行检测、合并和归档，保留最新记忆内容，并将旧记忆内容放在历史字段中；
+      Improvements:
+        - type: 偏好记忆迁移到图数据库
+          changedInfo:
+            - 偏好记忆迁移到图数据库，和其他记忆类型统一；
+        - type: 记忆版本优化
+          changedInfo:
+            - 记忆版本功能完全迁移到异步执行，不影响async_mode=true时的addMessage接口时延；
+        - type: 数据库优化
+          changedInfo:
+            - 采用信号量实现精细化的并发限流，结合故障连接自动剔除与线程生命周期管理，提升系统在高并发下的稳定性。
+            - 优化日志级别与内容，保留关键执行轨迹，降低日志写入对数据库性能的影响。
+            - 通过触发式预热，将热数据加载至缓存，避免冷启动带来的高延迟。
+      Bug Fixes:
+        - type: 记忆快添加的bug
+          changedInfo:
+            - 记忆添加时，如果选用了MultiModalStruct，在fast模式下部分情况没有进行embedding操作，导致快速模式记忆无法被搜索到；
+        - type: 多模态记忆bug
+          changedInfo:
+            - 对于图片类记忆，修复没有单独解读图片内容的bug。
+        - type: 记忆检索
+          changedInfo:
+            - 记忆检索减少重复调用get_by_metadata，降低了记忆检索耗时
+        - type: 记忆版本并发问题修复
+          changedInfo:
+            - 记忆版本功能现在在并发add（小于add接口时延的短时间内收到多个add请求，并且add的是相关的记忆）情况下，也会按照时间顺序依次合并处理，而不是fallback到不处理
   - name: v2.0.7
     date: 2026-02-27
     changedInfo:

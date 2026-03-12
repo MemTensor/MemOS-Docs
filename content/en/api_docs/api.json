@@ -522,7 +522,9 @@
             "minimum": 0,
             "maximum": 1,
             "title": "Relativity",
-            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering."          },
+            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering.",
+            "default": 0.45
+          },
           "model_name": {
             "type": "string",
             "enum": [
@@ -1112,7 +1114,8 @@
             "minimum": 0,
             "maximum": 1,
             "title": "Relativity",
-            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering."
+            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering.",
+            "default": 0.45
           }
         },
         "title": "SearchMemoryRequest"
