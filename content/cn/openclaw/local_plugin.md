@@ -140,7 +140,7 @@ openclaw plugins install @memtensor/memos-local-openclaw-plugin
 
 **方式一：网页面板 http://127.0.0.1:18799 登录后点「设置」**
 
-<img src="https://cdn.memtensor.com.cn/img/1773306548639_3rml9z_compressed.webp" alt="网页面板在线修改" style="width:100%;" /> 
+<img src="https://cdn.memtensor.com.cn/img/1773317552220_nf6xxl_compressed.jpeg" alt="网页面板在线修改" style="max-width: 800px;" /> 
 
 **方式二：将插件配置添加到 `~/.openclaw/openclaw.json`**
  
@@ -169,11 +169,7 @@ openclaw plugins install @memtensor/memos-local-openclaw-plugin
             "endpoint": "https://your-api-endpoint/v1",
             "apiKey": "sk-••••••"
           }
-        },
-        "recall": {                               // optional
-          "vectorSearchMaxChunks": 0   // 0=search all; set 200000–300000 only if slow on huge DB
-        },
-        "viewerPort": 18799
+        }
       }
     }}
   }
