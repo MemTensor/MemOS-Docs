@@ -139,7 +139,7 @@ Modify online via the Viewer web panel or edit `openclaw.json`. Supports hierarc
 
 **Method 1: Web panel http://127.0.0.1:18799 - Click 'Settings' after login**
 
-<img src="https://cdn.memtensor.com.cn/img/1773308628801_gofk00_compressed.png" alt="Web panel online modification" style="width:100%;" />
+<img src="https://cdn.memtensor.com.cn/img/1773317848162_edd2du_compressed.jpeg" alt="Web panel online modification" style="max-width: 800px;" />
 
 **Method 2: Add the plugin config to `~/.openclaw/openclaw.json`**
  
@@ -168,11 +168,7 @@ Modify online via the Viewer web panel or edit `openclaw.json`. Supports hierarc
             "endpoint": "https://your-api-endpoint/v1",
             "apiKey": "sk-••••••"
           }
-        },
-        "recall": {                               // optional
-          "vectorSearchMaxChunks": 0   // 0=search all; set 200000–300000 only if slow on huge DB
-        },
-        "viewerPort": 18799
+        }
       }
     }}
   }
