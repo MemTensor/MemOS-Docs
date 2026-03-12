@@ -134,60 +134,51 @@ openclaw plugins install @memtensor/memos-local-openclaw-plugin
 > cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
 > ```
  
-从源码安装（开发模式）：
- 
-```bash
-git clone https://github.com/MemTensor/MemOS.git
-cd MemOS/apps/memos-local-openclaw
-npm install && npm run build
-openclaw plugins install .
-```
- 
 ### Step2. 配置
  
-将插件配置添加到 `~/.openclaw/openclaw.json`：
+通过 Viewer 网页面板在线修改或编辑 `openclaw.json` 。支持分级模型。
+
+**方式一：网页面板 http://127.0.0.1:18799 登录后点「设置」**
+
+<img src="https://cdn.memtensor.com.cn/img/1773306548639_3rml9z_compressed.webp" alt="网页面板在线修改" style="width:100%;" /> 
+
+**方式二：将插件配置添加到 `~/.openclaw/openclaw.json`**
  
 ```json
 {
-  "agents": {
-    "defaults": {
-      // 重要：禁用 OpenClaw 内置记忆，避免冲突
-      "memorySearch": {
-        "enabled": false
-      }
-    }
-  },
   "plugins": {
-    "slots": {
-      "memory": "memos-local-openclaw-plugin"
-    },
-    "entries": {
-      "memos-local-openclaw-plugin": {
-        "enabled": true,
-        "config": {
-          "embedding": {
+    "slots": { "memory": "memos-local" },
+    "entries": { "memos-local": {
+      "config": {
+        "embedding": {                           // required
+          "provider": "openai_compatible",
+          "model": "bge-m3",
+          "endpoint": "https://your-api-endpoint/v1",
+          "apiKey": "sk-••••••"
+        },
+        "summarizer": {                          // mid-tier
+          "provider": "openai_compatible",
+          "model": "gpt-4o-mini",
+          "endpoint": "https://your-api-endpoint/v1",
+          "apiKey": "sk-••••••"
+        },
+        "skillEvolution": {
+          "summarizer": {                        // high-quality
             "provider": "openai_compatible",
+            "model": "claude-4.6-opus",
             "endpoint": "https://your-api-endpoint/v1",
-            "apiKey": "sk-••••••",
-            "model": "bge-m3"
-          },
-          "summarizer": {
-            "provider": "openai_compatible",
-            "endpoint": "https://your-api-endpoint/v1",
-            "apiKey": "sk-••••••",
-            "model": "gpt-4o-mini",
-            "temperature": 0
+            "apiKey": "sk-••••••"
           }
-        }
+        },
+        "recall": {                               // optional
+          "vectorSearchMaxChunks": 0   // 0=search all; set 200000–300000 only if slow on huge DB
+        },
+        "viewerPort": 18799
       }
-    }
+    }}
   }
 }
 ```
-
-::warning 
-**关键配置**：必须将 `agents.defaults.memorySearch.enabled` 设为 `false`。否则 OpenClaw 内置的记忆检索会与本插件同时运行，导致重复检索和 Token 浪费。
-::
  
 #### Embedding 提供者选项
  
@@ -201,7 +192,7 @@ openclaw plugins install .
 | 本地离线 | `local` | — | 使用 `Xenova/all-MiniLM-L6-v2`，无需 API |
 
 ::tip
-未配置 Embedding？插件会自动降级到本地模型。你可以零配置直接启动，之后再按需切换到云端提供者以获得更好的效果。
+Embedding 必须配置。
 ::
  
 #### Summarizer 提供者选项
@@ -239,7 +230,7 @@ openclaw plugins install .
 }
 ```
  
-LLM 降级链：`skillSummarizer` → `summarizer` → OpenClaw 原生模型（自动检测）。链上每一步失败后自动尝试下一步。
+**LLM 降级链**：`skillSummarizer` → `summarizer` → OpenClaw 原生模型（自动检测）。链上每一步失败后自动尝试下一步。
  
 #### 环境变量支持
  

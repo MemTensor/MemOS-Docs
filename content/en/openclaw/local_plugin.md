@@ -3,7 +3,7 @@ title: OpenClaw Local Plugin
 desc: Fully local persistent memory, smart task summarization, auto skill evolution, and multi-agent collaboration for OpenClaw. 
 ---
 
-Prior to the local version, we released the [MemOS Cloud OpenClaw Plugin](/en/openclaw/guide) powered by MemOS Cloud services. This plugin utilizes MemOS's cloud memory service to provide OpenClaw with cross-device and cross-instance long-term memory capabilities, making it ideal for team collaboration or multi-environment deployments.
+Prior to the local version, we released the [MemOS Cloud OpenClaw Plugin](/openclaw/guide) powered by MemOS Cloud services. This plugin utilizes MemOS's cloud memory service to provide OpenClaw with cross-device and cross-instance long-term memory capabilities, making it ideal for team collaboration or multi-environment deployments.
 
 In contrast, the local version of the MemOS OpenClaw plugin stores all data locally, supporting offline operation and complete data autonomy. It is designed for developers with stricter requirements for privacy, security, or localized operation. Both versions are fully open source, allowing developers to choose the solution that best fits their needs.
 
@@ -112,9 +112,9 @@ xcode-select --install
 sudo apt install build-essential python3
 ```
 
-> Windows users: `better-sqlite3` ships prebuilt binaries for Windows + Node.js LTS, so you can usually skip this step and go directly to Step 1. If installation still fails, install Visual Studio Build Tools (select "C++ build tools" workload).<br>
+> Windows users: `better-sqlite3` ships prebuilt binaries for Windows + Node.js LTS, so you can usually skip this step and go directly to Step1. If installation still fails, install Visual Studio Build Tools (select "C++ build tools" workload).<br>
 >
-> Already have build tools? Skip to Step 1. Not sure? Run the install command above — it's safe to re-run.<br>
+> Already have build tools? Skip to Step1. Not sure? Run the install command above — it's safe to re-run.<br>
 > 
 > Still having issues? See the [Troubleshooting](https://memos-claw.openmem.net/docs/troubleshooting.html) section, the detailed troubleshooting guide, or [the official better-sqlite3 troubleshooting docs](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md).
  
@@ -126,69 +126,58 @@ openclaw plugins install @memtensor/memos-local-openclaw-plugin
  
 The plugin is installed under `~/.openclaw/extensions/memos-local-openclaw-plugin` and registered as `memos-local-openclaw-plugin`. Dependencies and `better-sqlite3` native module are built automatically during installation.
 
-The plugin is installed under `~/.openclaw/extensions/memos-local-openclaw-plugin` and registered as `memos-local-openclaw-plugin`. Dependencies and `better-sqlite3` native module are built automatically during installation.
-
-> **Note:** The Memory Viewer starts only when the **OpenClaw gateway** is running. After install, **configure** `openclaw.json` (step 2) and **start the gateway** (step 3); the viewer will then be available at `http://127.0.0.1:18799`.
+> **Note:** The Memory Viewer starts only when the **OpenClaw gateway** is running. After install, **configure** `openclaw.json` (step2) and **start the gateway** (step3); the viewer will then be available at `http://127.0.0.1:18799`.
 >
 > **Installation failed?** If `better-sqlite3` compilation fails during install, manually rebuild after ensuring build tools are installed:
 > ```bash
 > cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
 > ```
  
-**From source (development):**
- 
-```bash
-git clone https://github.com/MemTensor/MemOS.git
-cd MemOS/apps/memos-local-openclaw
-npm install && npm run build
-openclaw plugins install .
-```
- 
 ### Step2. Configure
- 
-Add the plugin config to `~/.openclaw/openclaw.json`:
+
+Modify online via the Viewer web panel or edit `openclaw.json`. Supports hierarchical models.
+
+**Method 1: Web panel http://127.0.0.1:18799 - Click 'Settings' after login**
+
+<img src="https://cdn.memtensor.com.cn/img/1773308628801_gofk00_compressed.png" alt="Web panel online modification" style="width:100%;" />
+
+**Method 2: Add the plugin config to `~/.openclaw/openclaw.json`**
  
 ```json
 {
-  "agents": {
-    "defaults": {
-      // IMPORTANT: Disable OpenClaw's built-in memory to avoid conflicts
-      "memorySearch": {
-        "enabled": false
-      }
-    }
-  },
   "plugins": {
-    "slots": {
-      "memory": "memos-local-openclaw-plugin"
-    },
-    "entries": {
-      "memos-local-openclaw-plugin": {
-        "enabled": true,
-        "config": {
-          "embedding": {
+    "slots": { "memory": "memos-local" },
+    "entries": { "memos-local": {
+      "config": {
+        "embedding": {                           // required
+          "provider": "openai_compatible",
+          "model": "bge-m3",
+          "endpoint": "https://your-api-endpoint/v1",
+          "apiKey": "sk-••••••"
+        },
+        "summarizer": {                          // mid-tier
+          "provider": "openai_compatible",
+          "model": "gpt-4o-mini",
+          "endpoint": "https://your-api-endpoint/v1",
+          "apiKey": "sk-••••••"
+        },
+        "skillEvolution": {
+          "summarizer": {                        // high-quality
             "provider": "openai_compatible",
+            "model": "claude-4.6-opus",
             "endpoint": "https://your-api-endpoint/v1",
-            "apiKey": "sk-••••••",
-            "model": "bge-m3"
-          },
-          "summarizer": {
-            "provider": "openai_compatible",
-            "endpoint": "https://your-api-endpoint/v1",
-            "apiKey": "sk-••••••",
-            "model": "gpt-4o-mini",
-            "temperature": 0
+            "apiKey": "sk-••••••"
           }
-        }
+        },
+        "recall": {                               // optional
+          "vectorSearchMaxChunks": 0   // 0=search all; set 200000–300000 only if slow on huge DB
+        },
+        "viewerPort": 18799
       }
-    }
+    }}
   }
 }
 ```
-
-::warning
-**Critical:** You must set `agents.defaults.memorySearch.enabled` to `false`. Otherwise OpenClaw's built-in memory search runs alongside this plugin, causing duplicate retrieval and wasted tokens.
-::
  
 #### Embedding Provider Options
  
@@ -202,7 +191,7 @@ Add the plugin config to `~/.openclaw/openclaw.json`:
 | Local (offline) | `local` | — | Uses `Xenova/all-MiniLM-L6-v2`, no API needed |
 
 ::tip
-**No embedding config?** The plugin falls back to the local model automatically. You can start with zero configuration and add a cloud provider later for better quality.
+Embedding must be configured.
 ::
  
 #### Summarizer Provider Options
