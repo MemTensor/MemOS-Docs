@@ -84,6 +84,7 @@ nav:
 
   - "(ri:robot-line) Openclaw":
     - "(ri:book-open-line) OpenClaw Plugin": openclaw/guide.md
+    - "(ri:computer-line) OpenClaw Local Plugin": openclaw/local_plugin.md
 
   - "(ri:puzzle-line) MCP and Agent Framework Support":
     - "(ri:tools-line) MCP Services":
