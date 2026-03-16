@@ -83,7 +83,7 @@ nav:
     - "(ri:file-code-line) API Reference": api-reference/search-memories
 
   - "(ri:robot-line) Openclaw":
-    - "(ri:book-open-line) OpenClaw Plugin": openclaw/guide.md
+    - "(ri:book-open-line) OpenClaw Cloud Plugin": openclaw/guide.md
     - "(ri:computer-line) OpenClaw Local Plugin": openclaw/local_plugin.md
     - "(ri:book-open-line) Cloud Plugin vs Local Plugin": openclaw/plugin_compare.md
 
