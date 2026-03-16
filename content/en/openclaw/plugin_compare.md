@@ -5,11 +5,11 @@ desc: Both plugins bring persistent memory to OpenClaw, but they serve different
 
 ## Overview
 
-### ☁️ Cloud Plugin
+### Cloud Plugin
 
 Stores memories in **MemOS Cloud**. A single API Key is all you need to get started. Supports multi-agent memory sharing across devices, and benchmarks show up to **72% reduction in Token usage** — ideal for quick setup or team collaboration.
 
-### 🖥️ Local Plugin
+### Local Plugin
 
 Stores memories entirely on your **local machine (SQLite)** with zero cloud dependency. Features hybrid search (FTS5 + vector), automatic Task summarization, Skill evolution, and a built-in Memory Viewer dashboard (7 management pages). Best for developers with strict privacy, security, or local deployment requirements.
 
@@ -17,64 +17,37 @@ Stores memories entirely on your **local machine (SQLite)** with zero cloud depe
 
 ## Core Differences
 
-| Dimension | ☁️ Cloud Plugin | 🖥️ Local Plugin |
+| Comparison Dimension | ☁️&nbsp;MemOS&nbsp;Cloud Plugin | 🖥️&nbsp;MemOS&nbsp;Local Plugin |
 | --- | --- | --- |
-| 💾 **Memory Storage** | MemOS Cloud hosted service | Local machine (SQLite file) |
-| 🔑 **API Key** | MemOS Cloud API Key (provided by MemOS) | Embedding model API Key (bring your own; local model option requires no key) |
-| 🔍 **Search** | Cloud-side semantic vector search | Hybrid search: FTS5 + vector (RRF + MMR + recency decay) |
-| 🧠 **Skill Evolution** | ❌ Not supported | ✅ Automatic Task summarization & Skill evolution |
-| 👥 **Multi-Agent** | ✅ Supported (`multiAgentMode`, memory isolation) | ✅ Supported (memory isolation + public memory + skill sharing) |
-| 🛠️ **Setup Complexity** | Low (just provide an API Key) | Higher (local environment required, including build dependencies) |
-
----
-
-## Detailed Feature Comparison
-
-### Memory Search
-
-| | ☁️ Cloud Plugin | 🖥️ Local Plugin |
-| --- | --- | --- |
-| Retrieval | Cloud-side semantic vector search | FTS5 full-text + vector dual-path, RRF fusion |
-| Reranking | — | MMR (balances relevance and diversity) |
-| Recency Decay | — | ✅ (14-day half-life by default) |
-| LLM Relevance Filter | — | ✅ (filters low-value candidates, assesses sufficiency) |
-
-### Memory Write
-
-Both plugins use the same lifecycle hooks:
-
-- **`before_agent_start`** → Retrieves relevant memories and injects them into the Agent's context (invisible to the user)
-- **`agent_end`** → Persists the current conversation turn to memory storage
-
-The local plugin additionally supports: content hash deduplication (SHA-256, prevents duplicate writes within the same session), semantic chunking, and per-chunk LLM summarization.
-
-### Task Summarization & Skill Evolution (Local Plugin Only)
-
-The local plugin adds two evolution pipelines on top of memory write:
-
-**Task Generation**: Automatically organizes fragmented conversations into structured task records (goal → steps → result → key details), so the Agent can retrieve complete experiences via `task_summary` rather than scattered chunks.
-
-**Skill Evolution**: Completed tasks automatically trigger skill evaluation — if a related skill exists (confidence ≥ 0.7), it is upgraded; otherwise a new skill is created and scored (auto-installed if score ≥ 6). The Agent reuses accumulated Skills on similar problems, resulting in faster and more Token-efficient execution.
+| 💾&nbsp;**Data Storage & Privacy** | **Cloud storage**: Memory data is stored in MemOS Cloud, making cross-device and multi-instance sharing easy. Privacy and security depend on the cloud service provider. | **Local storage**: All data (SQLite + vectors) is stored locally on the user's machine, supports fully offline operation, and gives 100% user control for maximum privacy and security. |
+| 🔑&nbsp;**API&nbsp;Key** | MemOS Cloud API Key (provided by MemOS) | Embedding model API Key (self-provided; local models can be configured to run without a key) |
+| 🔍&nbsp;**Retrieval Capability** | Cloud-based semantic vector retrieval | FTS5 full-text + vector hybrid retrieval (RRF + MMR + time decay) |
+| 🧠&nbsp;**Memory Evolution** | Not supported yet | Fragmented conversations are automatically summarized into structured tasks; task completion triggers skill evaluation, and reusable skills are automatically created or upgraded |
+| 👥&nbsp;**Multi&nbsp;Agent** | ✅ Supported (`multiAgentMode`, data isolation) | ✅ Supported (memory isolation + shared public memory + skill sharing) |
+| 💡&nbsp;**Extra Capabilities** | • 60% lower token cost<br>• Automatic logging of all conversations<br>• Dedicated user-preference categorization | • Full memory visualization (Web admin dashboard with 7 pages)<br>• One-click import of native memories<br>• Tiered model configuration (assign different models to different tasks) |
+| 🛠️&nbsp;**Deployment & Configuration** | **Very simple**: Done in 3 steps (install plugin, get API Key, configure env vars), mainly relying on cloud services. | **Moderate**: Requires a local build environment and configuration of multiple models (Embedding, Summarizer, etc.; supports local or cloud models). More flexible, but initial setup is more complex. |
 
 ---
 
 ## Use Case Selection
 
-| Scenario | ☁️ Cloud Plugin | 🖥️ Local Plugin |
+| Scenario | Recommended Option | Why |
 | --- | --- | --- |
-| Individual developers / rapid prototyping | ✅ **Recommended** | ⚪ Works |
-| Multi-agent memory sharing across machines | ✅ **Recommended** | ❌ Not suitable |
-| Sensitive data with strict privacy requirements (finance, healthcare, legal) | ❌ Not suitable | ✅ **Recommended** |
-| Offline / air-gapped environments | ❌ Not suitable | ✅ **Recommended** |
-| Skill evolution & Task summarization | ❌ Not supported | ✅ **Recommended** |
-| Local development & debugging with a visual dashboard | ⚪ Works | ✅ **Recommended** |
-| Zero-ops, out-of-the-box experience | ✅ **Recommended** | ❌ Not suitable |
+| Individual developers who prioritize privacy | Local plugin | Data stays off the cloud, fully under your control, and supports offline use |
+| Handling sensitive data (healthcare, finance, legal, etc.) | Local plugin | Data never leaves local storage, helping meet compliance requirements |
+| Offline or intranet-isolated environments | Local plugin | Supports configurable local embedding models with zero network dependency |
+| Need skill evolution and task management | Local plugin | Includes a unique task-generation and skill-evolution pipeline, so your Agent gets smarter over time |
+| Local development/debugging with visual management | Local plugin | Built-in Memory Viewer provides full transparency and control over memories, tasks, and skills |
+| Team collaboration or multi-device work | Cloud plugin | Cross-device memory sync without manual migration |
+| Multi-Agent memory sharing across machines | Cloud plugin | Cloud-native support for cross-device sync and memory isolation |
+| Fast onboarding with minimal setup effort | Cloud plugin | No build tools required, just configure an API Key |
+| Temporary use or trial | Cloud plugin | Ready to use immediately, with no local resource overhead |
 
 ---
 
 ## Quick Install
 
-### ☁️ Cloud Plugin (3 steps)
+### Cloud Plugin (3 steps)
 ```bash
 # 1. Install the plugin
 openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
@@ -90,7 +63,7 @@ Get your API Key: [MemOS Cloud Dashboard](https://memos-dashboard.openmem.net/ap
 
 > For more details, see the [OpenClaw Cloud Plugin documentation](/openclaw/guide).
 
-### 🖥️ Local Plugin (build tools required)
+### Local Plugin (build tools required)
 ```bash
 # macOS
 xcode-select --install
