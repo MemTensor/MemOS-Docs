@@ -1,4 +1,21 @@
 versions:
+  - name: v2.0.9
+    date: 2026-03-16
+    changedInfo:
+      Improvements:
+        - type: 记忆版本兼容 feedback
+          changedInfo:
+            - Feedback对节点更新时，走记忆版本逻辑，会更新到原节点，并把旧内容推到 history 字段中。
+        - type: 记忆版本优化
+          changedInfo:
+            - 记忆版本在冲突消解/重复合并的过程中，全面优化了“恢复过去版本当中的独立事实”这条链路，当前能够更稳定、准确地恢复出独立事实，保留记忆信息完整，并减少由于模型回答不稳定而造成的记忆错乱。
+      Bug Fixes:
+        - type: 记忆版本参数等 bug 修复
+          changedInfo:
+            - 记忆版本参数校验、更新后 key 为空、update时间错误的几个 bug 修复。
+        - type: feedback 问题修复
+          changedInfo:
+            - Feedback过程中sources为空的问题修复.
   - name: v2.0.8
     date: 2026-03-05
     changedInfo:
