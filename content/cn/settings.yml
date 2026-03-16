@@ -90,8 +90,9 @@ nav:
       - "(ri:book-open-line) 使用指南": mcp_agent/agent/guide.md
 
   - "(ri:robot-line) Openclaw":
-    - "(ri:book-open-line) OpenClaw 插件": openclaw/guide.md
+    - "(ri:book-open-line) OpenClaw 云插件": openclaw/guide.md
     - "(ri:computer-line) OpenClaw 本地插件": openclaw/local_plugin.md
+    - "(ri:book-open-line) 云插件 vs 本地插件": openclaw/plugin_compare.md
 
   - "(ri:file-code-line) API文档":
     - "(ri:rocket-line) 开始使用":

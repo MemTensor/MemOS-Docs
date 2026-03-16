@@ -15,6 +15,8 @@ desc: 从 MemOS 删除记忆,支持批量删除。
 
 *   **记忆 ID 列表（memory\_ids[]）**：每条存储在 MemOS 中的记忆都对应一个唯一标识符，支持以列表形式传入，用于精确删除一条或多条指定记忆。
 
+*   **用户 ID（user_id）**：用于删除某个用户的所有记忆。传入该字段时，将删除与该用户关联的所有记忆（包含：事实、偏好、技能、工具记忆）。
+
 :::note
 **如何获取待删除记忆的记忆ID**
 <br>
@@ -24,11 +26,7 @@ desc: 从 MemOS 删除记忆,支持批量删除。
 :::
 
 
-## 2. 工作原理
-
-*   **删除记忆**：根据提供的记忆 ID，删除与指定用户匹配的记忆内容。
-
-## 3. 快速上手
+## 2. 快速上手
 
 ```python
 import os
@@ -40,7 +38,9 @@ os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
-    "memory_ids":["4a50618f-797d-4c3b-b914-94d7d1246c8d"]  # 替换为真实的记忆 ID
+    "memory_ids":["4a50618f-797d-4c3b-b914-94d7d1246c8d"],  # 替换为真实的记忆 ID
+    # "user_id": "12345" 如果需要删除某用户的所有记忆，替换为真实的用户 ID
+    ## 注意，user_id 和 memory_ids[] 为两个不同的筛选条件，同时使用时报错。
   }
 headers = {
   "Content-Type": "application/json",

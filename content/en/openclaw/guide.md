@@ -1,5 +1,5 @@
 ---
-title: OpenClaw Plugin
+title: OpenClaw Cloud Plugin
 desc: Enhance your OpenClaw's memory and reduce token by 60%. MemOS OpenClaw plugin is now live!
 ---
 
@@ -141,38 +141,95 @@ openclaw onboard
 
 ### 2. Get and configure your API Key
 
-#### **2.1 Get your Key**
+#### 2.1 Get your Key
 
 Log in to or register with MemOS Cloud to get your API Key  🔗 [MemOS Cloud](https://memos-dashboard.openmem.net/apikeys/)
 
 ![image.png](https://cdn.memtensor.com.cn/img/1772443326905_kkxve6_compressed.webp)
 
-#### **2.2 Set Variables**
+#### 2.2 Set Environment Variables
 
-Complete minimal configuration with a single command in the terminal:
+The plugin tries env files in order (**openclaw → moltbot → clawdbot**). For each key, the first file with a value wins.
+If none of these files exist (or the key is missing), it falls back to the process environment.
 
+**Where to configure**
+- Files (priority order):
+  - `~/.openclaw/.env`
+  - `~/.moltbot/.env`
+  - `~/.clawdbot/.env`
+- Each line is `KEY=value`
+
+**Quick setup (shell)**
 ```bash
-mkdir -p ~/.openclaw && echo "MEMOS_API_KEY=mpg-..." > ~/.openclaw/.env
+echo 'export MEMOS_API_KEY="mpg-..."' >> ~/.zshrc
+source ~/.zshrc
+# or
+
+echo 'export MEMOS_API_KEY="mpg-..."' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-#### **2.3 Install Plugins and Testing**
+**Quick setup (Windows PowerShell)**
+```powershell
+[System.Environment]::SetEnvironmentVariable("MEMOS_API_KEY", "mpg-...", "User")
+```
 
-##### **2.3.1 Installation**
+If `MEMOS_API_KEY` is missing, the plugin will warn with setup instructions and the API key URL.
+
+**Minimal config**
+```env
+MEMOS_API_KEY=YOUR_TOKEN
+```
+
+### 3 Install Plugins
+
+#### Option A — NPM (Recommended)
 
 ```bash
 openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
 openclaw gateway restart
 ```
 
-* [npm package](https://www.npmjs.com/package/@memtensor/memos-cloud-openclaw-plugin)
-* [Github](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin)
+> Note for Windows Users: If you encounter Error: spawn EINVAL, this is a known issue with OpenClaw's plugin installer on Windows. Please use Option B (Manual Install) below.
 
-##### **2.3.2 The plugin will automatically commence operation**
+Make sure it’s enabled in ~/.openclaw/openclaw.json:
 
-- **Pre-run**: Retrieve relevant memories from MemOS Cloud and inject context
-- **Post-run**: Save this conversation to MemOS Cloud
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": { "enabled": true }
+    }
+  }
+}
+```
 
-We've finished the configuration! We can start testing now~
+#### Option B — Manual Install (Workaround for Windows)
+
+1. Download the latest `.tgz` from [NPM](https://www.npmjs.com/package/@memtensor/memos-cloud-openclaw-plugin).
+2. Extract it to a local folder (e.g., `C:\Users\YourName\.openclaw\extensions\memos-cloud-openclaw-plugin`).
+3. Configure `~/.openclaw/openclaw.json` (or `%USERPROFILE%\.openclaw\openclaw.json`):
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": { "enabled": true }
+    },
+    "load": {
+      "paths": [
+        "C:\\Users\\YourName\\.openclaw\\extensions\\memos-cloud-openclaw-plugin\\package"
+      ]
+    }
+  }
+}
+```
+
+::tip
+Note: The extracted folder usually contains a package subfolder. Point to the folder containing package.json.
+::
+
+Restart the gateway after config changes.
 
 ## Advanced Configuration for Open-Source Projects
 

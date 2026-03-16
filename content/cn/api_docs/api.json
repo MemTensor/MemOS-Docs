@@ -1863,9 +1863,6 @@
       },
       "DeleteMemoryRequest": {
         "type": "object",
-        "required": [
-          "memory_ids"
-        ],
         "properties": {
           "memory_ids": {
             "type": "array",
@@ -1874,6 +1871,11 @@
             },
             "title": "Memory IDs",
             "description": "需要删除的记忆 ID 列表。每个 ID 均来自 search/memory 或 get/memory 接口返回的 id 字段。"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "删除用户的所有记忆，该用户关联的唯一ID标识符。"
           }
         },
         "title": "DeleteMemoryRequest"

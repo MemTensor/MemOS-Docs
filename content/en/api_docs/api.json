@@ -1849,9 +1849,6 @@
       },
       "DeleteMemoryRequest": {
         "type": "object",
-        "required": [
-          "memory_ids"
-        ],
         "properties": {
           "memory_ids": {
             "type": "array",
@@ -1860,6 +1857,11 @@
             },
             "title": "Memory IDs",
             "description": "IDs of the memories to be deleted, obtained from the `id` field returned by the `search/memory` or `get/memory` API."
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "Unique identifier of the user whose memories are being deleted."
           }
         },
         "title": "DeleteMemoryRequest"
