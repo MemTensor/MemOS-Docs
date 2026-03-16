@@ -181,7 +181,7 @@ If `MEMOS_API_KEY` is missing, the plugin will warn with setup instructions and 
 MEMOS_API_KEY=YOUR_TOKEN
 ```
 
-### 3 Install Plugins
+### 3. Install Plugins
 
 #### Option A — NPM (Recommended)
 
