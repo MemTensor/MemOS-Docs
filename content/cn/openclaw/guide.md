@@ -181,7 +181,7 @@ source ~/.bashrc
 MEMOS_API_KEY=YOUR_TOKEN
 ```
 
-### 2.3 安装插件
+### 3. 安装插件
 
 #### 方案 A — NPM（推荐）
 
@@ -218,7 +218,7 @@ openclaw gateway restart
     },
     "load": {
       "paths": [
-        "C:\\Users\\YourName\\.openclaw\\extensions\\memos-cloud-openclaw-plugin\\package"
+        "C:\\Users\\YourName\\.openclaw\\extensions\\memos-cloud-openclaw-plugin"
       ]
     }
   }
