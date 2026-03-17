@@ -128,11 +128,42 @@ openclaw plugins install @memtensor/memos-local-openclaw-plugin
 
 > **注意**：Memory Viewer 仅在 OpenClaw gateway 运行时才会启动。安装后，请先完成 `openclaw.json` 配置（Step2），再启动 gateway（Step3），之后即可在 `http://127.0.0.1:18799` 访问 Viewer。
 > 
-> 安装失败？如果 `better-sqlite3` 在安装时编译失败，确认已安装编译工具后，手动重新构建：
+> 安装失败？如果 `better-sqlite3` 在安装时编译失败，确认已安装编译工具后，手动重新构建然后重启：
 > 
 > ```bash
 > cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
 > ```
+
+### **已有用户如何升级？**
+
+**不需要卸载或删除重装。** 插件代码与你的数据是分离的：记忆数据存放在 `~/.openclaw/memos-local/`（如 `memos.db`），插件本体在 `~/.openclaw/extensions/memos-local-openclaw-plugin`。升级只会更新插件代码，不会清空已有记忆。
+
+**推荐步骤：**
+
+1. **执行安装命令**（会拉取并安装当前最新版本）：
+   ```bash
+   openclaw plugins install @memtensor/memos-local-openclaw-plugin
+   ```
+2. **若依赖了原生模块**（如 `better-sqlite3`），升级后如遇报错可重新构建：
+   ```bash
+   cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
+   ```
+3. **重启 Gateway** 使新版本生效：
+   ```bash
+   openclaw gateway stop
+   openclaw gateway start
+   ```
+
+你的 `openclaw.json` 配置和本地数据库都会保留，无需重新配置或迁移数据。
+
+**升级报错如何解决？** 若升级过程中 CLI 报错、无法完成，可先手动删除插件目录再重新安装：
+
+```bash
+rm -rf ~/.openclaw/extensions/memos-local-openclaw-plugin
+openclaw plugins install @memtensor/memos-local-openclaw-plugin
+```
+
+若删目录后下次安装仍报 **config invalid**，说明配置里仍引用该插件但目录已不存在。请编辑 `~/.openclaw/openclaw.json`，去掉与 `memos-local-openclaw-plugin` 相关的条目（如 `plugins.allow`、`plugins.slots.memory`、`plugins.entries.memos-local-openclaw-plugin` 等），保存后再执行上述安装命令。卸载或重装前建议备份 `~/.openclaw/memos-local/` 以保留记忆数据。
  
 ### Step2. 配置
  
@@ -146,33 +177,49 @@ openclaw plugins install @memtensor/memos-local-openclaw-plugin
  
 ```json
 {
-  "plugins": {
-    "slots": { "memory": "memos-local" },
-    "entries": { "memos-local": {
-      "config": {
-        "embedding": {                           // required
-          "provider": "openai_compatible",
-          "model": "bge-m3",
-          "endpoint": "https://your-api-endpoint/v1",
-          "apiKey": "sk-••••••"
+    "plugins": {
+        "allow": [
+            "memos-local-openclaw-plugin"
+        ],
+        "slots": {
+            "memory": "memos-local-openclaw-plugin"
         },
-        "summarizer": {                          // mid-tier
-          "provider": "openai_compatible",
-          "model": "gpt-4o-mini",
-          "endpoint": "https://your-api-endpoint/v1",
-          "apiKey": "sk-••••••"
-        },
-        "skillEvolution": {
-          "summarizer": {                        // high-quality
-            "provider": "openai_compatible",
-            "model": "claude-4.6-opus",
-            "endpoint": "https://your-api-endpoint/v1",
-            "apiKey": "sk-••••••"
-          }
+        "entries": {
+            "memory-core": {
+                "enabled": false
+            },
+            "memory-lancedb": {
+                "enabled": false
+            },
+            "memos-local-openclaw-plugin": {
+                "enabled": true,
+                "config": {
+                    "embedding": {                                  // required
+                        "provider": "openai_compatible",
+                        "model": "bge-m3",
+                        "endpoint": "https://your-api-endpoint/v1",
+                        "apiKey": "sk-••••••"
+                    },
+                    "summarizer": {                                 // mid-tier
+                        "provider": "openai_compatible",
+                        "model": "gpt-4o-mini",
+                        "endpoint": "https://your-api-endpoint/v1",
+                        "apiKey": "sk-••••••"
+                    },
+                    "skillEvolution": {
+                        "enabled": true,
+                        "autoInstall": false,
+                        "summarizer": {                             // high-quality
+                            "provider": "openai_compatible",
+                            "model": "claude-4.6-opus",
+                            "endpoint": "https://your-api-endpoint/v1",
+                            "apiKey": "sk-••••••"
+                        }
+                    }
+                }
+            }
         }
-      }
-    }}
-  }
+    }
 }
 ```
  
@@ -181,11 +228,16 @@ openclaw plugins install @memtensor/memos-local-openclaw-plugin
 | 提供者 | `provider` 值 | 示例模型 | 备注 |
 |--------|--------------|----------|------|
 | OpenAI / 兼容接口 | `openai_compatible` | `bge-m3`, `text-embedding-3-small` | 任何 OpenAI 兼容 API |
-| Gemini | `gemini` | `text-embedding-004` | 需要 apiKey |
+| OpenAI 官方 | `openai` | `text-embedding-3-small` | 默认 endpoint: `https://api.openai.com/v1` |
+| Azure OpenAI | `azure_openai` | 同 OpenAI 兼容 | 需配置 Azure 的 endpoint 与 apiKey |
+| 智谱 AI | `zhipu` | `embedding-3` | 默认 endpoint: `https://open.bigmodel.cn/api/paas/v4` |
+| 硅基流动 | `siliconflow` | `BAAI/bge-m3` | 默认 endpoint: `https://api.siliconflow.cn/v1` |
+| 阿里百炼 | `bailian` | `text-embedding-v3` | 默认 endpoint: `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+| Gemini | `gemini` | `text-embedding-004` | 需要 apiKey，使用 Google 官方接口 |
 | Cohere | `cohere` | `embed-english-v3.0` | 文档/查询分开 embedding |
-| Voyage | `voyage` | `voyage-2` | — |
-| Mistral | `mistral` | `mistral-embed` | — |
-| 本地离线 | `local` | — | 使用 `Xenova/all-MiniLM-L6-v2`，无需 API |
+| Voyage | `voyage` | `voyage-3` | 默认 endpoint: `https://api.voyageai.com/v1` |
+| Mistral | `mistral` | `mistral-embed` | 默认 endpoint: `https://api.mistral.ai/v1` |
+| 本地离线 | `local` | — | 使用 `Xenova/all-MiniLM-L6-v2`（384 维），无需 API |
 
 ::tip
 Embedding 必须配置。
@@ -193,12 +245,20 @@ Embedding 必须配置。
  
 #### Summarizer 提供者选项
  
-| 提供者 | `provider` 值 | 示例模型 |
-|--------|--------------|----------|
-| OpenAI / 兼容接口 | `openai_compatible` | `gpt-4o-mini` |
-| Anthropic | `anthropic` | `claude-3-haiku-20240307` |
-| Gemini | `gemini` | `gemini-1.5-flash` |
-| AWS Bedrock | `bedrock` | `anthropic.claude-3-haiku-20240307-v1:0` |
+| 提供者 | `provider` 值 | 示例模型 | 备注 |
+|--------|--------------|----------|------|
+| OpenAI / 兼容接口 | `openai_compatible` | `gpt-4o-mini` | 任何 OpenAI 兼容 Chat API |
+| OpenAI 官方 | `openai` | `gpt-4o-mini` | 默认 endpoint: `https://api.openai.com/v1` |
+| Azure OpenAI | `azure_openai` | 同 OpenAI 兼容 | 需配置 Azure 的 endpoint 与 apiKey |
+| 智谱 AI | `zhipu` | `glm-4-flash` | 默认 endpoint: `https://open.bigmodel.cn/api/paas/v4` |
+| 硅基流动 | `siliconflow` | `Qwen/Qwen2.5-7B-Instruct` | 默认 endpoint: `https://api.siliconflow.cn/v1` |
+| 阿里百炼 | `bailian` | `qwen-max` | 默认 endpoint: `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+| Cohere | `cohere` | 兼容 Chat 接口的模型 | 需配置 endpoint 与 apiKey |
+| Mistral | `mistral` | 兼容 Chat 接口的模型 | 默认 endpoint: `https://api.mistral.ai/v1` |
+| Voyage | `voyage` | 兼容 Chat 接口的模型 | 默认 endpoint: `https://api.voyageai.com/v1` |
+| Anthropic | `anthropic` | `claude-3-haiku-20240307` | 默认 endpoint: `https://api.anthropic.com/v1/messages` |
+| Gemini | `gemini` | `gemini-2.0-flash` | 需要 apiKey |
+| AWS Bedrock | `bedrock` | `anthropic.claude-3-haiku-20240307-v1:0` | 需配置 endpoint（如 `https://bedrock-runtime.us-east-1.amazonaws.com`） |
 
 ::tip 
 未配置 Summarizer？插件会自动降级到 OpenClaw 原生模型（从 `~/.openclaw/openclaw.json` 自动检测）。如该模型也不可用，则使用基于规则的 fallback，从首句 + 关键实体生成摘要。足够用来起步。

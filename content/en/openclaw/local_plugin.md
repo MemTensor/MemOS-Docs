@@ -132,6 +132,37 @@ The plugin is installed under `~/.openclaw/extensions/memos-local-openclaw-plugi
 > ```bash
 > cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
 > ```
+
+### **Upgrading for existing users?**
+
+You do **not** need to uninstall or reinstall. Plugin code and your data are separate: memory data lives under `~/.openclaw/memos-local/` (e.g. `memos.db`), and the plugin under `~/.openclaw/extensions/memos-local-openclaw-plugin`. Upgrading only updates the plugin code and does not clear existing memories.
+
+**Recommended steps:**
+
+1. **Run the install command again** (fetches and installs the latest version):
+   ```bash
+   openclaw plugins install @memtensor/memos-local-openclaw-plugin
+   ```
+2. **If you use native modules** (e.g. `better-sqlite3`), rebuild after upgrading if you see errors:
+   ```bash
+   cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
+   ```
+3. **Restart the gateway** so the new version is loaded:
+   ```bash
+   openclaw gateway stop
+   openclaw gateway start
+   ```
+
+Your `openclaw.json` config and local database are preserved; no need to reconfigure or migrate.
+
+**Upgrade failing or CLI errors?** If the upgrade cannot complete, remove the plugin directory and reinstall:
+
+```bash
+rm -rf ~/.openclaw/extensions/memos-local-openclaw-plugin
+openclaw plugins install @memtensor/memos-local-openclaw-plugin
+```
+
+If after removing the directory the next install reports **config invalid**, the config still references the plugin but the directory is gone. Edit `~/.openclaw/openclaw.json` and remove entries related to `memos-local-openclaw-plugin` (e.g. `plugins.allow`, `plugins.slots.memory`, `plugins.entries.memos-local-openclaw-plugin`), save, then run the install command again. Before uninstalling or reinstalling, back up `~/.openclaw/memos-local/` to keep your memory data.
  
 ### Step2. Configure
 
@@ -178,13 +209,18 @@ Modify online via the Viewer web panel or edit `openclaw.json`. Supports hierarc
 #### Embedding Provider Options
  
 | Provider | `provider` value | Example `model` | Notes |
-|---|---|---|---|
+|--------|------------------|-----------------|-------|
 | OpenAI / compatible | `openai_compatible` | `bge-m3`, `text-embedding-3-small` | Any OpenAI-compatible API |
-| Gemini | `gemini` | `text-embedding-004` | Requires `apiKey` |
-| Cohere | `cohere` | `embed-english-v3.0` | Separates document/query embedding |
-| Voyage | `voyage` | `voyage-2` | |
-| Mistral | `mistral` | `mistral-embed` | |
-| Local (offline) | `local` | — | Uses `Xenova/all-MiniLM-L6-v2`, no API needed |
+| OpenAI | `openai` | `text-embedding-3-small` | Default endpoint: `https://api.openai.com/v1` |
+| Azure OpenAI | `azure_openai` | Same as OpenAI compatible | Configure Azure endpoint and apiKey |
+| Zhipu AI | `zhipu` | `embedding-3` | Default endpoint: `https://open.bigmodel.cn/api/paas/v4` |
+| SiliconFlow | `siliconflow` | `BAAI/bge-m3` | Default endpoint: `https://api.siliconflow.cn/v1` |
+| Alibaba Bailian | `bailian` | `text-embedding-v3` | Default endpoint: `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+| Gemini | `gemini` | `text-embedding-004` | Requires apiKey, uses Google API |
+| Cohere | `cohere` | `embed-english-v3.0` | Document/query embedding handled separately |
+| Voyage | `voyage` | `voyage-3` | Default endpoint: `https://api.voyageai.com/v1` |
+| Mistral | `mistral` | `mistral-embed` | Default endpoint: `https://api.mistral.ai/v1` |
+| Local (offline) | `local` | — | Uses `Xenova/all-MiniLM-L6-v2` (384d), no API needed |
 
 ::tip
 Embedding must be configured.
@@ -192,12 +228,20 @@ Embedding must be configured.
  
 #### Summarizer Provider Options
  
-| Provider | `provider` value | Example `model` |
-|---|---|---|
-| OpenAI / compatible | `openai_compatible` | `gpt-4o-mini` |
-| Anthropic | `anthropic` | `claude-3-haiku-20240307` |
-| Gemini | `gemini` | `gemini-1.5-flash` |
-| AWS Bedrock | `bedrock` | `anthropic.claude-3-haiku-20240307-v1:0` |
+| Provider | `provider` value | Example `model` | Notes |
+|--------|------------------|-----------------|-------|
+| OpenAI / compatible | `openai_compatible` | `gpt-4o-mini` | Any OpenAI-compatible Chat API |
+| OpenAI | `openai` | `gpt-4o-mini` | Default endpoint: `https://api.openai.com/v1` |
+| Azure OpenAI | `azure_openai` | Same as OpenAI compatible | Configure Azure endpoint and apiKey |
+| Zhipu AI | `zhipu` | `glm-4-flash` | Default endpoint: `https://open.bigmodel.cn/api/paas/v4` |
+| SiliconFlow | `siliconflow` | `Qwen/Qwen2.5-7B-Instruct` | Default endpoint: `https://api.siliconflow.cn/v1` |
+| Alibaba Bailian | `bailian` | `qwen-max` | Default endpoint: `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+| Cohere | `cohere` | Chat-compatible model | Configure endpoint and apiKey |
+| Mistral | `mistral` | Chat-compatible model | Default endpoint: `https://api.mistral.ai/v1` |
+| Voyage | `voyage` | Chat-compatible model | Default endpoint: `https://api.voyageai.com/v1` |
+| Anthropic | `anthropic` | `claude-3-haiku-20240307` | Default endpoint: `https://api.anthropic.com/v1/messages` |
+| Gemini | `gemini` | `gemini-2.0-flash` | Requires apiKey |
+| AWS Bedrock | `bedrock` | `anthropic.claude-3-haiku-20240307-v1:0` | Configure endpoint (e.g. `https://bedrock-runtime.us-east-1.amazonaws.com`) |
 
 ::tip 
 **No summarizer config?** The plugin automatically falls back to the OpenClaw native model (auto-detected from `~/.openclaw/openclaw.json`). If that is also unavailable, a rule-based fallback generates summaries from the first sentence + key entities. Good enough to start.
