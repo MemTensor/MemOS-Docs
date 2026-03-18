@@ -95,6 +95,7 @@ nav:
     - "(ri:download-line) 安装指南": 
       - "(ri:cloud-line) OpenClaw 云插件": openclaw/guide.md
       - "(ri:computer-line) OpenClaw 本地插件": openclaw/local_plugin.md
+    - "(ri:flask-line) 使用示例": openclaw/examples.md
 
   - "(ri:file-code-line) API文档":
     - "(ri:rocket-line) 开始使用":
