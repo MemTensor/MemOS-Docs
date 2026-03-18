@@ -91,8 +91,10 @@ nav:
 
   - "(ri:robot-line) Openclaw":
     - "(ri:book-open-line) 云插件 vs 本地插件": openclaw/plugin_compare.md
-    - "(ri:cloud-line) OpenClaw 云插件": openclaw/guide.md
-    - "(ri:computer-line) OpenClaw 本地插件": openclaw/local_plugin.md
+    - "(ri:file-list-3-line) 更新日志": openclaw/changes.md
+    - "(ri:download-line) 安装指南": 
+      - "(ri:cloud-line) OpenClaw 云插件": openclaw/guide.md
+      - "(ri:computer-line) OpenClaw 本地插件": openclaw/local_plugin.md
 
   - "(ri:file-code-line) API文档":
     - "(ri:rocket-line) 开始使用":
