@@ -1,5 +1,5 @@
 ---
-title: OpenClaw 插件
+title: OpenClaw 云插件
 desc: 增强 OpenClaw 的记忆能力并减少 60% 的 Token 消耗：MemOS OpenClaw 插件现已上线！
 ---
 
@@ -140,38 +140,96 @@ openclaw onboard
 
 ### 2. 获取并配置 API Key
 
-#### **2.1 获取 Key**
+#### 2.1 获取 Key
 
 登陆/注册 MemOS Cloud 获取你的 API Key 🔗 [MemOS Cloud](https://memos-dashboard.openmem.net/cn/apikeys/)
 
 ![image.png](https://cdn.memtensor.com.cn/img/1772443326905_kkxve6_compressed.webp)
 
-#### **2.2 设置变量**
+#### 2.2 设置环境变量
 
-终端中一键完成最简配置：
+插件会按顺序尝试读取 env 文件（**openclaw → moltbot → clawdbot**）。对于每个键，优先使用首个包含该值的文件。
+如果这些文件都不存在（或缺少对应键），则会回退到进程环境变量。
 
+**配置位置**
+- 文件（优先级顺序）：
+  - `~/.openclaw/.env`
+  - `~/.moltbot/.env`
+  - `~/.clawdbot/.env`
+- 每行格式为 `KEY=value`
+
+**快速配置（Shell）**
 ```bash
-mkdir -p ~/.openclaw && echo "MEMOS_API_KEY=mpg-..." > ~/.openclaw/.env
+echo 'export MEMOS_API_KEY="mpg-..."' >> ~/.zshrc
+source ~/.zshrc
+
+# or
+
+echo 'export MEMOS_API_KEY="mpg-..."' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-#### **2.3 安装插件并测试**
+**快速配置（Windows PowerShell）**
+```powershell
+[System.Environment]::SetEnvironmentVariable("MEMOS_API_KEY", "mpg-...", "User")
+```
 
-##### **2.3.1 安装**
+如果缺少 `MEMOS_API_KEY`，插件会提示配置说明和 API Key 获取链接。
+
+**最小配置**
+```env
+MEMOS_API_KEY=YOUR_TOKEN
+```
+
+### 3. 安装插件
+
+#### 方案 A — NPM（推荐）
 
 ```bash
 openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
 openclaw gateway restart
 ```
 
-* [npm包](https://www.npmjs.com/package/@memtensor/memos-cloud-openclaw-plugin)
-* [Github](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin)
+> Windows 用户注意：如果遇到 `Error: spawn EINVAL`，这是 OpenClaw 插件安装器在 Windows 上的已知问题。请使用下面的方案 B（手动安装）。
 
-##### **2.3.2 插件会自动开始运行**
+请确认在 `~/.openclaw/openclaw.json` 中已启用：
 
-- **运行前**: 从 MemOS Cloud 检索相关记忆并注入上下文
-- **运行后**: 将本次对话保存至 MemOS Cloud
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": { "enabled": true }
+    }
+  }
+}
+```
 
-现在，我们就完成配置啦！可以开始进行测试了～
+#### 方案 B — 手动安装（Windows 兼容方案）
+
+1. 从 [NPM](https://www.npmjs.com/package/@memtensor/memos-cloud-openclaw-plugin) 下载最新的 `.tgz` 包。
+2. 解压到本地目录（例如：`C:\Users\YourName\.openclaw\extensions\memos-cloud-openclaw-plugin`）。
+3. 配置 `~/.openclaw/openclaw.json`（或 `%USERPROFILE%\.openclaw\openclaw.json`）：
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": { "enabled": true }
+    },
+    "load": {
+      "paths": [
+        "C:\\Users\\YourName\\.openclaw\\extensions\\memos-cloud-openclaw-plugin"
+      ]
+    }
+  }
+}
+```
+
+::info
+注意：解压后的目录通常包含一个 `package` 子目录。请将路径指向包含 `package.json` 的文件夹。
+::
+
+配置修改后请重启 gateway。
 
 ## 开源项目进阶配置
 

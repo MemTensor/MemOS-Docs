@@ -83,8 +83,13 @@ nav:
     - "(ri:file-code-line) API Reference": api-reference/search-memories
 
   - "(ri:robot-line) Openclaw":
-    - "(ri:book-open-line) OpenClaw Plugin": openclaw/guide.md
-    - "(ri:computer-line) OpenClaw Local Plugin": openclaw/local_plugin.md
+    - "(ri:book-open-line) Cloud Plugin vs Local Plugin": openclaw/plugin_compare.md
+    - "(ri:file-list-3-line) Changelog": openclaw/changes.md
+    - "(ri:download-line) Installation Guide": 
+      - "(ri:cloud-line) OpenClaw Cloud Plugin": openclaw/guide.md
+      - "(ri:computer-line) OpenClaw Local Plugin": openclaw/local_plugin.md
+    - "(ri:flask-line) Usage Examples": 
+      - "(ri:team-line) Multi-Agent Memory Isolation": openclaw/multi_agent.md
 
   - "(ri:puzzle-line) MCP and Agent Framework Support":
     - "(ri:tools-line) MCP Services":
