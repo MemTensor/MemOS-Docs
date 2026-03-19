@@ -32,20 +32,28 @@ desc: 两款插件都能为 OpenClaw 提供持久记忆能力，但面向的场�
 ## 安装速览
 
 ### 云插件（3 步完成）
-```bash
-# 1. 安装插件
-openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
 
-# 2. 配置 API Key
-mkdir -p ~/.openclaw && echo "MEMOS_API_KEY=mpg-..." > ~/.openclaw/.env
+1. **安装插件**
+    ```bash
+    openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
+    ```
 
-# 3. 重启 gateway
-openclaw gateway restart
-```
+2. **获取并配置 API Key**
 
-获取 API Key：[MemOS Cloud Dashboard](https://memos-dashboard.openmem.net/cn/apikeys/)
+    获取 API Key：[MemOS Cloud Dashboard](https://memos-dashboard.openmem.net/cn/apikeys/)
 
-> 更多信息请参考 [Openclaw 云插件文档](/cn/openclaw/guide)。
+    ```bash
+    mkdir -p ~/.openclaw && echo "MEMOS_API_KEY=mpg-..." > ~/.openclaw/.env
+    ```
+
+3. **重启 gateway**
+
+    ```bash
+    openclaw gateway restart
+    ```
+
+
+> 更多信息请参考 [Openclaw 云插件文档](/cn/openclaw/guide#快速开始)
 
 ### 本地插件（需先准备编译环境）
 ```bash
@@ -63,4 +71,4 @@ openclaw gateway stop && openclaw gateway start
 
 安装完成后，Memory Viewer 将在 `http://127.0.0.1:18799` 上线。
 
-> 完整配置（Embedding、Summarizer、Skill Evolution 分级模型）请参考 [OpenClaw 本地插件文档](/cn/openclaw/local_plugin)。
+> 完整配置（Embedding、Summarizer、Skill Evolution 分级模型）请参考 [OpenClaw 本地插件文档](/cn/openclaw/local_plugin#快速开始)

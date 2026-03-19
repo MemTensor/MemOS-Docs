@@ -32,20 +32,29 @@ Stores memories entirely on your **local machine (SQLite)** with zero cloud depe
 ## Quick Install
 
 ### Cloud Plugin (3 steps)
-```bash
-# 1. Install the plugin
-openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
 
-# 2. Configure API Key
-mkdir -p ~/.openclaw && echo "MEMOS_API_KEY=mpg-..." > ~/.openclaw/.env
+1. **Install the plugin**
 
-# 3. Restart the gateway
-openclaw gateway restart
-```
+    ```bash
+    openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
+    ```
 
-Get your API Key: [MemOS Cloud Dashboard](https://memos-dashboard.openmem.net/apikeys/)
+2. **Get and configure API Key**
 
-> For more details, see the [OpenClaw Cloud Plugin documentation](/openclaw/guide).
+    Get your API Key: [MemOS Cloud Dashboard](https://memos-dashboard.openmem.net/apikeys/)
+
+    ```bash
+    mkdir -p ~/.openclaw && echo "MEMOS_API_KEY=mpg-..." > ~/.openclaw/.env
+    ```
+
+3. **Restart the gateway**
+
+    ```bash
+    openclaw gateway restart
+    ```
+
+
+> For more details, see the [OpenClaw Cloud Plugin documentation](/openclaw/guide#quick-start).
 
 ### Local Plugin (build tools required)
 ```bash
@@ -63,4 +72,4 @@ openclaw gateway stop && openclaw gateway start
 
 Once started, the Memory Viewer will be available at `http://127.0.0.1:18799`.
 
-> For full configuration (Embedding, Summarizer, and Skill Evolution tiered models), see the [OpenClaw Local Plugin documentation](/openclaw/local_plugin).
+> For full configuration (Embedding, Summarizer, and Skill Evolution tiered models), see the [OpenClaw Local Plugin documentation](/openclaw/local_plugin#quick-start).
