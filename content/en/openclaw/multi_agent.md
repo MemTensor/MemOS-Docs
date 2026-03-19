@@ -2,7 +2,9 @@
 title: Multi-Agent Memory Isolation
 ---
 
-The MemOS Cloud plugin supports full isolation of memories and message history by Agent. Each Agent can only access its own memory, preventing cross-agent interference.
+The MemOS OpenClaw Cloud plugin supports complete isolation of memory and message history across multiple Agents. Each Agent can only access its own memory, preventing cross-agent interference.
+
+> Note: This feature is currently available only in the Cloud plugin. Try it now.
 
 ## How to Use in Cloud Plugin
 
