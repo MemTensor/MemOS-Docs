@@ -1,16 +1,14 @@
 ---
-title: OpenClaw Plugin Usage Examples
+title: Multi-Agent Memory Isolation
 ---
-
-## Multi-Agent Memory Isolation
 
 The MemOS Cloud plugin supports full isolation of memories and message history by Agent. Each Agent can only access its own memory, preventing cross-agent interference.
 
-### How to Use
+## How to Use in Cloud Plugin
 
 With a simple configuration, different Agents can have independent memory spaces. Both auto-detection and static assignment are supported.
 
-#### 1) Enable Multi-Agent Mode
+### 1. Enable Multi-Agent Mode
 
 Add the following to your `openclaw.json`:
 
@@ -34,11 +32,11 @@ Or set the environment variable:
 MEMOS_MULTI_AGENT_MODE=true
 ```
 
-#### 2) Auto-detect Agent
+### 2. Auto-detect Agent
 
 Once enabled, the plugin automatically reads `ctx.agentId` and isolates memory for each Agent. No extra configuration is required.
 
-#### 3) Statically Assign Agent (Optional)
+### 3. Statically Assign Agent (Optional)
 
 If you need to pin a specific Agent ID, set it in the config:
 
@@ -50,13 +48,13 @@ If you need to pin a specific Agent ID, set it in the config:
 }
 ```
 
-### Data Isolation Mechanism
+## Principles
 
 - **/search/memory**: Memory retrieval — returns only the current Agent's memories
 - **/add/message**: Record insertion — automatically tags data for the current Agent
 - **Backward compatibility**: Default Agent `"main"` is ignored to keep existing single-Agent data unaffected
 
-### Use Cases
+## Use Cases
 
 - **Multi-role collaboration**: Strategy, business, marketing, and engineering Agents can work in parallel
 - **Business-line isolation**: Agents from different business lines run independently without interference
