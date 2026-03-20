@@ -100,28 +100,14 @@ desc: 为 OpenClaw 提供完全本地化的持久记忆、智能任务总结、�
 
 ## 快速开始
  
-### Step0. 准备编译环境（macOS / Linux）
- 
-本插件依赖 `better-sqlite3`（一个原生 C/C++ 模块）。在 macOS 和 Linux 上，预编译二进制文件可能不可用，因此需要先安装 C++ 编译工具以确保安装顺利：
- 
-```bash
-# macOS
-xcode-select --install
- 
-# Linux (Ubuntu / Debian)
-sudo apt install build-essential python3
-```
- 
-> Windows 用户：`better-sqlite3` 为 Windows + Node.js LTS 提供了预编译二进制文件，通常可以跳过此步骤，直接进入 Step1。如果安装仍然失败，请安装 Visual Studio Build Tools（选择「C++ build tools」工作负载）。
-> 
-> 已有编译工具？跳至 Step1。不确定？直接运行上面的命令——重复执行是安全的。
-> 
-> 仍有问题？请查看[排查指南](https://memos-claw.openmem.net/docs/troubleshooting.html)或 [better-sqlite3 官方排查文档](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md)。
- 
 ### Step1. 安装插件
  
 ```bash
+# macOS/Linux
 curl -fsSL https://cdn.memtensor.com.cn/memos-local-openclaw/install.sh | bash
+
+# Windows
+powershell -c "irm https://cdn.memtensor.com.cn/memos-local-openclaw/install.ps1 | iex"
 ```
  
 插件将安装至 `~/.openclaw/extensions/memos-local-openclaw-plugin`，并以 `memos-local-openclaw-plugin` 注册。依赖项和 `better-sqlite3` 原生模块会在安装过程中自动构建。
@@ -133,14 +119,18 @@ curl -fsSL https://cdn.memtensor.com.cn/memos-local-openclaw/install.sh | bash
 > ```bash
 > cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
 > ```
-
+> 仍有问题？请查看[排查指南](https://memos-claw.openmem.net/docs/troubleshooting.html)或 [better-sqlite3 官方排查文档](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md)。
 #### **已有用户如何升级？**
 
 **不需要卸载或删除重装。** 插件代码与你的数据是分离的：记忆数据存放在 `~/.openclaw/memos-local/`（如 `memos.db`），插件本体在 `~/.openclaw/extensions/memos-local-openclaw-plugin`。升级只会更新插件代码，不会清空已有记忆。
 
 **执行安装命令**（会拉取并安装当前最新版本）：
 ```bash
+# macOS/Linux
 curl -fsSL https://cdn.memtensor.com.cn/memos-local-openclaw/install.sh | bash
+
+# Windows
+powershell -c "irm https://cdn.memtensor.com.cn/memos-local-openclaw/install.ps1 | iex"
 ```
 
 ::note

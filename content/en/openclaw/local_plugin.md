@@ -99,29 +99,15 @@ Query → FTS5 + Vector dual recall → RRF Fusion → MMR Rerank
 ---
 
 ## Quick Start
- 
-### **Step0. Prepare build environment (macOS / Linux)**
- 
-This plugin uses `better-sqlite3`, a native C/C++ module. On macOS and Linux, prebuilt binaries may not be available, so install C++ build tools first to ensure a smooth installation:
- 
-```bash
-# macOS
-xcode-select --install
- 
-# Linux (Ubuntu / Debian)
-sudo apt install build-essential python3
-```
 
-> Windows users: `better-sqlite3` ships prebuilt binaries for Windows + Node.js LTS, so you can usually skip this step and go directly to Step1. If installation still fails, install Visual Studio Build Tools (select "C++ build tools" workload).<br>
->
-> Already have build tools? Skip to Step1. Not sure? Run the install command above — it's safe to re-run.<br>
-> 
-> Still having issues? See the [Troubleshooting](https://memos-claw.openmem.net/docs/troubleshooting.html) section, the detailed troubleshooting guide, or [the official better-sqlite3 troubleshooting docs](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md).
- 
 ### **Step1. Install the plugin**
  
 ```bash
+# macOS/Linux
 curl -fsSL https://cdn.memtensor.com.cn/memos-local-openclaw/install.sh | bash
+
+# Windows
+powershell -c "irm https://cdn.memtensor.com.cn/memos-local-openclaw/install.ps1 | iex"
 ```
  
 The plugin is installed under `~/.openclaw/extensions/memos-local-openclaw-plugin` and registered as `memos-local-openclaw-plugin`. Dependencies and `better-sqlite3` native module are built automatically during installation.
@@ -132,6 +118,7 @@ The plugin is installed under `~/.openclaw/extensions/memos-local-openclaw-plugi
 > ```bash
 > cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
 > ```
+> Still having issues? See the [Troubleshooting](https://memos-claw.openmem.net/docs/troubleshooting.html) section, the detailed troubleshooting guide, or [the official better-sqlite3 troubleshooting docs](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md).
 
 #### **Upgrading for existing users?**
 
@@ -139,7 +126,11 @@ You do **not** need to uninstall or reinstall. Plugin code and your data are sep
 
 **Run the install command again** (fetches and installs the latest version):
 ```bash
+# macOS/Linux
 curl -fsSL https://cdn.memtensor.com.cn/memos-local-openclaw/install.sh | bash
+
+# Windows
+powershell -c "irm https://cdn.memtensor.com.cn/memos-local-openclaw/install.ps1 | iex"
 ```
 
 ::note
