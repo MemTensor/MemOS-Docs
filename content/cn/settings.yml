@@ -96,7 +96,8 @@ nav:
       - "(ri:cloud-line) OpenClaw 云插件": openclaw/guide.md
       - "(ri:computer-line) OpenClaw 本地插件": openclaw/local_plugin.md
     - "(ri:flask-line) 使用示例": 
-      - "(ri:team-line) 多智能体记忆隔离": openclaw/multi_agent.md
+      - "(ri:team-line) 多智能体记忆隔离": openclaw/examples/multi_agent.md
+      - "(ri:filter-3-line) 记忆召回的二次过滤": openclaw/examples/recall_filter.md
 
   - "(ri:file-code-line) API文档":
     - "(ri:rocket-line) 开始使用":

@@ -1,4 +1,21 @@
 versions:
+  - name: v2.0.9
+    date: 2026-03-16
+    changedInfo:
+      Improvements:
+        - type: Memory version compatibility for feedback
+          changedInfo:
+            - When Feedback updates a node, it follows the memory version logic, updates the original node, and pushes the previous content into the history field.
+        - type: Memory version optimization
+          changedInfo:
+            - During conflict resolution and duplicate merging, the process of "restoring independent facts from past versions" has been comprehensively optimized. It can now restore independent facts more stably and accurately, preserve the completeness of memory information, and reduce memory inconsistencies caused by unstable model responses.
+      Bug Fixes:
+        - type: Memory version parameter and related bug fixes
+          changedInfo:
+            - Fixed several bugs including memory version parameter validation, empty key after update, and incorrect update time.
+        - type: Feedback issue fixes
+          changedInfo:
+            - Fixed the issue where sources were empty during the Feedback process.
   - name: v2.0.8
     date: 2026-03-05
     changedInfo:

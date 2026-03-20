@@ -239,7 +239,7 @@ openclaw gateway restart
 
 除了必需的 API Key，你还可以通过环境变量调整插件行为。
 
-更多细节配置项可以见 [MemTensor GitHub 官方插件仓库](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin)
+更多细节配置项可以见 [MemTensor GitHub 官方插件仓库](https://github.com/MemTensor/MemOS/tree/main/apps/MemOS-Cloud-OpenClaw-Plugin)
 
 ## 测试记忆功能
 
