@@ -100,7 +100,7 @@ desc: 为 OpenClaw 提供完全本地化的持久记忆、智能任务总结、�
 
 ## 快速开始
  
-### **Step0. 准备编译环境（macOS / Linux）**
+### Step0. 准备编译环境（macOS / Linux）
  
 本插件依赖 `better-sqlite3`（一个原生 C/C++ 模块）。在 macOS 和 Linux 上，预编译二进制文件可能不可用，因此需要先安装 C++ 编译工具以确保安装顺利：
  
@@ -118,15 +118,15 @@ sudo apt install build-essential python3
 > 
 > 仍有问题？请查看[排查指南](https://memos-claw.openmem.net/docs/troubleshooting.html)或 [better-sqlite3 官方排查文档](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md)。
  
-### **Step1. 安装插件**
+### Step1. 安装插件
  
 ```bash
-openclaw plugins install @memtensor/memos-local-openclaw-plugin
+curl -fsSL https://cdn.memtensor.com.cn/memos-local-openclaw/install.sh | bash
 ```
  
 插件将安装至 `~/.openclaw/extensions/memos-local-openclaw-plugin`，并以 `memos-local-openclaw-plugin` 注册。依赖项和 `better-sqlite3` 原生模块会在安装过程中自动构建。
 
-> **注意**：Memory Viewer 仅在 OpenClaw gateway 运行时才会启动。安装后，请先完成 `openclaw.json` 配置（Step2），再启动 gateway（Step3），之后即可在 `http://127.0.0.1:18799` 访问 Viewer。
+> **注意**：构建完成后，将自动启动 openclaw gateway 以及 memos-local-openclaw-plugin 插件。接下来只需打开 `http://127.0.0.1:18799` 即可访问 Memory Viewer 并配置不同模型。
 > 
 > 安装失败？如果 `better-sqlite3` 在安装时编译失败，确认已安装编译工具后，手动重新构建然后重启：
 > 
@@ -134,25 +134,18 @@ openclaw plugins install @memtensor/memos-local-openclaw-plugin
 > cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
 > ```
 
-### **已有用户如何升级？**
+#### **已有用户如何升级？**
 
 **不需要卸载或删除重装。** 插件代码与你的数据是分离的：记忆数据存放在 `~/.openclaw/memos-local/`（如 `memos.db`），插件本体在 `~/.openclaw/extensions/memos-local-openclaw-plugin`。升级只会更新插件代码，不会清空已有记忆。
 
-**推荐步骤：**
+**执行安装命令**（会拉取并安装当前最新版本）：
+```bash
+curl -fsSL https://cdn.memtensor.com.cn/memos-local-openclaw/install.sh | bash
+```
 
-1. **执行安装命令**（会拉取并安装当前最新版本）：
-   ```bash
-   openclaw plugins install @memtensor/memos-local-openclaw-plugin
-   ```
-2. **若依赖了原生模块**（如 `better-sqlite3`），升级后如遇报错可重新构建：
-   ```bash
-   cd ~/.openclaw/extensions/memos-local-openclaw-plugin && npm rebuild better-sqlite3
-   ```
-3. **重启 Gateway** 使新版本生效：
-   ```bash
-   openclaw gateway stop
-   openclaw gateway start
-   ```
+::note
+执行以上命令会自动检测系统是否已安装 `memos-local-openclaw-plugin`，如果是首次安装则会自动安装；如果是已安装，则会自动进行升级并保留原有本地记忆文件。
+::
 
 你的 `openclaw.json` 配置和本地数据库都会保留，无需重新配置或迁移数据。
 

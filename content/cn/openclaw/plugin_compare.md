@@ -63,12 +63,9 @@ xcode-select --install
 sudo apt install build-essential python3
 
 # 安装插件
-openclaw plugins install @memtensor/memos-local-openclaw-plugin
-
-# 重启 gateway
-openclaw gateway stop && openclaw gateway start
+curl -fsSL https://cdn.memtensor.com.cn/memos-local-openclaw/install.sh | bash
 ```
 
-安装完成后，Memory Viewer 将在 `http://127.0.0.1:18799` 上线。
-
+> 构建完成后，将自动启动 openclaw gateway 以及 memos-local-openclaw-plugin 插件。接下来只需打开 http://127.0.0.1:18799 即可访问 Memory Viewer 并配置不同模型。
+>
 > 完整配置（Embedding、Summarizer、Skill Evolution 分级模型）请参考 [OpenClaw 本地插件文档](/cn/openclaw/local_plugin#快速开始)

@@ -89,7 +89,8 @@ nav:
       - "(ri:cloud-line) OpenClaw Cloud Plugin": openclaw/guide.md
       - "(ri:computer-line) OpenClaw Local Plugin": openclaw/local_plugin.md
     - "(ri:flask-line) Usage Examples": 
-      - "(ri:team-line) Multi-Agent Memory Isolation": openclaw/multi_agent.md
+      - "(ri:team-line) Multi-Agent Memory Isolation": openclaw/examples/multi_agent.md
+      - "(ri:filter-3-line) Secondary Filtering for Memory Recall": openclaw/examples/recall_filter.md
 
   - "(ri:puzzle-line) MCP and Agent Framework Support":
     - "(ri:tools-line) MCP Services":

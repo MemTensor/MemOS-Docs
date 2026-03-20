@@ -239,7 +239,7 @@ If you wanna unlock further possibilities, you may explore and configure additio
 
 In addition to the required API Key, you may also adjust the plugin's behaviour via environment variables。
 
-Further configuration details can be found in [the MemTensor official plugin repo](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin)
+Further configuration details can be found in [the MemTensor official plugin repo](https://github.com/MemTensor/MemOS/tree/main/apps/MemOS-Cloud-OpenClaw-Plugin)
 
 ## Testing
 
