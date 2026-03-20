@@ -12,8 +12,9 @@ Just configure an OpenAI-compatible model endpoint (such as local Ollama or a th
 
 #### 1. Enable Memory Filtering
 
-Add the following in your `openclaw.json` config:
+When configuring an LLM for memory filtering, you **must** configure the API Key and Base URL.
 
+Add the following in your `openclaw.json` config:
 ```json
 {
   "plugins": {
@@ -22,7 +23,8 @@ Add the following in your `openclaw.json` config:
         "config": {
           "recallFilterEnabled": true,
           "recallFilterBaseUrl": "http://127.0.0.1:11434/v1",
-          "recallFilterModel": "qwen2.5:7b"
+          "recallFilterApiKey": "sk-...",
+          "recallFilterModel": "qwen2.5_7b"
         }
       }
     }
@@ -34,17 +36,16 @@ Or set environment variables:
 ```bash
 MEMOS_RECALL_FILTER_ENABLED=true
 MEMOS_RECALL_FILTER_BASE_URL="http://127.0.0.1:11434/v1"
-MEMOS_RECALL_FILTER_MODEL="qwen2.5:7b"
+MEMOS_RECALL_FILTER_API_KEY="sk-..."
+MEMOS_RECALL_FILTER_MODEL="qwen2.5_7b"
 ```
 
 #### 2. Configure Authentication and Advanced Parameters (Optional)
 
-If your model endpoint requires an API key, or if you need to adjust timeout and failure strategy, specify:
-
+If you need to adjust timeout and failure strategy, you can specify them in the config:
 ```json
 {
   "config": {
-    "recallFilterApiKey": "sk-...",
     "recallFilterTimeoutMs": 6000,
     "recallFilterFailOpen": true
   }
@@ -52,14 +53,14 @@ If your model endpoint requires an API key, or if you need to adjust timeout and
 ```
 
 ### How It Works
-- **Post-recall interception**: Before each conversation round, after memories are recalled from the cloud, the plugin sends candidate memory entries (`memory / preference / tool_memory`) to your configured filtering model for secondary screening.
+- **Post-recall interception**: Before each conversation round, after memories are recalled from the cloud, the plugin sends candidate memory entries to your configured filtering model for secondary screening.
 - **Precise retention**: After model judgment, only entries marked as `keep` are retained and injected into the agent context.
 - **High-availability fallback**: Fail-open (`recallFilterFailOpen: true`) is enabled by default. If the filtering model times out or fails, it automatically falls back to full injection without filtering, so the current conversation is not interrupted.
 
 ### Typical Use Cases
 - **Pruning long-term memory**: In long-running conversations with many accumulated memories, remove content unrelated to the current prompt to significantly reduce main-model context token usage.
 - **Improving reasoning accuracy**: For agents handling complex tasks, filter out early irrelevant memories to improve reasoning quality on the core task.
-- **Working with local models**: Use a locally running small model (such as `qwen2.5:7b` via Ollama) as a low-cost pre-filter to improve memory injection quality without increasing main-model API costs.
+- **Working with local models**: Use a locally running small model (such as `qwen2.5_7b` via Ollama) as a low-cost pre-filter to improve memory injection quality without increasing main-model API costs.
 
 ---
 
