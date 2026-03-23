@@ -1,6 +1,6 @@
 ---
 title: MemFeedback
-desc: "MemFeedback enables your Agent to understand 'You remembered it wrong' and automatically correct the memory database. It is a key component for self-evolving memory."
+desc: MemFeedback is your "memory error notebook". It enables your Agent to understand 'You remembered it wrong' and automatically correct the memory database. It is a key component for achieving self-evolving memory.
 ---
 
 ## 1. Introduction
@@ -9,7 +9,7 @@ desc: "MemFeedback enables your Agent to understand 'You remembered it wrong' an
 
 In long-term memory systems, the biggest headache is often not "forgetting," but "remembering wrong and unable to change." When a user says, "No, my birthday is tomorrow" or "Change the project code to X," simple RAG systems are usually helpless.
 
-MemFeedback can understand these natural language instructions, accurately locate conflicting memories in the database, and execute atomic correction operations (such as archiving old memories and writing new ones). With it, your Agent can correct errors and learn continuously during interactions, just like a human.
+MemFeedback can understand these natural language instructions, automatically locate conflicting memories in the database, and execute atomic correction operations (such as archiving old memories and writing new ones). With it, your Agent can correct errors and learn continuously during interactions, just like a human.
 
 ---
 
@@ -23,7 +23,7 @@ When the user points out a factual error. The system will not brutally delete th
 ### Addition
 If the user just supplements new information that does not conflict with old memories, it is simple—directly save it as a new node in the memory database.
 
-### Keyword Replacement
+### Keyword Replacement (Global Refactor)
 Similar to "Global Refactor" in an IDE. For example, if the user says, "Change 'Zhang San' to 'Li Si' in all documents," the system will combine the Reranker to automatically determine the scope of affected documents and update all relevant memories in batches.
 
 ### Preference Evolution
@@ -50,7 +50,7 @@ There is only one main entry point: `process_feedback()`. It is usually called a
 
 | Parameter | Description |
 | :--- | :--- |
-| `user_id` / `user_name` | User ID and Cube ID. |
+| `user_id` / `user_name` | User identification and Cube ID. |
 | `chat_history` | Conversation history, letting LLM know what you talked about. |
 | `feedback_content` | The feedback sentence from the user (e.g., "No, it's 5 o'clock"). |
 | **`retrieved_memory_ids`** | **Required (Strongly Recommended)**. Pass in the memory IDs retrieved in the previous RAG round. This gives the system a "target," telling it which memory to correct. If not passed, the system has to search again in the massive memory, which is slow and prone to errors. |
