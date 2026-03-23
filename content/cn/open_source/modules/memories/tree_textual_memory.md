@@ -1,12 +1,14 @@
 ---
-title: "TreeTextMemory: 分层结构的明文记忆"
+title: "TreeTextMemory: 树形明文记忆"
+desc: >
+    让我们在MemOS中构建你的第一个**基于图的、树形明文记忆**！
+    <br>
+    **TreeTextMemory** 支持以结构化方式组织、关联并检索记忆，同时保留丰富的上下文信息与良好的可解释性。
+    <br>
+    MemOS当前使用[Neo4j](/open_source/modules/memories/neo4j_graph_db)作为后端，未来计划支持更多图数据库。
 ---
 
-让我们在MemOS中构建你的第一个**基于图的、树形明文记忆**！
 
-**TreeTextMemory** 支持以结构化方式组织、关联并检索记忆，同时保留丰富的上下文信息与良好的可解释性。
-
-MemOS当前使用[Neo4j](/open_source/modules/memories/neo4j_graph_db)作为后端，未来计划支持更多图数据库。
 
 ## 目录
 
@@ -319,7 +321,7 @@ print(f"✓ 已从混合内容提取并添加 {len(mixed_memories)} 条记忆")
 - **上下文保持**：使用滑动窗口保持分块间的上下文连续性
 ::
 
-::注意
+::note
 **配置提示**<br>
 - 使用 `direct_markdown_hostnames` 参数可以指定哪些域名直接返回 Markdown 格式<br>
 - 支持 `mode="fast"` 和 `mode="fine"` 两种提取模式，fine 模式提取更详细<br>

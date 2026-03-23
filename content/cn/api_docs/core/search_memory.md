@@ -1,5 +1,5 @@
 ---
-title: 检索记忆
+title: Search Memory
 openapi: "POST /search/memory"
 ---
 <!-- Menu Mapping -->

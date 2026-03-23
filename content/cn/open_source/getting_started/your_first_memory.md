@@ -1,5 +1,5 @@
 ---
-title: 您的第一个记忆
+title: 创建你的第一个记忆
 desc: "动手实战！我们将带您使用 **SimpleStructMemReader** 从对话中提取记忆，并把它存进 **TreeTextMemory** 进行管理与检索。"
 ---
 

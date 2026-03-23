@@ -49,9 +49,8 @@ desc: "`PreferenceTextMemory` is a textual memory module in MemOS for storing an
 - Learning assistance systems (adapting to learning styles)
 ::
 
-::alert{type="info"}
-**Applicable Scenarios**<br>
-When you need to build systems that can "remember" user preferences and provide personalized services accordingly, `PreferenceTextMemory` is the best choice.
+
+In conclusion, when you need to build systems that can "remember" user preferences and provide personalized services accordingly, `PreferenceTextMemory` is the best choice.
 ::
 
 ## Core Concepts and Workflow
@@ -74,7 +73,7 @@ Preference memory can be divided into explicit preference memory and implicit pr
     - User frequently requests detailed explanations → prefers in-depth understanding
     - User mentions environmental topics multiple times → concerned about sustainable development
 
-::alert{type="success"}
+::note
 **Intelligent Extraction**<br>
 `PreferenceTextMemory` automatically extracts both explicit and implicit preferences from conversations using LLM, no manual annotation required!
 ::

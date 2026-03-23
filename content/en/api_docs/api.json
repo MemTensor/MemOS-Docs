@@ -497,13 +497,13 @@
               "type": "string"
             },
             "title": "Knowledgebase IDs",
-            "description": "Selected scope of knowledgebases for retrieval."
+            "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched.Pass specific Knowledgebase IDs to search within that designated repository; pass \"all\" to search across all associated knowledgebases within the project."
           },
           "memory_limit_number": {
             "type": "integer",
             "title": "Memory Limit Number",
-            "description": "Limits the number of returned fact memories, controlling the count of recalled fact memories. Default: 6, Max: 25.",
-            "default": 6
+            "description": "Maximum number of memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -514,8 +514,16 @@
           "preference_limit_number": {
             "type": "integer",
             "title": "Preference Limit Number",
-            "description": "Limits the number of returned preference memories, controlling the count of recalled preference memories. Effective only when include_preference=true. Default: 6, Max: 25.",
-            "default": 6
+            "description": "Maximum number of preferred memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many preference memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering.",
+            "default": 0.45
           },
           "model_name": {
             "type": "string",
@@ -818,7 +826,7 @@
                       "properties": {
                         "file_data": {
                           "type": "string",
-                          "description": "Accessible file URL or base64. Supports txt / pdf / doc / docx / json / md / xml. Single file max 100MB, 200 pages, total max 20 files. Required when type is file."
+                          "description": "Accessible file URL or base64. Supports txt / pdf / doc / docx / json / md / xml. Single file max 100MB, 500 pages, total max 20 files. Required when type is file."
                         }
                       }
                     }
@@ -1056,14 +1064,14 @@
             "items": {
               "type": "string"
             },
-            "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched.Pass specific Knowledgebase IDs to search within that designated repository; pass "all" to search across all associated knowledgebases within the project."
+            "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched.Pass specific Knowledgebase IDs to search within that designated repository; pass \"all\" to search across all associated knowledgebases within the project."
           },
           "memory_limit_number": {
             "type": "integer",
             "format": "int32",
             "title": "Memory Limit Number",
-            "description": "Limits the number of fact memory items returned, controlling the length of fact memory. Defaults to 6 if not provided. The maximum allowed value is 25.",
-            "default": 6
+            "description": "Maximum number of memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -1075,8 +1083,8 @@
             "type": "integer",
             "format": "int32",
             "title": "Preference Limit Number",
-            "description": "Limits the number of preference memory items returned, controlling the length of fact memory. Defaults to 6 if not provided. The maximum allowed value is 25.",
-            "default": 6
+            "description": "Maximum number of preference memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many preferred memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_tool_memory": {
             "type": "boolean",
@@ -1090,6 +1098,24 @@
             "title": "Tool Memroy Limit Number",
             "description": "Limits the number of tool memory items returned, controlling the count of recalled tool memories. Effective only when include_tool_memory=true. Default is 6 if not provided, max is 25.",
             "default": 6
+          },
+          "include_skill": {
+            "type": "boolean",
+            "title": "Include Skill",
+            "description": "Whether to enable Skill recall. When enabled, the system will intelligently recall memories related to tools based on the query content. Default is disabled if not provided."
+          },
+          "skill_limit_number": {
+            "type": "number",
+            "title": "Include Skill",
+            "description": "Limits the number of returned Skills, controlling the count of recalled skills. Effective only when `include_skill=true`. Default is 6 if not provided, max is 25."
+          },
+         "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering.",
+            "default": 0.45
           }
         },
         "title": "SearchMemoryRequest"
@@ -1151,6 +1177,14 @@
             "type": "string",
             "title": "Preference Note",
             "description": "Preference memory usage note when it is retrieved."
+          },
+          "skill_detail_list": {
+            "type": "array",
+            "title": "Skill Detail List",
+            "description": "List of skill details returned.",
+            "items": {
+              "$ref": "#/components/schemas/SkillDetail"
+            }
           }
         },
         "description": "Object containing the query result."
@@ -1287,6 +1321,14 @@
             "type": "string",
             "title": "Update Time",
             "description": "Last modification or update time of preference memory, usually in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance score of preference memory to the query, ranging from 0 to 1. Higher values indicate stronger relevance.",
+            "example": 0.87
           }
         },
         "title": "PreferenceDetail"
@@ -1382,6 +1424,129 @@
           }
         },
         "title": "ToolMemoryDetail"
+      },
+      "SkillValue": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The name of the Skill, used for display and identification of the capability."
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "The description of the Skill."
+          },
+          "procedure": {
+            "type": "string",
+            "title": "Procedure",
+            "description": "Recommended procedures or operational steps to complete the task."
+          },
+          "experience": {
+            "type": "array",
+            "title": "Experience",
+            "items": {
+              "type": "string"
+            },
+            "description": "Experience accumulated from historical tasks, including best practices, common pitfalls, and avoidance suggestions."
+          },
+          "preference": {
+            "type": "array",
+            "title": "Preference",
+            "items": {
+              "type": "string"
+            },
+            "description": "User preference settings for this type of task, such as style, constraints, or priorities."
+          },
+          "examples": {
+            "type": "array",
+            "title": "Examples",
+            "items": {
+              "type": "string"
+            },
+            "description": "Typical usage examples of the Skill, helping the Agent understand input/output formats and usage boundaries."
+          },
+          "script": {
+            "type": "object",
+            "title": "Script",
+            "description": "Reusable code scripts or logic implementations used to complete the Skill."
+          },
+          "others": {
+            "type": "object",
+            "title": "Others",
+            "description": "Other supplementary information."
+          }
+        }
+      },
+      "SkillDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "The unique identifier of the Skill, used internally by the system to distinguish different memory entries."
+          },
+          "skill_value": {
+            "type": "object",
+            "title": "Skill Value",
+            "description": "The specific content of the Skill.",
+            "items": {
+              "$ref": "#/components/schemas/SkillValue"
+            }
+          },
+          "skill_url": {
+            "type": "string",
+            "title": "Skill Url",
+            "description": "The download link for the Skill, downloaded as reusable skill implementations or configuration files."
+          },
+          "skill_type": {
+            "type": "string",
+            "title": "Skill Type",
+            "description": "The type of the Skill."
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "The creation time of the Skill content, usually in ISO 8601 format."
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "The unique identifier of the conversation associated with the Skill."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "The status of the Skill. Currently, all retrieved Skills are 'activated'. activated: Active status, the Skill is currently retrievable and usable.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence",
+            "description": "The confidence score of the Skill, ranging from 0 to 1. A value closer to 1 indicates the Skill is more accurate and reliable.\nThe confidence score gradually decays as the model infers this Skill more times, reflecting the uncertainty that may arise over time or usage frequency."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of tags associated with the Skill, used for classification, retrieval, or topic marking. Each element in the array is a string, e.g., [\"Person\", \"Event\", \"Work\"]."
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "The time when the Skill was last modified or updated, usually in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "string",
+            "title": "Relativity",
+            "description": "The relevance score between the query content and the Skill, ranging from 0 to 1. A value closer to 1 indicates higher relevance."
+          }
+        },
+        "title": "SkillDetail"
       },
       "GetMemoryRequest": {
         "type": "object",
@@ -1684,9 +1849,6 @@
       },
       "DeleteMemoryRequest": {
         "type": "object",
-        "required": [
-          "memory_ids"
-        ],
         "properties": {
           "memory_ids": {
             "type": "array",
@@ -1695,6 +1857,11 @@
             },
             "title": "Memory IDs",
             "description": "IDs of the memories to be deleted, obtained from the `id` field returned by the `search/memory` or `get/memory` API."
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "Unique identifier of the user whose memories are being deleted."
           }
         },
         "title": "DeleteMemoryRequest"
@@ -1996,7 +2163,7 @@
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "The file content input supports URL or Base64 encoding, and the supported document types include PDF, DOCX, DOC, TXT, JSON, MD and XML."
+                  "description": "The file content input supports URL or Base64 encoding, and the supported document types include PDF, DOCX, DOC, TXT, JSON, MD and XML.Supports uploading up to 20 documents at a time; each document must be no larger than 100 MB, 500 pages, or 20,000 tokens."
                 }
               }
             }

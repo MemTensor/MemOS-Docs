@@ -1,5 +1,5 @@
 ---
-title: 获取记忆
+title: Get Memory
 openapi: "POST /get/memory"
 ---
 <!-- Menu Mapping -->

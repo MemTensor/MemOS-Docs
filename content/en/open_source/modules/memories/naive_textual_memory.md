@@ -3,11 +3,9 @@ title: "NaiveTextMemory: Simple Plain Text Memory"
 desc: "The most lightweight memory module in MemOS, designed for rapid prototyping and simple scenarios. No vector database required—quickly retrieve memories using keyword matching."
 ---
 
-# NaiveTextMemory: Simple Plain Text Memory
+Let's get started with the MemOS memory system in the simplest way possible!
 
-Let's start using the MemOS memory system in the simplest way possible!
-
-**NaiveTextMemory** is a lightweight, in-memory plain text memory module that stores memories in a memory list and uses keyword matching for retrieval. It's the best starting point for learning MemOS and is suitable for demos, testing, and small-scale applications.
+NaiveTextMemory is a lightweight, memory-based, plain-text memory module. It stores memories in an in-memory list and retrieves them using keyword matching. It is the perfect starting point for learning MemOS, as well as an ideal choice for demos, testing, and small-scale applications.
 
 ## Table of Contents
 
@@ -62,7 +60,7 @@ By the end of this guide, you will be able to:
 - Keyword search scenarios (queries directly match memories)
 ::
 
-::alert{type="warning"}
+::note
 **Performance Tip**<br>
 When memory count exceeds 1000, it's recommended to upgrade to [GeneralTextMemory](/open_source/modules/memories/general_textual_memory), which uses vector search for better performance.
 ::
@@ -139,19 +137,8 @@ Sort all memories by match count in descending order
 #### Step 4: Return Results
 Return the top-k memories as search results
 
-::
 
-**Algorithm Comparison**
-
-| Feature            | Keyword Matching (NaiveTextMemory) | Vector Semantic Search (GeneralTextMemory) |
-| ------------------ | ---------------------------------- | ------------------------------------------ |
-| **Semantic Understanding** | ❌ Doesn't understand synonyms  | ✅ Understands similar concepts            |
-| **Resource Usage** | ✅ Extremely low                   | ⚠️ Requires embedding model and vector DB  |
-| **Execution Speed** | ✅ Fast (O(n))                    | ⚠️ Slower (indexing + querying)            |
-| **Suitable Scale** | < 1K memories                     | 10K - 100K memories                        |
-| **Predictability** | ✅ Intuitive results               | ⚠️ Black box model                         |
-
-::alert{type="info"}
+::note
 **Example Comparison**<br>
 Query: "cat" <br>
 - **Keyword Matching**: Only matches memories containing "cat"<br>
@@ -238,7 +225,7 @@ memory.add(memories)
 print(f"✓ Added {len(memories)} memories")
 ```
 
-::alert{type="info"}
+::note
 **Advanced: Using MultiModal Reader**<br>
 If you need to process multimodal content such as images, URLs, or files, use `MultiModalStructMemReader`.<br>
 View complete example: [Using MultiModalStructMemReader (Advanced)](./tree_textual_memory#using-multimodalstructmemreader-advanced)
@@ -332,7 +319,7 @@ if memories:
 # memory.delete_all()
 ```
 
-::alert{type="info"}
+::note
 **Extension: Internet Retrieval**<br>
 NaiveTextMemory focuses on local memory management. For retrieving information from the internet and adding it to your memory store, see:<br>
 [Retrieve Memories from the Internet (Optional)](./tree_textual_memory#retrieve-memories-from-the-internet-optional)
@@ -367,7 +354,7 @@ When calling `dump(dir)`, the system saves memories to:
 
 Use `load(dir)` to fully restore all memory data.
 
-::alert{type="warning"}
+::note
 **Important Note**<br>
 Memories are stored in memory and will be lost after process restart. Remember to call `dump()` regularly to save data!
 ::

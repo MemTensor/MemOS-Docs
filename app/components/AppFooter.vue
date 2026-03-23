@@ -16,7 +16,7 @@ const socialData: SocialLink[] = [
   },
   {
     icon: 'ri:twitter-x-fill',
-    link: 'https://x.com/MemOS_MemTensor'
+    link: 'https://x.com/MemOS_dev'
   },
   {
     icon: 'ri:discord-fill',

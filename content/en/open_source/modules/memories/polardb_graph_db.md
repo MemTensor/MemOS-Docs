@@ -1,11 +1,9 @@
 ---
 title: "PolarDB Graph Database"
-desc: "Configuration and usage of PolarDB graph database in the MemOS framework"
+desc: "Configuration and usage of PolarDB graph database in the MemOS framework. MemOS supports using **PolarDB** (based on Apache AGE extension) as a graph database backend for storing and retrieving knowledge graph-style memory data. PolarDB combines the powerful capabilities of PostgreSQL with the flexibility of graph databases, making it particularly suitable for scenarios requiring both relational and graph data queries."
 ---
 
-# PolarDB Graph Database
 
-MemOS supports using **PolarDB** (based on Apache AGE extension) as a graph database backend for storing and retrieving knowledge graph-style memory data. PolarDB combines the powerful capabilities of PostgreSQL with the flexibility of graph databases, making it particularly suitable for scenarios requiring both relational and graph data queries.
 
 
 ## Features
@@ -46,7 +44,7 @@ pip install psycopg2-binary  # Recommended: pre-compiled version
 pip install psycopg2          # Requires PostgreSQL development libraries
 
 # Install MemOS
-pip install memos
+pip install MemoryOS -U
 ```
 
 ### 2. Configure PolarDB

@@ -1,12 +1,13 @@
 ---
 title: "TreeTextMemory: Structured Hierarchical Textual Memory"
+desc: >
+    Let’s build your first **graph-based, tree-structured memory** in MemOS!
+    <br>
+    **TreeTextMemory** helps you organize, link, and retrieve memories with rich context and explainability.
+    <br>
+    [Neo4j](/open_source/modules/memories/neo4j_graph_db) is the current backend, with support for additional graph stores planned in the future.
 ---
 
-Let’s build your first **graph-based, tree-structured memory** in MemOS!
-
-**TreeTextMemory** helps you organize, link, and retrieve memories with rich context and explainability.
-
-[Neo4j](/open_source/modules/memories/neo4j_graph_db) is the current backend, with support for additional graph stores planned in the future.
 
 ## Table of Contents
 
@@ -309,7 +310,7 @@ for m_list in mixed_memories:
 print(f"✓ Extracted and added {len(mixed_memories)} memories from mixed content")
 ```
 
-::alert{type="info"}
+::note
 **MultiModal Reader Advantages**<br>
 - **Smart Routing**: Automatically identifies content type (image/URL/file) and selects appropriate parser<br>
 - **Format Support**: Supports PDF, DOCX, Markdown, HTML, images, and more<br>
@@ -318,7 +319,7 @@ print(f"✓ Extracted and added {len(mixed_memories)} memories from mixed conten
 - **Context Preservation**: Uses sliding window to maintain context continuity between chunks
 ::
 
-::alert{type="tip"}
+::note
 **Configuration Tips**<br>
 - Use the `direct_markdown_hostnames` parameter to specify which domains should return Markdown format<br>
 - Supports both `mode="fast"` and `mode="fine"` extraction modes; fine mode extracts more details<br>

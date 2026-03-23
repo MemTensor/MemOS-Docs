@@ -1,5 +1,5 @@
 ---
-title: 获取任务状态
+title: Get Task Status
 openapi: "POST /get/status"
 ---
 <!-- Menu Mapping -->

@@ -1,5 +1,5 @@
 ---
-title: "GeneralTextMemory: 通用文本记忆"
+title: "GeneralTextMemory: 通用明文记忆"
 desc: "`GeneralTextMemory` 是MemOS中一个灵活的、基于向量的明文记忆模块，用于存储、搜索和管理非结构化知识。如果说 Naive 模块是‘关键词匹配’，那么 GeneralTextMemory 就是‘理解意思’的智能索引，它适用于会话代理、个人助理和任何需要语义记忆检索的系统。"
 ---
 ## 目录

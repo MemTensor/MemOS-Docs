@@ -40,6 +40,12 @@ const items = computed(() => localeItems.value.map((item, index) => ({
         >
           {{ $t('homepage.buttonText') }}
         </BaseButton>
+        <BaseButton
+          trailing-icon="ri:arrow-right-line"
+          to="/openclaw/guide"
+        >
+          {{ $t('homepage.openclawButton') }}
+        </BaseButton>
       </template>
     </UPageHero>
     <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-12 max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-0">

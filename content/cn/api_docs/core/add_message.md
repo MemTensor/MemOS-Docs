@@ -1,5 +1,5 @@
 ---
-title: 添加消息
+title: Add Message
 openapi: "POST /add/message"
 ---
 <!-- Menu Mapping -->

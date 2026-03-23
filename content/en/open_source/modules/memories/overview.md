@@ -3,19 +3,18 @@ title: "Memory Modules Overview"
 desc: "Complete guide to MemOS memory systems - from lightweight text memory to advanced graph structures, choose the right memory module for your needs"
 ---
 
-# Memory Modules Overview
 
-MemOS provides a rich set of memory modules to meet various needs from rapid prototyping to production environments. This guide helps you quickly find the most suitable memory solution.
+The Memory Module provides Agents with essential long-term memory capabilities. Instead of acting as a static database, it mimics human cognitive processes by automatically extracting, organizing, and linking information. Choosing different memory modules allows you to customize and enhance your Agent's skills.
 
 ## 🎯 Quick Selection Guide
 
 ::alert{type="info"}
 **Not sure which to choose?** Follow this decision tree:
-- 🚀 **Quick testing/demo** → [NaiveTextMemory](#naivetextmemory-simple-textual-memory)
-- 📝 **General text memory** → [GeneralTextMemory](#generaltextmemory-general-purpose-textual-memory)
-- 👤 **User preference management** → [PreferenceTextMemory](#preferencetextmemory-preference-memory)
-- 🌳 **Structured knowledge graph** → [TreeTextMemory](#treetextmemory-hierarchical-structured-memory)
-- ⚡ **Inference acceleration** → [KVCacheMemory](#kvcachememory-activation-memory)
+- 🚀 **Quick testing/demo**: Get started easily with no additional software → [NaiveTextMemory](#naivetextmemory-simple-textual-memory)
+- 📝 **General text memory**: Retain chat history or massive documents with semantic search capabilities → [GeneralTextMemory](#generaltextmemory-general-purpose-textual-memory)
+- 👤 **User preference management**：Specifically designed for building and managing user profiles → [PreferenceTextMemory](#preferencetextmemory-preference-memory)
+- 🌳 **Structured knowledge graph**: Ideal for data with complex logical relationships and interconnections → [TreeTextMemory](#treetextmemory-hierarchical-structured-memory)
+- ⚡ **Inference acceleration**: Optimized for high-traffic scenarios to ensure stable and rapid responses → [KVCacheMemory](#kvcachememory-activation-memory)
 ::
 
 ---

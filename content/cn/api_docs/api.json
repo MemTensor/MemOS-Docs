@@ -19,7 +19,7 @@
   "paths": {
     "/add/message": {
       "post": {
-        "summary": "添加消息",
+        "summary": "Add Message",
         "description": "该接口用于添加会话消息，支持多类型内容、批量添加。MemOS 会自动解析消息并处理记忆，用于后续对话时召回参考。",
         "operationId": "add_message",
         "requestBody": {
@@ -78,7 +78,7 @@
     },
     "/get/message": {
       "post": {
-        "summary": "获取消息",
+        "summary": "Get Message",
         "description": "该接口用于获取指定会话的用户与助手历史对话记录，可按数量限制返回结果。",
         "operationId": "get_message",
         "requestBody": {
@@ -112,7 +112,7 @@
     },
     "/search/memory": {
       "post": {
-        "summary": "检索记忆",
+        "summary": "Search Memory",
         "description": "该接口用于检索指定用户的记忆，返回与输入查询内容最相关的记忆片段，供Agent使用。召回的记忆片段包括“事实记忆”、“偏好记忆”、“工具记忆”。",
         "operationId": "search_memory",
         "requestBody": {
@@ -146,7 +146,7 @@
     },
     "/chat": {
       "post": {
-        "summary": "对话",
+        "summary": "Chat",
         "description": "",
         "operationId": "chat",
         "requestBody": {
@@ -210,7 +210,7 @@
     },
     "/get/memory": {
       "post": {
-        "summary": "获取记忆",
+        "summary": "Get Memory",
         "description": "该接口用于获取某个用户的记忆，包含事实记忆、偏好记忆与工具记忆。",
         "operationId": "get_memory",
         "requestBody": {
@@ -239,7 +239,7 @@
     },
     "/delete/memory": {
       "post": {
-        "summary": "删除记忆",
+        "summary": "Delete Memory",
         "description": "该接口用于删除指定用户的记忆，支持批量删除。",
         "operationId": "delete_memory",
         "requestBody": {
@@ -268,7 +268,7 @@
     },
     "/add/feedback": {
       "post": {
-        "summary": "添加反馈",
+        "summary": "Add Feedback",
         "description": "该接口用于添加对当前会话消息的反馈，MemOS能够基于用户的反馈更正记忆。",
         "operationId": "add_feedback",
         "requestBody": {
@@ -297,7 +297,7 @@
     },
     "/get/status": {
       "post": {
-        "summary": "获取任务状态",
+        "summary": "Get Task Status",
         "description": "获取异步处理任务的状态。",
         "operationId": "get_status",
         "requestBody": {
@@ -515,13 +515,13 @@
               "type": "string"
             },
             "title": "Knowledgebase IDs",
-            "description": "选定可以检索的知识库范围。"
+            "description": "该字段用于限制当次搜索可访问的知识库范围，默认为空（即不检索任何知识库）。传入具体知识库 ID，则可检索指定的知识库；传入all，则可检索该项目下所有关联知识库。"
           },
           "memory_limit_number": {
             "type": "integer",
             "title": "Memory Limit Number",
-            "description": "限定返回的事实记忆条数，用于控制召回的事实记忆个数。默认值： 6，最大值：25。",
-            "default": 6
+            "description": "召回的事实记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -532,8 +532,16 @@
           "preference_limit_number": {
             "type": "integer",
             "title": "Preference Limit Number",
-            "description": "限定返回的偏好记忆条数，用于控制召回的偏好记忆个数，仅在include_preference=true 时生效 默认值： 6，最大值：25",
-            "default": 6
+            "description": "召回的偏好记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
+            "default": 9
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "召回记忆的相关性阈值（0~1）。用于过滤低相关记忆，并与限定返回的事实、偏好记忆最大条数，共同约束最终返回结果。不传时使用系统默认阈值，取值为0时表示不进行相关性过滤。",
+            "default": 0.45
           },
           "model_name": {
             "type": "string",
@@ -751,7 +759,7 @@
                       "properties": {
                         "file_data": {
                           "type": "string",
-                          "description": "可访问的文件URL或者base64, 只支持四种类型txt / pdf / doc / docx / json / md / xml， 单文件不超过100MB、200页，总数不超过20个。type为file时必填。"
+                          "description": "可访问的文件URL或者base64, 只支持七种类型txt / pdf / doc / docx / json / md / xml， 单文件不超过100MB、500页，总数不超过20个。type为file时必填。注意：该接口的总输入上限为20,000 Tokens。"
                         }
                       }
                     }
@@ -1076,8 +1084,8 @@
             "type": "integer",
             "format": "int32",
             "title": "Memory Limit Number",
-            "description": "限定返回的事实记忆条数，用于控制事实记忆片段的长度，不传时使用系统默认值6，最大值为25。",
-            "default": 6
+            "description": "召回的记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -1089,8 +1097,8 @@
             "type": "integer",
             "format": "int32",
             "title": "Preference Limit Number",
-            "description": "限定返回的偏好记忆条数，用于控制偏好记忆片段的长度，仅在 include_preference=true 时生效。不传时使用系统默认值6，最大值为25。",
-            "default": 6
+            "description": "召回的偏好记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
+            "default": 9
           },
           "include_tool_memory": {
             "type": "boolean",
@@ -1104,6 +1112,24 @@
             "title": "Tool Memroy Limit Number",
             "description": "限定返回的工具记忆条数，用于控制召回的工具记忆个数,仅在 include_tool_memory=true 时生效。不传时使用系统默认值6，最大值为25。",
             "default": 6
+          },
+          "include_skill": {
+            "type": "boolean",
+            "title": "Include Skill",
+            "description": "是否启用技能（Skill）召回。开启后，系统会根据查询内容智能召回工具相关的记忆。不传时该功能默认关闭。"
+          },
+          "skill_limit_number": {
+            "type": "number",
+            "title": "Include Skill",
+            "description": "限定返回的技能（Skill）条数，用于控制召回的技能个数,仅在 include_skill=true 时生效。不传时使用系统默认值6，最大值为25。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "召回记忆的相关性阈值（0~1）。用于过滤低相关记忆，并与限定返回的事实、偏好记忆最大条数，共同约束最终返回结果。不传时使用系统默认阈值，取值为0时表示不进行相关性过滤。",
+            "default": 0.45
           }
         },
         "title": "SearchMemoryRequest"
@@ -1239,6 +1265,14 @@
             "type": "string",
             "title": "Update Time",
             "description": "偏好记忆最后一次被修改或更新的时间，通常为 ISO 8601 格式。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "查询内容与该偏好记忆的相关性分数，范围 0~1，数值越接近 1 表示越相关。",
+            "example": 0.87
           }
         },
         "title": "PreferenceDetail"
@@ -1335,6 +1369,129 @@
         },
         "title": "ToolMemoryDetail"
       },
+      "SkillValue": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "技能 Skill 的名称，用于展示与识别该能力。"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "技能 Skill 的描述。"
+          },
+          "procedure": {
+            "type": "string",
+            "title": "Procedure",
+            "description": "完成该任务的推荐流程或操作步骤。"
+          },
+          "experience": {
+            "type": "array",
+            "title": "Experience",
+            "items": {
+              "type": "string"
+            },
+            "description": "来自历史任务的经验沉淀，包括最佳实践、常见误区与避坑建议。"
+          },
+          "preference": {
+            "type": "array",
+            "title": "Preference",
+            "items": {
+              "type": "string"
+            },
+            "description": "用户在该类任务中的偏好设定，例如风格、约束条件或优先级。"
+          },
+          "examples": {
+            "type": "array",
+            "title": "Examples",
+            "items": {
+              "type": "string"
+            },
+            "description": "该技能 Skill 的典型使用示例，帮助 Agent 理解输入输出形式与使用边界。"
+          },
+          "script": {
+            "type": "object",
+            "title": "Script",
+            "description": "用于完成该 Skill 的可复用代码脚本或逻辑实现。"
+          },
+          "others": {
+            "type": "object",
+            "title": "Others",
+            "description": "其他补充信息。"
+          }
+        }
+      },
+      "SkillDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "技能 Skill 的唯一标识符，系统内部用于区分不同的记忆条目。"
+          },
+          "skill_value": {
+            "type": "object",
+            "title": "Skill Value",
+            "description": "技能 Skill 的具体内容。",
+            "items": {
+              "$ref": "#/components/schemas/SkillValue"
+            }
+          },
+          "skill_url": {
+            "type": "string",
+            "title": "Skill Url",
+            "description": "技能 Skill 的下载链接，下载为可复用的技能实现或配置文件。"
+          },
+          "skill_type": {
+            "type": "string",
+            "title": "Skill Type",
+            "description": "技能 Skill 的类型。"
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "技能 Skill 内容创建的时间，通常为 ISO 8601 格式。"
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "与该技能 Skill 关联的会话的唯一标识符。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "技能 Skill 的状态，当前所有检索到的技能 Skill 都是 activated。activated：激活状态，当前可检索和使用的技能 Skill 。",
+            "enum": [
+              "activated"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence",
+            "description": "技能 Skill 的置信度分数，范围 0~1，数值越接近 1 表示该技能 Skill 越准确可靠。\n置信度分数会随着模型对该技能 Skill 的推理次数增加而逐渐衰减，用于反映技能 Skill 随着时间或使用频率可能产生的不确定性。"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "与技能 Skill 相关的标签列表，用于分类、检索或主题标记。数组中的每个元素都是string，例如 [\"人物\", \"事件\", \"工作\"]。"
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "技能 Skill 最后一次被修改或更新的时间，通常为 ISO 8601 格式"
+          },
+          "relativity": {
+            "type": "string",
+            "title": "Relativity",
+            "description": "查询内容与该技能 Skill 的相关性分数，范围 0~1，数值越接近 1 表示越相关。"
+          }
+        },
+        "title": "SkillDetail"
+      },
       "SearchMemoryResponseData": {
         "type": "object",
         "title": "SearchMemoryResponseData",
@@ -1367,6 +1524,14 @@
             "type": "string",
             "title": "Preference Note",
             "description": "召回偏好记忆时，返回的偏好使用说明。"
+          },
+          "skill_detail_list": {
+            "type": "array",
+            "title": "Skill Detail List",
+            "description": "返回的技能 Skill 详情列表。",
+            "items": {
+              "$ref": "#/components/schemas/SkillDetail"
+            }
           }
         }
       },
@@ -1698,9 +1863,6 @@
       },
       "DeleteMemoryRequest": {
         "type": "object",
-        "required": [
-          "memory_ids"
-        ],
         "properties": {
           "memory_ids": {
             "type": "array",
@@ -1709,6 +1871,11 @@
             },
             "title": "Memory IDs",
             "description": "需要删除的记忆 ID 列表。每个 ID 均来自 search/memory 或 get/memory 接口返回的 id 字段。"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "删除用户的所有记忆，该用户关联的唯一ID标识符。"
           }
         },
         "title": "DeleteMemoryRequest"
@@ -2010,7 +2177,7 @@
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "文档内容输入方式支持 URL 或 Base64 编码，可上传的文档类型包括：PDF、DOCX、DOC、TXT、JSON、MD、XML。"
+                  "description": "文档内容输入方式支持 URL 或 Base64 编码，可上传的文档类型包括：PDF、DOCX、DOC、TXT、JSON、MD、XML。支持单次上传最多20个文档，单个文档不超过100MB、500页、20,000 Token数。"
                 }
               }
             }

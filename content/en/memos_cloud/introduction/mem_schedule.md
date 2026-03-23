@@ -1,336 +1,146 @@
 ---
 title: Memory Scheduling
-desc: Memory scheduling acts as the neural center of the memory system. It dynamically allocates and reclaims cognitive resources in the background by organizing and coordinating operations such as adding, updating, transforming, and retrieving memories, thereby continuously optimizing the entire memory system.
+desc: Memory scheduling works like the brain's attention mechanism, dynamically deciding which memories to call up at the right moment.
 ---
 
-## 0. Entry Point and Initialization Process
+## 1. Capability Overview
 
-**Entry Files**
+In MemOS, **Memory Scheduling** orchestrates memories with different efficiency tiers (parameters > active > working > other plaintext) so the model can retrieve what the user needs more efficiently and accurately. While conversations or tasks run, it predicts which memories might be required next and proactively loads higher efficiency types such as active or working memories to accelerate reasoning.
 
-- `MemOS/src/memos/api/server_api.py`: FastAPI application entry point, responsible only for mounting routes and exception handling.
-- `MemOS/src/memos/api/routers/server_router.py`: API Router, executes `handlers.init_server()` to complete component loading and obtain `mem_scheduler`.
+::note{icon="ri:triangular-flag-fill"}
+**Why is scheduling needed?**
+::
 
-**Initialization Logic** (`MemOS/src/memos/api/handlers/component_init.py`)
+In complex interactions, relying only on a basic global search each time can lead to:
 
-1. Initialize Redis client (used for status tracking and queue support).
-2. Build core components like LLM, Embedder, GraphDB, Reranker, MemReader, etc.
-3. Create `OptimizedScheduler` (of `BaseScheduler` type) (via `SchedulerFactory` + `SchedulerConfigFactory`).
-4. Call `mem_scheduler.initialize_modules(...)` and `mem_scheduler.init_mem_cube(...)` to bind resources.
-5. If `API_SCHEDULER_ON=true` (default), call `mem_scheduler.start()` to start the scheduler.
+* **Too slow**: Waiting until the user finishes before searching causes high first-token latency.
+* **Inaccurate**: Too much history can bury key information and make retrieval harder.
 
-**Scheduler Startup** (`BaseScheduler.start()`)
+<br>
 
-- `start_consumer()`: Start message consumer threads/processes.
-- `start_background_monitor()`: Start queue monitor thread (samples queue length and other metrics).
+Scheduling equips the system with “just-in-time preparation and rapid response” capabilities:
 
-> Thread/Process mode is controlled by `scheduler_startup_mode`, defaulting to `thread`.
+* **Preloading**: Load the user’s frequently used background right at the start of a conversation.
+* **Predictive fetch**: Prepare likely-to-be-used memories before the user finishes typing.
 
-## 1. Feature Overview
+<br>
 
-MemScheduler adopts a **Producer-Consumer + Thread Pool Parallelism** model.
+::note
+**How it works — combine task semantics, context, access frequency, lifecycle, and other signals to dynamically arrange memory invocation and storage.**
+::
 
-**Overall Workflow**
+| Dimension | Description |
+| --- | --- |
+| What to schedule? | Parameter memories (long-term knowledge and skills)<br><br>Active memories (runtime KV cache and hidden states)<br><br>Plaintext memories (externally editable facts, user preferences, retrieved snippets)<br><br>Supports dynamic migration across `plaintext ⇆ active ⇆ parameter`: frequently used plaintext snippets can be compiled into KV cache in advance, while stable templates can settle into parameters. |
+| When to schedule? | When existing context plus high-efficiency memories are insufficient to answer the user, optimize the memory structure.<br><br>Prepare memories in advance according to user intent and needs.<br><br>During continuous questioning, keep the dialog context efficient and accurate via scheduling. |
+| Who receives it? | The current user, specific agent roles, or cross-task shared contexts. |
+| What form? | Memories are tagged with heat, freshness, and importance. The scheduler uses these signals to decide who loads first, who goes to cold storage, and who needs archiving. |
 
-```text
-API Request
-  -> BaseScheduler.submit_messages
-     -> Priority Branching (LEVEL_1 Immediate / Others to Queue)
-        -> Consumer Thread _message_consumer
-           -> Dispatcher.dispatch (Thread Pool Concurrency)
-              -> Handler Executes Business Logic
-              -> Status Tracker Updates Status + Redis ACK
-```
+When you use the MemOS Cloud service, you can observe scheduling through the `searchMemory` API:
 
+* It quickly returns relevant memories, avoiding context gaps.
+* Returned content has already been optimized by the scheduler, so results stay relevant without overloading the model input.
 
-### 1.1 Queue Model
+## 2. Example: Memory Scheduling in a Home Assistant Scenario
 
-#### Local Queue (SchedulerLocalQueue)
+*Earlier:* The user was busy looking for a house.
 
-- Enabled when `use_redis_queue=False`.
-- Suitable for single-node deployment or development environments.
+::card-group
 
-#### Redis Queue (SchedulerRedisQueue)
+  :::card
+  ---
+  title: The user often says
+  ---
+  * “Help me check the average second-hand price in XX community.”
+  * “Remind me to view houses on Saturday.”
+  * “Record the latest mortgage rate changes.”
+  :::
 
-The Redis version is the **recommended default path for production environments**, supporting multi-instance deployment and breakpoint recovery.
+  :::card
+  ---
+  title: ✨ What MemOS does
+  ---
+  * The system initially writes these entries as **plaintext memories**.
+  * Because the house-hunting topic appears frequently, the scheduler identifies it as a **core theme** and migrates the related plaintext memories into **active memories** so follow-up queries are faster and more direct.
+  :::
 
-**Stream Key Format**
+::
 
-```
-{prefix}:{user_id}:{mem_cube_id}:{task_label}
-```
+<br>
 
-- Default prefix: `scheduler:messages:stream:v2.0`
-- Consumer Group: `scheduler_group`
-  - Redis queue prefix can be overridden by `MEMSCHEDULER_REDIS_STREAM_KEY_PREFIX`.
-  - Default constant `DEFAULT_STREAM_KEY_PREFIX` can be overridden by `MEMSCHEDULER_STREAM_KEY_PREFIX` (if a unified style is needed, configuring the former is recommended).
+*Recently:* The user bought the house and started renovating.
 
+::card-group
 
-### 1.2 Status Tracking (TaskStatusTracker)
+  :::card
+  ---
+  title: The user now says
+  ---
+  * “I’m going to look at tiles this weekend.”
+  * “Remind me to confirm electrical and plumbing work with the contractor.”
+  * “Note next week’s furniture delivery schedule.”
+  :::
 
-The scheduling system tracks task status via Redis Hash:
+  :::card
+  ---
+  title: ✨ What MemOS does
+  ---
+  * The system keeps generating new **plaintext memories**.
+  * The scheduler detects that “renovation” has become the new high-frequency topic, so it upgrades those entries into **active memories**.
+  * Previously active house-hunting memories are no longer used, so they are automatically **downgraded back to plaintext** to free active capacity.
+  :::
 
-- **Task Main Table**: `memos:task_meta:{user_id}`
-  - field: `item_id`
-  - value: JSON payload (status, task_type, mem_cube_id, timestamps...)
-  - TTL: 7 days
-- **Business Task Association Table**: `memos:task_items:{user_id}:{task_id}`
-  - value: set[item_id]
-  - TTL: 7 days
+::
 
-**Status Transition**
+<br>
 
-```
-waiting -> in_progress -> completed / failed
-```
+*Right now:* The user casually says, “I feel like everything is piling up—please sort it out for me.”
 
-**TTL**
+::card-group
 
-- All tracking keys expire in 7 days by default.
+  :::card
+  ---
+  title: Without scheduling, a full-database retrieval would return
+  ---
+  * Check tiles (renovation)
+  * Confirm electrical and plumbing (renovation)
+  * Furniture delivery (renovation)
+  * Check housing prices (house-hunting, outdated)
+  * View houses (house-hunting, outdated)
+  * Grocery shopping (chores)
+  * Watch movies (chores)
+  :::
 
-**Aggregate Query**
+  :::card
+  ---
+  title: ✨ With scheduling, the system quickly returns
+  ---
+  * Check tiles
+  * Confirm electrical and plumbing
+  * Furniture delivery
+  :::
 
-- When multiple `item_id`s share the same `task_id`, `get_task_status_by_business_id` aggregates them:
-  - Any failed -> failed
-  - Any in_progress/waiting -> in_progress
-  - All completed -> completed
+::
 
-### 1.3 Message Protocol
+<br>
 
-#### ScheduleMessageItem
+👉 **User experience improves**
 
-The core message structure received by the scheduler:
+* Faster responses (no need for full-database scans).
+* The list contains exactly what the user cares about—so the assistant “really gets me.”
 
-| Field | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `item_id` | `str` | Yes | Single message UUID. |
-| `redis_message_id` | `str` | No | Redis Stream message ID (written after consumption). |
-| `stream_key` | `str` | No | Redis stream key. |
-| `user_id` | `str` | Yes | User ID. |
-| `trace_id` | `str` | No | Trace ID, for distributed tracing. |
-| `mem_cube_id` | `str` | Yes | MemCube ID. |
-| `session_id` | `str` | No | Session ID (used for soft filtering). |
-| `label` | `str` | Yes | Scheduling instruction. |
-| `content` | `str` | Yes | JSON string or text payload. |
-| `timestamp` | `datetime` | No | Submission time (auto-generated). |
-| `user_name` | `str` | No | User display name. |
-| `info` | `dict` | No | Extended information (e.g., source_doc_id). |
-| `task_id` | `str` | No | Business task ID (used for aggregated status). |
+## 3. Advanced: If You Want Deep Customization
 
-#### Instruction Set (Task Labels)
+Developers can **extend scheduling strategies** to customize system behavior, for example:
 
-| Label | Priority | Handler | Description |
-| :--- | :--- | :--- | :--- |
-| `query` | Level 1 | `_query_message_consumer` | Retrieval and memory activation. |
-| `answer` | Level 1 | `_answer_message_consumer` | Record answer. |
-| `add` | Level 1 | `_add_message_consumer` | Write new memory. |
-| `mem_update` | Level 3 | `_memory_update_consumer` | Long-term memory index update. |
-| `mem_read` | Level 3 | `_mem_read_message_consumer` | Memory enhancement after file parsing. |
-| `mem_organize` | Level 3 | `_mem_reorganize_message_consumer` | Memory consolidation and organization. |
-| `mem_archive` | Level 3 | Not Registered | Memory archiving reserved Label (handler not registered in current version). |
-| `pref_add` | Level 3 | `_pref_add_message_consumer` | User preference recording. |
-| `mem_feedback` | Level 3 | `_mem_feedback_message_consumer` | Like/Dislike feedback learning. |
-| `api_mix_search` | Level 3 | `_api_mix_search_message_consumer` | API-side hybrid search (asynchronous enhancement). |
-
-> Task priority is determined by `SchedulerOrchestrator.tasks_priorities`. Labels not configured default to Level 3.
-
-### 1.4 Management and Monitoring API
-
-**Scheduler Status**
-
-- `GET /product/scheduler/status`
-  - Params: `user_id`, `task_id`(optional)
-  - `task_id` can be a business task ID (aggregated status) or a single `item_id`.
-  - Returns: Status list for the specified task or all user tasks.
-
-- `GET /product/scheduler/allstatus`
-  - Returns: Global aggregated statistics (waiting / in_progress / failed / completed...).
-
-**Queue Backlog**
-
-- `GET /product/scheduler/task_queue_status`
-  - Params: `user_id`
-  - Only available when Redis queue is enabled (`use_redis_queue=True`).
-  - Returns: Pending and remaining statistics at Redis Stream dimension.
-
-**Request / Response Examples**
-
-`GET /product/scheduler/status?user_id=u_123`
-
-```json
-{
-  "data": [
-    { "task_id": "9b4b8f3b-7c4e-4f9f-9cf0-0a4f5d2e3b10", "status": "completed" },
-    { "task_id": "c0d3b7a1-5a9e-4e4a-90e0-6b8a6df6a2aa", "status": "in_progress" }
-  ]
-}
-```
-
-`GET /product/scheduler/status?user_id=u_123&task_id=task_20240722_001`
-
-```json
-{
-  "data": [
-    { "task_id": "task_20240722_001", "status": "completed" }
-  ]
-}
-```
-
-`GET /product/scheduler/task_queue_status?user_id=u_123`
-
-```json
-{
-  "data": {
-    "user_id": "u_123",
-    "user_name": null,
-    "mem_cube_id": null,
-    "stream_keys": [
-      "scheduler:messages:stream:v2.0:u_123:mem_001:query",
-      "scheduler:messages:stream:v2.0:u_123:mem_001:add"
-    ],
-    "users_count": 1,
-    "pending_tasks_count": 2,
-    "remaining_tasks_count": 5,
-    "pending_tasks_detail": [
-      "scheduler:messages:stream:v2.0:u_123:mem_001:query:1",
-      "scheduler:messages:stream:v2.0:u_123:mem_001:add:1"
-    ],
-    "remaining_tasks_detail": [
-      "scheduler:messages:stream:v2.0:u_123:mem_001:query:3",
-      "scheduler:messages:stream:v2.0:u_123:mem_001:add:2"
-    ]
-  }
-}
-```
-
-`GET /product/scheduler/allstatus`
-
-```json
-{
-  "data": {
-    "scheduler_summary": {
-      "waiting": 2,
-      "in_progress": 1,
-      "pending": 2,
-      "completed": 15,
-      "failed": 0,
-      "cancelled": 0,
-      "total": 18
-    },
-    "all_tasks_summary": {
-      "waiting": 3,
-      "in_progress": 1,
-      "pending": 3,
-      "completed": 24,
-      "failed": 1,
-      "cancelled": 0,
-      "total": 29
-    }
-  }
-}
-```
-
-### 1.5. Observability and Monitoring Events
-
-The scheduler sends monitoring events at critical stages:
-
-- `enqueue` / `dequeue` / `start` / `finish`
-- Records `queue_wait_ms`, `exec_duration_ms`, `total_duration_ms`
-- Supports `trace_id` to trace through API and scheduling links.
-
-These events are the core basis for scheduling performance analysis and troubleshooting.
-
-        
-
-## 2. Advanced: Deep Customization
-
-Developers can customize system behavior by **extending scheduling policies**, mainly including:
-
-| **Extension Point** | **Configurable Content** | **Example Scenario** |
+| Category | Description | Example Scenario |
 | --- | --- | --- |
-| Scheduling Policy | Define memory selection logic for different tasks | Dialogue systems prioritize active memory; Research systems prioritize retrieving latest plaintext |
-| Transition Rules | Set conditions for cross-type migration | High-frequency FAQ → KV cache; Stable paradigm → Parameter module |
-| Context Binding | Link memory with roles/users | Student users auto-load learning preferences; Enterprise users load project archives |
-| Permissions & Governance | Combine access control and compliance checks during scheduling | Medical records visible only to doctors; Sensitive content not shareable across domains |
-| Scheduling Metrics | Optimize scheduling based on access frequency and latency requirements | High-frequency hot memory boosts priority; Low-frequency cold memory downgraded to archive |
+| Permissions & governance | Combine scheduling with access control and compliance checks. | Medical records are visible only to doctors; sensitive content cannot be shared across domains. |
+| Scheduling metrics | Optimize scheduling based on access frequency and latency needs. | High-frequency hot memories gain priority; low-frequency cold memories are downgraded to archival storage. |
 
-### Deep Customization Guide: Registering and Triggering Custom Memory Management Tasks
+## 4. Next Steps
 
-Memos' scheduler supports developers in registering asynchronous background tasks (such as regular memory organization, bulk data export, or time-consuming analysis). You can trigger these tasks by registering a **Handler** and submitting messages with a specific **Label** to the scheduler.
+Learn more about MemOS core capabilities:
 
-Here is the complete process for implementing custom asynchronous tasks, which can be referred to in `examples/mem_scheduler/scheduler_for_async_tasks.py`:
-
-#### 1. Define Handler Function
-
-First, define a handler function that receives a batch of `ScheduleMessageItem` messages. This is where the business logic is actually executed.
-
-```python
-from memos.mem_scheduler.schemas.message_schemas import ScheduleMessageItem
-import time
-
-def my_async_task_handler(messages: list[ScheduleMessageItem]):
-    """
-    Process a batch of scheduling messages.
-    """
-    print(f"Received {len(messages)} tasks, starting processing...")
-    
-    for msg in messages:
-        # Get task details
-        task_id = msg.item_id
-        content = msg.content
-        user_id = msg.user_id
-        
-        # Execute your memory management logic here (e.g., file I/O, API calls, data analysis)
-        print(f"Processing task {task_id} for user {user_id}: {content}")
-        time.sleep(1) # Simulate time-consuming operation
-        
-    print("All tasks processed.")
-```
-
-#### 2. Register Handler
-
-Define a unique Label for your task and register the Handler into the global scheduler instance `mem_scheduler`.
-
-```python
-from memos.api.routers.server_router import mem_scheduler
-
-# Define unique task identifier
-MY_TASK_LABEL = "my_custom_async_task"
-
-# Register Handler
-mem_scheduler.register_handlers({
-    MY_TASK_LABEL: my_async_task_handler
-})
-
-# (Optional) Set minimum idle time (ms) for this task type
-# This prevents the task from executing too frequently, suitable for low-priority background tasks
-mem_scheduler.orchestrator.tasks_min_idle_ms[MY_TASK_LABEL] = 5000 
-```
-
-#### 3. Submit Task to Trigger Scheduling
-
-Construct a `ScheduleMessageItem` and submit it to the scheduling queue. The scheduler will automatically distribute the message to your Handler based on the Label.
-
-```python
-from memos.mem_scheduler.schemas.message_schemas import ScheduleMessageItem
-
-# Create task message
-task_item = ScheduleMessageItem(
-    user_id="user_123",
-    mem_cube_id="default_cube",
-    label=MY_TASK_LABEL,          # Must match the Label used during registration
-    content="Data content to process",    # Payload passed to the Handler
-    item_id="unique_task_id_001"   # (Optional) Task ID, will auto-generate UUID if left blank
-)
-
-# Submit to scheduling queue
-print("Submitting task...")
-mem_scheduler.memos_message_queue.submit_messages([task_item])
-
-# At this point, the scheduler will asynchronously call my_async_task_handler in the background
-```
-
-By doing this, you can easily decouple complex memory management logic and hand it over to the Memos scheduling system for reliable background execution.
-
-
-## 3. Contact Us
-<img src="https://cdn.memtensor.com.cn/img/1758685658684_nbhka4_compressed.png" alt="image" style="width:70%;">
+* [Memory Recall](/overview/quick_start/mem_recall)
+* [Memory Lifecycle Management](/overview/quick_start/mem_lifecycle)

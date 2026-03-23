@@ -1,5 +1,5 @@
 ---
-title: MemOS API 开发指南 (Component & Handler 架构)
+title: API 开发指南 (Component & Handler 架构)
 desc: MemOS v2.0 采用了更加模块化和解耦的架构。旧版的 MOS 类已被弃用，现在推荐使用 Components (组件) + Handlers (处理器) 的模式进行开发。
 ---
 

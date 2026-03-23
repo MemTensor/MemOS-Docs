@@ -1,14 +1,151 @@
 versions:
+  - name: v2.0.10
+    date: 2026-03-19
+    changedInfo:
+      Improvements:
+        - type: PolarDB Database
+          changedInfo:
+            - PolarDB optimization and upgrade. Optimized execution paths for queries with multiple filter conditions, leveraging new kernel capabilities to improve CPU and memory usage, achieving several-fold query acceleration and reducing system pressure.
+        - type: Memory Version Service
+          changedInfo:
+            - Memory version plugin-based architecture.
+            - Added high availability for NLI model.
+            - Added routing logic for memory version at memreader. Falls back to legacy prompt and model when no relevant memory is recalled or all recalled content is judged irrelevant by the NLI model; otherwise uses the memory version plugin (qwen-flash).
+        - type: Service Optimization
+          changedInfo:
+            - Optimized scheduling tasks to improve memory usage.
+
+  - name: v2.0.9
+    date: 2026-03-16
+    changedInfo:
+      Improvements:
+        - type: Memory version compatibility for feedback
+          changedInfo:
+            - When Feedback updates a node, it follows the memory version logic, updates the original node, and pushes the previous content into the history field.
+        - type: Memory version optimization
+          changedInfo:
+            - During conflict resolution and duplicate merging, the process of "restoring independent facts from past versions" has been comprehensively optimized. It can now restore independent facts more stably and accurately, preserve the completeness of memory information, and reduce memory inconsistencies caused by unstable model responses.
+      Bug Fixes:
+        - type: Memory version parameter and related bug fixes
+          changedInfo:
+            - Fixed several bugs including memory version parameter validation, empty key after update, and incorrect update time.
+        - type: Feedback issue fixes
+          changedInfo:
+            - Fixed the issue where sources were empty during the Feedback process.
+  - name: v2.0.8
+    date: 2026-03-05
+    changedInfo:
+      New Features:
+        - type: New Features
+          changedInfo:
+            - When adding memories, conflicting/duplicate memories are automatically detected, merged, and archived. The latest memory content is retained, while the old memory content is placed in the history field.
+      Improvements:
+        - type: Preference memories migrated to graph database
+          changedInfo:
+            - Preference memories have been migrated to the graph database, unifying them with other memory types.
+        - type: memory versioning optimization
+          changedInfo:
+            - Memory retrieval reduces redundant calls to get_by_metadata, decreasing retrieval latency.
+        - type: database optimization
+          changedInfo:
+            - Implemented fine-grained concurrent rate limiting using semaphores, combined with automatic faulty connection removal and thread lifecycle management, to enhance system stability under high concurrency.
+            - Optimized log levels and content, retaining key execution traces while reducing the impact of log writing on database performance.
+            - Implemented trigger-based preheating to load hot data into the cache, avoiding high latency caused by cold starts.
+      Bug Fixes:
+        - type: bug in fast memory addition
+          changedInfo:
+            - Fixed an issue where, when adding memories with MultiModalStruct selected, embedding operations were not performed in some cases under fast mode, causing memories in fast mode to be unsearchable.
+        - type: bug in multimodal memory
+          changedInfo:
+            - Fixed a bug where the image content was not being separately interpreted for image-based memories.
+        - type: Memory Retrieval
+          changedInfo:
+            - Reduced redundant calls to get_by_metadata during memory retrieval, decreasing retrieval latency.
+        - type: Memory Versioning Concurrency Fix
+          changedInfo:
+            - Memory versioning now, under concurrent add scenarios (receiving multiple related add requests within a time frame shorter than the add interface latency), will sequentially merge and process them in chronological order instead of falling back to no processing.
+  - name: v2.0.7
+    date: 2026-02-27
+    changedInfo:
+      Improvements:
+        - type: Parameter optimization
+          changedInfo:
+            - 'The search and chat APIs have the relativity parameter for filtering recalled memories by relevance score. This update sets the default relevance threshold to 0.45.'
+        - type: Log optimization
+          changedInfo:
+            - 'Intercept some log errors and adjust the log level for certain logs.'
+  - name: v2.0.6
+    date: 2026-02-12
+    changedInfo:
+      New Features:
+        - type: Retrieval Optimization
+          changedInfo:
+            - 'Added keyword-based search in the search phase, while relativity continues to use cosine similarity of embeddings.'
+            - 'Added a relativity output field to the Chat API, allowing users to control the retrieval threshold during conversations using relativity.'
+      Bug Fixes:
+        - type: Fixes
+          changedInfo:
+            - 'Fixed an issue where an incorrect field was used in preference memory threshold filtering.'
+            - 'Fixed an issue that caused failures or hanging when calling the get_memory API with the filter parameter containing both field conditions and logical operators such as AND/OR/NOT.'
+            - 'Fixed issues related to passing extra body parameters to LLMs, ensuring compatibility with the enable thinking parameter input'
+  - name: v2.0.5
+    date: 2026-02-10
+    changedInfo:
+      New Features:
+        - type: Knowledge Base Retrieval Optimization
+          changedInfo:
+            - 'Dual-track retrieval: Supports coordinated storage and retrieval of "original text + memory", with customizable recall modes.'
+            - 'Context wake-up: Supports recalling surrounding context before/after chunks to improve semantic coherence in long texts.'
+            - 'Relevance filtering: The search API adds a relativity field (0~1) to filter low-quality recalls by threshold.'
+        - type: MindDock
+          changedInfo:
+            - 'Cloud Skill: Added cloud skill support and a quick entry.'
+            - 'Real-time prompt injection: Dynamically inject Skill modules during chat to enable skill interoperability across models.'
+        - type: MCP Memory Deletion
+          changedInfo:
+            - When deletion intent is detected, synchronously trigger deleteMemory and addFeedback.
+      Improvements:
+        - type: Scheduling & Retrieval Pipeline Refactor
+          changedInfo:
+            - 'Pipeline refactor: Rebuilt the retrieval chain into four stages—Search -> Enhance -> Rerank -> Filter—scheduled by a unified API.'
+            - 'Scheduling optimization: Modularized the task processor and fixed Redis Streams serialization and user_context passing issues.'
+        - type: Skills Improvements
+          changedInfo:
+            - 'Skill docs localization: Supports local storage of skill docs and generates dedicated URLs, downloadable directly via API.'
+            - "Skill generation optimization: Can now generate richer and more complete skills from users' historical information."
+      Bug Fixes:
+        - type: Playground Improvements
+          changedInfo:
+            - Fixed known UX issues and improved environment stability.
+  - name: v2.0.4
+    date: 2026-01-30
+    changedInfo:
+      New Features:
+        - type: Core Capabilities
+          changedInfo:
+            - Added Skill Memory.
+            - Added modules supporting memory versioning.
+            - Added chat/completions interface, compatible with OAI protocol.
+      Improvements:
+        - type: Retrieval Optimization
+          changedInfo:
+            - Reduced duplication between factual and preference memories during retrieval.
+      Bug Fixes:
+        - type: Bug Fixes
+          changedInfo:
+            - Fixed bug for new users in Playground.
+            - Fixed occasional latency when adding memories in cloud service.
+            - Resolved graph database efficiency issues.
   - name: v2.0.3
     date: 2026-01-22
     changedInfo:
       New Features:
         - type: Documentation
           changedInfo:
-            - Open-source project documentation: Fixed formatting issues, improved example descriptions, resolved Chinese-English inconsistencies, and added practical usage tips.
+            - 'Open-source project documentation: Fixed formatting issues, improved example descriptions, resolved Chinese-English inconsistencies, and added practical usage tips.'
         - type: Dashboard
           changedInfo:
-            - Knowledge base now supports more file types: JSON, MD, XML.
+            - 'Knowledge base now supports more file types: JSON, MD, XML.'
         - type: GitHub Repository
           changedInfo:
             - Adjusted the startup approach (introduced a new server router class) and removed the reference to src/memos/product_api.py.
@@ -328,5 +465,3 @@ versions:
         - type: Playground Progress
           changedInfo:
             - Completed engineering, front-end, and algorithm end-to-end connection, and bug fixing and optimization in progress
-
-

@@ -19,6 +19,6 @@ function onToggleOpen() {
     }"
     @click="onToggleOpen"
   >
-    Ask AI
+    <span class="inline-block @max-3xl:hidden">Ask AI</span>
   </UButton>
 </template>

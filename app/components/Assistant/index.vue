@@ -56,7 +56,7 @@ function onStopStreaming() {
   <Transition name="slide">
     <div
       v-if="isOpen"
-      class="h-full shrink-0 overflow-hidden"
+      class="h-screen sticky top-0 shrink-0 overflow-hidden"
     >
       <UDashboardSidebar
         id="assistant"

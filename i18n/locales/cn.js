@@ -9,6 +9,7 @@ export default {
       welcome: '欢迎',
       cloud: 'MemOS Cloud',
       openSource: '开源项目',
+      openclaw: 'OpenClaw',
       mcpAgent: 'MCP与Agent框架支持',
       apiDocs: 'API接口文档',
       samples: '示例项目',
@@ -53,6 +54,7 @@ export default {
     title: '别让你的 AI 再忘来忘去，用 MemOS',
     description: '在这里，你将找到从上手入门到生产部署的一切指南，帮助你在最短时间内把 MemOS 集成到你的 AI 应用中',
     buttonText: '现在就去',
+    openclawButton: 'OpenClaw 配置指南',
     items: [
       {
         title: 'MemOS Cloud',
