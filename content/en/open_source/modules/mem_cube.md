@@ -4,11 +4,14 @@ desc: "`MemCube` is the core organizational unit in MemOS, designed to encapsula
 ---
 ## What is a MemCube?
 
-A **MemCube** is a container that bundles three major types of memory:
+A **MemCube** is a container that bundles memory modules for a user/cube.
 
-- **Textual Memory** (e.g., `GeneralTextMemory`, `TreeTextMemory`): For storing and retrieving unstructured or structured text knowledge.
-- **Activation Memory** (e.g., `KVCacheMemory`): For storing key-value caches to accelerate LLM inference and context reuse.
-- **Parametric Memory** (e.g., `LoRAMemory`): For storing model adaptation parameters (like LoRA weights).
+In MemOS, the `GeneralMemCube` implementation can contain four configured memories:
+
+- **Textual Memory** (`text_mem`) (e.g., `GeneralTextMemory`, `TreeTextMemory`)
+- **Activation Memory** (`act_mem`) (e.g., `KVCacheMemory`, `VLLMKVCacheMemory`)
+- **Parametric Memory** (`para_mem`) (e.g., `LoRAMemory`)
+- **Preference Memory** (`pref_mem`) (a specialized textual memory backend, e.g. `pref_text`)
 
 Each memory type is independently configurable and can be swapped or extended as needed.
 
@@ -21,6 +24,7 @@ MemCube
  ├── text_mem: TextualMemory
  ├── act_mem: ActivationMemory
  └── para_mem: ParametricMemory
+ └── pref_mem: TextualMemory (preference)
 ```
 
 All memory modules are accessible via the MemCube interface:
@@ -28,6 +32,7 @@ All memory modules are accessible via the MemCube interface:
 - `mem_cube.text_mem`
 - `mem_cube.act_mem`
 - `mem_cube.para_mem`
+- `mem_cube.pref_mem`
 
 ## View Architecture
 
@@ -90,6 +95,9 @@ results = composite.search_memories(search_request)
 
 ```python
 from memos.mem_cube.general import GeneralMemCube
+from memos.configs.mem_cube import GeneralMemCubeConfig
+
+config = GeneralMemCubeConfig()
 mem_cube = GeneralMemCube(config)
 ```
 
@@ -98,13 +106,13 @@ mem_cube = GeneralMemCube(config)
 | Method                                    | Description                                               |
 | ----------------------------------------- | --------------------------------------------------------- |
 | `init_from_dir(dir)`                    | Load a MemCube from a local directory                     |
-| `init_from_remote_repo(repo, base_url)` | Load a MemCube from remote repo (e.g., Hugging Face)      |
-| `load(dir)`                             | Load all memories from a directory into existing instance |
-| `dump(dir)`                             | Save all memories to a directory for persistence          |
+| `init_from_remote_repo(cube_id, base_url)` | Load a MemCube from remote repo (e.g., Hugging Face)      |
+| `load(dir, memory_types=None)`          | Load selected memories from a directory into the instance |
+| `dump(dir, memory_types=None)`          | Save selected memories to a directory for persistence     |
 
 ## File Storage
 
-A MemCube directory contains:
+A MemCube directory typically contains:
 
 - `config.json` (MemCube configuration)
 - `textual_memory.json` (textual memory)
@@ -112,6 +120,8 @@ A MemCube directory contains:
 - `parametric_memory.adapter` (parametric memory)
 
 ## Example Usage
+
+The repository provides runnable examples under `MemOS/examples/mem_cube/`.
 
 ### Export Example (dump_cube.py)
 
@@ -187,7 +197,7 @@ print(f"✓ Saved to: {memory_file}")
 
 ### Import and Search Example (load_cube.py)
 
-> **Note on Embeddings**: The sample data uses **bge-m3** model with **1024 dimensions**. If your environment uses a different embedding model or dimension, semantic search after import may be inaccurate or fail. Ensure your `.env` configuration matches the embedding settings used during export.
+> **Note on Embeddings**: The sample data uses the **bge-m3** embedding model with **1024 dimensions**. If your environment uses a different embedding model/dimension, semantic search after import may be inaccurate.
 
 ```python
 import json
@@ -269,7 +279,7 @@ See examples in the code repository:
 
 ### Legacy API Notes
 
-The old approach of directly calling `mem_cube.text_mem.get_all()` is deprecated. Please use the View architecture. Legacy examples have been moved to `MemOS/examples/mem_cube/_deprecated/`.
+Directly operating on memory modules (e.g., calling `mem_cube.text_mem.get_all()` from application code) is considered legacy; prefer the View architecture for runtime add/search.
 
 ## Developer Notes
 
