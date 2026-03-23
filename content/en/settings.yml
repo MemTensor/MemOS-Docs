@@ -66,6 +66,30 @@ nav:
       - "(ri:database-2-line) KV Cache Memory": open_source/modules/memories/kv_cache_memory.md
       - "(ri:cpu-line) Parametric Memory": open_source/modules/memories/parametric_memory.md
 
+    - "(ri:file-code-line) Open Source API":
+      - "(ri:rocket-line) Getting Started":
+        - "(ri:eye-line) Overview": open_source/open_source_api/start/overview.md
+        - "(ri:settings-3-line) Configuration": open_source/open_source_api/start/configuration.md
+      - "(ri:edit-box-line) Core Operations":
+        - "(ri:message-3-line) Add Memory": open_source/open_source_api/core/add_memory.md
+        - "(ri:search-2-line) Search Memory": open_source/open_source_api/core/search_memory.md
+        - "(ri:file-list-line) Get Memories": open_source/open_source_api/core/get_memory.md
+        - "(ri:file-search-line) Get Memory Detail": open_source/open_source_api/core/get_memory_by_id.md
+        - "(ri:delete-bin-line) Delete Memory": open_source/open_source_api/core/delete_memory.md
+      - "(ri:chat-smile-2-line) Chat":
+        - "(ri:chat-4-line) Chat": open_source/open_source_api/chat/chat.md
+      - "(ri:chat-1-line) Messages":
+        - "(ri:feedback-line) Add Feedback": open_source/open_source_api/message/feedback.md
+        - "(ri:file-list-line) Get Message": open_source/open_source_api/message/get_message.md
+        - "(ri:question-line) Get Suggestions": open_source/open_source_api/message/get_suggestion_queries.md
+      - "(ri:timer-flash-line) Scheduler":
+        - "(ri:task-line) Task Status": open_source/open_source_api/scheduler/get_status.md
+      - "(ri:tools-line) Tools":
+        - "(ri:checkbox-multiple-blank-line) Check Cube": open_source/open_source_api/tools/check_cube.md
+        - "(ri:user-line) Get User Names": open_source/open_source_api/tools/get_user_names.md
+      - "(ri:customer-service-line) Help":
+        - "(ri:error-warning-line) Error Codes": open_source/open_source_api/help/error_codes.md
+
     - "(ri:star-line) Best Practice":
       - "(ri:speed-line) Performance Tuning": open_source/best_practice/performance_tuning.md
       - "(ri:wifi-line) Network Environment Adaptation": open_source/best_practice/network_workarounds.md
