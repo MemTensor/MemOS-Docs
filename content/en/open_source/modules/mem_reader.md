@@ -42,7 +42,7 @@ MemReader’s code structure is straightforward and mainly includes:
 *   **`base.py`**: defines the interface contract that all Readers must follow.
 *   **`simple_struct.py`**: **the most commonly used implementation**. Focuses on pure-text conversations and local documents; lightweight and efficient.
 *   **`multi_modal_struct.py`**: **an all-rounder**. Handles images, file URLs, tool calls, and other complex inputs.
-*   **`read_multi_modal/`**: contains various parsers, such as `ImageParser` for images and `FileParser` for files.
+*   **`read_multi_modal/`**: contains parsers for multimodal chat messages, e.g. `ImageParser`, `FileContentParser`, `ToolParser`, and role-based parsers.
 
 ---
 
@@ -50,8 +50,8 @@ MemReader’s code structure is straightforward and mainly includes:
 
 | Your need | Recommended choice | Why |
 | :--- | :--- | :--- |
-| **Only process plain text chats** | `SimpleStructMemReader` | Simple, direct, and performant. |
-| **Need to handle images and file links** | `MultiModalStructMemReader` | Built-in multimodal parsing. |
+| **Only process plain text chats** | `SimpleStructMemReader` (`backend="simple_struct"`) | Simple, direct, and performant. |
+| **Need to handle images and file links** | `MultiModalStructMemReader` (`backend="multimodal_struct"`) | Built-in multimodal parsing. |
 | **Upgrade from Fast to Fine** | Any Reader’s `fine_transfer` method | Supports a progressive “store first, refine later” strategy. |
 
 ---
@@ -93,7 +93,7 @@ memories = reader.get_memory(
 
 ### Scenario 1: Processing simple chat logs
 
-This is the most basic usage, with `SimpleStructMemReader`.
+This is the most basic usage, with `SimpleStructMemReader` (`backend="simple_struct"`).
 
 ```python
 # 1. Prepare input: standard OpenAI-style conversation format
@@ -114,12 +114,12 @@ memories = reader.get_memory(
 )
 
 # 3. Result
-# memories will include extracted facts, e.g., "User has a meeting tomorrow at 3pm about the Q4 project deadline"
+# memories will include extracted `TextualMemoryItem`s (nested by window)
 ```
 
 ### Scenario 2: Processing multimodal inputs
 
-When users send images or file links, switch to `MultiModalStructMemReader`.
+When users send images or file links, switch to `MultiModalStructMemReader` (`backend="multimodal_struct"`).
 
 ```python
 # 1. Prepare input: a complex message containing files and images
@@ -159,7 +159,7 @@ fast_memories = reader.get_memory(conversation, mode="fast", ...)
 
 # 2. Refine asynchronously in the background
 refined_memories = reader.fine_transfer_simple_mem(
-    fast_memories_flat_list, # Note: pass a flattened list of Items here
+    fast_memories,  # Note: fine_transfer_simple_mem expects nested windows (list[list[TextualMemoryItem]])
     type="chat"
 )
 
@@ -172,7 +172,13 @@ refined_memories = reader.fine_transfer_simple_mem(
 
 In `.env` or configuration files, you can adjust these key parameters:
 
-*   **`chat_window_max_tokens`**: **sliding window size**. Default is 1024. It determines how much context is packed together for processing. Too small may lose context; too large may exceed the LLM token limit.
+*   **`chat_chunker`**: chat chunking strategy configuration. (Chunker behavior is configured via `chunker`/`chat_chunker` in `MemReaderConfigFactory`.) It determines how much context is packed together for processing. Too small may lose context; too large may exceed the LLM token limit.
 *   **`remove_prompt_example`**: **whether to remove examples from the prompt**. Set to True if you want to save tokens; set to False if extraction quality is not good (keep few-shot examples).
 *   **`direct_markdown_hostnames`** (multimodal only): **hostname allowlist**. If a file URL’s hostname is in this list (e.g., `raw.githubusercontent.com`), the Reader treats it as Markdown text directly instead of trying OCR or conversion, which is more efficient.
 
+
+
+Additional config fields (from `BaseMemReaderConfig`):
+
+- `general_llm`: optional general-purpose LLM for non chat/doc tasks (falls back to `llm`).
+- `image_parser_llm`: optional vision LLM for image parsing (falls back to `general_llm`).
