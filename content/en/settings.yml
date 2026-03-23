@@ -52,6 +52,7 @@ nav:
       - "(ri:calendar-line) MemScheduler": open_source/modules/mem_scheduler.md
       - "(ri:calendar-line) MemChat": open_source/modules/mem_chat.md
       - "(ri:feedback-line) MemFeedback": open_source/modules/mem_feedback.md
+      - "(ri:lightbulb-line) Skill Memory": open_source/modules/skill_memory.md
 
 
     - "(ri:brain-line) Memories":
