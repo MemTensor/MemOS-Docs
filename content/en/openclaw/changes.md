@@ -5,6 +5,19 @@ title: OpenClaw Plugin Changelog
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-03-24'
+    plugins:
+      - title: 'Cloud Plugin'
+        version: 'v0.1.10'
+        sections:
+          - items:
+            - '**Improved memory ingestion quality:** Added and strengthened cleanup for OpenClaw inbound metadata, timestamp wrappers, and trailing Feishu system hints to reduce noisy writes into memory.'
+            - '**Multi-channel message prefix cleanup improvements**: Expanded and standardized envelope/prefix stripping for channels such as WebChat, WhatsApp, Telegram, Slack, Discord, and Zalo, reducing platform wrapper noise in memory ingestion and recall quality.'
+            - '**More accurate recall display**: Recall timestamps now prioritize update time for better temporal consistency.'
+            - '**More robust Recall Filter**: Default parameters are aligned with runtime fallback values (timeout and retries), improving stability in local model scenarios.'
+            - '**Timeout and resource management optimization**: Fixed timer cleanup behavior to prevent resource leaks on exceptional code paths.'
+            - '**Configuration completeness**: Completed Recall Filter-related fields in the plugin schema for more complete and controllable configuration.'
+            - '**Enhanced observability**: Added before/after filtering count logs to make recall quality and filter effect troubleshooting easier.'
   - date: '2026-03-13'
     plugins:
       - title: 'Cloud Plugin'
