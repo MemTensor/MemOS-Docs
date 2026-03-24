@@ -83,7 +83,11 @@ function normalizePlugins(plugins?: ReleasePlugin[]) {
                   :key="`${release.date}-${plugin.title}-${index}-${itemIndex}`"
                   class="leading-[1.75] text-[#cbd5e1]"
                 >
-                  {{ item }}
+                  <MDC
+                    tag="span"
+                    unwrap="p"
+                    :value="item"
+                  />
                 </li>
               </ul>
             </template>
