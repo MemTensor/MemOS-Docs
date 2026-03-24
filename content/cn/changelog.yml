@@ -1,4 +1,20 @@
 versions:
+  - name: v2.0.10
+    date: 2026-03-19
+    changedInfo:
+      Improvements:
+        - type: PolarDB底层数据库
+          changedInfo:
+            - polardb优化升级，针对查询带有多种过滤条件的执行路径进行优化，通过使用新增内核能力改善cpu和内存使用率情况，使得查询能够数倍加速，缓解系统压力。
+        - type: 记忆版本服务优化
+          changedInfo:
+            - 记忆版本插件化。
+            - NLI模型添加高可用。
+            - memreader处记忆版本增加路由，若无相关记忆召回/召回内容经nli模型全判断为无关，则走旧prompt和模型，否则才走记忆版本插件(qwen-flash)。
+        - type: 服务优化
+          changedInfo:
+            - 调度任务优化改进，改善内存使用率情况。
+
   - name: v2.0.9
     date: 2026-03-16
     changedInfo:

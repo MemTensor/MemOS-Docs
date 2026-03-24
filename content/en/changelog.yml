@@ -1,4 +1,20 @@
 versions:
+  - name: v2.0.10
+    date: 2026-03-19
+    changedInfo:
+      Improvements:
+        - type: PolarDB Database
+          changedInfo:
+            - PolarDB optimization and upgrade. Optimized execution paths for queries with multiple filter conditions, leveraging new kernel capabilities to improve CPU and memory usage, achieving several-fold query acceleration and reducing system pressure.
+        - type: Memory Version Service
+          changedInfo:
+            - Memory version plugin-based architecture.
+            - Added high availability for NLI model.
+            - Added routing logic for memory version at memreader. Falls back to legacy prompt and model when no relevant memory is recalled or all recalled content is judged irrelevant by the NLI model; otherwise uses the memory version plugin (qwen-flash).
+        - type: Service Optimization
+          changedInfo:
+            - Optimized scheduling tasks to improve memory usage.
+
   - name: v2.0.9
     date: 2026-03-16
     changedInfo:
