@@ -9,6 +9,7 @@ export default {
       welcome: 'Welcome',
       cloud: 'MemOS Cloud',
       openSource: 'Open Source',
+      selfDevelopedModel: 'Self-developed Models',
       openclaw: 'OpenClaw',
       mcpAgent: 'MCP & Agent Framework',
       apiDocs: 'API Documentation',
@@ -63,6 +64,10 @@ export default {
       {
         title: 'Open Source',
         description: 'Explore MemOS’ open-source SDK, core components, and sample projects. Understand how MemOS works and customize or extend it in your own local or private environment'
+      },
+      {
+        title: 'Self-developed Models',
+        description: 'Introduces MemOS in-house memory models and memory services that are more flexible and better aligned with developers\' needs.'
       },
       {
         title: 'MCP & Agent Framework',

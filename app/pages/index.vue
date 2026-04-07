@@ -9,6 +9,7 @@ const localeItems = computed(() => tm('homepage.items') as ItemProps[])
 const rawItems = [
   { to: '/memos_cloud/overview', icon: 'ri:file-cloud-fill' },
   { to: '/open_source/getting_started/installation', icon: 'ri:open-source-fill' },
+  { to: '/self_developed_model/extraction_usage_example', icon: 'ri:cpu-line' },
   { to: '/mcp_agent/mcp/guide', icon: 'material-symbols:switch-access-3' },
   { to: '/api_docs/start/overview', icon: 'ant-design:api-filled' },
   { to: '/usecase/financial_assistant', icon: 'ri:book-read-fill' }
@@ -57,8 +58,8 @@ const items = computed(() => localeItems.value.map((item, index) => ({
         :class="[
           'group',
           'xl:col-span-4',
-          index === items.length - 2 ? 'xl:col-start-3' : '',
-          index === items.length - 1 ? 'xl:col-start-7' : ''
+          index === items.length - 2 && items.length === 5 ? 'xl:col-start-3' : '',
+          index === items.length - 1 && items.length === 5 ? 'xl:col-start-7' : ''
         ]"
         :ui="{
           root: 'rounded-[20px]',
