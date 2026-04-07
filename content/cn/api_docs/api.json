@@ -295,6 +295,59 @@
         }
       }
     },
+    "/extract/memory": {
+      "post": {
+        "summary": "Extract Memory",
+        "description": "基于 MemOS 自研抽取模型，从对话消息中直接抽取并返回事实与偏好记忆。",
+        "operationId": "extract_memory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtractMemoryRequest"
+              },
+              "example": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "我暑假定好去广州旅游，住宿的话有哪些连锁酒店可选？"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "您可以考虑【七天、全季、希尔顿】等等"
+                  },
+                  {
+                    "role": "user",
+                    "content": "我选七天"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "好的，有其他问题再问我。"
+                  }
+                ],
+                "extraction_types": [
+                  "memory",
+                  "preference"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/get/status": {
       "post": {
         "summary": "Get Task Status",
@@ -574,13 +627,13 @@
           "temperature": {
             "type": "number",
             "title": "Temperature",
-            "description": "控制生成随机性。取值范围：0 <= x <= 2",
+            "description": "控制生成随机性。取值范围：0 ≤ x ≤ 2",
             "default": 0.7
           },          
           "top_p": {
             "type": "number",
             "title": "Top P",
-            "description": "Nucleus 采样参数。取值范围：0 <= x <= 1",
+            "description": "Nucleus 采样参数。取值范围：0 ≤ x ≤ 1",
             "default": 0.95
           },
          "add_message_on_answer": {
@@ -2360,6 +2413,178 @@
           }
         },
         "title": "DeleteFileResponse"
+      },
+      "ExtractMemoryItem": {
+        "type": "object",
+        "title": "ExtractMemoryItem",
+        "properties": {
+          "memory_key": {
+            "type": "string",
+            "title": "Memory Key",
+            "description": "记忆主题，对抽取到的事实记忆的概括性描述。",
+            "example": "用户基本信息"
+          },
+          "memory_value": {
+            "type": "string",
+            "title": "Memory Value",
+            "description": "记忆内容，对抽取到的事实记忆的详细描述。",
+            "example": "用户张三，28岁，在杭州从事后端开发，喜欢打羽毛球。"
+          },
+          "memory_type": {
+            "type": "string",
+            "title": "Memory Type",
+            "description": "记忆类型分类标识。<br>示例：UserMemory、LongTermMemory。",
+            "example": "UserMemory"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "description": "记忆标签列表，用于对记忆内容进行分类标注。",
+            "example": [
+              "人物",
+              "职业",
+              "爱好"
+            ]
+          }
+        }
+      },
+      "ExtractPreferenceItem": {
+        "type": "object",
+        "title": "ExtractPreferenceItem",
+        "properties": {
+          "preference": {
+            "type": "string",
+            "title": "Preference",
+            "description": "偏好描述，对抽取到的用户偏好的具体内容。",
+            "example": "用户明确表示希望回复尽量简洁。"
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning",
+            "description": "推理依据，说明该偏好是如何从对话中推断得出的。",
+            "example": "对话中用户直接说明偏好。"
+          },
+          "preference_type": {
+            "type": "string",
+            "title": "Preference Type",
+            "description": "偏好类型：显性偏好为用户明确表达，隐性偏好为从行为或语境推断。",
+            "enum": [
+              "explicit_preference",
+              "implicit_preference"
+            ],
+            "example": "explicit_preference"
+          }
+        }
+      },
+      "ExtractMemoryResponseData": {
+        "type": "object",
+        "title": "ExtractMemoryResponseData",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "是否抽取成功。"
+          },
+          "memory_detail_list": {
+            "type": "array",
+            "title": "Memory Detail List",
+            "description": "事实记忆列表。当请求中 extraction_types 包含 memory，或未传 extraction_types 时返回。",
+            "items": {
+              "$ref": "#/components/schemas/ExtractMemoryItem"
+            }
+          },
+          "preference_detail_list": {
+            "type": "array",
+            "title": "Preference Detail List",
+            "description": "偏好记忆列表。当请求中 extraction_types 包含 preference，或未传 extraction_types 时返回；结果中可包含显性偏好与隐性偏好。",
+            "items": {
+              "$ref": "#/components/schemas/ExtractPreferenceItem"
+            }
+          }
+        }
+      },
+      "ExtractMemoryMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "ExtractMemoryMessage",
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "enum": [
+              "user",
+              "assistant",
+              "system"
+            ],
+            "description": "消息创建者的角色。"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "消息内容文本。"
+          }
+        }
+      },
+      "ExtractMemoryRequest": {
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "ExtractMemoryRequest",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "title": "Messages",
+            "description": "需要抽取记忆的消息对象数组，数组中所有消息的总 Token 数上限为8k。",
+            "items": {
+              "$ref": "#/components/schemas/ExtractMemoryMessage"
+            }
+          },
+          "extraction_types": {
+            "type": "array",
+            "title": "Extraction Types",
+            "description": "<p>限定抽取的记忆类型；不传则抽取全部支持的类型。</p><ul><li><code>memory</code>：事实记忆，从对话中提取用户相关的事实性信息。</li><li><code>preference</code>：偏好记忆，从对话中提取用户的偏好信息，包含显性偏好（用户明确表达）和隐性偏好（从行为推断）。</li></ul>",
+            "items": {
+              "type": "string",
+              "enum": [
+                "memory",
+                "preference"
+              ]
+            }
+          }
+        }
+      },
+      "ExtractMemoryResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ExtractMemoryResponse",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "title": "Code",
+            "description": "接口状态码，更多内容可查阅<a href=\"/api_docs/help/error_codes\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">错误码列表</a>了解详情。",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/ExtractMemoryResponseData"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "接口提示信息。",
+            "example": "ok"
+          }
+        }
       }
     }
   }

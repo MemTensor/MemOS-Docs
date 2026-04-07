@@ -9,6 +9,7 @@ export default {
       welcome: '欢迎',
       cloud: 'MemOS Cloud',
       openSource: '开源项目',
+      selfDevelopedModel: '自研模型',
       openclaw: 'OpenClaw',
       mcpAgent: 'MCP与Agent框架支持',
       apiDocs: 'API接口文档',
@@ -63,6 +64,10 @@ export default {
       {
         title: '开源项目',
         description: '涵盖 MemOS 的开源 SDK、核心组件与示例项目。帮助你理解 MemOS 的运行机制，并在本地或自有环境中自由定制与扩展'
+      },
+      {
+        title: '自研模型',
+        description: '介绍 MemOS 的自研记忆模型，为开发者提供更灵活、更符合开发需求的记忆服务。'
       },
       {
         title: 'MCP与Agent框架支持',

@@ -241,7 +241,7 @@ print(f"result: {res.json()}")
       "id": "1f35642253606ed1e9dd8cd8113a8998",
       "name": "Software_Procurement_Reimbursement_Policy.pdf",
       "sizeMB": 0.06331157684326172,
-      "status": "PROCESSING"
+      "status": "running"
     }
   ],
   "message": "ok"
