@@ -53,6 +53,11 @@ Stores memories entirely on your **local machine (SQLite)** with zero cloud depe
     openclaw gateway restart
     ```
 
+**Manually update the plugin**:
+```bash
+openclaw plugins update @memtensor/memos-cloud-openclaw-plugin@latest
+openclaw gateway restart
+```
 
 > For more details, see the [OpenClaw Cloud Plugin documentation](/openclaw/guide#quick-start).
 

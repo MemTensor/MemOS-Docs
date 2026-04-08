@@ -52,6 +52,11 @@ desc: 两款插件都能为 OpenClaw 提供持久记忆能力，但面向的场�
     openclaw gateway restart
     ```
 
+**手动更新插件**：
+```bash
+openclaw plugins update @memtensor/memos-cloud-openclaw-plugin@latest
+openclaw gateway restart
+```
 
 > 更多信息请参考 [Openclaw 云插件文档](/cn/openclaw/guide#快速开始)
 

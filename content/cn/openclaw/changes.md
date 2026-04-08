@@ -5,6 +5,37 @@ title: OpenClaw 插件更新日志
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-04-03'
+    plugins:
+      - title: '云插件'
+        version: 'v0.1.12'
+        summary: '推出本地可视化配置界面，深度重构配置解析架构并适配 OpenClaw 插件安全审查。'
+        sections:
+          - title: '可视化配置 UI (Config UI)'
+            items:
+              - '**本地配置服务**：内置 HTTP 服务提供插件管理后台，支持在浏览器中可视化查看与修改配置，并实现配置变更的实时同步（默认访问地址为 `http://127.0.0.1:38463`）。'
+              - '**启动稳定性保障**：服务启动流程中引入了网关就绪检测 (`waitForGatewayReady`)，确保服务状态稳定。'
+              - '**界面体验优化**：新增响应式布局与可折叠悬浮导航工具，并补充了全新的 SVG 图标。'
+          - title: '架构优化与安全合规'
+            items:
+              - '**适配插件安全审查（移除子进程）**：为了符合严格的插件沙箱与安全合规要求，完全移除了 `child_process` 的 `spawn`/`exec` 调用。插件自更新机制由原来的“后台静默下载并强制更新”改为了“仅检测版本并在日志中打印手动更新命令提示”，避免后台进程逃逸风险。'
+              - '**适配插件安全审查（移除默认越权）**：移除了 `plugin.json` 声明文件中的所有 `default` 默认值设定，确保插件在无显式配置时不会触发越权或非预期调用。'
+              - '**配置 Schema 集中管理**：重构配置解析逻辑 (`getConfigResolution`)，集中管理环境变量、用户配置与默认值的优先级策略，提升了代码的安全性和健壮性。'
+
+  - date: '2026-03-30'
+    plugins:
+      - title: '云插件'
+        version: 'v0.1.11'
+        summary: '强化多 Agent 场景的细粒度控制，增强动态用户标识提取能力。'
+        sections:
+          - title: '会话与用户身份管理'
+            items:
+              - '**Direct Session User ID 支持**：新增 `useDirectSessionUserId` 配置，开启后可直接从 `sessionKey` 中解析并提取真实会话的用户 ID，满足复杂代理场景下的数据隔离需求。'
+          - title: '多 Agent 配置增强'
+            items:
+              - '**Agent 运行白名单**：新增 `allowedAgents` 配置项，允许在多 Agent 模式下仅对特定的 Agent 触发记忆召回和记录，避免全局拦截带来的冗余消耗。'
+              - '**差异化覆盖机制 (Agent Overrides)**：引入 `agentOverrides` 配置对象，支持针对不同的 Agent 单独覆盖如知识库 ID (`knowledgebaseIds`)、召回条数 (`memoryLimitNumber`)、功能开关 (`recallEnabled`) 等核心参数。'
+
   - date: '2026-03-24'
     plugins:
       - title: '云插件'

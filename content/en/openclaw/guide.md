@@ -1,6 +1,6 @@
 ---
 title: OpenClaw Cloud Plugin
-desc: Enhance your OpenClaw's memory and reduce token by 60%. MemOS OpenClaw plugin is now live!
+desc: Enhance your OpenClaw's memory and reduce token by 72%. MemOS OpenClaw plugin is now live!
 ---
 
 OpenClaw's going viral lately. But if you've actually used it for a while, you'll find two issues you can hardly avoid:
@@ -231,9 +231,96 @@ Note: The extracted folder usually contains a package subfolder. Point to the fo
 
 Restart the gateway after config changes.
 
+### 4. Update Plugin
+
+You can manually update the cloud plugin to the latest version using the following commands:
+
+```bash
+openclaw plugins update @memtensor/memos-cloud-openclaw-plugin@latest
+openclaw gateway restart
+```
+
 ## Advanced Configuration for Open-Source Projects
 
 If you wanna unlock further possibilities, you may explore and configure additional features via the MemOS GitHub project!
+
+### Visual Configuration UI (Config UI)
+
+Starting from version `v0.1.12`, the Cloud Plugin features a built-in local visual configuration service, allowing you to manage and modify plugin settings more intuitively.
+
+**How to access:**
+1. Start your OpenClaw node or host gateway.
+2. Once the plugin is successfully loaded and detects that the gateway is ready, it will automatically start the Config UI service in the background.
+3. An access link will be printed in the terminal console logs (the default URL is typically `http://127.0.0.1:38463`).
+4. Open this link in your browser to access the plugin's visual management backend.
+
+**Features:**
+- **Intuitive Editing**: Supports form-based editing of all core configurations (such as Knowledge Base IDs, LLM retrieval parameters, multi-agent override rules, etc.).
+- **Real-time Synchronization**: Configuration changes saved via the interface take effect immediately during plugin runtime, without requiring a service restart.
+- **Status Monitoring**: The interface provides heartbeat detection with the host gateway to ensure the configuration synchronization link is healthy.
+
+### Multi-Agent Support & Isolation
+
+The plugin provides powerful native support for multi-agent architectures (via the `agent_id` parameter), making it ideal for complex workflows or team agent scenarios.
+
+**1. Enable & Data Isolation**
+- **How to enable**: Set `"multiAgentMode": true` in the config or configure the environment variable `MEMOS_MULTI_AGENT_MODE=true`.
+- **Automatic Isolation**: When enabled, the plugin automatically reads `ctx.agentId` from the context. This Agent identifier is attached to memory retrieval and writing, ensuring complete data isolation between different Agents under the same user (Note: the default `"main"` Agent is ignored to maintain legacy data compatibility).
+
+**2. Memory Switch per Agent (Whitelist Control)**
+In Multi-Agent mode, if you do not want all Agents to consume memory, you can use `allowedAgents` to precisely control the whitelist:
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": {
+        "enabled": true,
+        "config": {
+          "multiAgentMode": true,
+          "allowedAgents": ["research-agent", "coding-agent"]
+        }
+      }
+    }
+  }
+}
+```
+*(Tip: 1. If `allowedAgents` is not configured or is an empty array `[]`, it means **all Agents** are allowed to use memory retrieval and writing. 2. If it is configured, Agents not in the configuration will be completely skipped, and only the configured Agents will be effective for memory retrieval and writing, thereby avoiding Token waste.)*
+
+**3. Per-Agent Configuration (agentOverrides)**
+Beyond simple toggles, you can use `agentOverrides` to **configure different memory parameters for each Agent**. For example, giving a research assistant a looser retrieval threshold, while restricting a coding assistant to read only a specific codebase knowledge base:
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": {
+        "enabled": true,
+        "config": {
+          "multiAgentMode": true,
+          "allowedAgents": ["research-agent", "coding-agent"],
+          "memoryLimitNumber": 6,
+          "relativity": 0.45,
+
+          "agentOverrides": {
+            "research-agent": {
+              "knowledgebaseIds": ["kb-research-papers"],
+              "memoryLimitNumber": 12,
+              "relativity": 0.3,
+              "queryPrefix": "research context: "
+            },
+            "coding-agent": {
+              "knowledgebaseIds": ["kb-codebase"],
+              "memoryLimitNumber": 9,
+              "addEnabled": false
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+*(In the example above, memory writing is disabled for the `coding-agent`, and it can only retrieve the top 9 highly relevant memories from the `kb-codebase` knowledge base).*
 
 ### Deep customisation of environment variables
 

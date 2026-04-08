@@ -5,6 +5,37 @@ title: OpenClaw Plugin Changelog
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-04-03'
+    plugins:
+      - title: 'Cloud Plugin'
+        version: 'v0.1.12'
+        summary: 'Introduced local visual configuration interface, deeply refactored configuration resolution architecture, and adapted to OpenClaw plugin security review.'
+        sections:
+          - title: 'Visual Configuration UI (Config UI)'
+            items:
+              - '**Local Configuration Service**: Built-in HTTP service provides a plugin management backend, supporting visual configuration viewing and modification in the browser, and real-time synchronization of configuration changes (default URL is `http://127.0.0.1:38463`).'
+              - '**Startup Stability Assurance**: Introduced gateway readiness detection (`waitForGatewayReady`) in the service startup process to ensure stable service status.'
+              - '**UI Experience Optimization**: Added responsive layout and collapsible floating navigation tools, along with new SVG icons.'
+          - title: 'Architecture Optimization & Security Compliance'
+            items:
+              - '**Security Review Adaptation (Subprocess Removed)**: To comply with strict plugin sandbox and security requirements, completely removed `child_process` `spawn`/`exec` calls. The auto-update mechanism was changed from "silent background download and force update" to "version detection only with manual update command prompts in logs", eliminating the risk of background process escape.'
+              - '**Security Review Adaptation (Default Overstep Removed)**: Removed all `default` value settings in the `plugin.json` declaration files to ensure the plugin does not trigger unauthorized or unexpected calls when no explicit configuration is provided.'
+              - '**Centralized Schema Management**: Refactored configuration resolution logic (`getConfigResolution`) to centrally manage priority strategies for environment variables, user configurations, and default values, enhancing code security and robustness.'
+
+  - date: '2026-03-30'
+    plugins:
+      - title: 'Cloud Plugin'
+        version: 'v0.1.11'
+        summary: 'Strengthened fine-grained control for multi-agent scenarios and enhanced dynamic user identity extraction capabilities.'
+        sections:
+          - title: 'Session & User Identity Management'
+            items:
+              - '**Direct Session User ID Support**: Added `useDirectSessionUserId` configuration. When enabled, it directly parses and extracts the real session user ID from the `sessionKey`, meeting data isolation needs in complex agent scenarios.'
+          - title: 'Multi-Agent Configuration Enhancements'
+            items:
+              - '**Agent Execution Whitelist**: Added the `allowedAgents` configuration item, allowing memory recall and recording to be triggered only for specific agents in multi-agent mode, avoiding redundant consumption caused by global interception.'
+              - '**Differentiated Override Mechanism (Agent Overrides)**: Introduced the `agentOverrides` configuration object, supporting individual overrides for core parameters such as knowledge base IDs (`knowledgebaseIds`), recall limit (`memoryLimitNumber`), and feature switches (`recallEnabled`) for different agents.'
+
   - date: '2026-03-24'
     plugins:
       - title: 'Cloud Plugin'
