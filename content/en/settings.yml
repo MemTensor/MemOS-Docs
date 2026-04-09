@@ -86,15 +86,17 @@ nav:
     - "(ri:flask-line) Extraction Model":
       - "(ri:file-code-line) Usage Examples": self_developed_model/extraction_usage_example.md
 
-  - "(ri:robot-line) Openclaw":
+  - "(ri:robot-line) Agent":
     - "(ri:book-open-line) Cloud Plugin vs Local Plugin": openclaw/plugin_compare.md
     - "(ri:file-list-3-line) Changelog": openclaw/changes.md
     - "(ri:download-line) Installation Guide": 
       - "(ri:cloud-line) OpenClaw Cloud Plugin": openclaw/guide.md
       - "(ri:computer-line) OpenClaw Local Plugin": openclaw/local_plugin.md
+      - "(ri:server-line) Hermes Local Plugin": openclaw/hermes_local_plugin.md
     - "(ri:flask-line) Usage Examples": 
       - "(ri:team-line) Multi-Agent Memory Isolation": openclaw/examples/multi_agent.md
       - "(ri:filter-3-line) Secondary Filtering for Memory Recall": openclaw/examples/recall_filter.md
+      - "(ri:terminal-box-line) Hermes Local Plugin Usage": openclaw/examples/hermes_usage.md
 
   - "(ri:puzzle-line) MCP and Agent Framework Support":
     - "(ri:tools-line) MCP Services":
