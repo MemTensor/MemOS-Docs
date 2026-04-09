@@ -1,6 +1,6 @@
 ---
 title: OpenClaw 云插件
-desc: 增强 OpenClaw 的记忆能力并减少 60% 的 Token 消耗：MemOS OpenClaw 插件现已上线！
+desc: 增强 OpenClaw 的记忆能力并减少 72% 的 Token 消耗：MemOS OpenClaw 插件现已上线！
 ---
 
 OpenClaw 近期备受关注，但在实际使用中，用户普遍会遇到两个难以回避的问题：
@@ -231,9 +231,96 @@ openclaw gateway restart
 
 配置修改后请重启 gateway。
 
+### 4. 更新插件
+
+你可以通过以下命令手动更新云服务插件到最新版本：
+
+```bash
+openclaw plugins update @memtensor/memos-cloud-openclaw-plugin@latest
+openclaw gateway restart
+```
+
 ## 开源项目进阶配置
 
 如果希望进一步解锁更多可能性，还可以通过 MemOS Github 项目进行进一步探索和配置！
+
+### 可视化配置界面 (Config UI)
+
+自 `v0.1.12` 版本起，云插件内置了本地可视化配置服务，让您可以更直观地管理和修改插件配置。
+
+**如何访问：**
+1. 启动 OpenClaw 节点或宿主网关。
+2. 插件成功加载并检测到网关就绪后，会自动在后台启动 Config UI 服务。
+3. 在终端控制台日志中会打印访问链接（默认地址通常为 `http://127.0.0.1:38463`）。
+4. 在浏览器中打开该链接，即可进入插件的可视化管理后台。
+
+**功能特点：**
+- **直观编辑**：支持以表单形式编辑所有核心配置（如知识库 ID、大模型检索参数、多 Agent 覆盖规则等）。
+- **实时同步**：在界面上保存的配置变更会立即在插件运行时生效，无需重启服务。
+- **状态监控**：界面提供与宿主网关的心跳检测，确保配置同步链路健康。
+
+### 多Agent支持与隔离（Multi-Agent）
+
+插件内置对多 Agent 模式的强大支持（通过 `agent_id` 参数实现），非常适合在复杂工作流或团队代理场景下使用。
+
+**1. 开启与数据隔离**
+- **开启方式**：在配置中设置 `"multiAgentMode": true` 或配置环境变量 `MEMOS_MULTI_AGENT_MODE=true`。
+- **自动隔离**：开启后，插件会自动读取上下文中的 `ctx.agentId`。在进行记忆检索和写入时，会自动附带该 Agent 标识，从而保证同一用户下的不同 Agent 之间记忆数据完全隔离（注：默认的 `"main"` Agent 会被忽略以保证旧数据兼容性）。
+
+**2. 按 Agent 开关记忆（白名单控制）**
+在多 Agent 模式下，如果不想让所有 Agent 都产生记忆消耗，你可以使用 `allowedAgents` 精确控制白名单：
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": {
+        "enabled": true,
+        "config": {
+          "multiAgentMode": true,
+          "allowedAgents": ["research-agent", "coding-agent"]
+        }
+      }
+    }
+  }
+}
+```
+*（提示：1. 如果 `allowedAgents` 未配置或为空数组 `[]`，则表示**所有 Agent** 都允许使用记忆检索和写入。2. 如果进行了配置，那么不在配置中的 Agent 将被完全跳过，只有配置中的 Agent 才会生效进行记忆检索和写入，从而避免 Token 浪费）。*
+
+**3. 按 Agent 独立配置参数（agentOverrides）**
+除了简单的开关，你还可以通过 `agentOverrides` 为**每个 Agent 单独覆写记忆参数**。例如，让研究助手拥有更宽松的检索阈值，而让代码助手只读取特定的代码库知识：
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": {
+        "enabled": true,
+        "config": {
+          "multiAgentMode": true,
+          "allowedAgents": ["research-agent", "coding-agent"],
+          "memoryLimitNumber": 6,
+          "relativity": 0.45,
+
+          "agentOverrides": {
+            "research-agent": {
+              "knowledgebaseIds": ["kb-research-papers"],
+              "memoryLimitNumber": 12,
+              "relativity": 0.3,
+              "queryPrefix": "research context: "
+            },
+            "coding-agent": {
+              "knowledgebaseIds": ["kb-codebase"],
+              "memoryLimitNumber": 9,
+              "addEnabled": false
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+*（在上面的例子中，`coding-agent` 被禁止了记忆写入，且只能检索 `kb-codebase` 知识库中的前 9 条高相关性记忆）。*
 
 ### 环境变量深度定制
 

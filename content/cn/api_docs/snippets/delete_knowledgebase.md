@@ -21,18 +21,6 @@ res = requests.post(url=url, headers=headers, data=json.dumps(data))
 
 print(f"result: {res.json()}")
 ```
-```python [Python (SDK)]
-# 请确保已安装MemoS (pip install MemoryOS -U)
-from memos.api.client import MemOSClient
-
-# 使用 API Key 初始化客户端
-client = MemOSClient(api_key="YOUR_API_KEY")
-
-knowledgebase_id = "basee5ec9050-c964-484f-abf1-ce3e8e2aa5b7" # 替换为要删除的知识库 ID
-
-res = client.delete_knowledgebase(knowledgebase_id=knowledgebase_id)
-print(f"result: {res}")
-```
 ```bash [Curl]
 curl --request POST \
   --url https://memos.memtensor.cn/api/openmem/v1/delete/knowledgebase \

@@ -15,6 +15,7 @@ const localizedMenus = computed(() => {
     { label: t('header.menus.welcome'), to: '/' },
     { label: t('header.menus.cloud'), to: '/memos_cloud/overview' },
     { label: t('header.menus.openSource'), to: '/open_source/getting_started/installation' },
+    { label: t('header.menus.selfDevelopedModel'), to: '/self_developed_model/extraction_usage_example' },
     { label: t('header.menus.openclaw'), to: '/openclaw/guide' },
     { label: t('header.menus.mcpAgent'), to: '/mcp_agent/mcp/guide' },
     { label: t('header.menus.apiDocs'), to: '/api_docs/start/overview' },

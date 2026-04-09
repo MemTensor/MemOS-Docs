@@ -277,6 +277,59 @@
         }
       }
     },
+    "/extract/memory": {
+      "post": {
+        "summary": "Extract Memory",
+        "description": "Uses MemOS’s self-developed extraction model to extract and return fact and preference memories directly from conversation messages.",
+        "operationId": "extract_memory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtractMemoryRequest"
+              },
+              "example": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "I’ve planned a summer trip to Guangzhou. What chain hotels can you recommend for accommodation?"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "You can consider options like 7 Days Inn, All Seasons, Hilton, and others."
+                  },
+                  {
+                    "role": "user",
+                    "content": "I’ll go with 7 Days Inn."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Alright—ask me anytime if you have more questions."
+                  }
+                ],
+                "extraction_types": [
+                  "memory",
+                  "preference"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/get/status": {
       "post": {
         "summary": "Get Task Status",
@@ -556,13 +609,13 @@
           "temperature": {
             "type": "number",
             "title": "Temperature",
-            "description": "Controls generation randomness. Range: 0 <= x <= 2.",
+            "description": "Controls generation randomness. Range: 0 ≤ x ≤ 2.",
             "default": 0.7
           },          
           "top_p": {
             "type": "number",
             "title": "Top P",
-            "description": "Nucleus sampling parameter. Range: 0 <= x <= 1.",
+            "description": "Nucleus sampling parameter. Range: 0 ≤ x ≤ 1.",
             "default": 0.95
           },
          "add_message_on_answer": {
@@ -2346,6 +2399,178 @@
           }
         },
         "title": "DeleteFileResponse"
+      },
+      "ExtractMemoryItem": {
+        "type": "object",
+        "title": "ExtractMemoryItem",
+        "properties": {
+          "memory_key": {
+            "type": "string",
+            "title": "Memory Key",
+            "description": "High-level topic or title summarizing the extracted factual memory.",
+            "example": "User profile basics"
+          },
+          "memory_value": {
+            "type": "string",
+            "title": "Memory Value",
+            "description": "Detailed content of the extracted factual memory.",
+            "example": "User Zhang San, 28, backend developer in Hangzhou, enjoys badminton."
+          },
+          "memory_type": {
+            "type": "string",
+            "title": "Memory Type",
+            "description": "Memory type classifier.<br>Examples: UserMemory, LongTermMemory.",
+            "example": "UserMemory"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "description": "Tags for categorizing the memory content.",
+            "example": [
+              "person",
+              "job",
+              "hobby"
+            ]
+          }
+        }
+      },
+      "ExtractPreferenceItem": {
+        "type": "object",
+        "title": "ExtractPreferenceItem",
+        "properties": {
+          "preference": {
+            "type": "string",
+            "title": "Preference",
+            "description": "Concrete preference text extracted from the dialogue.",
+            "example": "The user asked for replies to stay concise."
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning",
+            "description": "How this preference was inferred from the conversation.",
+            "example": "The user stated this preference explicitly in the chat."
+          },
+          "preference_type": {
+            "type": "string",
+            "title": "Preference Type",
+            "description": "explicit_preference: clearly stated by the user; implicit_preference: inferred from behavior or context.",
+            "enum": [
+              "explicit_preference",
+              "implicit_preference"
+            ],
+            "example": "explicit_preference"
+          }
+        }
+      },
+      "ExtractMemoryResponseData": {
+        "type": "object",
+        "title": "ExtractMemoryResponseData",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Whether extraction succeeded."
+          },
+          "memory_detail_list": {
+            "type": "array",
+            "title": "Memory Detail List",
+            "description": "Factual memories. Returned when the request includes memory in extraction_types, or when extraction_types is omitted.",
+            "items": {
+              "$ref": "#/components/schemas/ExtractMemoryItem"
+            }
+          },
+          "preference_detail_list": {
+            "type": "array",
+            "title": "Preference Detail List",
+            "description": "Preference memories. Returned when the request includes preference in extraction_types, or when extraction_types is omitted; may mix explicit and implicit preferences.",
+            "items": {
+              "$ref": "#/components/schemas/ExtractPreferenceItem"
+            }
+          }
+        }
+      },
+      "ExtractMemoryMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "ExtractMemoryMessage",
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "enum": [
+              "user",
+              "assistant",
+              "system"
+            ],
+            "description": "Creator role of the message."
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Message body text."
+          }
+        }
+      },
+      "ExtractMemoryRequest": {
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "ExtractMemoryRequest",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "title": "Messages",
+            "description": "Array of message objects from which to extract memories. The combined Token count of all messages must not exceed 8k.",
+            "items": {
+              "$ref": "#/components/schemas/ExtractMemoryMessage"
+            }
+          },
+          "extraction_types": {
+            "type": "array",
+            "title": "Extraction Types",
+            "description": "<p>Limits which memory types to extract; omit to extract all supported types.</p><ul><li><code>memory</code>: factual memories—user-related factual information extracted from the dialogue.</li><li><code>preference</code>: preference memories—user preferences from the dialogue, including explicit preferences (clearly stated) and implicit preferences (inferred from behavior).</li></ul>",
+            "items": {
+              "type": "string",
+              "enum": [
+                "memory",
+                "preference"
+              ]
+            }
+          }
+        }
+      },
+      "ExtractMemoryResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ExtractMemoryResponse",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "title": "Code",
+            "description": "API status code. See <a href=\"/api_docs/help/error_codes\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Error Code</a> for details.",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/ExtractMemoryResponseData"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message.",
+            "example": "ok"
+          }
+        }
       }
     }
   }
