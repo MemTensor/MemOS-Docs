@@ -1,4 +1,54 @@
 versions:
+  - name: v2.0.13
+    date: 2026-04-09
+    changedInfo:
+      Improvements:
+        - type: 调度日志分级优化
+          changedInfo:
+            - 将高频、重复、逐条打印的日志从 info 下调到 debug，明显降低线上日志噪音和存储压力。
+        - type: 队列日志结构化
+          changedInfo:
+            - 本地队列和 Redis 队列日志统一为结构化字段（如 label/item_id/user_id/mem_cube_id/stream），避免大段内容日志，检索和聚合更稳定
+        - type: 调度链路关键路径可观测
+          changedInfo:
+            - 补齐“提交 -> 出队 -> 分发”关键节点的摘要日志，定位堆积、分发异常、任务拥堵更快。
+
+  - name: v2.0.12
+    date: 2026-04-02
+    changedInfo:
+      Improvements:
+        - type: 服务优化
+          changedInfo:
+            - 新增最小线程数抽取为可配置参数，支持运行时动态调整线程池大小，有效控制活跃连接数，避免因瞬时流量激增导致系统负载飙升
+
+  - name: v2.0.11
+    date: 2026-03-26
+    changedInfo:
+      New Features:
+        - type: LLM 与搜索能力
+          changedInfo:
+            - 新增 MiniMax 作为 LLM Provider，遵循与 Qwen、DeepSeek 相同的接入模式，通过 OpenAI 兼容 API 对接。
+            - 新增 Tavily 作为可插拔的互联网搜索后端。通过配置即可启用 Tavily API 进行实时网络搜索，为记忆系统提供外部知识补充能力。
+        - type: 部署与运维 
+          changedInfo:
+            - 新增 health check API 端点，用于服务状态监控。支持容器编排（如 Kubernetes liveness/readiness probe）和负载均衡器的健康探测。
+            - 新增生产级 Dockerfile（多阶段构建）和 Kubernetes Helm Chart，包含 MemOS API 服务、Neo4j 图数据库、Qdrant 向量数据库的编排配置，以及 Ingress 和示例 values 文件，支持一键部署到 K8s 集群。
+        - type: 接口能力扩展
+          changedInfo:
+            - 此前 delete_memory 接口仅支持按 memory_id 删除。本次更新扩展了删除过滤条件，支持通过 user_id 和 conversation_id 批量删除记忆，并在 API 层增加了过滤参数校验，同时为 PostgreSQL 后端实现了 delete_node_by_params 方法。
+      Bug Fixes:
+        - type: MCP 与消息处理
+          changedInfo:
+            - 修复 MCP add_memory 工具消息格式问题；
+            - 修复 get_further_suggestion 无法处理 string 类型输入参数的问题。
+        - type: 记忆与反馈
+          changedInfo:
+            - 修复用户对记忆执行 feedback 操作后，相关记忆节点被错误归档（archived），导致后续检索时无法命中的问题；
+        - type: Neo4j 
+          changedInfo:
+            - 修复 Neo4j 检索后过滤逻辑的问题；
+            - 修复 Neo4j 嵌套 metadata 写入问题。
+
   - name: v2.0.10
     date: 2026-03-19
     changedInfo:
