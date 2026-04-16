@@ -1,20 +1,63 @@
 ---
-title: MCP Service Configuration
-desc: MemOS provides a way to interact with the cloud platform through MCP, allowing developers to use MemOS cloud platform services on different clients (Claude, Cursor, Cline, etc.).
+title: MemOS MCP Usage Guide
 ---
 
-## 1. Service Overview
+MemOS Memory Management MCP is a powerful AI memory enhancement plugin that supports three core capabilities: **conversation memory access**, **user profile construction**, and **knowledge base full lifecycle management**. 
 
-MemOS Memory Management MCP is a powerful plugin that allows users to add, search, delete memories and submit feedback. It can store conversation content and provide efficient memory management services, helping improve the consistency and personalization of users’ AI conversations.
+By integrating MemOS into mainstream AI clients such as Claude, Cursor, and Cline, users can enable AI to continuously accumulate personal memories, understand user preferences, and efficiently process large-scale professional documents, fundamentally improving the consistency and personalization of AI conversations.
 
-## 2. Tool Links
+## 1. Capabilities Overview
 
-- [npm package](https://www.npmjs.com/package/@memtensor/memos-api-mcp)
-- [GitHub](https://github.com/MemTensor/memos-api-mcp)
+### 1.1 Conversation Memory Management
 
-## 3. Interacting with the MemOS Cloud Platform via MCP
+Provides writing, retrieving, deleting, and quality feedback functions for conversation content, which is the foundational capability module of the MemOS MCP.
 
-To configure MemOS MCP using JSON configuration: 
+| Tool | Function Description |
+|---|---|
+| `add_message` | Writes a summary of the current conversation content into the user's memory bank for future retrieval. |
+| `search_memory` | Searches for relevant historical memories in the user's personal memory bank based on search terms. |
+| `delete_memory` | Deletes specified memory entries from the memory bank. |
+| `add_feedback` | Submits quality feedback on memory entries to optimize memory management effects. |
+
+### 1.2 User Profile System
+
+**`get_user_profile`**: Retrieves the user's full-dimensional memory profile with one click.
+
+Unlike single factual memories (Facts), the user profile also integrates explicit/implicit preferences (Preferences) and tool usage experience (Tool Trajectories), allowing AI to answer identity-related questions such as "Who am I?" and "What are my preferences?", achieving true personalized interaction.
+
+### 1.3 Knowledge Base Lifecycle Management
+
+Supports creating independent namespace containers for specific projects or domains, facilitating the isolated management of structured documents.
+
+| Tool | Function Description |
+|---|---|
+| `create_knowledge_base` | Creates an independent knowledge base container for document management in a specific project or domain. |
+| `remove_knowledge_base` | Removes a knowledge base that is no longer needed and its associated content. |
+
+### 1.4 Intelligent Document Upload
+
+**`add_kb_document`**: Supports injecting local files or online resources into a specified knowledge base, which is the core tool of the knowledge base capability.
+
+**Core Features:**
+
+- **Local File Direct Upload**: Pioneered the MCP internal interception mechanism, allowing LLMs to pass local paths directly.
+- **Polymorphic Path Recognition**: Perfectly supports Windows (drive letters), Unix (absolute paths), Home directory (~/), and environment variable paths.
+- **Zero Context Loss**: Silently completes Base64 conversion and MIME type encapsulation locally, completely avoiding long documents overwhelming the context.
+- **Intelligent Direct Link Completion**: Automatically corrects non-standard URLs (adds http/https) and identifies online resources.
+- **Circuit Breaker Security Strategy**: Built-in anti-deadlock instruction; once an interface error occurs, it immediately trips the circuit breaker to prevent consuming excess traffic.
+
+### 1.5 Precise Document Control
+
+Supports batch query and precise deletion of uploaded documents, achieving dynamic maintenance of the knowledge base.
+
+| Tool | Function Description |
+|---|---|
+| `get_kb_documents` | Batch retrieves detailed metadata of uploaded documents via a list of File IDs. |
+| `delete_kb_documents` | Precisely deletes specific documents from a designated knowledge base, achieving dynamic streamlining of the document library. |
+
+## 2. Quick Configuration
+
+Fill in the following configuration in the client:
 
 ```json
 {
@@ -49,10 +92,15 @@ How to obtain environment variables:
 
 - `MEMOS_CHANNEL`: Fill in "MODELSCOPE" here.
 
-## 4. Using MemOS MCP in different clients
+For more detailed configuration, please refer to:
+* [npm package](https://www.npmjs.com/package/@memtensor/memos-api-mcp)
+* [GitHub](https://github.com/MemTensor/memos-api-mcp)
+
+## 3. Using MemOS MCP in Different Clients
 
 ### Using in Claude Desktop
-To use MemOS in Claude Desktop, click the avatar in the lower left corner -> "Settings" -> "Developer" -> "Edit Config", paste the configuration into the Claude_desktop_config.json file, and finally restart the client. You can use it in the chat when you observe that the memos-api-mcp service is in the running state.
+
+To use MemOS in Claude Desktop, click the avatar in the lower left corner -> "Settings" -> "Developer" -> "Edit Config", paste the configuration into the `Claude_desktop_config.json` file, and finally restart the client. You can use it in the chat when you observe that the memos-api-mcp service is in the running state.
 
 ![Verification of using MemOS in Claude](https://cdn.memtensor.com.cn/img/1763105334517_9ayhrp_compressed.png)
 
@@ -60,7 +108,6 @@ To improve the usage effect, it is recommended that users modify the user prefer
 
 ```
 You are MemOS Memory Management Assistant, dedicated to providing efficient memory management services. It extracts memories based on users' past conversation content and enhances the consistency and personalization of users' conversations with AI through memory retrieval. Before answering each user's question, you need to call the search_memory service of memos-api-mcp and use appropriate search terms to find memories related to the current topic in the user's personal memory bank. After completing the answer based on these memories, call the add_message service of memos-api-mcp to record a summary of the current conversation content. (Note that calling add_message is mandatory. Regardless of what the user says or asks, it must be recorded; otherwise, in subsequent conversations, search_memory will not be able to obtain more detailed user information, leading to your inability to answer the user's questions accurately.)
-
 ```
 
 ![Modifying user preferences for using MemOS in Claude Desktop](https://cdn.memtensor.com.cn/img/1763105312212_yqu9m7_compressed.png)
@@ -70,11 +117,13 @@ The following is an example of using MemOS in Claude Desktop, by which users can
 ![Example of using MemOS in Claude Desktop](https://cdn.memtensor.com.cn/img/1763105296073_gtqj1s_compressed.png)
 
 ### Using in Cursor
-To use MemOS in Cursor, go to "Cursor Settings" -> "Tools & MCP" -> "Add Custom MCP" (or "New MCP Server"), paste the configuration into the pop-up mcp.json file editing page. You can use it in the Cursor chat panel when you observe that memos-api-mcp is in the started state and can see tools such as "add_message" and "search_memory" on the tool details page.
+
+To use MemOS in Cursor, go to "Cursor Settings" -> "Tools & MCP" -> "Add Custom MCP" (or "New MCP Server"), and paste the configuration into the pop-up `mcp.json` file editing page. You can use it in the Cursor chat panel when you observe that memos-api-mcp is in the started state and can see tools such as `add_message` and `search_memory` on the tool details page.
 
 ![Using MemOS in Cursor](https://cdn.memtensor.com.cn/img/1763105278297_n23ukk_compressed.png)
 
 To improve the usage effect, it is recommended that users modify User Rules when using MemOS in Cursor. The specific method is to go to "Cursor Settings" -> "Rules, Memories, Commands" -> "User Rules" -> "+ Add Rule", then copy and paste the following content and save it:
+
 ```
 You are MemOS Memory Management Assistant, dedicated to providing efficient memory management services. It extracts memories based on users' past conversation content and enhances the consistency and personalization of users' conversations with AI through memory retrieval. Before answering each user's question, you need to call the search_memory service of memos-api-mcp and use appropriate search terms to find memories related to the current topic in the user's personal memory bank. After completing the answer based on these memories, call the add_message service of memos-api-mcp to record a summary of the current conversation content. (Note that calling add_message is mandatory. Regardless of what the user says or asks, it must be recorded; otherwise, in subsequent conversations, search_memory will not be able to obtain more detailed user information, leading to your inability to answer the user's questions accurately.)
 ```
@@ -86,7 +135,8 @@ The following is an example of using MemOS in Cursor, by which users can judge w
 ![Usage example of using MemOS in Cursor](https://cdn.memtensor.com.cn/img/1763105238556_p99epu_compressed.png)
 
 ### Using in Visual Studio Code or Trae
-To use MemOS in VS Code or Trae, install the Cline extension and configure the model, then click the "MCP Servers" icon in the upper right corner inside the Cline panel -> "Configure" -> "Configure MCP Servers", and paste the configuration into the cline_map_settings.json file. You can use it in the Cline agent when you observe that memos-api-mcp is in the started state. At the same time, it is recommended to turn on the `Auto-approve` switch of each tool to avoid the agent asking before each tool call, making the use more smooth.
+
+To use MemOS in VS Code or Trae, install the Cline extension and configure the model, then click the "MCP Servers" icon in the upper right corner inside the Cline panel -> "Configure" -> "Configure MCP Servers", and paste the configuration into the `cline_map_settings.json` file. You can use it in the Cline agent when you observe that memos-api-mcp is in the started state. At the same time, it is recommended to turn on the Auto-approve switch of each tool to avoid the agent asking before each tool call, making the use smoother.
 
 ![Configuration process of using MemOS in Cline](https://cdn.memtensor.com.cn/img/1763105211482_g1xclj_compressed.png)
 
@@ -96,7 +146,7 @@ To improve the usage effect, it is recommended that users modify global rules wh
 # 🧠 MemOS Automatic Memory System — Mandatory Usage
 
 ## ⚠️ Always-On (No User Opt-In Required)
-This system must run **automatically for every turn**. Do **not** wait for the user to say “use memory”, “use MCP”, or “call a tool”. The **client/orchestrator is responsible** for auto-invoking the tools.
+This system must run **automatically for every turn**. Do **not** wait for the user to say "use memory", "use MCP", or "call a tool". The **client/orchestrator is responsible** for auto-invoking the tools.
 
 ## 🎯 Mandatory 3-Step Workflow (Enforced by Client Each Turn)
 \`\`\`
@@ -135,7 +185,9 @@ The following is an example of using MemOS in Cline, by which users can judge wh
 ![Usage example of using MemOS in Cline](https://cdn.memtensor.com.cn/img/1763105156433_jz4k3t_compressed.png)
 
 ### Using in [Chatbox](https://chatboxai.app/en)
+
 To use MemOS in Chatbox, click "Settings" in the lower left corner -> "MCP" -> "Custom MCP Servers - Add Server" -> "Add Custom Server", and add the memos-api-mcp service according to the following configuration.
+
 ```
 Name: MemOS Memory Management
 Type: Local (stdio)
@@ -144,11 +196,13 @@ Environment Variables:
 MEMOS_API_KEY={{api_key applied for on the MemOS official website API Console}}
 MEMOS_USER_ID={{custom USER_ID}}
 ```
-After filling in, click "Test". If you can see tools such as "add_message" and "search_memory" at the bottom of the dialog box, the configuration is successful.
+
+After filling in, click "Test". If you can see tools such as `add_message` and `search_memory` at the bottom of the dialog box, the configuration is successful.
 
 ![Verification of using MemOS in Chatbox](https://cdn.memtensor.com.cn/img/1763105136401_xbvcsh_compressed.png)
 
 To improve the usage effect, it is recommended that users modify the system_prompt when using MemOS in Chatbox. The specific method is to go to "Settings" in the lower left corner -> "Chat Settings" -> "Default Settings for New Conversation", and modify the prompt as follows:
+
 ```
 You are MemOS Memory Management Assistant, dedicated to providing efficient memory management services. It extracts memories based on users' past conversation content and enhances the consistency and personalization of users' conversations with AI through memory retrieval. Before answering each user's question, you need to call the search_memory service of memos-api-mcp and use appropriate search terms to find memories related to the current topic in the user's personal memory bank. After completing the answer based on these memories, call the add_message service of memos-api-mcp to record a summary of the current conversation content. (Note that calling add_message is mandatory. Regardless of what the user says or asks, it must be recorded; otherwise, in subsequent conversations, search_memory will not be able to obtain more detailed user information, leading to your inability to answer the user's questions accurately.)
 ```
@@ -159,13 +213,12 @@ The following is an example of using MemOS in Chatbox, by which users can judge 
 
 ![Effect example of using MemOS in Chatbox](https://cdn.memtensor.com.cn/img/1763104980563_q3q7v2_compressed.png)
 
+## 4. Q&A
 
-## 5. Q&A
-Q: Why do agents sometimes fail to invoke tools when they should?
+**Q: Why do agents sometimes fail to invoke tools when they should?**
 
 A: Due to the different underlying models used, different agents have different proficiency in using tools. When the agent forgets to use the tool, you can guide the model to call the corresponding tool through instructions, or try to use other underlying models.
 
-
-## 6. Contact Us
+## 5. Contact Us
 
 ![image.png](https://cdn.memtensor.com.cn/img/1758685658684_nbhka4_compressed.png)
