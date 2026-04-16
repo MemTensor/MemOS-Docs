@@ -5,6 +5,16 @@ title: OpenClaw Plugin Changelog
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-04-16'
+    plugins:
+      - title: 'Cloud Plugin'
+        version: 'v0.1.13'
+        summary: 'Fully supports shared knowledge base access and collaborative processing in multi-agent mode.'
+        sections:
+          - title: 'Shared Knowledge Base Support (Multi-Agent Scenario)'
+            items:
+              - '**Multi-Agent Knowledge Base Support**: Fully supported collaborative access and processing of the knowledge base by multiple agents. Allows different agent nodes to share, retrieve, and invoke data from the same knowledge base, improving knowledge acquisition efficiency and context consistency during multi-agent collaboration in complex tasks.'
+
   - date: '2026-04-03'
     plugins:
       - title: 'Cloud Plugin'
@@ -80,7 +90,7 @@ releases:
       - title: 'Cloud Plugin'
         version: 'v0.1.7'
         summary: 'Added support for user-defined relativity in the searchMemory API.'
-  
+
   - date: '2026-02-26'
     plugins:
       - title: 'Cloud Plugin'

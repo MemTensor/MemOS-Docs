@@ -1,18 +1,61 @@
 ---
-title: MCP 服务配置
-desc: MemOS 提供了通过 MCP 与云平台交互的方式，开发者可在不同的客户端（Claude、Cursor、Cline等）使用MemOS云平台服务。
+title: MemOS MCP 使用指南
 ---
 
-## 1. 服务简介
+MemOS 记忆管理 MCP 是一款强大的 AI 记忆增强插件，支持**对话记忆存取**、**用户画像构建**与**向量知识库全生命周期管理**三大核心能力。
 
-MemOS记忆管理MCP是一款强大的插件，它允许用户访问MemOS记忆的添加、搜索、删除、反馈等功能，能够存取对话内容，为用户提供高效的记忆管理服务，助力于提升用户与AI对话的一致性和个性化水平。
+通过将 MemOS 接入 Claude、Cursor、Cline 等主流 AI 客户端，用户可以让 AI 持续积累个人记忆、理解用户偏好，并高效处理大规模专业文档，从根本上提升 AI 对话的连贯性与个性化水平。
 
-## 2. 工具链接
-* [npm包](https://www.npmjs.com/package/@memtensor/memos-api-mcp)
-* [Github](https://github.com/MemTensor/memos-api-mcp)
+## 1. 能力介绍
 
+### 1.1 对话记忆管理
 
-## 3. 通过 MCP 与 MemOS 云平台交互
+提供对话内容的写入、检索、删除与质量反馈功能，是 MemOS MCP 的基础能力模块。
+
+| 工具 | 功能说明 |
+|---|---|
+| `add_message` | 将当前对话内容摘要写入用户记忆库，供后续检索使用 |
+| `search_memory` | 根据检索词在用户个人记忆库中搜索相关历史记忆 |
+| `delete_memory` | 从记忆库中删除指定的记忆条目 |
+| `add_feedback` | 对记忆条目提交质量反馈，优化记忆管理效果 |
+
+### 1.2 用户画像系统
+
+**`get_user_profile`**：一键调取用户的全维度记忆画像。
+
+不同于单一的事实记忆（Facts），用户画像还整合了显性/隐性偏好（Preferences）以及工具使用经验（Tool Trajectories），让 AI 能够回答"我是谁？"、"我的偏好是什么？"等身份相关问题，实现真正的个性化交互。
+
+### 1.3 知识库全生命周期管理
+
+支持为特定项目或领域创建独立的命名空间容器，便于结构化文档的隔离管理。
+
+| 工具 | 功能说明 |
+|---|---|
+| `create_knowledge_base` | 创建独立的知识库容器，用于特定项目或领域的文档管理 |
+| `remove_knowledge_base` | 移除不再需要的知识库及其关联内容 |
+
+### 1.4 智能文档上传
+
+**`add_kb_document`**：支持将本地文件或在线资源注入指定知识库，是知识库能力的核心工具。
+
+**核心特性：**
+
+- **本地文件直传**：首创 MCP 内部拦截机制，支持大模型直接传递本地路径。
+- **多态路径识别**：完美支持 Windows (盘符)、Unix (绝对路径)、Home 目录 (~/) 以及环境变量路径。
+- **零上下文损耗**：在本地静默完成 Base64 转换与 MIME 类型封装，彻底避免长文档撑爆上下文。
+- **智能直链补全**：自动修正不规范的 URL（补全 http/https）并识别在线资源。
+- **熔断安全策略**：内置防死磕指令，一旦接口报错立即熔断，防止消耗多余流量。
+
+### 1.5 文档精准管控
+
+支持对已上传文档的批量查询与精准删除，实现知识库的动态维护。
+
+| 工具 | 功能说明 |
+|---|---|
+| `get_kb_documents` | 通过 File ID 列表批量获取已上传文档的详细元数据 |
+| `delete_kb_documents` | 从指定知识库中精准删除特定文档，实现文档库动态精简 |
+
+## 2. 快速配置
 
 在客户端中填写如下配置：
 
@@ -49,7 +92,11 @@ MemOS记忆管理MCP是一款强大的插件，它允许用户访问MemOS记忆�
 
 - `MEMOS_CHANNEL`: 填写为"MODELSCOPE"即可。
 
-## 4. 在不同的客户端中使用 MemOS MCP
+更多细节配置可参考：
+* [npm 包](https://www.npmjs.com/package/@memtensor/memos-api-mcp)
+* [Github](https://github.com/MemTensor/memos-api-mcp)
+
+## 3. 在不同的客户端中使用 MemOS MCP
 
 ### 在Claude Desktop中使用
 
@@ -96,7 +143,7 @@ MemOS记忆管理MCP是一款强大的插件，它允许用户访问MemOS记忆�
 # 🧠 MemOS Automatic Memory System — Mandatory Usage
 
 ## ⚠️ Always-On (No User Opt-In Required)
-This system must run **automatically for every turn**. Do **not** wait for the user to say “use memory”, “use MCP”, or “call a tool”. The **client/orchestrator is responsible** for auto-invoking the tools.
+This system must run **automatically for every turn**. Do **not** wait for the user to say "use memory", "use MCP", or "call a tool". The **client/orchestrator is responsible** for auto-invoking the tools.
 
 ## 🎯 Mandatory 3-Step Workflow (Enforced by Client Each Turn)
 \`\`\`
@@ -161,11 +208,11 @@ MEMOS_USER_ID=<YOUR-USER-ID>
 ![在Chatbox中使用MemOS-效果示例](https://cdn.memtensor.com.cn/img/1763105677226_cygzzf_compressed.png)
 
 
-## 5. Q&A
+## 4. Q&A
 Q：有时会遇到智能体在应当使用工具的场景没有使用的情况？
 
 A：由于使用的底层模型不同，不同智能体对工具使用的熟练程度也存在差别，当出现智能体忘记使用工具的情况时可通过指令引导模型调用相应的工具，或尝试使用其他底层模型。
 
-## 6. 联系我们
+## 5. 联系我们
 
 ![image.png](https://cdn.memtensor.com.cn/img/1758685658684_nbhka4_compressed.png)

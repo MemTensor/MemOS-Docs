@@ -5,6 +5,16 @@ title: OpenClaw 插件更新日志
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-04-16'
+    plugins:
+      - title: '云插件'
+        version: 'v0.1.13'
+        summary: '全面支持多 Agent 模式下的共享知识库访问与协同处理。'
+        sections:
+          - title: '共享知识库支持（多 Agent 场景）'
+            items:
+              - '**多 Agent 知识库支持**：全面支持了多 Agent 对知识库的协同访问与处理。允许不同的 Agent 节点共享、检索和调用同一个知识库中的数据，提升了复杂任务下多智能体协作时的知识获取效率与上下文一致性。'
+
   - date: '2026-04-03'
     plugins:
       - title: '云插件'
