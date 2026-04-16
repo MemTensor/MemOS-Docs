@@ -10,7 +10,7 @@ export default {
       cloud: 'MemOS Cloud',
       openSource: 'Open Source',
       selfDevelopedModel: 'Self-developed Models',
-      openclaw: 'OpenClaw',
+      openclaw: 'Agent',
       mcpAgent: 'MCP & Agent Framework',
       apiDocs: 'API Documentation',
       samples: 'Sample Projects',
@@ -55,7 +55,7 @@ export default {
     title: 'Don\'t let your AI forget again, Empower it with MemOS!',
     description: 'Here, you\'ll find everything to quickly integrate MemOS into your AI applications and deploy it in production',
     buttonText: 'Get Started Now',
-    openclawButton: 'OpenClaw Configuration',
+    openclawButton: 'Agent Configuration',
     items: [
       {
         title: 'MemOS Cloud',

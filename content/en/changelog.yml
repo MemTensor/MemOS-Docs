@@ -1,4 +1,54 @@
 versions:
+  - name: v2.0.13
+    date: 2026-04-09
+    changedInfo:
+      Improvements:
+        - type: Scheduling log level optimization
+          changedInfo:
+            - Lowered the log level of frequently printed, repetitive, and line-by-line logs from info to debug, significantly reducing online log noise and storage pressure.
+        - type: Queue log structure
+          changedInfo:
+            - Unified local queue and Redis queue logs to structured fields (e.g., label/item_id/user_id/mem_cube_id/stream) to avoid large content logs and improve stable retrieval and aggregation.
+        - type: Scheduling chain key path observability
+          changedInfo:
+            - Added summary logs for the key nodes of the "submit -> dequeue -> dispatch" chain to quickly locate task congestion, dispatch exceptions, and other issues.
+  
+  - name: v2.0.12
+    date: 2026-04-02
+    changedInfo:
+      Improvements:
+        - type: Service optimization
+          changedInfo:
+            - Added the minimum thread count as a configurable parameter, allowing runtime dynamic adjustment of thread pool size to effectively control active connection count and avoid system overload caused by sudden traffic spikes.
+  
+  - name: v2.0.11
+    date: 2026-03-26
+    changedInfo:
+      New Features:
+        - type: LLM and search
+          changedInfo:
+            - Added MiniMax as an LLM Provider, following the same integration pattern as Qwen and DeepSeek via an OpenAI-compatible API.
+            - Added Tavily as a pluggable internet search backend. Enable the Tavily API through configuration for real-time web searches to supplement the memory system with external knowledge.
+        - type: Deployment and operations
+          changedInfo:
+            - Added a health check API endpoint for service status monitoring, supporting health probes for container orchestration (such as Kubernetes liveness/readiness probes) and load balancers.
+            - Added a production-grade Dockerfile (multi-stage build) and a Kubernetes Helm Chart, including orchestration for the MemOS API service, Neo4j graph database, and Qdrant vector database, plus Ingress and example values files for one-click deployment to Kubernetes clusters.
+        - type: API extensions
+          changedInfo:
+            - The delete_memory interface previously only supported deletion by memory_id. This update expands filter conditions to support batch deletion by user_id and conversation_id, adds filter parameter validation at the API layer, and implements the delete_node_by_params method for the PostgreSQL backend.
+      Bug Fixes:
+        - type: MCP and message handling
+          changedInfo:
+            - Fixed an issue where the MCP add_memory tool sent plain strings instead of the expected list of chat message objects to the /product/add interface. When SimpleStruct MemReader was used, invalid formats were silently skipped so memories were not actually stored. Messages are now converted to the standard chat format before sending.
+            - Fixed a TypeError in _get_further_suggestion when callers passed a string instead of a MessageList. Added isinstance checks to convert string inputs to [{\"role\"：\"user\", \"content\"：...}] while preserving compatibility with MessageList inputs.
+        - type: Memory and feedback
+          changedInfo:
+            - Fixed a bug where memory nodes were incorrectly archived after user feedback, making them unretrievable. Corrected node ID handling in the feedback workflow to prevent accidental archiving.
+        - type: Neo4j
+          changedInfo:
+            - Fixed Neo4j vector search that applied filtering after vector retrieval, which limited recall (or prevented recalling memories for a given cube) on large databases. Retrieval now uses pre-filtering.
+            - Fixed nested metadata write errors in Neo4j. Node properties only accept primitive types or arrays; nested dict/list metadata from some MemOS flows (e.g., SkillMemory and feedback) caused CypherTypeError (Map{} encountered). Added a sanitization layer that serializes dict values to JSON strings before write for Neo4j compatibility while keeping content readable.
+
   - name: v2.0.10
     date: 2026-03-19
     changedInfo:
