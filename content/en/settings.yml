@@ -83,8 +83,10 @@ nav:
     - "(ri:file-code-line) API Reference": api-reference/search-memories
 
   - "(ri:cpu-line) Self-developed Models Overview":
-    - "(ri:flask-line) Extraction Model":
-      - "(ri:file-code-line) Usage Examples": self_developed_model/extraction_usage_example.md
+    - "(ri:filter-3-line) Extraction Model":
+      - "(ri:book-open-line) Usage Examples": self_developed_model/extraction_usage_example.md
+    - "(ri:sort-desc) Reranker Model":
+      - "(ri:book-open-line) Usage Examples": self_developed_model/reranker_usage_example.md
 
   - "(ri:robot-line) Agent":
     - "(ri:book-open-line) Cloud Plugin vs Local Plugin": openclaw/plugin_compare.md
@@ -119,6 +121,7 @@ nav:
 
     - "(ri:cpu-line) Self-developed Models":
       - "(ri:flask-line) Extract Memory": api_docs/core/extract_memory.md
+      - "(ri:sort-desc) Rerank Memory": api_docs/core/rerank.md
 
     - "(ri:chat-1-line) Messages":
       - "(ri:file-list-line) Get Message": api_docs/message/get_message.md

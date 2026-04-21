@@ -81,7 +81,10 @@ const displaySchema = computed((): ArrayItemType | null => {
                 </span>
               </div>
             </div>
-            <template v-if="subitem.items">
+            <template v-if="subitem.properties">
+              <ApiResponseSubItem :item="subitem" />
+            </template>
+            <template v-else-if="subitem.items">
               <ApiResponseSubItem :item="subitem.items" />
             </template>
           </div>
