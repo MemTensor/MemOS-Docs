@@ -348,6 +348,46 @@
         }
       }
     },
+    "/rerank": {
+      "post": {
+        "summary": "Rerank Memory",
+        "description": "提供记忆重排接口，基于 memos-reranker 小模型，传入用户查询与候选记忆列表，一键完成记忆相关性重排。",
+        "operationId": "rerank",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RerankRequest"
+              },
+              "example": {
+                "model": "memos-reranker-0.6b",
+                "query": "用户有什么兴趣爱好",
+                "documents": [
+                  "用户喜欢打羽毛球",
+                  "用户在杭州做后端开发",
+                  "用户偏好简洁的回复风格",
+                  "用户比较喜欢酱香型白酒",
+                  "用户下周三要去北京出差"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RerankResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/get/status": {
       "post": {
         "summary": "Get Task Status",
@@ -2528,6 +2568,127 @@
             "type": "string",
             "title": "Content",
             "description": "消息内容文本。"
+          }
+        }
+      },
+      "RerankRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "query",
+          "documents"
+        ],
+        "title": "RerankRequest",
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "模型名称，固定为 memos-reranker-0.6b。"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "用户查询文本，用于与候选文档进行相关性匹配。"
+          },
+          "documents": {
+            "type": "array",
+            "title": "Documents",
+            "description": "候选记忆/文档列表，每条为一段文本。数组中所有文档的总 token 数上限为 8k。",
+            "items": {
+              "type": "string"
+            }
+          },
+          "top_n": {
+            "type": "integer",
+            "title": "Top N",
+            "description": "返回前 N 条最相关的结果。不传时默认返回全部结果。"
+          }
+        }
+      },
+      "RerankResult": {
+        "type": "object",
+        "required": [
+          "index",
+          "document",
+          "relevance_score"
+        ],
+        "title": "RerankResult",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index",
+            "description": "该文档在原始 documents 列表中的索引位置。"
+          },
+          "document": {
+            "type": "object",
+            "title": "Document",
+            "description": "文档对象。",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "title": "Text",
+                "description": "文档原文内容。"
+              }
+            }
+          },
+          "relevance_score": {
+            "type": "number",
+            "title": "Relevance Score",
+            "description": "相关性分数，范围 0~1，越高表示与 query 越相关。"
+          }
+        }
+      },
+      "RerankResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "model",
+          "usage",
+          "results"
+        ],
+        "title": "RerankResponse",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "本次请求的唯一标识。"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "使用的模型名称。"
+          },
+          "usage": {
+            "type": "object",
+            "title": "Usage",
+            "description": "token 用量统计。",
+            "required": [
+              "prompt_tokens",
+              "total_tokens"
+            ],
+            "properties": {
+              "prompt_tokens": {
+                "type": "integer",
+                "title": "Prompt Tokens",
+                "description": "输入消耗的 token 数。"
+              },
+              "total_tokens": {
+                "type": "integer",
+                "title": "Total Tokens",
+                "description": "总消耗 token 数。"
+              }
+            }
+          },
+          "results": {
+            "type": "array",
+            "title": "Results",
+            "description": "重排结果列表，按 relevance_score 降序排列。",
+            "items": {
+              "$ref": "#/components/schemas/RerankResult"
+            }
           }
         }
       },

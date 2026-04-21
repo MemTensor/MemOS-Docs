@@ -330,6 +330,46 @@
         }
       }
     },
+    "/rerank": {
+      "post": {
+        "summary": "Rerank Memory",
+        "description": "Provides a memory reranking API based on the memos-reranker small model. It takes a user query and a list of candidate memories and completes memory relevance reranking with a single call.",
+        "operationId": "rerank",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RerankRequest"
+              },
+              "example": {
+                "model": "memos-reranker-0.6b",
+                "query": "What are the user's hobbies?",
+                "documents": [
+                  "User likes playing badminton.",
+                  "User is a backend developer in Hangzhou.",
+                  "User prefers concise replies.",
+                  "User prefers Jiangxiang-flavored baijiu.",
+                  "User is going on a business trip to Beijing next Wednesday."
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RerankResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/get/status": {
       "post": {
         "summary": "Get Task Status",
@@ -2488,6 +2528,127 @@
             "description": "Preference memories. Returned when the request includes preference in extraction_types, or when extraction_types is omitted; may mix explicit and implicit preferences.",
             "items": {
               "$ref": "#/components/schemas/ExtractPreferenceItem"
+            }
+          }
+        }
+      },
+      "RerankRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "query",
+          "documents"
+        ],
+        "title": "RerankRequest",
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Model name to use. E.g. memos-reranker-0.6b."
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "The user query."
+          },
+          "documents": {
+            "type": "array",
+            "title": "Documents",
+            "description": "A list of document texts to rerank.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "top_n": {
+            "type": "integer",
+            "title": "Top N",
+            "description": "Return the top N most relevant results. If omitted, returns all results by default."
+          }
+        }
+      },
+      "RerankResult": {
+        "type": "object",
+        "required": [
+          "index",
+          "document",
+          "relevance_score"
+        ],
+        "title": "RerankResult",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index",
+            "description": "The index position of this document in the original documents list."
+          },
+          "document": {
+            "type": "object",
+            "title": "Document",
+            "description": "Document object.",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "title": "Text",
+                "description": "The original text content of the document."
+              }
+            }
+          },
+          "relevance_score": {
+            "type": "number",
+            "title": "Relevance Score",
+            "description": "Relevance score, ranging from 0 to 1, higher indicates more relevant to the query."
+          }
+        }
+      },
+      "RerankResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "model",
+          "usage",
+          "results"
+        ],
+        "title": "RerankResponse",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique identifier for this request."
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Model name used."
+          },
+          "usage": {
+            "type": "object",
+            "title": "Usage",
+            "description": "Token usage statistics.",
+            "required": [
+              "prompt_tokens",
+              "total_tokens"
+            ],
+            "properties": {
+              "prompt_tokens": {
+                "type": "integer",
+                "title": "Prompt Tokens",
+                "description": "Number of tokens consumed by the prompt."
+              },
+              "total_tokens": {
+                "type": "integer",
+                "title": "Total Tokens",
+                "description": "Total number of tokens consumed."
+              }
+            }
+          },
+          "results": {
+            "type": "array",
+            "title": "Results",
+            "description": "List of reranked results, sorted in descending order by relevance_score.",
+            "items": {
+              "$ref": "#/components/schemas/RerankResult"
             }
           }
         }
