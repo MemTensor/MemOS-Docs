@@ -83,8 +83,10 @@ nav:
     - "(ri:file-code-line) API 参考文档": api-reference/search-memories
 
   - "(ri:cpu-line) 自研模型说明":
-    - "(ri:flask-line) 抽取模型":
-      - "(ri:file-code-line) 使用示例": self_developed_model/extraction_usage_example.md
+    - "(ri:filter-3-line) 抽取模型":
+      - "(ri:book-open-line) 使用示例": self_developed_model/extraction_usage_example.md
+    - "(ri:sort-desc) 重排模型":
+      - "(ri:book-open-line) 使用示例": self_developed_model/reranker_usage_example.md
 
   - "(ri:puzzle-line) MCP与Agent框架支持":
     - "(ri:tools-line) MCP 服务":
@@ -118,7 +120,8 @@ nav:
       - "(ri:feedback-line) Add Feedback": api_docs/message/add_feedback.md
 
     - "(ri:cpu-line) 自研模型":
-      - "(ri:flask-line) Extract Memory": api_docs/core/extract_memory.md
+      - "(ri:filter-3-line) Extract Memory": api_docs/core/extract_memory.md
+      - "(ri:sort-desc) Rerank Memory": api_docs/core/rerank.md
 
     - "(ri:chat-1-line) 消息":
       - "(ri:file-list-line) Get Message": api_docs/message/get_message.md
