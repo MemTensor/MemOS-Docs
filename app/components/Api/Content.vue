@@ -72,7 +72,7 @@ onUnmounted(() => {
         </h1>
         <div class="mt-2 text-lg">
           <p
-            class="text-gray-400 text-base"
+            class="text-gray-600 dark:text-gray-400 text-base"
             v-html="apiData?.description"
           />
         </div>

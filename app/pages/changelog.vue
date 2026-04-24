@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import releasesData from '../../content/releases.json'
-import enChangelogData from '../../content/en/changelog.yml'
-import cnChangelogData from '../../content/cn/changelog.yml'
-
 const { t, locale } = useI18n()
+
+const { data: releasesData } = await useAsyncData('releases', () => import('../../content/releases.json').then(m => m.default))
+const { data: enChangelogData } = await useAsyncData('changelog-en', () => import('../../content/en/changelog.yml').then(m => m.default))
+const { data: cnChangelogData } = await useAsyncData('changelog-cn', () => import('../../content/cn/changelog.yml').then(m => m.default))
 
 interface ChangelogItem {
   type: string
@@ -38,9 +38,8 @@ interface ChangelogData {
   versions: ChangelogVersion[]
 }
 
-// Get changelog data based on current language
 const changelogData = computed(() => {
-  return locale.value === 'cn' ? cnChangelogData : enChangelogData
+  return locale.value === 'cn' ? cnChangelogData.value : enChangelogData.value
 })
 
 const activeTab = ref('0')
@@ -127,12 +126,11 @@ const getCategoryClass = (category: string) => {
   return categoryClass[category] || 'text-[#10B981]'
 }
 
-// Transform changelog data to match ChangelogVersions component format
 const highlightVersions = computed(() => {
   const data = changelogData.value as unknown as ChangelogData
+  if (!data?.versions) return []
   return data.versions.map(version => ({
     ...version,
-    // Keep original structure for display
     changedInfo: version.changedInfo,
     ui: {
       container: 'max-w-3xl'
@@ -141,7 +139,7 @@ const highlightVersions = computed(() => {
 })
 
 const opensourceVersions = computed<Version[]>(() => {
-  const versions = releasesData.versions as Version[]
+  const versions = (releasesData.value?.versions ?? []) as Version[]
 
   return versions
     .map(version => ({
@@ -153,7 +151,6 @@ const opensourceVersions = computed<Version[]>(() => {
         container: 'max-w-3xl'
       }
     }))
-    // 过滤掉没有符合类型的版本
     .filter(version => version.changedInfo.length > 0)
 })
 

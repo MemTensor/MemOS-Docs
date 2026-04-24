@@ -16,25 +16,25 @@ nav:
       - "(ri:shield-line) 配额和限制": memos_cloud/limit.md
 
     - "(ri:question-line) 支持与问题排查":
-      - "(ri:question-line) 常见问题": memos_cloud/faq.md
+      - "(ri:question-line) FAQs 常见问题解答": memos_cloud/faq.md
 
     - "(ri:edit-box-line) 记忆操作":
-      - "(ri:message-3-line) 添加消息": memos_cloud/mem_operations/add_message.md
-      - "(ri:search-2-line) 搜索记忆": memos_cloud/mem_operations/search_memory.md
-      - "(ri:delete-bin-line) 删除记忆": memos_cloud/mem_operations/delete_memory.md
-      - "(ri:feedback-line) 添加反馈": memos_cloud/mem_operations/add_feedback.md
+      - "(ri:message-3-line) Add Message": memos_cloud/mem_operations/add_message.md
+      - "(ri:search-2-line) Search Memory": memos_cloud/mem_operations/search_memory.md
+      - "(ri:delete-bin-line) Delete Memory": memos_cloud/mem_operations/delete_memory.md
+      - "(ri:feedback-line)Add Feedback": memos_cloud/mem_operations/add_feedback.md
 
     - "(ri:function-line) 功能介绍":
       - "(ri:flag-line) 基础功能":
-        - "(ri:filter-3-line) 记忆过滤": memos_cloud/features/basic/filters.md
-        - "(ri:timer-flash-line) 异步模式": memos_cloud/features/basic/async_mode.md
+        - "(ri:filter-3-line) 记忆过滤Filter": memos_cloud/features/basic/filters.md
+        - "(ri:timer-flash-line) 异步模式AsyncMode": memos_cloud/features/basic/async_mode.md
         - "(ri:image-add-line) 多模态消息": memos_cloud/features/basic/multimodal.md
-        - "(ri:price-tag-3-line) 自定义标签": memos_cloud/features/basic/custom_tags.md
+        - "(ri:price-tag-3-line) 自定义标签Tags": memos_cloud/features/basic/custom_tags.md
       - "(ri:vip-diamond-line) 高级功能":
-        - "(ri:function-line) 技能": memos_cloud/features/advanced/skill.md
-        - "(ri:book-read-line) 知识库": memos_cloud/features/advanced/knowledge_base.md
-        - "(ri:tools-line) 工具调用": memos_cloud/features/advanced/tool_calling.md
-        - "(ri:chat-history-line) 持续对话": memos_cloud/features/advanced/continuous_dialogue.md
+        - "(ri:function-line) 技能Skills": memos_cloud/features/advanced/skill.md
+        - "(ri:book-read-line) 知识库Knowledgebase": memos_cloud/features/advanced/knowledge_base.md
+        - "(ri:tools-line) 工具调用Tool Call": memos_cloud/features/advanced/tool_calling.md
+        - "(ri:chat-history-line) 持续对话Chat": memos_cloud/features/advanced/continuous_dialogue.md
 
   - "(ri:github-line) 开源项目":
     - "(ri:rocket-line) 快速入门":

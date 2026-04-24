@@ -126,7 +126,7 @@ provide('navigation', filteredNavigation)
 
 <template>
   <UApp>
-    <NuxtLoadingIndicator />
+    <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <NuxtLayout>
       <div

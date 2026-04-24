@@ -56,6 +56,6 @@ onMounted(() => {
     >
       <slot />
     </UDashboardPanel>
-    <Assistant />
+    <LazyAssistant />
   </UDashboardGroup>
 </template>

@@ -20,7 +20,7 @@ async function generateHighlight() {
       theme: 'material-theme-palenight'
     })
 
-    highlightCode.value = highlightHtml
+    highlightCode.value = highlightHtml.replace(/background-color:[^;"]+;?/g, '')
   }
 }
 </script>
@@ -30,9 +30,6 @@ async function generateHighlight() {
 </template>
 
 <style lang="css" scoped>
-:deep(.shiki.material-theme-palenight) {
-  background-color: #0e1219 !important;
-}
 :deep(.shiki span.line) {
   display: inline-block !important;
 }

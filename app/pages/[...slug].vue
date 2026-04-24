@@ -51,6 +51,27 @@ const { data: surround } = await useAsyncData(`surround-${normalizedPath}`, () =
   watch: [locale, navigation]
 })
 
+const parentSection = computed(() => {
+  if (!navigation?.value) return ''
+
+  const normalize = (p: string) => p.replace(/\/$/, '')
+
+  const find = (items: ContentNavigationItem[], parent: string): string => {
+    for (const item of items) {
+      if (item.path && normalize(item.path) === normalizedPath) {
+        return parent
+      }
+      if (item.children) {
+        const found = find(item.children, item.title || parent)
+        if (found) return found
+      }
+    }
+    return ''
+  }
+
+  return find(navigation.value, '')
+})
+
 const description = computed(() => {
   const frontmatterDesc = Object.keys(page.value || {}).includes('desc') ? page.value?.desc : undefined
   return frontmatterDesc
@@ -90,32 +111,76 @@ useHead({
 </script>
 
 <template>
-  <UContainer>
-    <template v-if="apiData">
-      <ApiMain
-        :data="apiData"
-        :show-request-code="true"
-        :show-surround="false"
+  <UContainer class="doc-page-container">
+    <div
+      v-if="apiData"
+      class="flex"
+    >
+      <UPageAside
+        v-if="navigation?.length"
+        class="doc-sidebar-nav overflow-auto scrollbar-hide relative shrink-0"
       >
-        <template
-          v-if="page"
-          #markdown
-        >
-          <ContentRenderer
-            class="wrap-break-word"
-            :value="page"
-          />
-        </template>
-      </ApiMain>
-      <USeparator
-        v-if="surround?.length"
-        :ui="{
-          root: 'mt-8! mb-12!'
-        }"
-      />
+        <div class="sidebar-right-line absolute top-0 right-0 w-px h-full bg-(--ui-border-muted,#e2e8f0)" />
+        <keep-alive>
+          <UContentNavigation
+            :key="route.path"
+            :navigation="navigation"
+            highlight
+            trailing-icon="i-lucide-chevron-down"
+            :ui="{
+              linkTrailingBadge: 'font-semibold uppercase',
+              linkLeadingIcon: 'hidden',
+              linkTitle: 'flex-1 min-w-0 truncate flex items-center',
+              linkTrailingIcon: 'size-5 shrink-0 transform transition-transform duration-200'
+            }"
+          >
+            <template #link-title="{ link }">
+              <span class="block w-full min-w-0 max-w-full">
+                <span class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2">
+                  <UIcon
+                    v-if="link.icon && typeof link.icon === 'string'"
+                    :name="link.icon as string"
+                    class="w-4 h-4 flex-shrink-0"
+                  />
+                  <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
+                  <UIcon
+                    v-if="link.target === '_blank'"
+                    name="i-ri-external-link-line"
+                    class="w-3 h-3 flex-shrink-0 text-gray-400"
+                  />
+                </span>
+              </span>
+            </template>
+          </UContentNavigation>
+        </keep-alive>
+      </UPageAside>
 
-      <UContentSurround :surround="surround" />
-    </template>
+      <div class="flex-1 min-w-0">
+        <ApiMain
+          :data="apiData"
+          :show-request-code="true"
+          :show-surround="false"
+        >
+          <template
+            v-if="page"
+            #markdown
+          >
+            <ContentRenderer
+              class="wrap-break-word"
+              :value="page"
+            />
+          </template>
+        </ApiMain>
+        <USeparator
+          v-if="surround?.length"
+          :ui="{
+            root: 'mt-8! mb-12!'
+          }"
+        />
+
+        <UContentSurround :surround="surround" />
+      </div>
+    </div>
     <UPage
       v-else-if="page"
       class="doc-page-grid"
@@ -123,38 +188,38 @@ useHead({
       <template #left>
         <UPageAside
           v-if="navigation?.length"
-          class="doc-sidebar-nav overflow-auto scrollbar-hide"
+          class="doc-sidebar-nav overflow-auto scrollbar-hide relative"
         >
+          <div class="sidebar-right-line absolute top-0 right-0 w-px h-full bg-(--ui-border-muted,#e2e8f0)" />
           <keep-alive>
             <UContentNavigation
               :key="route.path"
               :navigation="navigation"
               highlight
+              trailing-icon="i-lucide-chevron-down"
               :ui="{
                 linkTrailingBadge: 'font-semibold uppercase',
-                linkLeadingIcon: 'hidden'
+                linkLeadingIcon: 'hidden',
+                linkTitle: 'flex-1 min-w-0 truncate flex items-center',
+                linkTrailingIcon: 'size-5 shrink-0 transform transition-transform duration-200'
               }"
             >
               <template #link-title="{ link }">
-                <UTooltip
-                  :text="link.title"
-                  :delay-duration="100"
-                  class="w-full min-w-0"
-                >
-                  <span class="inline-flex items-center gap-2 w-full min-w-0 max-w-full">
+                <span class="block w-full min-w-0 max-w-full">
+                  <span class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2">
                     <UIcon
                       v-if="link.icon && typeof link.icon === 'string'"
                       :name="link.icon as string"
                       class="w-4 h-4 flex-shrink-0"
                     />
-                    <span class="truncate flex-1 min-w-0">{{ link.title }}</span>
+                    <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
                     <UIcon
                       v-if="link.target === '_blank'"
                       name="i-ri-external-link-line"
                       class="w-3 h-3 flex-shrink-0 text-gray-400"
                     />
                   </span>
-                </UTooltip>
+                </span>
               </template>
             </UContentNavigation>
           </keep-alive>
@@ -164,14 +229,22 @@ useHead({
       <UPageHeader
         :title="page.title"
         :links="page.links"
-        class="doc-page-header max-w-[720px] mx-auto"
+        class="doc-page-header max-w-[768px] mx-auto"
         :ui="{
           title: 'text-[1.95rem] sm:text-[2.15rem] leading-[1.14] tracking-[-0.02em] font-[650]',
           description: 'text-base sm:text-[1.0625rem] leading-7 text-muted',
           wrapper: 'flex flex-col gap-2.5',
-          root: 'relative border-b border-default py-7'
+          root: 'relative border-b border-default pt-9 pb-8'
         }"
       >
+        <template #headline>
+          <span
+            v-if="parentSection"
+            class="text-sm font-medium text-primary"
+          >
+            {{ parentSection }}
+          </span>
+        </template>
         <template #description>
           <div
             v-if="page.avatar"
@@ -194,7 +267,7 @@ useHead({
       </UPageHeader>
 
       <!-- Document content -->
-      <UPageBody class="doc-page-body max-w-[720px] mx-auto">
+      <UPageBody class="doc-page-body max-w-[768px] mx-auto">
         <ContentRenderer
           v-if="page"
           :value="page"
@@ -214,10 +287,10 @@ useHead({
           :ui="{
             root: 'top-(--ui-topbar-height) lg:top-(--ui-header-height) lg:-mx-0 lg:px-0',
             container:
-              'pt-0 pb-2.5 sm:pb-4.5 lg:pt-8 lg:pb-8 border-b border-dashed border-default lg:border-0 flex flex-col gap-0',
+              'pt-0 pb-2.5 sm:pb-4.5 lg:pt-[4.125rem] lg:pb-8 border-b border-dashed border-default lg:border-0 flex flex-col gap-0',
             trigger:
               'group w-full min-h-14 py-4 px-5 sm:px-6 -mx-4 sm:-mx-6 text-left !items-start gap-3 rounded-none border-0 border-b border-default bg-default/80 hover:bg-elevated/60 dark:hover:bg-elevated/40',
-            title: 'flex flex-col gap-1 min-w-0 flex-1 items-stretch text-left',
+            title: 'min-w-0 flex-1 text-left',
             trailing: 'ms-auto self-center shrink-0 pt-0.5'
           }"
         >
@@ -235,19 +308,12 @@ useHead({
             v-if="page.body?.toc?.links?.length"
             #default
           >
-            <div class="min-w-0 flex-1 text-left">
-              <div class="flex flex-col gap-0.5 lg:hidden">
-                <span class="text-xs font-medium text-muted">
-                  {{ $t('pageToc.navLabel') }}
-                </span>
-                <span class="text-sm font-semibold text-highlighted line-clamp-2">
-                  {{ page.title }}
-                </span>
-              </div>
-              <span class="hidden text-base font-medium text-default lg:inline">
-                {{ toc?.title || $t('pageToc.onPage') }}
-              </span>
-            </div>
+            <span class="text-sm font-semibold text-highlighted truncate lg:hidden">
+              {{ page.title }}
+            </span>
+            <span class="hidden text-base font-medium text-default lg:inline">
+              {{ toc?.title || $t('pageToc.onPage') }}
+            </span>
           </template>
           <template
             v-if="toc?.bottom"
