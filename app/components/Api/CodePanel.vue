@@ -88,24 +88,17 @@ async function handleCopy() {
 </script>
 
 <template>
-  <div class="w-full xl:w-[28rem] gap-6 grid grid-rows-[repeat(auto-fit,minmax(0,min-content))] grid-rows relative max-h-[calc(100%-32px)] min-h-[18rem]">
-    <div class="p-0.5 flex flex-col relative overflow-hidden rounded-2xl border border-gray-950/10 dark:border-white/10 my-0 dark:text-gray-50">
-      <div class="flex items-center justify-between gap-2 relative px-2.5">
-        <div class="flex-1 min-w-0 text-xs leading-6 rounded-tl-xl gap-1 flex overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20 active:scrollbar-thumb-black/20 dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25 dark:active:scrollbar-thumb-white/25">
+  <div class="code-block relative group my-5 w-full xl:w-[28rem] max-h-[calc(100%-32px)] min-h-[18rem]">
+    <div class="relative flex items-center justify-between gap-2 rounded-t-md border border-muted border-b-0 bg-default px-3 py-2">
+        <div class="flex-1 min-w-0 text-xs leading-6 gap-1 flex overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20 active:scrollbar-thumb-black/20 dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25 dark:active:scrollbar-thumb-white/25">
           <button
             v-for="(res, index) in responses"
             :key="res.statusCode"
-            class="group flex items-center relative gap-1.5 py-1 pb-1.5 outline-none whitespace-nowrap font-medium text-gray-500 cursor-pointer dark:text-gray-400"
-            :class="active === index ? 'text-primary dark:text-primary-400' : ''"
+            class="relative inline-flex items-center gap-1.5 text-default hover:bg-elevated/50 px-2 py-1.5 text-sm rounded-md cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary focus:outline-none transition-colors"
+            :class="active === index ? 'bg-elevated text-highlighted' : ''"
             @click="handleClick(index)"
           >
-            <div class="flex items-center gap-1.5 px-1.5 rounded-lg z-10 group-hover:bg-gray-200/50 dark:group-hover:bg-gray-700/70 group-hover:text-primary dark:group-hover:text-primary-light">
-              {{ res.statusCode }}
-            </div>
-            <div
-              v-show="active === index"
-              class="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-primary dark:bg-primary-light"
-            />
+            <span class="truncate">{{ res.statusCode }}</span>
           </button>
         </div>
         <button
@@ -118,12 +111,10 @@ async function handleCopy() {
           />
         </button>
       </div>
-      <div class="flex flex-1 overflow-hidden">
-        <div class="w-full min-w-full max-w-full h-full max-h-full">
-          <div class="w-0 min-w-full max-w-full py-3.5 px-4 h-full bg-[#0b0c0e] relative text-sm leading-6 children:!my-0 children:!shadow-none children:!bg-transparent transition-[height] duration-300 ease-in-out [&_*]:ring-0 [&_*]:outline-none [&_*]:focus:ring-0 [&_*]:focus:outline-none [&_pre>code]:pr-[3rem] [&_pre>code>span.line-highlight]:min-w-[calc(100%+3rem)] [&_pre>code>span.line-diff]:min-w-[calc(100%+3rem)] rounded-[14px] verflow-auto overflow-x-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20 active:scrollbar-thumb-black/20 dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25 dark:active:scrollbar-thumb-white/25">
-            <div class="font-mono whitespace-pre flex-none h-full text-xs leading-[1.35rem]">
-              <pre><code v-html="highlightedExamples[active]" /></pre>
-            </div>
+      <div class="group overflow-x-auto rounded-md rounded-t-none border border-muted bg-muted px-4 py-3 font-mono text-sm/6 break-words whitespace-pre-wrap focus:outline-none">
+        <div class="min-w-full [&_pre]:!m-0 [&_pre]:bg-transparent! [&_pre]:p-0!">
+          <div class="font-mono whitespace-pre flex-none h-full text-xs leading-[1.35rem]">
+            <pre><code v-html="highlightedExamples[active]" /></pre>
           </div>
         </div>
       </div>

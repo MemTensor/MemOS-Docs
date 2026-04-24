@@ -112,52 +112,55 @@ useHead({
 
 <template>
   <UContainer class="doc-page-container">
-    <div
+    <UPage
       v-if="apiData"
-      class="flex"
+      class="doc-page-grid doc-api-page-grid"
     >
-      <UPageAside
-        v-if="navigation?.length"
-        class="doc-sidebar-nav overflow-auto scrollbar-hide relative shrink-0"
-      >
-        <div class="sidebar-right-line absolute top-0 right-0 w-px h-full bg-(--ui-border-muted,#e2e8f0)" />
-        <keep-alive>
-          <UContentNavigation
-            :key="route.path"
-            :navigation="navigation"
-            highlight
-            trailing-icon="i-lucide-chevron-down"
-            :ui="{
-              linkTrailingBadge: 'font-semibold uppercase',
-              linkLeadingIcon: 'hidden',
-              linkTitle: 'flex-1 min-w-0 truncate flex items-center',
-              linkTrailingIcon: 'size-5 shrink-0 transform transition-transform duration-200'
-            }"
-          >
-            <template #link-title="{ link }">
-              <span class="block w-full min-w-0 max-w-full">
-                <span class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2">
-                  <UIcon
-                    v-if="link.icon && typeof link.icon === 'string'"
-                    :name="link.icon as string"
-                    class="w-4 h-4 flex-shrink-0"
-                  />
-                  <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
-                  <UIcon
-                    v-if="link.target === '_blank'"
-                    name="i-ri-external-link-line"
-                    class="w-3 h-3 flex-shrink-0 text-gray-400"
-                  />
+      <template #left>
+        <UPageAside
+          v-if="navigation?.length"
+          class="doc-sidebar-nav overflow-auto scrollbar-hide relative"
+        >
+          <div class="sidebar-right-line absolute top-0 right-0 w-px h-full bg-(--ui-border-muted,#e2e8f0)" />
+          <keep-alive>
+            <UContentNavigation
+              :key="route.path"
+              :navigation="navigation"
+              highlight
+              trailing-icon="i-lucide-chevron-down"
+              :ui="{
+                linkTrailingBadge: 'font-semibold uppercase',
+                linkLeadingIcon: 'hidden',
+                linkTitle: 'flex-1 min-w-0 truncate flex items-center',
+                linkTrailingIcon: 'size-5 shrink-0 transform transition-transform duration-200'
+              }"
+            >
+              <template #link-title="{ link }">
+                <span class="block w-full min-w-0 max-w-full">
+                  <span class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2">
+                    <UIcon
+                      v-if="link.icon && typeof link.icon === 'string'"
+                      :name="link.icon as string"
+                      class="w-4 h-4 flex-shrink-0"
+                    />
+                    <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
+                    <UIcon
+                      v-if="link.target === '_blank'"
+                      name="i-ri-external-link-line"
+                      class="w-3 h-3 flex-shrink-0 text-gray-400"
+                    />
+                  </span>
                 </span>
-              </span>
-            </template>
-          </UContentNavigation>
-        </keep-alive>
-      </UPageAside>
+              </template>
+            </UContentNavigation>
+          </keep-alive>
+        </UPageAside>
+      </template>
 
-      <div class="flex-1 min-w-0">
+      <div class="min-w-0">
         <ApiMain
           :data="apiData"
+          :headline="parentSection"
           :show-request-code="true"
           :show-surround="false"
         >
@@ -171,16 +174,30 @@ useHead({
             />
           </template>
         </ApiMain>
-        <USeparator
-          v-if="surround?.length"
-          :ui="{
-            root: 'mt-8! mb-12!'
-          }"
-        />
+        <div class="xl:mx-[18.4062px] xl:w-[520px] xl:max-w-[520px]">
+          <USeparator
+            v-if="surround?.length"
+            :ui="{
+              root: 'mt-8! mb-12!'
+            }"
+          />
 
-        <UContentSurround :surround="surround" />
+          <UContentSurround
+            class="doc-api-surround mb-10"
+            prev-icon="i-lucide-chevron-left"
+            next-icon="i-lucide-chevron-right"
+            :surround="surround"
+            :ui="{
+              link: 'px-4 py-3',
+              linkLeading: 'mb-0 p-0 bg-transparent ring-0 group-hover:bg-transparent group-hover:ring-0',
+              linkLeadingIcon: 'size-4',
+              linkTitle: 'mb-0 text-sm',
+              linkDescription: 'hidden'
+            }"
+          />
+        </div>
       </div>
-    </div>
+    </UPage>
     <UPage
       v-else-if="page"
       class="doc-page-grid"
@@ -274,7 +291,16 @@ useHead({
         />
         <USeparator v-if="surround?.length" />
 
-        <UContentSurround :surround="surround" />
+        <UContentSurround
+          :surround="surround"
+          :ui="{
+            link: 'px-4 py-3',
+            linkLeading: 'mb-0 p-0 bg-transparent ring-0 group-hover:bg-transparent group-hover:ring-0',
+            linkLeadingIcon: 'size-4',
+            linkTitle: 'mb-0 text-sm',
+            linkDescription: 'hidden'
+          }"
+        />
       </UPageBody>
 
       <template

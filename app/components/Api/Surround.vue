@@ -37,6 +37,13 @@ const surround = computed(() => {
       prev-icon="i-lucide-chevron-left"
       next-icon="i-lucide-chevron-right"
       :surround="surround"
+      :ui="{
+        link: 'px-4 py-3',
+        linkLeading: 'mb-0 p-0 bg-transparent ring-0 group-hover:bg-transparent group-hover:ring-0',
+        linkLeadingIcon: 'size-4',
+        linkTitle: 'mb-0 text-sm',
+        linkDescription: 'hidden'
+      }"
     />
   </div>
 </template>

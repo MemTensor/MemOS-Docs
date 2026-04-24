@@ -139,6 +139,24 @@ html.dark .doc-sidebar-nav {
   }
 }
 
+/* API 页：上一篇 / 下一篇——保持在内容列宽度内，参考 mem0 样式 */
+.doc-api-page-grid .doc-api-surround {
+  display: flex !important;
+  grid-template-columns: none !important;
+  width: 100%;
+  max-width: 100%;
+  gap: 1rem;
+}
+
+.doc-api-page-grid .doc-api-surround > a,
+.doc-api-page-grid .doc-api-surround > span {
+  flex: 1 1 0%;
+  min-width: 0;
+  max-width: none !important;
+  width: auto !important;
+  margin-left: 0 !important;
+}
+
 .doc-sidebar-nav nav > ul {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -537,13 +555,6 @@ html.dark [class*="--spotlight-color"] {
 
 /* open-api-docs-module reset styles */
 .oapi {
-  color: var(--color-black) !important;
-  background-color: transparent !important;
-
-  .bg-default {
-    background-color: transparent !important;
-  }
-
   code {
     word-break: break-all;
     overflow-wrap: break-word;
@@ -782,10 +793,7 @@ html.dark .doc-page-body .group.relative.block.rounded-md code {
   margin-top: 0 !important;
 }
 
-/* Code group：亮色下选中标签指示器可见 */
-:root:not(.dark) .doc-page-body div[data-orientation="horizontal"] [role="tablist"] {
-  --ui-bg-elevated: #eef2f6;
-}
+/* Code group 选中标签指示器（已由统一代码块变量控制） */
 
 /* Code group：恢复 Pre 容器定位，让复制按钮正确定位到代码区域 */
 .doc-page-body div[data-orientation="horizontal"] > [role="tabpanel"] {

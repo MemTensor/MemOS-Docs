@@ -12,7 +12,7 @@ const description = computed(
 
 <template>
   <div class="w-full">
-    <div class="border-1 border-[#ffffff1a] rounded-2xl bg-background-light p-6">
+    <div class="rounded-2xl border border-default bg-background-light p-6">
       <div class="flex items-start gap-4">
         <div
           class="flex items-center justify-center h-10 w-10 rounded-xl bg-gray-100/50 dark:bg-white/5 text-gray-700 dark:text-gray-200"

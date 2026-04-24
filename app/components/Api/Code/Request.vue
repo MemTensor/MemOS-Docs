@@ -69,8 +69,8 @@ async function handleCopy() {
 <template>
   <ApiCode class="mb-4">
     <template #header>
-      <div class="flex items-center gap-1.5 text-xs font-medium min-w-0 py-2">
-        <span class="truncate text-gray-950 dark:text-gray-50">
+      <div class="flex items-center gap-1.5 text-sm min-w-0">
+        <span class="truncate">
           {{ activeItem?.label }}
         </span>
       </div>

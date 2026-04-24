@@ -46,7 +46,7 @@ const securitys = computed<SecurityProps[]>(() => {
         </div>
         <template v-if="security.scheme.description">
           <p
-            class="mt-4 whitespace-pre-line text-gray-400 text-sm"
+            class="mt-4 whitespace-pre-line text-gray-600 dark:text-gray-400 text-sm"
             v-html="security.scheme.description"
           />
         </template>

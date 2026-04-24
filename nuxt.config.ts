@@ -70,6 +70,12 @@ const config: NuxtConfig = {
     enabled: process.dev
   },
 
+  // 本机开发时同时监听 IPv4，避免仅绑定 ::1 导致浏览器走 127.0.0.1 时「打不开」
+  devServer: {
+    host: '0.0.0.0',
+    port: 3000
+  },
+
   vite: {
     plugins: [
       yaml()
@@ -89,8 +95,9 @@ const config: NuxtConfig = {
   },
 
   colorMode: {
-    preference: 'dark',
-    fallback: 'dark',
+    preference: 'light',
+    fallback: 'light',
+    storage: 'cookie',
     storageKey: 'memos-docs-color-mode'
   },
 
@@ -98,7 +105,12 @@ const config: NuxtConfig = {
     build: {
       markdown: {
         highlight: {
-          langs: ['bash', 'shell', 'ts', 'typescript', 'diff', 'vue', 'json', 'yml', 'css', 'mdc', 'python', 'py', 'mermaid', 'markdown', 'md']
+          langs: ['bash', 'shell', 'ts', 'typescript', 'diff', 'vue', 'json', 'yml', 'css', 'mdc', 'python', 'py', 'mermaid', 'markdown', 'md'],
+          // 与 @nuxt/content 解析器一致；显式指定避免仅传 langs 时落到偏淡的默认主题
+          theme: {
+            default: 'github-light-high-contrast',
+            dark: 'github-dark-default'
+          }
         }
       }
     }

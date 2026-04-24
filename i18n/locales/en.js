@@ -10,7 +10,7 @@ export default {
       cloud: 'MemOS Cloud',
       openSource: 'Open Source',
       selfDevelopedModel: 'Self-developed Models',
-      openclaw: 'Agent',
+      openclaw: 'OpenClaw',
       mcpAgent: 'MCP & Agent Framework',
       apiDocs: 'API Documentation',
       samples: 'Sample Projects',
@@ -77,8 +77,8 @@ export default {
         description: 'Self-hosted open-source memory—deploy privately, stay in control, customize and extend freely.'
       },
       {
-        title: 'Self-developed Models',
-        description: 'Purpose-built models for memory extraction and recall—plug in and go.'
+        title: 'Sample Projects',
+        description: 'Real-world examples to help you quickly build production-ready AI apps with long-term memory.'
       },
       {
         title: 'MCP & Agent Framework',
@@ -89,8 +89,8 @@ export default {
         description: 'Complete REST API and SDK reference covering auth, memory read/write, retrieval, and more.'
       },
       {
-        title: 'Sample Projects',
-        description: 'Real-world examples to help you quickly build production-ready AI apps with long-term memory.'
+        title: 'Self-developed Models',
+        description: 'Purpose-built models for memory extraction and recall—plug in and go.'
       }
     ]
   },

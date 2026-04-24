@@ -96,7 +96,7 @@ const refLabel = computed(() => extractRefName(props.schema))
           v-if="defaultValue !== undefined"
           class="flex items-center px-2 py-0.5 rounded-md bg-gray-100/50 dark:bg-white/5 text-gray-600 dark:text-gray-200 font-medium break-all"
         >
-          <span class="text-gray-400 dark:text-[#707473]">default: </span>
+          <span class="text-gray-600 dark:text-[#707473]">default: </span>
           <span>{{ defaultValue }}</span>
         </div>
         <div

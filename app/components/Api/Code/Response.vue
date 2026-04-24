@@ -81,21 +81,15 @@ async function handleCopy() {
 <template>
   <ApiCode>
     <template #header>
-      <div class="flex-1 min-w-0 text-xs leading-6 rounded-tl-xl gap-1 flex overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20 active:scrollbar-thumb-black/20 dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25 dark:active:scrollbar-thumb-white/25">
+      <div class="relative flex-1 min-w-0 text-xs leading-6 gap-1 flex overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20 active:scrollbar-thumb-black/20 dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25 dark:active:scrollbar-thumb-white/25">
         <button
           v-for="option in responseOptions"
           :key="`${option.code}-${option.contentType}`"
-          class="group flex items-center relative gap-1.5 py-1 pb-1.5 outline-none whitespace-nowrap font-medium text-gray-500 cursor-pointer dark:text-gray-400"
-          :class="(currentCode === option.code && currentContentType === option.contentType) ? 'text-primary dark:text-primary-400' : ''"
+          class="relative inline-flex items-center gap-1.5 text-default hover:bg-elevated/50 px-2 py-1.5 text-sm rounded-md cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary focus:outline-none transition-colors"
+          :class="(currentCode === option.code && currentContentType === option.contentType) ? 'bg-elevated text-highlighted' : ''"
           @click="handleClick(option.code, option.contentType)"
         >
-          <div class="flex items-center gap-1.5 px-1.5 rounded-lg z-10 group-hover:bg-gray-200/50 dark:group-hover:bg-gray-700/70 group-hover:text-primary dark:group-hover:text-primary-light">
-            {{ option.label }}
-          </div>
-          <div
-            v-show="currentCode === option.code && currentContentType === option.contentType"
-            class="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-primary dark:bg-primary-light"
-          />
+          <span class="truncate">{{ option.label }}</span>
         </button>
       </div>
       <button

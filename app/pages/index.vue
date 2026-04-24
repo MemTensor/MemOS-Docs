@@ -9,10 +9,10 @@ const localeItems = computed(() => tm('homepage.items') as ItemProps[])
 const rawItems = [
   { to: '/memos_cloud/overview', icon: 'ri:file-cloud-fill' },
   { to: '/open_source/getting_started/installation', icon: 'ri:open-source-fill' },
-  { to: '/self_developed_model/extraction_usage_example', icon: 'ri:cpu-line' },
+  { to: '/usecase/financial_assistant', icon: 'ri:book-read-fill' },
   { to: '/mcp_agent/mcp/guide', icon: 'material-symbols:switch-access-3' },
   { to: '/api_docs/start/overview', icon: 'ant-design:api-filled' },
-  { to: '/usecase/financial_assistant', icon: 'ri:book-read-fill' }
+  { to: '/self_developed_model/extraction_usage_example', icon: 'ri:cpu-line' }
 ]
 const items = computed(() => localeItems.value.map((item, index) => ({
   title: rt(item.title),

@@ -28,7 +28,7 @@ defineOptions({
           <div class="mt-3">
             <p
               v-if="param.description"
-              class="whitespace-pre-line text-gray-400 text-sm"
+              class="whitespace-pre-line text-gray-600 dark:text-gray-400 text-sm"
               v-html="param.description"
             />
             <div

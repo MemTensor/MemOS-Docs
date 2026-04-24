@@ -7,7 +7,7 @@ defineProps<{
 <template>
   <p
     v-if="description"
-    class="whitespace-pre-line text-gray-400 text-sm"
+    class="whitespace-pre-line text-gray-600 dark:text-gray-400 text-sm"
   >
     {{ description }}
   </p>

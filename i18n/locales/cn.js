@@ -10,7 +10,7 @@ export default {
       cloud: '云服务',
       openSource: '开源项目',
       selfDevelopedModel: '自研模型',
-      openclaw: 'Agent',
+      openclaw: 'OpenClaw',
       mcpAgent: 'MCP与Agent框架支持',
       apiDocs: 'API接口文档',
       samples: '示例项目',
@@ -66,7 +66,7 @@ export default {
     titleSuffix: '',
     description: '提供从上手入门到生产部署的一切指南，帮你最短时间集成 MemOS',
     buttonText: '写入你的第一条记忆',
-    openclawButton: 'Agent 配置指南',
+    openclawButton: 'OpenClaw 配置指南',
     items: [
       {
         title: 'MemOS 云服务',
@@ -77,8 +77,8 @@ export default {
         description: '自托管开源记忆方案，私有部署、安全可控，支持自由定制与深度扩展。'
       },
       {
-        title: '自研模型',
-        description: '专为记忆场景训练的自研模型，提升抽取与召回质量，即插即用。'
+        title: '示例项目',
+        description: '面向真实业务场景的实战示例，助你快速搭建可上线的长期记忆 AI 应用。'
       },
       {
         title: 'MCP与Agent框架支持',
@@ -89,8 +89,8 @@ export default {
         description: '完整的 REST API 与 SDK 参考，涵盖鉴权、记忆读写、检索等核心接口。'
       },
       {
-        title: '示例项目',
-        description: '面向真实业务场景的实战示例，助你快速搭建可上线的长期记忆 AI 应用。'
+        title: '自研模型',
+        description: '专为记忆场景训练的自研模型，提升抽取与召回质量，即插即用。'
       }
     ]
   },
