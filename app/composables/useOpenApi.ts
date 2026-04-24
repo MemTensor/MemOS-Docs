@@ -104,6 +104,18 @@ const useOpenApi = (collectionName: keyof Collections = 'openapi', parentPath: s
       doc = data.value?.[0]
     }
 
+    if (!doc) return
+
+    doc = {
+      ...doc,
+      openapi: doc.meta.openapi,
+      info: doc.meta.info,
+      servers: doc.meta.servers,
+      security: doc.meta.security,
+      paths: doc.meta.paths,
+      components: doc.meta.components
+    }
+
     const oas = new SimpleOAS(doc)
     await oas.dereference()
     _setOasInstance(oas)

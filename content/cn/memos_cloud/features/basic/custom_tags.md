@@ -1,5 +1,5 @@
 ---
-title: 自定义标签
+title: 自定义标签Tags
 desc: 添加消息时按照你的业务需求使用标签。
 ---
 ::warning 

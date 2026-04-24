@@ -17,7 +17,7 @@ desc: 以下是一些在开发过程中可能遇到的网络问题的应对方�
 
 ```bash
 pip install -U huggingface_hub
-````
+```
 
 #### 设置环境变量
 
@@ -28,6 +28,7 @@ pip install -U huggingface_hub
 使用 huggingface-cli 下载模型或数据集。例如：
 
 - 下载模型：
+
   ```bash
   huggingface-cli download --resume-download gpt2 --local-dir gpt2
   ```

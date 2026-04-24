@@ -190,6 +190,35 @@
         }
       }
     },
+    "/get/memory": {
+      "post": {
+        "summary": "Get Memory",
+        "description": "Retrieve a user’s memories, including factual, preference, and tool memories.",
+        "operationId": "get_memory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetMemoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/delete/memory": {
       "post": {
         "summary": "Delete Memory",
@@ -241,6 +270,99 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AddFeedbackResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/extract/memory": {
+      "post": {
+        "summary": "Extract Memory",
+        "description": "Uses MemOS’s self-developed extraction model to extract and return fact and preference memories directly from conversation messages.",
+        "operationId": "extract_memory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtractMemoryRequest"
+              },
+              "example": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "I’ve planned a summer trip to Guangzhou. What chain hotels can you recommend for accommodation?"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "You can consider options like 7 Days Inn, All Seasons, Hilton, and others."
+                  },
+                  {
+                    "role": "user",
+                    "content": "I’ll go with 7 Days Inn."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Alright—ask me anytime if you have more questions."
+                  }
+                ],
+                "extraction_types": [
+                  "memory",
+                  "preference"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rerank": {
+      "post": {
+        "summary": "Rerank Memory",
+        "description": "Provides a memory reranking API based on the memos-reranker small model. It takes a user query and a list of candidate memories and completes memory relevance reranking with a single call.",
+        "operationId": "rerank",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RerankRequest"
+              },
+              "example": {
+                "model": "memos-reranker-0.6b",
+                "query": "What are the user's hobbies?",
+                "documents": [
+                  "User likes playing badminton.",
+                  "User is a backend developer in Hangzhou.",
+                  "User prefers concise replies.",
+                  "User prefers Jiangxiang-flavored baijiu.",
+                  "User is going on a business trip to Beijing next Wednesday."
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RerankResponse"
                 }
               }
             }
@@ -459,7 +581,7 @@
           "filter": {
             "type": "object",
             "title": "Filter",
-            "description": "Filter conditions. Available fields include: \"agent_id\", \"app_id\", \"create_time\", \"update_time\", and specific fields in \"info\". Supports logical operators (and, or) and comparison operators (gte, lte, gt, lt). For the \"info\" field, supports filtering by \"business_type\", \"biz_id\", \"scene\", and other custom fields.",
+            "description": "Filter conditions, used to precisely limit the memory scope before retrieval. Available fields include: \"agent_id\", \"app_id\", \"create_time\", \"update_time\", and specific fields in \"info\". Supports logical operators (and, or) and comparison operators (gte, lte, gt, lt). For the \"info\" field, supports filtering by \"business_type\", \"biz_id\", \"scene\", and other custom fields.",
             "example": "{\"and\": [{\"create_time\":{\"gte\":\"...\"}}]}"
           },
           "knowledgebase_ids": {
@@ -468,13 +590,13 @@
               "type": "string"
             },
             "title": "Knowledgebase IDs",
-            "description": "Selected scope of knowledgebases for retrieval."
+            "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched.Pass specific Knowledgebase IDs to search within that designated repository; pass \"all\" to search across all associated knowledgebases within the project."
           },
           "memory_limit_number": {
             "type": "integer",
             "title": "Memory Limit Number",
-            "description": "Limits the number of returned fact memories, controlling the count of recalled fact memories. Default: 6, Max: 25.",
-            "default": 6
+            "description": "Maximum number of memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -485,19 +607,27 @@
           "preference_limit_number": {
             "type": "integer",
             "title": "Preference Limit Number",
-            "description": "Limits the number of returned preference memories, controlling the count of recalled preference memories. Effective only when include_preference=true. Default: 6, Max: 25.",
-            "default": 6
+            "description": "Maximum number of preferred memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many preference memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering.",
+            "default": 0.45
           },
           "model_name": {
             "type": "string",
             "enum": [
-              "Qwen3-32B",
+              "qwen3-32b",
               "deepseek-r1",
-              "qwen2.5-72B-Instruct"
+              "qwen2.5-72b-instruct"
             ],
             "title": "Model Name",
             "description": "Specifies the concrete conversation model.",
-            "default": "qwen2.5-72B-Instruct"
+            "default": "qwen2.5-72b-instruct"
           },
           "system_prompt": {
             "type": "string",
@@ -519,13 +649,13 @@
           "temperature": {
             "type": "number",
             "title": "Temperature",
-            "description": "Controls generation randomness. Range: 0 <= x <= 2.",
+            "description": "Controls generation randomness. Range: 0 ≤ x ≤ 2.",
             "default": 0.7
           },          
           "top_p": {
             "type": "number",
             "title": "Top P",
-            "description": "Nucleus sampling parameter. Range: 0 <= x <= 1.",
+            "description": "Nucleus sampling parameter. Range: 0 ≤ x ≤ 1.",
             "default": 0.95
           },
          "add_message_on_answer": {
@@ -789,7 +919,7 @@
                       "properties": {
                         "file_data": {
                           "type": "string",
-                          "description": "Accessible file URL or base64. Supports txt / pdf / doc / docx. Single file max 100MB, 200 pages, total max 20 files. Required when type is file."
+                          "description": "Accessible file URL or base64. Supports txt / pdf / doc / docx / json / md / xml. Single file max 100MB, 500 pages, total max 20 files. Required when type is file."
                         }
                       }
                     }
@@ -1019,7 +1149,7 @@
           "filter": {
             "type": "object",
             "title": "Filter",
-            "description": "Filter conditions. Available fields include: \"agent_id\", \"app_id\", \"create_time\", \"update_time\", and specific fields in \"info\". Supports logical operators (and, or) and comparison operators (gte, lte, gt, lt). For the \"info\" field, supports filtering by \"business_type\", \"biz_id\", \"scene\", and other custom fields.",
+            "description": "Filter conditions, used to precisely limit the memory scope before retrieval.Available fields include: \"agent_id\", \"app_id\", \"create_time\", \"update_time\", and specific fields in \"info\". Supports logical operators (and, or) and comparison operators (gte, lte, gt, lt). For the \"info\" field, supports filtering by \"business_type\", \"biz_id\", \"scene\", and other custom fields.",
             "example": "{\"and\": [{\"create_time\":{\"gte\":\"...\"}}]}"
           },
           "knowledgebase_ids": {
@@ -1027,14 +1157,14 @@
             "items": {
               "type": "string"
             },
-            "description": "Specified scope of knowledgebases for retrieval. Default is empty."
+            "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched.Pass specific Knowledgebase IDs to search within that designated repository; pass \"all\" to search across all associated knowledgebases within the project."
           },
           "memory_limit_number": {
             "type": "integer",
             "format": "int32",
             "title": "Memory Limit Number",
-            "description": "Limits the number of fact memory items returned, controlling the length of fact memory. Defaults to 6 if not provided. The maximum allowed value is 25.",
-            "default": 6
+            "description": "Maximum number of memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_preference": {
             "type": "boolean",
@@ -1046,8 +1176,8 @@
             "type": "integer",
             "format": "int32",
             "title": "Preference Limit Number",
-            "description": "Limits the number of preference memory items returned, controlling the length of fact memory. Defaults to 6 if not provided. The maximum allowed value is 25.",
-            "default": 6
+            "description": "Maximum number of preference memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many preferred memories may be returned. Default is 9, maximum is 25.",
+            "default": 9
           },
           "include_tool_memory": {
             "type": "boolean",
@@ -1061,6 +1191,24 @@
             "title": "Tool Memroy Limit Number",
             "description": "Limits the number of tool memory items returned, controlling the count of recalled tool memories. Effective only when include_tool_memory=true. Default is 6 if not provided, max is 25.",
             "default": 6
+          },
+          "include_skill": {
+            "type": "boolean",
+            "title": "Include Skill",
+            "description": "Whether to enable Skill recall. When enabled, the system will intelligently recall memories related to tools based on the query content. Default is disabled if not provided."
+          },
+          "skill_limit_number": {
+            "type": "number",
+            "title": "Include Skill",
+            "description": "Limits the number of returned Skills, controlling the count of recalled skills. Effective only when `include_skill=true`. Default is 6 if not provided, max is 25."
+          },
+         "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance threshold (0–1) for recalled memories. Filters out low-relevance memories and, together with the maximum counts for factual and preferred recalls, constrains the final results. When omitted, the system default threshold is used. A value of 0 disables relevance filtering.",
+            "default": 0.45
           }
         },
         "title": "SearchMemoryRequest"
@@ -1076,7 +1224,7 @@
             "type": "integer",
             "format": "int32",
             "title": "Code",
-            "description": "API status code. See <a href=\"/dashboard/api/error_code\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Error Code</a> for details.",
+            "description": "API status code. See <a href=\"/api_docs/help/error_codes\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Error Code</a> for details.",
             "example": 0
           },
           "data": {
@@ -1122,6 +1270,14 @@
             "type": "string",
             "title": "Preference Note",
             "description": "Preference memory usage note when it is retrieved."
+          },
+          "skill_detail_list": {
+            "type": "array",
+            "title": "Skill Detail List",
+            "description": "List of skill details returned.",
+            "items": {
+              "$ref": "#/components/schemas/SkillDetail"
+            }
           }
         },
         "description": "Object containing the query result."
@@ -1258,6 +1414,14 @@
             "type": "string",
             "title": "Update Time",
             "description": "Last modification or update time of preference memory, usually in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance score of preference memory to the query, ranging from 0 to 1. Higher values indicate stronger relevance.",
+            "example": 0.87
           }
         },
         "title": "PreferenceDetail"
@@ -1270,20 +1434,20 @@
             "title": "Used Tool",
             "description": "Name of the tool used."
           },
-          "experience": {
-            "type": "string",
-            "title": "Experience",
-            "description": "Tool usage experience or collaboration suggestions."
-          },
           "error_type": {
             "type": "string",
             "title": "Error Type",
             "description": "Error description when call fails."
           },
           "success_rate": {
-            "type": "string",
+            "type": "number",
             "title": "Success Rate",
             "description": "Success rate of this tool trajectory."
+          },
+          "tool_experience": {
+            "type": "string",
+            "title": "Tool Experience",
+            "description": "Experience with this tool in the current trajectory."
           }
         },
         "title": "ToolUsedStatus"
@@ -1340,32 +1504,457 @@
             "type": "string",
             "title": "Update Time",
             "description": "Last update time of the tool memory (ISO 8601 format)."
+          },
+          "relativity": {
+            "type": "number",
+            "title": "Relativity",
+            "description": "Relevance score of the tool memory to the query content."
+          },
+          "experience": {
+            "type": "string",
+            "title": "Experience",
+            "description": "Procedural experience of the entire trajectory, serving as overall guidance for task completion."
           }
         },
         "title": "ToolMemoryDetail"
       },
-      "DeleteMemoryRequest": {
+      "SkillValue": {
         "type": "object",
-        "required": [
-          "user_ids",
-          "memory_ids"
-        ],
         "properties": {
-          "user_ids": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The name of the Skill, used for display and identification of the capability."
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "The description of the Skill."
+          },
+          "procedure": {
+            "type": "string",
+            "title": "Procedure",
+            "description": "Recommended procedures or operational steps to complete the task."
+          },
+          "experience": {
+            "type": "array",
+            "title": "Experience",
+            "items": {
+              "type": "string"
+            },
+            "description": "Experience accumulated from historical tasks, including best practices, common pitfalls, and avoidance suggestions."
+          },
+          "preference": {
+            "type": "array",
+            "title": "Preference",
+            "items": {
+              "type": "string"
+            },
+            "description": "User preference settings for this type of task, such as style, constraints, or priorities."
+          },
+          "examples": {
+            "type": "array",
+            "title": "Examples",
+            "items": {
+              "type": "string"
+            },
+            "description": "Typical usage examples of the Skill, helping the Agent understand input/output formats and usage boundaries."
+          },
+          "script": {
+            "type": "object",
+            "title": "Script",
+            "description": "Reusable code scripts or logic implementations used to complete the Skill."
+          },
+          "others": {
+            "type": "object",
+            "title": "Others",
+            "description": "Other supplementary information."
+          }
+        }
+      },
+      "SkillDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "The unique identifier of the Skill, used internally by the system to distinguish different memory entries."
+          },
+          "skill_value": {
+            "type": "object",
+            "title": "Skill Value",
+            "description": "The specific content of the Skill.",
+            "items": {
+              "$ref": "#/components/schemas/SkillValue"
+            }
+          },
+          "skill_url": {
+            "type": "string",
+            "title": "Skill Url",
+            "description": "The download link for the Skill, downloaded as reusable skill implementations or configuration files."
+          },
+          "skill_type": {
+            "type": "string",
+            "title": "Skill Type",
+            "description": "The type of the Skill."
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "The creation time of the Skill content, usually in ISO 8601 format."
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "The unique identifier of the conversation associated with the Skill."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "The status of the Skill. Currently, all retrieved Skills are 'activated'. activated: Active status, the Skill is currently retrievable and usable.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence",
+            "description": "The confidence score of the Skill, ranging from 0 to 1. A value closer to 1 indicates the Skill is more accurate and reliable.\nThe confidence score gradually decays as the model infers this Skill more times, reflecting the uncertainty that may arise over time or usage frequency."
+          },
+          "tags": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "title": "User IDs",
-            "description": "List of users whose memories can be deleted."
+            "description": "A list of tags associated with the Skill, used for classification, retrieval, or topic marking. Each element in the array is a string, e.g., [\"Person\", \"Event\", \"Work\"]."
           },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "The time when the Skill was last modified or updated, usually in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "string",
+            "title": "Relativity",
+            "description": "The relevance score between the query content and the Skill, ranging from 0 to 1. A value closer to 1 indicates higher relevance."
+          }
+        },
+        "title": "SkillDetail"
+      },
+      "GetMemoryRequest": {
+        "type": "object",
+        "required": [
+          "user_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "Unique identifier of the user whose memories are being retrieved."
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "Page number for pagination when many results are returned.",
+            "default": 1
+          },
+          "size": {
+            "type": "integer",
+            "title": "Size",
+            "description": "Number of entries returned per memory category on the current page, up to 50.",
+            "default": 10
+          },
+          "filter": {
+            "type": "object",
+            "title": "Filter",
+            "description": "Filter conditions, used to precisely limit the memory scope before retrieval. Available fields include: \"agent_id\", \"app_id\", \"create_time\", \"update_time\", and specific fields in \"info\". Supports logical operators (and, or) and comparison operators (gte, lte, gt, lt). For the \"info\" field, supports filtering by \"business_type\", \"biz_id\", \"scene\", and other custom fields.",
+            "example": "{\"and\": [{\"create_time\":{\"gte\":\"...\"}}]}"
+          },
+          "include_preference": {
+            "type": "boolean",
+            "title": "Include Preference",
+            "description": "Whether preference memories should be included.",
+            "default": true
+          },
+          "include_tool_memory": {
+            "type": "boolean",
+            "title": "Include Tool Memory",
+            "description": "Whether tool memories should be included.",
+            "default": true
+          }
+        },
+        "title": "GetMemoryRequest"
+      },
+      "GetMemoryResponseData": {
+        "type": "object",
+        "title": "GetMemoryResponseData",
+        "properties": {
+          "memory_detail_list": {
+            "type": "array",
+            "title": "Memory Detail List",
+            "description": "Returned factual memories.",
+            "items": {
+              "type": "object",
+              "title": "Memory Detail",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier of a factual memory entry."
+                },
+                "memory_key": {
+                  "type": "string",
+                  "description": "Title or keyword summarizing the factual memory."
+                },
+                "memory_value": {
+                  "type": "string",
+                  "description": "Content of the factual memory."
+                },
+                "memory_type": {
+                  "type": "string",
+                  "enum": [
+                    "WorkingMemory",
+                    "LongTermMemory",
+                    "UserMemory"
+                  ],
+                  "description": "Type of factual memory."
+                },
+                "create_time": {
+                  "type": "string",
+                  "description": "Creation time in ISO 8601 format."
+                },
+                "conversation_id": {
+                  "type": "string",
+                  "description": "Conversation identifier linked to this memory."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Current status, only activated is returned."
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Confidence score between 0 and 1; higher means more reliable."
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Tag list for classification or retrieval."
+                },
+                "update_time": {
+                  "type": "string",
+                  "description": "Last update time in ISO 8601 format."
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "description": "Source message objects associated with the memory."
+                },
+                "info": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Custom metadata provided when adding the message."
+                }
+              }
+            }
+          },
+          "preference_detail_list": {
+            "type": "array",
+            "title": "Preference Detail List",
+            "description": "Returned preference memories.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier of the preference memory."
+                },
+                "preference_type": {
+                  "type": "string",
+                  "enum": [
+                    "explicit_preference",
+                    "implicit_preference"
+                  ],
+                  "description": "Preference memory type."
+                },
+                "preference": {
+                  "type": "string",
+                  "description": "Description of the preference."
+                },
+                "reasoning": {
+                  "type": "string",
+                  "description": "Reasoning for extracting or deriving the preference."
+                },
+                "create_time": {
+                  "type": "string",
+                  "description": "Creation time in ISO 8601 format."
+                },
+                "conversation_id": {
+                  "type": "string",
+                  "description": "Conversation identifier linked to this preference."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Current status, only activated is returned."
+                },
+                "update_time": {
+                  "type": "string",
+                  "description": "Last update time in ISO 8601 format."
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "description": "Source messages associated with the preference."
+                },
+                "info": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Custom metadata provided when adding the message."
+                }
+              }
+            }
+          },
+          "tool_memory_detail_list": {
+            "type": "array",
+            "title": "Tool Memory Detail List",
+            "description": "List of tool memory fragment details returned.",
+            "items": {
+              "type": "object",
+              "title": "Tool Memory Detail",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "title": "ID",
+                  "description": "Unique identifier of the tool memory fragment."
+                },
+                "tool_type": {
+                  "type": "string",
+                  "title": "Tool Type",
+                  "description": "Tool memory type. ToolTrajectoryMemory: tool trajectory memory; ToolSchema: tool info memory.",
+                  "enum": [
+                    "ToolTrajectoryMemory",
+                    "ToolSchema"
+                  ]
+                },
+                "tool_value": {
+                  "type": "string",
+                  "title": "Tool Value",
+                  "description": "Specific content of the tool memory."
+                },
+                "tool_used_status": {
+                  "type": "array",
+                  "title": "Tool Used Status",
+                  "description": "List of tool trajectory memories, each record contains tool used and experience info.",
+                  "items": {
+                    "$ref": "#/components/schemas/ToolUsedStatus"
+                  }
+                },
+                "create_time": {
+                  "type": "string",
+                  "title": "Create Time",
+                  "description": "Tool memory creation time (ISO 8601 format)."
+                },
+                "conversation_id": {
+                  "type": "string",
+                  "title": "Conversation ID",
+                  "description": "Unique identifier of the conversation associated with the tool memory."
+                },
+                "status": {
+                  "type": "string",
+                  "title": "Status",
+                  "description": "Tool memory status, currently activated.",
+                  "enum": [
+                    "activated"
+                  ]
+                },
+                "update_time": {
+                  "type": "string",
+                  "title": "Update Time",
+                  "description": "Last update time of the tool memory (ISO 8601 format)."
+                },
+                "experience": {
+                  "type": "string",
+                  "title": "Experience",
+                  "description": "Procedural experience of the entire trajectory, serving as overall guidance for task completion."
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "description": "List of original message content associated with the tool memory."
+                },
+                "info": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Custom metadata provided when adding the message."
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Maximum count across memory types, used to check if another page exists."
+          },
+          "size": {
+            "type": "integer",
+            "description": "Number of entries per memory type on the current page."
+          },
+          "current": {
+            "type": "integer",
+            "description": "Index of the current page."
+          },
+          "pages": {
+            "type": "integer",
+            "description": "Total number of pages."
+          }
+        }
+      },
+      "GetMemoryResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "GetMemoryResponse",
+        "properties": {
+          "code": {
+            "type": "number",
+            "title": "Code",
+            "description": "API status code; refer to the error-code list for details."
+          },
+          "data": {
+            "$ref": "#/components/schemas/GetMemoryResponseData"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API message."
+          }
+        }
+      },
+      "DeleteMemoryRequest": {
+        "type": "object",
+        "properties": {
           "memory_ids": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "title": "Memory IDs",
-            "description": "Unique identifiers of the memories to be deleted."
+            "description": "IDs of the memories to be deleted, obtained from the `id` field returned by the `search/memory` or `get/memory` API."
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "Unique identifier of the user whose memories are being deleted."
           }
         },
         "title": "DeleteMemoryRequest"
@@ -1659,10 +2248,15 @@
             "items": {
               "type": "object",
               "properties": {
+                "name": {
+                  "type": "string",
+                  "title": "Name",
+                  "description": "File name."
+                },
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "Document content, supports URL or Base64"
+                  "description": "The file content input supports URL or Base64 encoding, and the supported document types include PDF, DOCX, DOC, TXT, JSON, MD and XML.Supports uploading up to 20 documents at a time; each document must be no larger than 100 MB, 500 pages, or 20,000 tokens."
                 }
               }
             }
@@ -1845,6 +2439,299 @@
           }
         },
         "title": "DeleteFileResponse"
+      },
+      "ExtractMemoryItem": {
+        "type": "object",
+        "title": "ExtractMemoryItem",
+        "properties": {
+          "memory_key": {
+            "type": "string",
+            "title": "Memory Key",
+            "description": "High-level topic or title summarizing the extracted factual memory.",
+            "example": "User profile basics"
+          },
+          "memory_value": {
+            "type": "string",
+            "title": "Memory Value",
+            "description": "Detailed content of the extracted factual memory.",
+            "example": "User Zhang San, 28, backend developer in Hangzhou, enjoys badminton."
+          },
+          "memory_type": {
+            "type": "string",
+            "title": "Memory Type",
+            "description": "Memory type classifier.<br>Examples: UserMemory, LongTermMemory.",
+            "example": "UserMemory"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "description": "Tags for categorizing the memory content.",
+            "example": [
+              "person",
+              "job",
+              "hobby"
+            ]
+          }
+        }
+      },
+      "ExtractPreferenceItem": {
+        "type": "object",
+        "title": "ExtractPreferenceItem",
+        "properties": {
+          "preference": {
+            "type": "string",
+            "title": "Preference",
+            "description": "Concrete preference text extracted from the dialogue.",
+            "example": "The user asked for replies to stay concise."
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning",
+            "description": "How this preference was inferred from the conversation.",
+            "example": "The user stated this preference explicitly in the chat."
+          },
+          "preference_type": {
+            "type": "string",
+            "title": "Preference Type",
+            "description": "explicit_preference: clearly stated by the user; implicit_preference: inferred from behavior or context.",
+            "enum": [
+              "explicit_preference",
+              "implicit_preference"
+            ],
+            "example": "explicit_preference"
+          }
+        }
+      },
+      "ExtractMemoryResponseData": {
+        "type": "object",
+        "title": "ExtractMemoryResponseData",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Whether extraction succeeded."
+          },
+          "memory_detail_list": {
+            "type": "array",
+            "title": "Memory Detail List",
+            "description": "Factual memories. Returned when the request includes memory in extraction_types, or when extraction_types is omitted.",
+            "items": {
+              "$ref": "#/components/schemas/ExtractMemoryItem"
+            }
+          },
+          "preference_detail_list": {
+            "type": "array",
+            "title": "Preference Detail List",
+            "description": "Preference memories. Returned when the request includes preference in extraction_types, or when extraction_types is omitted; may mix explicit and implicit preferences.",
+            "items": {
+              "$ref": "#/components/schemas/ExtractPreferenceItem"
+            }
+          }
+        }
+      },
+      "RerankRequest": {
+        "type": "object",
+        "required": [
+          "model",
+          "query",
+          "documents"
+        ],
+        "title": "RerankRequest",
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Model name to use. E.g. memos-reranker-0.6b."
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "The user query."
+          },
+          "documents": {
+            "type": "array",
+            "title": "Documents",
+            "description": "A list of document texts to rerank.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "top_n": {
+            "type": "integer",
+            "title": "Top N",
+            "description": "Return the top N most relevant results. If omitted, returns all results by default."
+          }
+        }
+      },
+      "RerankResult": {
+        "type": "object",
+        "required": [
+          "index",
+          "document",
+          "relevance_score"
+        ],
+        "title": "RerankResult",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index",
+            "description": "The index position of this document in the original documents list."
+          },
+          "document": {
+            "type": "object",
+            "title": "Document",
+            "description": "Document object.",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "title": "Text",
+                "description": "The original text content of the document."
+              }
+            }
+          },
+          "relevance_score": {
+            "type": "number",
+            "title": "Relevance Score",
+            "description": "Relevance score, ranging from 0 to 1, higher indicates more relevant to the query."
+          }
+        }
+      },
+      "RerankResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "model",
+          "usage",
+          "results"
+        ],
+        "title": "RerankResponse",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique identifier for this request."
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Model name used."
+          },
+          "usage": {
+            "type": "object",
+            "title": "Usage",
+            "description": "Token usage statistics.",
+            "required": [
+              "prompt_tokens",
+              "total_tokens"
+            ],
+            "properties": {
+              "prompt_tokens": {
+                "type": "integer",
+                "title": "Prompt Tokens",
+                "description": "Number of tokens consumed by the prompt."
+              },
+              "total_tokens": {
+                "type": "integer",
+                "title": "Total Tokens",
+                "description": "Total number of tokens consumed."
+              }
+            }
+          },
+          "results": {
+            "type": "array",
+            "title": "Results",
+            "description": "List of reranked results, sorted in descending order by relevance_score.",
+            "items": {
+              "$ref": "#/components/schemas/RerankResult"
+            }
+          }
+        }
+      },
+      "ExtractMemoryMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content"
+        ],
+        "title": "ExtractMemoryMessage",
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "enum": [
+              "user",
+              "assistant",
+              "system"
+            ],
+            "description": "Creator role of the message."
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Message body text."
+          }
+        }
+      },
+      "ExtractMemoryRequest": {
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "ExtractMemoryRequest",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "title": "Messages",
+            "description": "Array of message objects from which to extract memories. The combined Token count of all messages must not exceed 8k.",
+            "items": {
+              "$ref": "#/components/schemas/ExtractMemoryMessage"
+            }
+          },
+          "extraction_types": {
+            "type": "array",
+            "title": "Extraction Types",
+            "description": "<p>Limits which memory types to extract; omit to extract all supported types.</p><ul><li><code>memory</code>: factual memories—user-related factual information extracted from the dialogue.</li><li><code>preference</code>: preference memories—user preferences from the dialogue, including explicit preferences (clearly stated) and implicit preferences (inferred from behavior).</li></ul>",
+            "items": {
+              "type": "string",
+              "enum": [
+                "memory",
+                "preference"
+              ]
+            }
+          }
+        }
+      },
+      "ExtractMemoryResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ExtractMemoryResponse",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "title": "Code",
+            "description": "API status code. See <a href=\"/api_docs/help/error_codes\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Error Code</a> for details.",
+            "example": 0
+          },
+          "data": {
+            "$ref": "#/components/schemas/ExtractMemoryResponseData"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message.",
+            "example": "ok"
+          }
+        }
       }
     }
   }

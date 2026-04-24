@@ -1,187 +1,181 @@
 ---
-title: Getting Started with MemReader
-desc: This guide walks you through how to use the `SimpleStructMemReader` to extract structured memories from conversations and documents using LLMs and embedding models. It is ideal for building memory-aware conversational AI, knowledge bases, and semantic search systems.
+title: "MemReader"
+desc: MemReader is your "memory translator". It translates messy user inputs (chat, documents, images) into structured memory fragments the system can understand.
 ---
 
-##  Initialize a `SimpleStructMemReader`
+## 1. Overview
 
-First, configure and initialize the reader with your preferred LLM and embedder models.
+When building AI applications, we often run into this problem: users send all kinds of things—casual chat messages, PDF documents, and images. **MemReader** turns these raw inputs (Raw Data) into standard memory blocks (Memory Items) with embeddings and metadata by "chewing" and "digesting" them.
 
-### Example:
+In short, it does three things:
+1.  **Normalization**: Whether you send a string or JSON, it first converts everything into a standard format.
+2.  **Chunking**: It splits long conversations or documents into appropriately sized chunks for downstream processing.
+3.  **Extraction**: It calls an LLM to extract unstructured information into structured knowledge points (Fine mode), or directly generates snapshots (Fast mode).
 
-```python
-from memos.configs.mem_reader import SimpleStructMemReaderConfig
-from memos.mem_reader.simple_struct import SimpleStructMemReader
-reader_config = SimpleStructMemReaderConfig.from_json_file(
-    "examples/data/config/simple_struct_reader_config.json"
-)
-reader = SimpleStructMemReader(reader_config)
-```
-::tip
-You can customize the model names or backends depending on your environment.
-::
 ---
 
-## Get Your First Chat Memory
+## 2. Core Modes
 
-Extract structured memories from a conversation between a user and assistant.
+MemReader provides two modes, corresponding to the needs for "speed" and "accuracy":
 
-### Example Input:
+### ⚡ Fast Mode (speed first)
+*   **Characteristics**: **Does not call an LLM**, only performs chunking and embeddings.
+*   **Use cases**:
+    *   Users are sending messages quickly and the system needs millisecond-level responses.
+    *   You only need to keep "snapshots" of the conversation, without deep understanding.
+*   **Output**: raw text chunks + vector index + provenance tracking (Sources).
+
+### 🧠 Fine Mode (carefully crafted)
+*   **Characteristics**: **Calls an LLM** for deeper analysis.
+*   **Use cases**:
+    *   Long-term memory writing (needs key facts extracted).
+    *   Document analysis (needs core ideas summarized).
+    *   Multimodal understanding (needs to understand what's in an image).
+*   **Output**: structured facts + key information extraction (Key) + background (Background) + vector index + provenance tracking (Sources) + multimodal details.
+
+---
+
+## 3. Code Structure
+
+MemReader's code structure is straightforward and mainly includes:
+
+*   **`base.py`**: defines the interface contract that all Readers must follow.
+*   **`simple_struct.py`**: **the most commonly used implementation**. Focuses on pure-text conversations and local documents; lightweight and efficient.
+*   **`multi_modal_struct.py`**: **an all-rounder**. Handles images, file URLs, tool calls, and other complex inputs.
+*   **`read_multi_modal/`**: contains various parsers, such as `ImageParser` for images and `FileParser` for files.
+
+---
+
+## 4. How to Choose?
+
+| Your need | Recommended choice | Why |
+| :--- | :--- | :--- |
+| **Only process plain text chats** | `SimpleStructMemReader` | Simple, direct, and performant. |
+| **Need to handle images and file links** | `MultiModalStructMemReader` | Built-in multimodal parsing. |
+| **Upgrade from Fast to Fine** | Any Reader's `fine_transfer` method | Supports a progressive "store first, refine later" strategy. |
+
+---
+
+## 5. API Overview
+
+### Unified Factory: `MemReaderFactory`
+
+Don't instantiate readers directly; using the factory pattern is best practice:
 
 ```python
-conversation_data = [
-    [
-        {"role": "user", "content": "I have a meeting tomorrow at 3 PM"},
-        {"role": "assistant", "content": "What's the meeting about?"},
-        {"role": "user", "content": "It's about the Q4 project deadline"}
-    ]
-]
+from memos.configs.mem_reader import MemReaderConfigFactory
+from memos.mem_reader.factory import MemReaderFactory
+
+# Create a Reader from configuration
+cfg = MemReaderConfigFactory.model_validate({...})
+reader = MemReaderFactory.from_config(cfg)
 ```
 
-### Extract Memories:
+### Core Method: `get_memory()`
+
+This is the method you will call most often.
 
 ```python
 memories = reader.get_memory(
-    conversation_data,
+    scene_data,       # your input data
+    type="chat",      # type: chat or doc
+    info=user_info,   # user info (user_id, session_id)
+    mode="fine"       # mode: fast or fine (highly recommended to specify explicitly!)
+)
+```
+
+**Return value**: `list[list[TextualMemoryItem]]`
+
+:::note
+Why a nested list?  
+Because a long conversation may be split into multiple windows (Window). The outer list represents windows, and the inner list represents memory items extracted from that window.
+:::
+
+---
+
+## 6. Practical Development
+
+### Scenario 1: Processing simple chat logs
+
+This is the most basic usage, with `SimpleStructMemReader`.
+
+```python
+# 1. Prepare input: standard OpenAI-style conversation format
+conversation = [
+    [
+        {"role": "user", "content": "I have a meeting tomorrow at 3pm"},
+        {"role": "assistant", "content": "What is the meeting about?"},
+        {"role": "user", "content": "Discussing the Q4 project deadline"},
+    ]
+]
+
+# 2. Extract memory (Fine mode)
+memories = reader.get_memory(
+    conversation,
     type="chat",
-    info={"user_id": "user_001", "session_id": "session_001"}
+    mode="fine",
+    info={"user_id": "u1", "session_id": "s1"}
+)
+
+# 3. Result
+# memories will include extracted facts, e.g., "User has a meeting tomorrow at 3pm about the Q4 project deadline"
+```
+
+### Scenario 2: Processing multimodal inputs
+
+When users send images or file links, switch to `MultiModalStructMemReader`.
+
+```python
+# 1. Prepare input: a complex message containing files and images
+scene_data = [
+    [
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Check this file and image"},
+                # Files support automatic download and parsing via URL
+                {"type": "file", "file": {"file_data": "https://example.com/readme.md"}},
+                # Images support URL
+                {"type": "image_url", "image_url": {"url": "https://example.com/chart.png"}},
+            ]
+        }
+    ]
+]
+
+# 2. Extract memory
+memories = multimodal_reader.get_memory(
+    scene_data,
+    type="chat",
+    mode="fine", # Only Fine mode invokes the vision model to parse images
+    info={"user_id": "u1", "session_id": "s1"}
 )
 ```
 
-### Sample Output:
+### Scenario 3: Progressive optimization (Fine Transfer)
 
-```json
-[
-    TextualMemoryItem(
-        id='2d5965f9-4c9b-4c24-9068-325b53db098b',
-        memory='Tomorrow at 3:00 PM, the user will meet with the Q4 project team to discuss the deadline.',
-        metadata=TreeNodeTextualMemoryMetadata(
-            user_id='user_001',
-            session_id='session_001',
-            status='activated',
-            type='fact',
-            confidence=0.99,
-            tags=['deadline', 'project'],
-            visibility=None,
-            updated_at='2025-07-03T14:34:33.535844',
-            memory_type='UserMemory',
-            key='Meeting schedule',
-            sources=[
-                "user: I have a meeting tomorrow at 3 PM",
-                "assistant: What's the meeting about?",
-                "user: It's about the Q4 project deadline"
-            ],
-            embedding=[0.0058597163, ..., 0.009375607],
-            created_at='2025-07-03T14:34:33.535860',
-            usage=[],
-            background="The user plans to meet with the Q4 project team tomorrow at 3:00 PM to address the project's deadline. This action reflects their proactive approach to managing project timelines and their focus on ensuring timely completion."
-        )
-    )
-]
-```
-::note
-The reader extract related memories and tags from the conversation session.
-::
----
-
-## Get Your First Document Memory
-
-Process text files to extract structured summaries and tags.
-
-### Example Code:
+For better UX, you can first store the conversation quickly in Fast mode, then "refine" it into Fine memories when the system is idle.
 
 ```python
-doc_paths = [
-    "examples/mem_reader/text1.txt",
-    "examples/mem_reader/text2.txt",
-]
+# 1. Store quickly first (millisecond-level)
+fast_memories = reader.get_memory(conversation, mode="fast", ...)
 
-doc_memories = reader.get_memory(
-    doc_paths,
-    type="doc",
-    info={
-        "user_id": "user_001",
-        "session_id": "session_001",
-        "chunk_size": 512,
-        "chunk_overlap": 128
-    }
+# ... store into the database ...
+
+# 2. Refine asynchronously in the background
+refined_memories = reader.fine_transfer_simple_mem(
+    fast_memories_flat_list, # Note: pass a flattened list of Items here
+    type="chat"
 )
-```
 
-### Sample Output:
-
-```json
-[
-    TextualMemoryItem(
-        id='24dabd9f-200b-40c4-84cc-2c0fccaaf8fd',
-        memory='This is another sample document content for testing purposes.',
-        metadata=TreeNodeTextualMemoryMetadata(
-            user_id='user_001',
-            session_id='session_001',
-            status='activated',
-            type='fact',
-            memory_time=None,
-            source=None,
-            confidence=0.99,
-            entities=None,
-            tags=['Testing', 'Sample'],
-            visibility=None,
-            updated_at='2025-07-03T14:38:29.776147',
-            memory_type='LongTermMemory',
-            key='',
-            sources=['examples/mem_reader/text2.txt_0'],
-            embedding=[0.028731367, ..., -0.018501928],
-            created_at='2025-07-03T14:38:29.776213',
-            usage=[],
-            background=''
-        )
-    )
-]
-```
-::note
-Documents are chunked and summarized to create searchable knowledge items.
-::
-
-### Supported Files
-
-We use [`markitdown`](https://github.com/microsoft/markitdown) to convert files to Markdown format texts.
-
-**MarkItDown currently supports the conversion from:**  
-
-```
-PDF  
-PowerPoint  
-Word  
-Excel  
-Images (EXIF metadata and OCR)  
-Audio (EXIF metadata and speech transcription)  
-HTML  
-Text-based formats (CSV, JSON, XML)  
-ZIP files (iterates over contents)  
-YouTube URLs  
-EPUBs  
-... and more!
-```
-*(Content sourced from [MarkItDown GitHub repository](https://github.com/microsoft/markitdown))*
-
----
-
-
-## Try It Out: Print Extracted Memories
-
-```python
-for memory_list in memories:
-    for memory_item in memory_list:
-        print("🧠 Memory:", memory_item.memory)
-        print("🏷 Tags:", memory_item.metadata.tags)
-        print("👤 User ID:", memory_item.metadata.user_id)
-        print("📅 Created At:", memory_item.metadata.created_at)
-        print("---")
+# 3. Replace the original fast_memories with refined_memories
 ```
 
 ---
 
-You've now successfully:
-- Initialized a `SimpleStructMemReader`
-- Extracted structured memories from chat conversations
-- Extracted knowledge from documents
+## 7. Configuration Notes
+
+In `.env` or configuration files, you can adjust these key parameters:
+
+*   **`chat_window_max_tokens`**: **sliding window size**. Default is 1024. It determines how much context is packed together for processing. Too small may lose context; too large may exceed the LLM token limit.
+*   **`remove_prompt_example`**: **whether to remove examples from the prompt**. True = save tokens but may reduce extraction quality; False = keep few-shot examples for better accuracy but consume more tokens.
+*   **`direct_markdown_hostnames`** (multimodal only): **hostname allowlist**. If a file URL's hostname is in this list (e.g., `raw.githubusercontent.com`), the Reader treats it as Markdown text directly instead of trying OCR or conversion, which is more efficient.

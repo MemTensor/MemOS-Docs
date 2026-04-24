@@ -54,3 +54,4 @@ MemOS 为 AI 应用提供了两种“记忆”解决方案。您可以选择�
 *   [试用免费平台](/memos_cloud/quick_start)：注册并登录 [MemOS 云平台](https://memos-dashboard.openmem.net/quickstart)，免费试用所有功能。
 
 *   [探索开源方案](/open_source/getting_started/quick_start)：克隆项目仓库，直接在本地运行试用。顺便点个 Star 支持我们吧！
+

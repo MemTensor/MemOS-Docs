@@ -1,427 +1,105 @@
 ---
-title: MOS API for MemOS
-desc: The **MOS** (Memory Operating System) is a core component of MemOS that acts as an orchestration layer, managing multiple memory modules (MemCubes) and providing a unified interface for memory-augmented applications.
+title: MemOS API Development Guide (Components & Handlers Architecture)
+desc: MemOS v2.0 adopts a more modular and decoupled architecture. The legacy MOS class is deprecated; Components + Handlers is now recommended for development.
 ---
 
-## API Summary (`MOS`)
+This architecture separates "system components" (Components) from "business logic execution" (Handlers), making the system easier to extend, test, and maintain.
 
-### Initialization
-```python
-from memos import MOS
-mos = MOS(config: MOSConfig)
-```
+## 1. Core Concepts
 
-### Core Methods
+### 1.1 Components (Core Components)
 
-| Method | Description |
-|--------|-------------|
-| `register_mem_cube(mem_cube_name_or_path, mem_cube_id=None, user_id=None)` | Register a new memory cube from a directory or remote repo for a user. |
-| `unregister_mem_cube(mem_cube_id, user_id=None)` | Unregister (remove) a memory cube by its ID. |
-| `add(messages=None, memory_content=None, doc_path=None, mem_cube_id=None, user_id=None)` | Add new memory (from messages, string, or document) to a cube. |
-| `search(query, user_id=None, install_cube_ids=None)` | Search memories across cubes for a query, optionally filtered by cube IDs. |
-| `chat(query, user_id=None)` | Chat with the LLM, enhanced by memory retrieval for specified user. |
-| `get(mem_cube_id, memory_id, user_id=None)` | Get a specific memory by cube and memory ID for a user. |
-| `get_all(mem_cube_id=None, user_id=None)` | Get all memories from a cube (or all cubes for user). |
-| `update(mem_cube_id, memory_id, text_memory_item, user_id=None)` | Update a memory in a cube by ID for a user. |
-| `delete(mem_cube_id, memory_id, user_id=None)` | Delete a memory from a cube by ID for a user. |
-| `delete_all(mem_cube_id=None, user_id=None)` | Delete all memories from a cube for a user. |
-| `clear_messages(user_id=None)` | Clear the chat history for the specified user session. |
-
-### User Management Methods
-
-| Method | Description |
-|--------|-------------|
-| `create_user(user_id, role=UserRole.USER, user_name=None)` | Create a new user with specified role and optional name. |
-| `list_users()` | List all active users with their information. |
-| `create_cube_for_user(cube_name, owner_id, cube_path=None, cube_id=None)` | Create a new cube for a specific user as owner. |
-| `get_user_info()` | Get current user information including accessible cubes. |
-| `share_cube_with_user(cube_id, target_user_id)` | Share a cube with another user. |
-
-## Class Overview
-
-`MOS` manages multiple `MemCube` objects, each representing a user's or session's memory. It provides a unified API for memory operations (add, search, update, delete) and integrates with LLMs to enhance chat with contextual memory retrieval. MOS supports multi-user, multi-session scenarios and is extensible to new memory types and backends.
-
-## Example Usage
-
-```python
-import uuid
-
-from memos.configs.mem_os import MOSConfig
-from memos.mem_os.main import MOS
-
-
-# init MOS
-mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
-memory = MOS(mos_config)
-
-# create user
-user_id = str(uuid.uuid4())
-memory.create_user(user_id=user_id)
-
-# register cube for user
-memory.register_mem_cube("examples/data/mem_cube_2", user_id=user_id)
-
-# add memory for user
-memory.add(
-    messages=[
-        {"role": "user", "content": "I like playing football."},
-        {"role": "assistant", "content": "I like playing football too."},
-    ],
-    user_id=user_id,
-)
-# Later, when you want to retrieve memory for user
-retrieved_memories = memory.search(query="What do you like?", user_id=user_id)
-# output text_memories: I like playing football, act_memories, para_memories
-print(f"text_memories: {retrieved_memories['text_mem']}")
-```
-
-## Core Operations Overview
-
-MOS exposes several main operations for interacting with memories:
-
-* **Adding Memories** - Store new information from conversations, documents, or direct content
-* **Searching Memories** - Retrieve relevant memories based on semantic queries
-* **Chat with Memory** - Enhanced conversations with contextual memory retrieval
-* **Memory Management** - Update, delete, and organize existing memories
-* **Dumping Memories** - Export memory cubes to persistent storage
-
-## 1. Adding Memories
-
-### Overview
-
-The add operation processes and stores new information through several steps
-
-
-#### Adding from Conversation Messages
-
-```python
-import uuid
-from memos.configs.mem_os import MOSConfig
-from memos.mem_os.main import MOS
-
-# Initialize MOS
-mos_config = MOSConfig.from_json_file("config/simple_memos_config.json")
-memory = MOS(mos_config)
-
-# Create user
-user_id = str(uuid.uuid4())
-memory.create_user(user_id=user_id, user_name="Alice")
-
-# Register memory cube
-memory.register_mem_cube("examples/data/mem_cube_2", user_id=user_id)
-
-# Add memory from conversation
-memory.add(
-    messages=[
-        {"role": "user", "content": "I like playing football and watching movies."},
-        {"role": "assistant", "content": "That's great! Football is a wonderful sport and movies can be very entertaining."},
-        {"role": "user", "content": "My favorite team is Barcelona."},
-        {"role": "assistant", "content": "Barcelona is a fantastic team with a rich history!"}
-    ],
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-print("Memory added successfully from conversation")
-```
-
-#### Adding Direct Memory Content
-
-```python
-# Add specific memory content directly
-memory.add(
-    memory_content="User prefers vegetarian food and enjoys cooking Italian cuisine",
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-# Add multiple memory items
-memory_items = [
-    "User works as a software engineer",
-    "User lives in San Francisco",
-    "User enjoys hiking on weekends"
-]
-
-for item in memory_items:
-    memory.add(
-        memory_content=item,
-        mem_cube_id="personal_memories",
-        user_id=user_id
-    )
-```
-
-#### Adding from Documents
-
-```python
+Components are the "organs" of MemOS. They are initialized when the server starts (via `init_server()`) and reused throughout the system lifecycle.
 
-# Add from multiple documents
-doc_path="./examples/data"
-memory.add(
-    doc_path=doc_path,
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-```
+Core components include:
 
-## 2. Searching Memories
-
-### Overview
+#### Core Memory Components
 
-The search operation retrieves memories through search api:
-
-
-#### Basic Memory Search
+1. **MemCube**: A memory container that isolates memories across different users and application scenarios, managing multiple memory modules in a unified way.
+2. **MemReader**: A memory processor that parses user inputs (chat, documents, images) into standardized memory items that the system can persist.
+3. **MemScheduler**: A background scheduler that handles asynchronous processing of memory operations—storage, indexing, and organization—supporting concurrent task execution.
+4. **MemChat**: A conversation controller responsible for orchestrating the memory-augmented dialogue loop: "retrieve memory → generate response → store new memory".
+5. **MemFeedback**: A memory correction engine that understands users' natural-language feedback and performs atomic-level updates to memories (correction, addition, replacement).
 
-```python
-# Search for relevant memories
-results = memory.search(
-    query="What sports do I like?",
-    user_id=user_id
-)
+### 1.2 Handlers (Business Processors)
 
-# Access different types of memories
-text_memories = results['text_mem']
-activation_memories = results['act_mem']
-parametric_memories = results['para_mem']
+Handlers are the "brain" of MemOS. They encapsulate concrete business logic by coordinating and calling the capabilities of Components to complete user-facing tasks.
 
-print(f"Found {len(text_memories)} text memories")
-for memory in text_memories:
-    print(memory)
-```
+#### Core Handlers Overview
 
-#### Search Across Specific Cubes
+| Handler | Purpose | Key Methods |
+| :--- | :--- | :--- |
+| **AddHandler** | Add memories (chat / documents / text) | `handle_add_memories` |
+| **SearchHandler** | Search memories (semantic retrieval) | `handle_search_memories` |
+| **ChatHandler** | Chat (with memory augmentation) | `handle_chat_complete`, `handle_chat_stream` |
+| **FeedbackHandler** | Feedback (correct memories / human feedback) | `handle_feedback_memories` |
+| **MemoryHandler** | Manage (get details / delete) | `handle_get_memory`, `handle_delete_memories` |
+| **SchedulerHandler** | Scheduling (query async task status) | `handle_scheduler_status`, `handle_scheduler_wait` |
+| **SuggestionHandler** | Suggestions (generate recommended questions) | `handle_get_suggestion_queries` |
 
-```python
-# Search only in specific cubes
-results = memory.search(
-    query="What are my preferences?",
-    user_id=user_id,
-    install_cube_ids=["personal_memories", "shared_knowledge"]
-)
+## 2. API Details
 
-# Process results by cube
-for cube_memories in results['text_mem']:
-    print(f"\nCube: {cube_memories['cube_id']}")
-    for memory in cube_memories['memories']:
-        print(f"- {memory}")
-```
+### 2.1 Initialization
+Initialization is the foundation of system startup. All Handlers rely on a unified component registry and dependency-injection mechanism.
 
-## 3. Chat with Memory Enhancement
+- Component loading (`init_server`): When the system starts, it initializes all core components, including the LLM, storage layers (vector DB, graph DB), scheduler, and various Memory Cubes.
+- Dependency injection (`HandlerDependencies`): To ensure loose coupling and testability, all components are wrapped into a `HandlerDependencies` container. When a Handler is instantiated, it receives this container and can access needed resources—such as `naive_mem_cube`, `mem_reader`, or `feedback_server`—without duplicating initialization logic.
 
-### Overview
+### 2.2 Add Memories (AddHandler)
+AddHandler is the brain's "memory intake instruction", responsible for converting external information into system memories. It handles not only intake and conversion of various information types, but also automatically recognizes feedback and routes it to dedicated feedback processing.
 
-The chat operation provides memory-enhanced conversations by:
+- Core capabilities:
+  - Multimodal support: Processes user conversations, documents, images, and other input types, converting them into standardized memory objects.
+  - Sync and async modes: Controlled via `async_mode`. **Sync mode** ("sync"): processes immediately and blocks until completion, suitable for debugging. **Async mode** ("async"): pushes tasks to a background queue for concurrent processing by MemScheduler, returns a task ID immediately, suitable for production to improve response speed.
+  - Automatic feedback routing: If the request sets `is_feedback=True`, the Handler automatically extracts the last user message as feedback content and routes it to MemFeedback processing, instead of adding it as a normal memory.
+  - Multi-target writes: Supports writing to multiple MemCubes simultaneously. When multiple targets are specified, the system processes all write tasks in parallel; when only one target is specified, it uses a lightweight approach.
 
-1. **Memory Retrieval** - Searches for relevant memories based on the query
-2. **Context Building** - Incorporates retrieved memories into the conversation context
-3. **Response Generation** - LLM generates responses with memory context
+### 2.3 Search Memories (SearchHandler)
+SearchHandler is the brain's "memory retrieval instruction", providing semantic-based intelligent memory query capabilities and serving as a key component for RAG (Retrieval-Augmented Generation).
 
+- Core capabilities:
+  - Semantic retrieval: Uses embedding technology to recall relevant memories based on semantic similarity, understanding user intent more accurately than simple keyword matching.
+  - Flexible search scope: Supports specifying the target data range for retrieval. For example, you can search only within a specific user's memory, or search across multiple users' shared public memories, meeting different privacy and business needs.
+  - Multiple retrieval modes: Flexibly choose between speed and accuracy based on application scenarios. **Fast mode** suits scenarios requiring high real-time performance, **fine mode** suits scenarios pursuing high retrieval accuracy, and **mixed mode** balances both.
+  - Multi-step reasoning retrieval: For complex questions, supports deep reasoning capability to progressively approach the most relevant memories through multiple rounds of understanding and retrieval.
 
+### 2.4 Chat (ChatHandler)
+ChatHandler is the brain's "dialogue coordination instruction", responsible for converting user dialogue requirements into a complete business process. It does not directly operate on memories; instead, it coordinates other Handlers to complete end-to-end dialogue tasks.
 
-#### Basic Chat
+- Core capabilities:
+  - Orchestration: Automatically executes the complete dialogue loop of "retrieve memory → generate response → store memory". Each user query benefits from historical memories for smarter responses, and each dialogue is crystallized as new memory, achieving "chat-as-learning".
+  - Context management: Handles the assembly of `history` (past conversation) and `query` (current question) to ensure the LLM understands the complete dialogue context and avoids information loss.
+  - Multiple interaction modes: Supports standard request-response mode and streaming response mode. Standard mode suits simple questions, streaming mode suits long-text replies, meeting different frontend interaction needs.
+  - Message push (optional): Supports automatically pushing results to third-party platforms (such as DingTalk) after generating responses, enabling multi-channel integration.
 
-```python
-# Simple chat with memory enhancement
-response = memory.chat(
-    query="What do you remember about my interests?",
-    user_id=user_id
-)
-print(f"Assistant: {response}")
-```
+### 2.5 Feedback and Correction (FeedbackHandler)
+FeedbackHandler is the brain's "feedback correction instruction", responsible for understanding users' natural-language feedback about AI performance and automatically locating and correcting relevant memory content.
 
-## 4. Memory Retrieval and Management
+- Core capabilities:
+  - Memory correction: When users point out AI errors (such as "the meeting location is Shanghai, not Beijing"), the Handler automatically updates or marks old memories. The system uses version management rather than direct deletion, maintaining traceability of modification history.
+  - Positive and negative feedback: Supports users marking specific memory quality through upvote or downvote. The system adjusts the memory's weight and credibility accordingly, making subsequent retrieval more accurate.
+  - Precise targeting: Supports two feedback modes. One is automatic conflict detection based on dialogue history, the other allows users to directly specify memories to correct, improving feedback effectiveness and accuracy.
 
-### Getting Specific Memory
+### 2.6 Memory Management (MemoryHandler)
+MemoryHandler is the brain's "memory management instruction", providing low-level CRUD capabilities for memory data, primarily for system admin backends or data cleanup scenarios.
 
-#### Code Example
+- Core capabilities:
+  - Fine-grained management: Unlike AddHandler's business-level writes, this Handler allows fetching detailed information of a single memory or performing physical deletion by memory ID. This direct operation bypasses business logic packaging, primarily for debugging, auditing, or system cleanup.
+  - Direct backend access: Some management operations need to interact directly with the underlying memory component (naive_mem_cube) to provide the most efficient and lowest-latency data operations, meeting system operations needs.
 
-```python
-# Get a specific memory by ID
-memory_item = memory.get(
-    mem_cube_id="personal_memories",
-    memory_id="memory_123",
-    user_id=user_id
-)
+### 2.7 Scheduler Status (SchedulerHandler)
+SchedulerHandler is the brain's "task monitoring instruction", responsible for tracking the real-time execution status of all async tasks in the system, allowing users to understand background task progress and results.
 
-print(f"Memory ID: {memory_item.memory_id}")
-print(f"Content: {memory_item.memory}")
-print(f"Created: {memory_item.created_at}")
-print(f"Metadata: {memory_item.metadata}")
-```
+- Core capabilities:
+  - Status tracking: Tracks real-time task status in real-time (queued, running, completed, failed). This is important for users in async mode who need to understand when tasks complete.
+  - Result fetching: Provides a task result query interface. When async tasks complete, users can fetch the final execution result or error information through this interface, understanding whether operations succeeded and the reasons for failure.
+  - Sync wait (debugging tool): During testing and integration testing, provides a tool to force async tasks into synchronous waits, allowing developers to debug async flows like debugging synchronous code, improving development efficiency.
 
-### Getting All Memories
+### 2.8 Suggested Questions (SuggestionHandler)
+SuggestionHandler is the brain's "suggestion generation instruction", predicting users' potential needs and proactively recommending related questions to help users explore system capabilities and discover topics of interest.
 
-
-
-#### Code Example
-
-```python
-# Get all memories from a specific cube
-all_memories = memory.get_all(
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-# Get all memories from all accessible cubes
-all_memories = memory.get_all(user_id=user_id)
-
-# Access different memory types
-for cube_memories in all_memories['text_mem']:
-    print(f"\nCube: {cube_memories['cube_id']}")
-    print(f"Total memories: {len(cube_memories['memories'])}")
-
-    for memory in cube_memories['memories']:
-        print(f"- {memory.memory}")
-        print(f"  ID: {memory.memory_id}")
-        print(f"  Created: {memory.created_at}")
-```
-
-## 5. Memory Updates and Deletion
-
-### Updating Memories
-
-
-
-#### Code Example
-
-```python
-from memos.memories.textual.item import TextualMemoryItem
-
-# Create updated memory item
-updated_memory = TextualMemoryItem(
-    memory="User now prefers vegan food and enjoys cooking Mediterranean cuisine",
-    metadata={
-        "updated_at": "2024-01-15",
-        "update_reason": "Dietary preference change"
-    }
-)
-
-# Update existing memory
-memory.update(
-    mem_cube_id="personal_memories",
-    memory_id="memory_123",
-    text_memory_item=updated_memory,
-    user_id=user_id
-)
-
-print("Memory updated successfully")
-```
-
-### Deleting Memories
-
-
-```python
-# Delete a specific memory
-memory.delete(
-    mem_cube_id="personal_memories",
-    memory_id="memory_123",
-    user_id=user_id
-)
-
-# Delete all memories from a specific cube
-memory.delete_all(
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-# Delete all memories for a user (use with caution!)
-memory.delete_all(user_id=user_id)
-```
-
-## 6. Dumping Memories
-
-### Overview
-
-The dump operation exports memory cubes to persistent storage, allowing you to:
-
-* **Backup Memories** - Create persistent copies of memory cubes
-* **Transfer Memories** - Move memory cubes between systems
-* **Archive Memories** - Store memory cubes for long-term preservation
-* **Share Memories** - Export memory cubes for sharing with other users
-
-#### Basic Memory Dump
-
-```python
-# Dump a specific memory cube to a directory
-memory.dump(
-    dump_dir="./backup/memories",
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-print("Memory cube dumped successfully")
-```
-
-#### Dump Default Cube
-
-```python
-# Dump the default cube for the user (first accessible cube)
-memory.dump(
-    dump_dir="./backup/default_memories",
-    user_id=user_id
-)
-
-print("Default memory cube dumped successfully")
-```
-
-#### Dump All User Cubes
-
-```python
-# Get user info to see all accessible cubes
-user_info = memory.get_user_info()
-
-# Dump each accessible cube
-for cube_info in user_info['accessible_cubes']:
-    if cube_info['is_loaded']:
-        memory.dump(
-            dump_dir=f"./backup/{cube_info['cube_name']}",
-            mem_cube_id=cube_info['cube_id'],
-            user_id=user_id
-        )
-        print(f"Dumped cube: {cube_info['cube_name']}")
-```
-
-#### Dump with Custom Directory Structure
-
-```python
-import os
-from datetime import datetime
-
-# Create timestamped backup directory
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-backup_dir = f"./backups/{timestamp}"
-
-# Ensure directory exists
-os.makedirs(backup_dir, exist_ok=True)
-
-# Dump memory cube with organized structure
-memory.dump(
-    dump_dir=backup_dir,
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-print(f"Memory cube dumped to: {backup_dir}")
-```
-
-## 7. Session Management
-
-### Clearing Chat History
-
-
-```python
-# Clear chat history for a user session
-memory.clear_messages(user_id=user_id)
-
-# Verify chat history is cleared
-user_info = memory.get_user_info()
-print(f"Chat history cleared for user: {user_info['user_name']}")
-```
-
-## When to Use MOS
-
-Use MOS when you need to:
-
-- Build LLM applications with persistent, user-specific memory.
-- Support multi-user, multi-session memory management.
-- Integrate memory-augmented retrieval and reasoning into chatbots or agents.
+- Core capabilities:
+  - Dual-mode generation:
+    - Conversation-based suggestions: When users provide recent conversation records, the system analyzes dialogue context and infers potential follow-up topics of interest, generating 3 related recommended questions.
+    - Memory-based suggestions: When there is no conversation context, the system infers user interests and status from recent memories, generating recommended questions related to the user's recent life or work. This suits dialogue initiation or topic transitions.
+  - Multi-language support: Recommended questions automatically adapt to user language settings, supporting Chinese, English, and other languages, improving experience for different users.

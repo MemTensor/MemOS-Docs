@@ -14,6 +14,14 @@ export function useDashboardUrl(basePath: string = '/', locale: string = 'cn') {
   return `${baseUrl}${prefix}${basePath}`
 }
 
+export function usePlaygroundUrl(basePath: string = '/', locale: string = 'cn') {
+  const { $config } = useNuxtApp()
+  const baseUrl = $config.public.playgroundUrl || 'https://memos-playground.openmem.net'
+  const prefix = locale === 'cn' ? '/cn' : ''
+
+  return `${baseUrl}${prefix}${basePath}`
+}
+
 export function useLangPath(basePath: string = '/', locale: string = 'cn') {
   const prefix = locale === 'cn' ? '/cn' : ''
 

@@ -1,5 +1,5 @@
 ---
-title: 获取消息
+title: Get Message
 openapi: "POST /get/message"
 ---
 <!-- Menu Mapping -->

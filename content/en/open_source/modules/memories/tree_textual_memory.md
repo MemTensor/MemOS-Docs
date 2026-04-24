@@ -1,13 +1,33 @@
 ---
 title: "TreeTextMemory: Structured Hierarchical Textual Memory"
+desc: >
+    Let’s build your first **graph-based, tree-structured memory** in MemOS!
+    <br>
+    **TreeTextMemory** helps you organize, link, and retrieve memories with rich context and explainability.
+    <br>
+    [Neo4j](/open_source/modules/memories/neo4j_graph_db) is the current backend, with support for additional graph stores planned in the future.
 ---
 
-Let’s build your first **graph-based, tree-structured memory** in MemOS!
 
-**TreeTextMemory** helps you organize, link, and retrieve memories with rich context and explainability.
+## Table of Contents
 
-[Neo4j](/open_source/modules/memories/neo4j_graph_db) is the current backend, with support for additional graph stores planned in the future.
-
+- [What You’ll Learn](#what-youll-learn)
+- [Core Concepts and Workflow](#core-concepts-and-workflow)
+    - [Memory Structure](#memory-structure)
+    - [Metadata Fields](#metadata-fields-treenodetextualmemorymetadata)
+    - [Core Workflow](#core-workflow)
+- [API Reference](#api-reference)
+- [Hands-on: From 0 to 1](#hands-on-from-0-to-1)
+    - [Create TreeTextMemory Config](#create-treetextmemory-config)
+    - [Initialize TreeTextMemory](#initialize-treetextmemory)
+    - [Extract Structured Memories](#extract-structured-memories)
+    - [Search Memories](#search-memories)
+    - [Retrieve Memories from the Internet (Optional)](#retrieve-memories-from-the-internet-optional)
+    - [Replace Working Memory](#replace-working-memory)
+    - [Backup & Restore](#backup--restore)
+    - [Full Code Example](#full-code-example)
+- [Why Choose TreeTextMemory](#why-choose-treetextmemory)
+- [What’s Next](#whats-next)
 
 ## What You’ll Learn
 
@@ -17,7 +37,7 @@ By the end of this guide, you will:
 - Link memories into **hierarchies** and semantic graphs.
 - Search them using **vector similarity + graph traversal**.
 
-## How It Works
+## Core Concepts and Workflow
 
 ### Memory Structure
 
@@ -51,7 +71,7 @@ Every node in your `TreeTextMemory` is a `TextualMemoryItem`:
 multi-hop reasoning.
 ::
 
-### Core Steps
+### Core Workflow
 
 When you run this example, your workflow will:
 
@@ -71,7 +91,7 @@ When you run this example, your workflow will:
 **Hint**<br>Graph links help retrieve context that pure vector search might miss!
 ::
 
-## API Summary (`TreeTextMemory`)
+## API Reference
 
 ### Initialization
 
@@ -97,7 +117,7 @@ TreeTextMemory(config: TreeTextMemoryConfig)
 | `load(dir)`                 | Load graph from saved JSON file                       |
 | `drop(keep_last_n)`         | Backup graph & drop database, keeping N backups       |
 
-## File Storage
+### File Storage
 
 When calling `dump(dir)`, the system writes to:
 
@@ -109,7 +129,7 @@ This file contains a JSON structure with `nodes` and `edges`. It can be reloaded
 
 ---
 
-## Your First TreeTextMemory — Step by Step
+## Hands-on: From 0 to 1
 
 ::steps{}
 
@@ -152,6 +172,159 @@ memories = reader.get_memory(scene_data, type="chat", info={"user_id": "1234"})
 for m_list in memories:
     tree_memory.add(m_list)
 ```
+
+#### Using MultiModalStructMemReader (Advanced)
+
+`MultiModalStructMemReader` supports processing multimodal content (text, images, URLs, files, etc.) and intelligently routes to different parsers:
+
+```python
+from memos.configs.mem_reader import MultiModalStructMemReaderConfig
+from memos.mem_reader.multi_modal_struct import MultiModalStructMemReader
+
+# Create MultiModal Reader configuration
+multimodal_config = MultiModalStructMemReaderConfig(
+    llm={
+        "backend": "openai",
+        "config": {
+            "model_name_or_path": "gpt-4o-mini",
+            "api_key": "your-api-key"
+        }
+    },
+    embedder={
+        "backend": "openai",
+        "config": {
+            "model_name_or_path": "text-embedding-3-small",
+            "api_key": "your-api-key"
+        }
+    },
+    chunker={
+        "backend": "text_splitter",
+        "config": {
+            "chunk_size": 1000,
+            "chunk_overlap": 200
+        }
+    },
+    extractor_llm={
+        "backend": "openai",
+        "config": {
+            "model_name_or_path": "gpt-4o-mini",
+            "api_key": "your-api-key"
+        }
+    },
+    # Optional: specify which domains should return Markdown directly
+    direct_markdown_hostnames=["github.com", "docs.python.org"]
+)
+
+# Initialize MultiModal Reader
+multimodal_reader = MultiModalStructMemReader(multimodal_config)
+
+# ========================================
+# Example 1: Process conversations with images
+# ========================================
+scene_with_image = [[
+    {
+        "role": "user",
+        "content": [
+            {"type": "text", "text": "This is my garden"},
+            {"type": "image_url", "image_url": {"url": "https://example.com/garden.jpg"}}
+        ]
+    },
+    {
+        "role": "assistant",
+        "content": "Your garden looks beautiful!"
+    }
+]]
+
+memories = multimodal_reader.get_memory(
+    scene_with_image,
+    type="chat",
+    info={"user_id": "1234", "session_id": "session_001"}
+)
+for m_list in memories:
+    tree_memory.add(m_list)
+print(f"✓ Added {len(memories)} multimodal memories")
+
+# ========================================
+# Example 2: Process web URLs
+# ========================================
+scene_with_url = [[
+    {
+        "role": "user",
+        "content": "Please analyze this article: https://example.com/article.html"
+    },
+    {
+        "role": "assistant",
+        "content": "I'll help you analyze this article"
+    }
+]]
+
+url_memories = multimodal_reader.get_memory(
+    scene_with_url,
+    type="chat",
+    info={"user_id": "1234", "session_id": "session_002"}
+)
+for m_list in url_memories:
+    tree_memory.add(m_list)
+print(f"✓ Extracted and added {len(url_memories)} memories from URL")
+
+# ========================================
+# Example 3: Process local files
+# ========================================
+# Supported file types: PDF, DOCX, TXT, Markdown, HTML, etc.
+file_paths = [
+    "./documents/report.pdf",
+    "./documents/notes.md",
+    "./documents/data.txt"
+]
+
+file_memories = multimodal_reader.get_memory(
+    file_paths,
+    type="doc",
+    info={"user_id": "1234", "session_id": "session_003"}
+)
+for m_list in file_memories:
+    tree_memory.add(m_list)
+print(f"✓ Extracted and added {len(file_memories)} memories from files")
+
+# ========================================
+# Example 4: Mixed mode (text + images + URLs)
+# ========================================
+mixed_scene = [[
+    {
+        "role": "user",
+        "content": [
+            {"type": "text", "text": "Here's my project documentation:"},
+            {"type": "text", "text": "https://github.com/user/project/README.md"},
+            {"type": "image_url", "image_url": {"url": "https://example.com/diagram.png"}}
+        ]
+    }
+]]
+
+mixed_memories = multimodal_reader.get_memory(
+    mixed_scene,
+    type="chat",
+    info={"user_id": "1234", "session_id": "session_004"}
+)
+for m_list in mixed_memories:
+    tree_memory.add(m_list)
+print(f"✓ Extracted and added {len(mixed_memories)} memories from mixed content")
+```
+
+::note
+**MultiModal Reader Advantages**<br>
+- **Smart Routing**: Automatically identifies content type (image/URL/file) and selects appropriate parser<br>
+- **Format Support**: Supports PDF, DOCX, Markdown, HTML, images, and more<br>
+- **URL Parsing**: Automatically extracts web content (including GitHub, documentation sites, etc.)<br>
+- **Large File Handling**: Automatically chunks oversized files to avoid token limits<br>
+- **Context Preservation**: Uses sliding window to maintain context continuity between chunks
+::
+
+::note
+**Configuration Tips**<br>
+- Use the `direct_markdown_hostnames` parameter to specify which domains should return Markdown format<br>
+- Supports both `mode="fast"` and `mode="fine"` extraction modes; fine mode extracts more details<br>
+- See complete examples: `/examples/mem_reader/multimodal_struct_reader.py`
+::
 
 ### Search Memories
 
@@ -244,7 +417,7 @@ tree_memory.load("tmp/tree_memories")
 ::
 
 
-### Whole Code
+### Full Code Example
 
 This combines all the steps above into one end-to-end example — copy & run!
 
@@ -313,7 +486,7 @@ my_tree_textual_memory.dump("tmp/my_tree_textual_memory")
 my_tree_textual_memory.drop()
 ```
 
-## What Makes TreeTextMemory Different?
+## Why Choose TreeTextMemory
 
 - **Structured Hierarchy:** Organize memories like a mind map — nodes can
 have parents, children, and cross-links.
@@ -328,7 +501,7 @@ have parents, children, and cross-links.
 manually or auto-merge similar nodes!
 ::
 
-## What’s Next?
+## What’s Next
 
 - **Know more about [Neo4j](/open_source/modules/memories/neo4j_graph_db):** TreeTextMemory is powered by a graph database backend.
   Understanding how Neo4j handles nodes, edges, and traversal will help you design more efficient memory hierarchies, multi-hop reasoning, and context linking strategies.
@@ -337,6 +510,6 @@ manually or auto-merge similar nodes!
   runtime KV-cache for session
   state.
 - **Explore Graph Reasoning:** Build workflows for multi-hop retrieval and answer synthesis.
-- **Go Deep:** Check the [API Reference](/api-reference/configure-memos) for advanced usage, or run more examples in `examples/`.
+- **Go Deep:** Check the [API Reference](/api-reference/search-memories) for advanced usage, or run more examples in `examples/`.
 
 Now your agent remembers not just facts — but the connections between them!

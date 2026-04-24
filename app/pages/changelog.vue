@@ -133,7 +133,10 @@ const highlightVersions = computed(() => {
   return data.versions.map(version => ({
     ...version,
     // Keep original structure for display
-    changedInfo: version.changedInfo
+    changedInfo: version.changedInfo,
+    ui: {
+      container: 'max-w-3xl'
+    }
   }))
 })
 
@@ -145,7 +148,10 @@ const opensourceVersions = computed<Version[]>(() => {
       ...version,
       changedInfo: version.changedInfo.filter(change =>
         allowedOpenSourceTypes.includes(change.type as (typeof allowedOpenSourceTypes)[number])
-      )
+      ),
+      ui: {
+        container: 'max-w-3xl'
+      }
     }))
     // 过滤掉没有符合类型的版本
     .filter(version => version.changedInfo.length > 0)
@@ -243,7 +249,7 @@ function handleTabChange(val: string | number) {
                   <UIcon :name="getCategoryIcon(change.type)" class="w-4 h-4 flex-shrink-0" />
                   {{ change.type }}:
                 </span>
-                <span class="break-words flex-1 min-w-0 ml-6 -indent-6">{{ change.description }} by @{{ change.author }}
+                <span class="flex-1">{{ change.description }} by @{{ change.author }}
                   <ULink
                     v-if="change.pr"
                     :to="`https://github.com/MemTensor/MemOS/pull/${String(change.pr)}`"
@@ -276,7 +282,7 @@ function handleTabChange(val: string | number) {
 }
 
 .changelog-list {
-  padding: 1.5rem;
+  padding: 1rem;
   /* background: var(--ui-bg-muted);
   border-radius: 0.5rem; */
 }
@@ -286,11 +292,5 @@ function handleTabChange(val: string | number) {
 }
 .changelog-list li:last-child {
   margin-bottom: 0;
-}
-
-@media screen and (min-width: 768px) {
-  .changelog-list {
-    width: max-content;
-  }
 }
 </style>

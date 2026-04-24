@@ -9,158 +9,318 @@ desc: "恭喜你——你已经掌握了快速入门并构建了第一个可用�
   ---
   icon: ri:play-line
   title: 最简Pipeline 
-  to: /open_source/getting_started/examples#example-1-minimal-pipeline
+  to: /cn/open_source/getting_started/examples#示例-1最简pipeline
   ---
-  最小的可用Pipeline  — 添加、搜索、更新并导出明文记忆。
+  最小的可用Pipeline  — 添加、搜索明文记忆。
   :::
 
   :::card
   ---
   icon: ri:tree-line
-  title: 仅 TreeTextMemory
-  to: /open_source/getting_started/examples#example-2-treetextmemory-only
+  title: 多信息源的添加与检索
+  to: /cn/open_source/getting_started/examples#示例-2多信息源记忆的添加与检索
   ---
-  使用 Neo4j 支持的层级记忆，构建结构化、多跳知识图谱。
+  添加文本、图片、文件、工具调用的多信息源messages到记忆，并能够检索它们。
+  :::
+
+  :::card
+  ---
+  icon: ri:apps-line
+  title: 多Cube添加和检索
+  to: /cn/open_source/getting_started/examples#示例-3多cube添加和检索
+  ---
+  添加不同记忆到不同的Cube，在检索时同时召回它们。
   :::
 
   :::card
   ---
   icon: ri:database-2-line
   title: 仅 KVCacheMemory
-  to: /open_source/getting_started/examples#example-3-kvcachememory-only
+  to: /cn/open_source/getting_started/examples#示例-4仅-kvcachememory
   ---
   使用短期 KV cache加速会话，实现快速上下文注入。
   :::
 
   :::card
   ---
-  icon: hugeicons:share-07
-  title: 混合 TreeText + KVCache
-  to: /open_source/getting_started/examples#example-4-hybrid
-  ---
-  在单一 MemCube 中结合可解释的基于图的明文记忆和快速 KV cache。
-  :::
-
-  :::card
-  ---
   icon: ri:calendar-check-line
-  title: 多记忆调度
-  to: /open_source/getting_started/examples#example-5-multi-memory-scheduling
+  title: 记忆调度
+  to: /cn/open_source/getting_started/examples#示例-5多忆调度
   ---
   为多用户、多会话智能体运行动态记忆调用。
   :::
 
 ::
 
-## 示例 1：最简Pipeline 
+## 示例 1：最简Pipeline
 
 ### 何时使用：
-- 你想要最小的可用示例。
-- 你只需要将简单的明文记忆存储到向量数据库中。
-- 适合入门或测试你的嵌入与向量Pipeline 。
+- 你想要最小的入门可用示例。
+- 你只需要将简单的明文记忆存储到数据库中，并能够检索它们。
 
 ### 关键点：
-- 仅使用 GeneralTextMemory（无图谱，无 KV cache）。
-- 支持添加、搜索、更新和导出记忆。
-- 集成基础的 MOS Pipeline 。
+- 支持基础的个人用户记忆添加、搜索。
 
 ### 完整示例代码
 ```python
-import uuid
-from memos.configs.mem_os import MOSConfig
-from memos.mem_os.main import MOS
+import json
+from memos.api.routers.server_router import add_memories, search_memories
+from memos.api.product_models import APIADDRequest, APISearchRequest
 
-
-# 初始化 MOSConfig
-mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
-mos = MOS(mos_config)
-
-# 创建用户并注册记忆立方体
-user_id = str(uuid.uuid4())
-mos.create_user(user_id=user_id)
-mos.register_mem_cube("examples/data/mem_cube_2", user_id=user_id)
-
-# 添加简单对话
-mos.add(
-    messages=[
-        {"role": "user", "content": "I love playing football."},
-        {"role": "assistant", "content": "That's awesome!"}
+user_id = "test_user_1"
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_1"],
+    messages = [
+      {"role": "user", "content": "I’ve planned to travel to Guangzhou during the summer vacation. What chain hotels are available for accommodation?"},
+      {"role": "assistant", "content": "You can consider [7 Days Inn, Ji Hotel, Hilton], etc."},
+      {"role": "user", "content": "I’ll choose 7 Days Inn."},
+      {"role": "assistant", "content": "Okay, feel free to ask me if you have any other questions."}
     ],
-    user_id=user_id
+    async_mode="sync",
+    mode="fine",
 )
 
-# 搜索记忆
-result = mos.search(query="What do you love?", user_id=user_id)
-print("Memories found:", result["text_mem"])
+add_rsp = add_memories(add_req)
+print("add_memories rsp: \n\n", add_rsp)
 
-# 导出并重新加载
-mos.dump("tmp/my_mem_cube")
-mos.load("tmp/my_mem_cube")
+search_req = APISearchRequest(
+    user_id=user_id,
+    readable_cube_ids=["cube_test_user_1"],
+    query="Please recommend a hotel that I haven’t stayed at before.",
+    include_preference=True,
+)
+
+search_rsp = search_memories(search_req).data
+print("\n\nsearch_rsp: \n\n", json.dumps(search_rsp, indent=2, ensure_ascii=False))
 ````
 
-## 示例 2：仅 TreeTextMemory
+## 示例 2：多信息源记忆的添加与检索
 
 ### 何时使用：
 
-- 你需要带有可解释关系的层级基于图的明文记忆。
-- 你想存储结构化知识并追踪连接关系。
-- 适用于知识图谱、概念树和多跳推理。
+- 除单纯的文本对话外，你需要将文件、图片内容或工具调用历史信息加入记忆
+- 同时你想要检索这些多源信息的记忆
 
 ### 关键点：
 
-- 使用由 Neo4j 支持的 TreeTextMemory。
-- 需要 extractor\_llm + dispatcher\_llm。
-- 存储节点、边，支持遍历查询。
+- 多种信息来源的记忆添加
+- 需要有可下载的文件、图片url
+- 添加的信息需要严格符合OpenAI Messages格式
+- system prompt中的工具Schema需要包装在<tool_chema> </tool_schema>中
 
 ### 完整示例代码
-
+添加文本+文件到记忆中
 ```python
-from memos.configs.embedder import EmbedderConfigFactory
-from memos.configs.memory import TreeTextMemoryConfig
-from memos.configs.mem_reader import SimpleStructMemReaderConfig
-from memos.embedders.factory import EmbedderFactory
-from memos.mem_reader.simple_struct import SimpleStructMemReader
-from memos.memories.textual.tree import TreeTextMemory
+import json
+from memos.api.routers.server_router import add_memories, search_memories
+from memos.api.product_models import APIADDRequest, APISearchRequest
 
-# 设置 Embedder
-embedder_config = EmbedderConfigFactory.model_validate({
-    "backend": "ollama",
-    "config": {"model_name_or_path": "nomic-embed-text:latest"}
-})
-embedder = EmbedderFactory.from_config(embedder_config)
-
-# 创建 TreeTextMemory
-tree_config = TreeTextMemoryConfig.from_json_file("examples/data/config/tree_config.json")
-my_tree_textual_memory = TreeTextMemory(tree_config)
-my_tree_textual_memory.delete_all()
-
-# 设置 Reader
-reader_config = SimpleStructMemReaderConfig.from_json_file(
-    "examples/data/config/simple_struct_reader_config.json"
+user_id = "test_user_2"
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_2"],
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Please read this file, summarize the key points, and provide a final conclusion."
+                },
+                {
+                    "type": "file",
+                    "file": {
+                    "file_id": "file_123",
+                    "filename": "report.md",
+                    "file_data": "@http://139.196.232.20:9090/graph-test/algorithm/2025_11_13/1763043889_1763043782_PM1%E8%BD%A6%E9%97%B4PMT%E9%9D%B4%E5%8E%8B%E8%BE%B9%E5%8E%8B%E5%8E%8B%E5%8A%9B%E6%97%A0%E6%B3%95%E5%BB%BA%E7%AB%8B%E6%95%85%E9%9A%9C%E6%8A%A5%E5%91%8A20240720.md"
+                    }
+                },
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Final Summary: During the PMT boot-pressure startup test of the PM1 workshop on July 20, 2024, the drive could not run because the edge pressures on both sides failed to reach the 2.5-bar interlock requirement. After troubleshooting, the PLC output signals, hydraulic pipelines, and valves were all found to be normal. The root cause was ultimately identified as poor contact at the negative terminal of the proportional valve’s DC 24V power supply inside the PLC cabinet, caused by a short-jumpered terminal block. After re-connecting the negative incoming lines in parallel, the equipment returned to normal operation. It is recommended to replace terminal blocks in batches, inspect instruments with uncertain service life, and optimize the troubleshooting process by tracing common-mode issues from shared buses and power supply sources."
+                }
+            ]
+        }
+    ],
+    async_mode="sync",
+    mode="fine",
 )
-reader = SimpleStructMemReader(reader_config)
 
-# 从对话中提取
-scene_data = [[
-    {"role": "user", "content": "Tell me about your childhood."},
-    {"role": "assistant", "content": "I loved playing in the garden with my dog."}
-]]
-memory = reader.get_memory(scene_data, type="chat", info={"user_id": "1234", "session_id": "2222"})
-for m_list in memory:
-    my_tree_textual_memory.add(m_list)
+add_rsp = add_memories(add_req)
+print("add_memories rsp: \n\n", add_rsp)
 
-# 搜索
-results = my_tree_textual_memory.search(
-    "Talk about the user's childhood story?",
-    top_k=10
+search_req = APISearchRequest(
+    user_id=user_id,
+    readable_cube_ids=["cube_test_user_2"],
+    query="Workshop PMT boot pressure startup test",
+    include_preference=False,
+)
+search_rsp = search_memories(search_req).data
+print("\n\nsearch_rsp: \n\n", json.dumps(search_rsp, indent=2, ensure_ascii=False))
+```
+添加多种混合信息源的messages到记忆中
+```python
+import json
+from memos.api.routers.server_router import add_memories, search_memories
+from memos.api.product_models import APIADDRequest, APISearchRequest
+
+user_id = "test_user_2"
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_2"],
+    messages = [
+  {
+    "role": "system",
+    "content": [
+      {
+        "type": "text",
+        "text": "You are a professional industrial fault analysis assistant. Please read the PDF, images, and instructions provided by the user and provide a professional technical summary.\n\n<tool_schema>\n[\n  {\n    \"name\": \"file_reader\",\n    \"description\": \"Used to read the content of files uploaded by the user and return the text data (in JSON string format).\",\n    \"parameters\": [\n      {\"name\": \"file_id\", \"type\": \"string\", \"required\": true, \"description\": \"The file ID to be read\"}\n    ],\n    \"returns\": {\"type\": \"text\", \"description\": \"Returns the extracted text content of the file\"}\n  }\n]\n</tool_schema>"
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "content": [
+      {
+        "type": "text",
+        "text": "Please read this file and image, summarize the key points, and provide a final conclusion."
+      },
+      {
+        "type": "file",
+        "file": {
+          "file_id": "file_123",
+          "filename": "report.pdf",
+          "file_data": "@http://139.196.232.20:9090/graph-test/algorithm/2025_11_13/1763043889_1763043782_PM1%E8%BD%A6%E9%97%B4PMT%E9%9D%B4%E5%8E%8B%E8%BE%B9%E5%8E%8B%E5%8E%8B%E5%8A%9B%E6%97%A0%E6%B3%95%E5%BB%BA%E7%AB%8B%E6%95%85%E9%9A%9C%E6%8A%A5%E5%91%8A20240720.md"
+        }
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "https://play-groud-test-1.oss-cn-shanghai.aliyuncs.com/%E5%9B%BE%E7%89%871.jpeg"
+        }
+      }
+    ]
+  },
+  {
+    "role": "assistant",
+    "tool_calls": [
+      {
+        "id": "call_file_reader_001",
+        "type": "function",
+        "function": {
+          "name": "file_reader",
+          "arguments": "{\"file_id\": \"file_123\"}"
+        }
+      }
+    ]
+  },
+  {
+    "role": "tool",
+    "tool_call_id": "call_file_reader_001",
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"file_id\":\"file_123\",\"extracted_text\":\"PM1 workshop PMT boot pressure startup test record… Final fault cause: poor contact at the negative terminal of the DC 24V power supply circuit due to a short-jumped terminal block.\"}"
+      }
+    ]
+  },
+  {
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "Final Summary: During the PMT boot-pressure startup test of the PM1 workshop on July 20, 2024, the drive could not run because the edge pressures on both sides failed to reach the 2.5-bar interlock requirement. After troubleshooting, the PLC output signals, hydraulic pipelines, and valves were all found to be normal. The root cause was ultimately identified as poor contact at the negative terminal of the proportional valve’s DC 24V power supply inside the PLC cabinet, caused by a short-jumpered terminal block. After re-connecting the negative incoming lines in parallel, the equipment returned to normal operation. It is recommended to replace terminal blocks in batches, inspect instruments with uncertain service life, and optimize the troubleshooting process by tracing common-mode issues from shared buses and power supply sources."
+      }
+    ]
+  }
+],
+    async_mode="sync",
+    mode="fine",
 )
 
-# [可选] 导出并清空
-my_tree_textual_memory.dump("tmp/my_tree_textual_memory")
-my_tree_textual_memory.drop()
+add_rsp = add_memories(add_req)
+
+print("add_memories rsp: \n\n", add_rsp)
+
+
+
+search_req = APISearchRequest(
+    user_id=user_id,
+    readable_cube_ids=["cube_test_user_2"],
+    query="Workshop PMT boot pressure startup test",
+    include_preference=False,
+)
+
+search_rsp = search_memories(search_req).data
+print("\n\nsearch_rsp: \n\n", json.dumps(search_rsp, indent=2, ensure_ascii=False))
 ```
 
-## 示例 3：仅 KVCacheMemory
+## 示例 3：多Cube添加和检索
+
+### 何时使用：
+
+- 向彼此隔离的不同的Cube空间中添加记忆
+- 你希望同时检索不同Cube空间中的记忆
+
+### 关键点：
+
+- 在检索时输入含有多个cube id的readable_cube_ids列表
+
+### 完整示例代码
+```python
+import json
+from memos.api.routers.server_router import add_memories, search_memories
+from memos.api.product_models import APIADDRequest, APISearchRequest
+
+user_id = "test_user_3"
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_3_1"] ,
+    messages = [
+      {"role": "user", "content": "I’ve planned to travel to Guangzhou during the summer vacation. What chain hotels are available for accommodation?"},
+      {"role": "assistant", "content": "You can consider [7 Days Inn, Ji Hotel, Hilton], etc."},
+      {"role": "user", "content": "I’ll choose 7 Days Inn."},
+      {"role": "assistant", "content": "Okay, feel free to ask me if you have any other questions."}
+    ],
+    async_mode="sync",
+    mode="fine",
+)
+
+add_rsp = add_memories(add_req)
+print("add_memories rsp: \n\n", add_rsp)
+
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_3_2"] ,
+    messages = [
+      {"role": "user", "content": "I love you, I need you."},
+      {"role": "assistant", "content": "Wow, I love you too"},
+    ],
+    async_mode="sync",
+    mode="fine",
+)
+
+add_rsp = add_memories(add_req)
+print("add_memories rsp: \n\n", add_rsp)
+
+search_req = APISearchRequest(
+    user_id=user_id,
+    readable_cube_ids=["cube_test_user_3_1", "cube_test_user_3_2"],
+    query="Please recommend a hotel, Love u u",
+    include_preference=True,
+)
+
+search_rsp = search_memories(search_req).data
+print("\n\nsearch_rsp: \n\n", json.dumps(search_rsp, indent=2, ensure_ascii=False))
+```
+
+## 示例 4：仅 KVCacheMemory
 
 ### 何时使用：
 
@@ -178,10 +338,69 @@ my_tree_textual_memory.drop()
 
 
 ```python
+import json
+from transformers import DynamicCache
+
+from memos.memories.activation.item import KVCacheItem
 from memos.configs.memory import MemoryConfigFactory
 from memos.memories.factory import MemoryFactory
 
-# 为 KVCacheMemory（HuggingFace 后端）创建配置
+def get_cache_info(cache):
+    if not cache:
+        return None
+
+    num_layers = 0
+    total_size_bytes = 0
+
+    if hasattr(cache, "layers"):
+        num_layers = len(cache.layers)
+        for layer in cache.layers:
+            if hasattr(layer, "key_cache") and layer.key_cache is not None:
+                total_size_bytes += layer.key_cache.nelement() * layer.key_cache.element_size()
+            if hasattr(layer, "value_cache") and layer.value_cache is not None:
+                total_size_bytes += layer.value_cache.nelement() * layer.value_cache.element_size()
+
+            if hasattr(layer, "keys") and layer.keys is not None:
+                total_size_bytes += layer.keys.nelement() * layer.keys.element_size()
+            if hasattr(layer, "values") and layer.values is not None:
+                total_size_bytes += layer.values.nelement() * layer.values.element_size()
+
+    elif hasattr(cache, "key_cache") and hasattr(cache, "value_cache"):
+        num_layers = len(cache.key_cache)
+        for k, v in zip(cache.key_cache, cache.value_cache, strict=False):
+            if k is not None:
+                total_size_bytes += k.nelement() * k.element_size()
+            if v is not None:
+                total_size_bytes += v.nelement() * v.element_size()
+
+    return {
+        "num_layers": num_layers,
+        "size_bytes": total_size_bytes,
+        "size_mb": f"{total_size_bytes / (1024 * 1024):.2f} MB",
+    }
+
+
+def serialize_item(obj):
+    if isinstance(obj, list):
+        return [serialize_item(x) for x in obj]
+
+    if isinstance(obj, KVCacheItem):
+        return {
+            "id": obj.id,
+            "metadata": obj.metadata,
+            "records": obj.records.model_dump()
+            if hasattr(obj.records, "model_dump")
+            else obj.records,
+            "memory": get_cache_info(obj.memory),
+        }
+
+    if isinstance(obj, DynamicCache):
+        return get_cache_info(obj)
+
+    return str(obj)
+
+
+# 为 KVCacheMemory(HuggingFace 后端)创建配置
 config = MemoryConfigFactory(
     backend="kv_cache",
     config={
@@ -200,200 +419,245 @@ config = MemoryConfigFactory(
 # 实例化 KVCacheMemory
 kv_mem = MemoryFactory.from_config(config)
 
-# 提取一个 KVCacheItem（DynamicCache）
+# 提取一个 KVCacheItem(DynamicCache)
 prompt = [
     {"role": "user", "content": "What is MemOS?"},
     {"role": "assistant", "content": "MemOS is a memory operating system for LLMs."},
 ]
 print("===== Extract KVCacheItem =====")
 cache_item = kv_mem.extract(prompt)
-print(cache_item)
+print(json.dumps(serialize_item(cache_item), indent=2, default=str))
 
 # 将缓存添加到内存中
 kv_mem.add([cache_item])
-print("All caches:", kv_mem.get_all())
+print("All caches:")
+print(json.dumps(serialize_item(kv_mem.get_all()), indent=2, default=str))
 
 # 通过 ID 获取
 retrieved = kv_mem.get(cache_item.id)
-print("Retrieved:", retrieved)
+print("Retrieved:")
+print(json.dumps(serialize_item(retrieved), indent=2, default=str))
 
-# 合并缓存（模拟多轮对话）
+# 合并缓存
 item2 = kv_mem.extract([{"role": "user", "content": "Tell me a joke."}])
 kv_mem.add([item2])
 merged = kv_mem.get_cache([cache_item.id, item2.id])
-print("Merged cache:", merged)
+print("Merged cache:")
+print(json.dumps(serialize_item(merged), indent=2, default=str))
 
 # 删除其中一个
 kv_mem.delete([cache_item.id])
-print("After delete:", kv_mem.get_all())
+print("After delete:")
+print(json.dumps(serialize_item(kv_mem.get_all()), indent=2, default=str))
 
 # 导出和加载缓存
 kv_mem.dump("tmp/kv_mem")
 print("Dumped to tmp/kv_mem")
 kv_mem.delete_all()
 kv_mem.load("tmp/kv_mem")
-print("Loaded caches:", kv_mem.get_all())
+print("Loaded caches:")
+print(json.dumps(serialize_item(kv_mem.get_all()), indent=2, default=str))
 ```
 
-## 示例 4：混合模式
-
-### 何时使用：
-- 你希望同时拥有长期可解释记忆与短期快速上下文。
-- 理想场景：用于具备计划能力、能记住事实并保持上下文的复杂智能体。
-- 展示多记忆调度能力。
-
-### 工作原理：
-
-- **TreeTextMemory** 将你的长时记忆存储在图数据库（Neo4j）中。
-- **KVCacheMemory** 将最近或稳定的上下文作为激活缓存保存。
-- 二者在一个 **MemCube** 中协同工作，由你的 `MOS` Pipeline 统一管理。
-
-
-### 完整示例代码
-
-```python
-import os
-
-from memos.configs.mem_cube import GeneralMemCubeConfig
-from memos.configs.mem_os import MOSConfig
-from memos.mem_cube.general import GeneralMemCube
-from memos.mem_os.main import MOS
-
-# 1. 配置 CUDA（如需）——用于本地 GPU 推理
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
-# 2. 定义用户和路径
-user_id = "root"
-cube_id = "root/mem_cube_kv_cache"
-tmp_cube_path = "/tmp/default/mem_cube_5"
-
-# 3. 初始化 MOSConfig
-mos_config = MOSConfig.from_json_file("examples/data/config/simple_treekvcache_memos_config.json")
-mos = MOS(mos_config)
-
-# 4. 初始化 MemCube（TreeTextMemory + KVCacheMemory）
-cube_config = GeneralMemCubeConfig.from_json_file(
-    "examples/data/config/simple_treekvcache_cube_config.json"
-)
-mem_cube = GeneralMemCube(cube_config)
-
-# 5. 将 MemCube 导出到磁盘
-try:
-    mem_cube.dump(tmp_cube_path)
-except Exception as e:
-    print(e)
-
-# 6. 显式注册 MemCube
-mos.register_mem_cube(tmp_cube_path, mem_cube_id=cube_id, user_id=user_id)
-
-# 7. 提取并添加一个 KVCache 记忆（模拟稳定上下文）
-extract_kvmem = mos.mem_cubes[cube_id].act_mem.extract("I like football")
-mos.mem_cubes[cube_id].act_mem.add([extract_kvmem])
-
-# 8. 开始聊天 —— 你的对话现在将使用：
-#    - TreeTextMemory：用于结构化的多跳检索
-#    - KVCacheMemory：用于快速上下文注入
-while True:
-    user_input = input("👤 [You] ").strip()
-    print()
-    response = mos.chat(user_input)
-    print(f"🤖 [Assistant] {response}\n")
-
-print("📢 [System] MemChat has stopped.")
-````
-
-## 示例 5：多记忆调度
+## 示例 5：记忆调度
 
 ### 何时使用：
 
-- 你希望管理多个用户、多个 MemCube 或动态的记忆流。
-- 适用于 SaaS 智能体或多会话 LLM。
-- 展示 MemScheduler 与 YAML 配置能力。
+- 你希望自定义记忆调度逻辑或扩展后台任务，以异步触发的方式不断对记忆进行管理和优化。
+- 适用于 SaaS 智能体或多会轮对话的LLM应用任务。
+- 展示 MemScheduler的记忆管理任务设置与运行方式。
 
 ### 关键点：
 
-- 使用 parse\_yaml 加载 MOSConfig 和 MemCubeConfig。
-- 动态创建用户与 MemCube。
-- 展示记忆的运行时调度。
+- 通过 `mem_scheduler.register_handlers` 注册自定义回调。
+- 使用 `add_handler` 和 `chat_stream_playground` 进行交互。
+- 演示了如何获取和使用从环境量初始化完成的MemScheduler实例。
 
 ### 完整示例代码
 
 ```python
-import shutil
-import uuid
+import asyncio
+import json
+import os
+import sys
+import time
+
 from pathlib import Path
 
-from memos.configs.mem_cube import GeneralMemCubeConfig
-from memos.configs.mem_os import MOSConfig
-from memos.mem_cube.general import GeneralMemCube
-from memos.mem_os.main import MOS
-from memos.mem_scheduler.utils import parse_yaml
 
-# 使用 MemScheduler 加载主 MOS 配置
-config = parse_yaml("./examples/data/config/mem_scheduler/memos_config_w_scheduler.yaml")
-mos_config = MOSConfig(**config)
-mos = MOS(mos_config)
+# 在依赖路径的导入之前设置路径
+FILE_PATH = Path(__file__).absolute()
+BASE_DIR = FILE_PATH.parent.parent.parent
+sys.path.insert(0, str(BASE_DIR))  # 启用从任何工作目录执行
 
-# 创建动态用户 ID
-user_id = str(uuid.uuid4())
-mos.create_user(user_id=user_id)
+# 在导入 server_router 之前设置环境变量，以确保组件正确初始化
+os.environ["ENABLE_CHAT_API"] = "true"
 
-# 创建 MemCube 配置并导出
-config = GeneralMemCubeConfig.from_yaml_file(
-    "./examples/data/config/mem_scheduler/mem_cube_config.yaml"
+from memos.api.product_models import APIADDRequest, ChatPlaygroundRequest  # noqa: E402
+
+# 从 server_router 导入以进行初始化
+from memos.api.routers.server_router import (  # noqa: E402
+    add_handler,
+    chat_stream_playground,
+    mem_scheduler,
 )
-mem_cube_id = "mem_cube_5"
-mem_cube_name_or_path = f"./outputs/mem_scheduler/{user_id}/{mem_cube_id}"
-
-# 若存在旧目录则删除
-if Path(mem_cube_name_or_path).exists():
-    shutil.rmtree(mem_cube_name_or_path)
-    print(f"{mem_cube_name_or_path} is not empty, and has been removed.")
-
-# 导出新的 MemCube
-mem_cube = GeneralMemCube(config)
-mem_cube.dump(mem_cube_name_or_path)
-
-# 为该用户注册 MemCube
-mos.register_mem_cube(
-    mem_cube_name_or_path=mem_cube_name_or_path,
-    mem_cube_id=mem_cube_id,
-    user_id=user_id
+from memos.log import get_logger  # noqa: E402
+from memos.mem_scheduler.schemas.message_schemas import ScheduleMessageItem  # noqa: E402
+from memos.mem_scheduler.schemas.task_schemas import (  # noqa: E402
+    MEM_UPDATE_TASK_LABEL,
+    QUERY_TASK_LABEL,
 )
 
-# 添加消息
-messages = [
-    {
-        "role": "user",
-        "content": "I like playing football."
-    },
-    {
-        "role": "assistant",
-        "content": "I like playing football too."
-    },
-]
-mos.add(messages, user_id=user_id, mem_cube_id=mem_cube_id)
 
-# 聊天循环：展示 TreeTextMemory 节点 + KVCache
-while True:
-    user_input = input("👤 [You] ").strip()
-    print()
-    response = mos.chat(user_input, user_id=user_id)
-    retrieved_memories = mos.get_all(mem_cube_id=mem_cube_id, user_id=user_id)
+logger = get_logger(__name__)
 
-    print(f"🤖 [Assistant] {response}")
 
-    # 展示 TreeTextMemory 中的 WorkingMemory 节点
-    for node in retrieved_memories["text_mem"][0]["memories"]["nodes"]:
-        if node["metadata"]["memory_type"] == "WorkingMemory":
-            print(f"[WorkingMemory] {node['memory']}")
+def init_task():
+    conversations = [
+        {"role": "user", "content": "I just adopted a golden retriever puppy yesterday."},
+        {"role": "assistant", "content": "Congratulations! What did you name your new puppy?"},
+        {
+            "role": "user",
+            "content": "His name is Max. I live near Central Park in New York where we'll walk daily.",
+        },
+        {"role": "assistant", "content": "Max will love those walks! Any favorite treats for him?"},
+        {
+            "role": "user",
+            "content": "He loves peanut butter biscuits. Personally, I'm allergic to nuts though.",
+        },
+        {"role": "assistant", "content": "Good to know about your allergy. I'll note that."},
+        # 问题 1 (宠物) - 名字
+        {"role": "user", "content": "What's my dog's name again?"},
+        {"role": "assistant", "content": "Your dog is named Max."},
+        # 问题 2 (宠物) - 品种
+        {"role": "user", "content": "Can you remind me what breed Max is?"},
+        {"role": "assistant", "content": "Max is a golden retriever."},
+        # 问题 3 (宠物) - 零食
+        {"role": "user", "content": "What treats does Max like?"},
+        {"role": "assistant", "content": "He loves peanut butter biscuits."},
+        # 问题 4 (地址)
+        {"role": "user", "content": "Where did I say I live?"},
+        {"role": "assistant", "content": "You live near Central Park in New York."},
+        # 问题 5 (过敏)
+        {"role": "user", "content": "What food should I avoid due to allergy?"},
+        {"role": "assistant", "content": "You're allergic to nuts."},
+        {"role": "user", "content": "Perfect, just wanted to check what you remembered."},
+        {"role": "assistant", "content": "Happy to help! Let me know if you need anything else."},
+    ]
 
-    # 展示 KVCache 激活记忆
-    if retrieved_memories["act_mem"][0]["memories"]:
-        for act_mem in retrieved_memories["act_mem"][0]["memories"]:
-            print(f"⚡ [KVCache] {act_mem['memory']}")
-    else:
-        print("⚡ [KVCache] None\n")
+    questions = [
+        {"question": "What's my dog's name again?", "category": "Pet"},
+        {"question": "Can you remind me what breed Max is?", "category": "Pet"},
+        {"question": "What treats does Max like?", "category": "Pet"},
+        {"question": "Where did I say I live?", "category": "Address"},
+        {"question": "What food should I avoid due to allergy?", "category": "Allergy"},
+    ]
+    return conversations, questions
+
+
+working_memories = []
+
+
+# 定义自定义查询处理函数
+def custom_query_handler(messages: list[ScheduleMessageItem]):
+    for msg in messages:
+        # 打印用户输入内容
+        print(f"\n[scheduler] User input query: {msg.content}")
+        # 手动构造带有 MEM_UPDATE 标签的新消息以触发记忆更新
+        new_msg = msg.model_copy(update={"label": MEM_UPDATE_TASK_LABEL})
+        # 提交消息给调度器处理
+        mem_scheduler.submit_messages([new_msg])
+
+
+# 定义自定义记忆更新处理函数
+def custom_mem_update_handler(messages: list[ScheduleMessageItem]):
+    global working_memories
+    search_args = {}
+    top_k = 2
+    for msg in messages:
+        # 在文本记忆中搜索与当前内容相关的记忆（返回 top_k=2）
+        results = mem_scheduler.retriever.search(
+            query=msg.content,
+            user_id=msg.user_id,
+            mem_cube_id=msg.mem_cube_id,
+            mem_cube=mem_scheduler.current_mem_cube,
+            top_k=top_k,
+            method=mem_scheduler.search_method,
+            search_args=search_args,
+        )
+        working_memories.extend(results)
+        working_memories = working_memories[-5:]
+        for mem in results:
+            print(f"\n[scheduler] Retrieved memory: {mem.memory}")
+
+
+async def run_with_scheduler():
+    print("==== run_with_automatic_scheduler_init ====")
+    conversations, questions = init_task()
+
+    # 使用 server_router 组件进行初始化
+    # 配置通过 init_server() 中的环境变量加载
+
+    user_id = "user_1"
+    mem_cube_id = "mem_cube_5"
+
+    print(f"Adding conversations for user {user_id}...")
+
+    # 使用 add_handler 添加记忆
+    add_req = APIADDRequest(
+        user_id=user_id,
+        writable_cube_ids=[mem_cube_id],
+        messages=conversations,
+        async_mode="sync",  # 在此示例中使用同步模式以便立即添加
+    )
+    add_handler.handle_add_memories(add_req)
+
+    for item in questions:
+        print("===== Chat Start =====")
+        query = item["question"]
+        print(f"Query:\n {query}\n")
+
+        # 使用 chat_handler 进行聊天
+        chat_req = ChatPlaygroundRequest(
+            user_id=user_id,
+            query=query,
+            readable_cube_ids=[mem_cube_id],
+            writable_cube_ids=[mem_cube_id],
+        )
+        response = chat_stream_playground(chat_req)
+
+        answer = ""
+        buffer = ""
+        async for chunk in response.body_iterator:
+            if isinstance(chunk, bytes):
+                chunk = chunk.decode("utf-8")
+            buffer += chunk
+            while "\n\n" in buffer:
+                msg, buffer = buffer.split("\n\n", 1)
+                for line in msg.split("\n"):
+                    if line.startswith("data: "):
+                        json_str = line[6:]
+                        try:
+                            data = json.loads(json_str)
+                            if data.get("type") == "text":
+                                answer += data["data"]
+                        except json.JSONDecodeError:
+                            pass
+        print(f"\nAnswer: {answer}")
+
+
+if __name__ == "__main__":
+    mem_scheduler.register_handlers(
+        {
+            QUERY_TASK_LABEL: custom_query_handler,  # 查询任务
+            MEM_UPDATE_TASK_LABEL: custom_mem_update_handler,  # 记忆更新任务
+        }
+    )
+
+    asyncio.run(run_with_scheduler())
+
+    time.sleep(20)
+    mem_scheduler.stop()
 ```
 
 ::note
@@ -402,7 +666,7 @@ while True:
 
 务必确保你的向量数据库维度与你的嵌入器匹配。
 
-如使用基于图的明文记忆功能，你需要安装 Neo4j Desktop（社区版支持即将到来）。
+如使用基于图的明文记忆功能，你需要安装 Neo4j Desktop。
 ::
 
 ## 下一步

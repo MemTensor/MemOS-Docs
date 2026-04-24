@@ -260,7 +260,7 @@ Ready to level up?
   hierarchical memory.
 - **Add [Activation Memory](/open_source/modules/memories/kv_cache_memory):** Cache key-value
   states for faster inference.
-- **Dive deeper:** Check the [API Reference](/api-reference/configure-memos) and [Examples](/open_source/getting_started/examples) for advanced workflows.
+- **Dive deeper:** Check the [API Reference](/api-reference/search-memories) and [Examples](/open_source/getting_started/examples) for advanced workflows.
 
 ::note
 **Try Graph Textual Memory**<br>Try switching to

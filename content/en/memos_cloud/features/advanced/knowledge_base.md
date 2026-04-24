@@ -1,4 +1,4 @@
-------------
+---
 title: Knowledge Base
 desc: Create a knowledge base associated with the project, and combine user memory with knowledge base to supplement knowledge when retrieving memories.
 ---
@@ -12,11 +12,11 @@ desc: Create a knowledge base associated with the project, and combine user memo
 MemOS Knowledge Base supports developers in integrating business knowledge into the long-term memory system of intelligent applications.
 <br>
 The system uses uploaded documents as the underlying data source to build and maintain an independent memory layer, supporting natural language interaction applications such as Q&A. As end-users continue to use it, MemOS dynamically evolves and updates memories based on conversation content, thereby promoting automatic iteration and self-evolution of the knowledge base.
-<brbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbrbr>
-<brbr>
-Unlike the static storage of traditional RAG, MemOS makes the knowledge base part of "memory". AI applications with "memory" can not only query information more accurately but also better understand the background and the user. Let's look at two real scenarios to compare the two solutions:Unlike the static storage of traditional RAG, MemOS makes the knowledge base part of "memory". AI applications with "memory" can not only query information more accurately but also better understand the background and the user. Let's look at two real scenarios to compare the two solutions:Unlike the static storage of traditional RAG, MemOS makes the knowledge base part of "memory". AI applications with "memory" can not only query information more accurately but also better understand the background and the user. Let's look at two real scenarios to compare the two solutions:Unlike the static storage of traditional RAG, MemOS makes the knowledge base part of "memory". AI applications with "memory" can not only query information more accurately but also better understand the background and the user. Let's look at two real scenarios to compare the two solutions:
+<br>
+<br>
+Unlike the static storage of traditional RAG, MemOS makes the knowledge base part of "memory". AI applications with "memory" can not only query information more accurately but also better understand the background and the user. Let's look at two real scenarios to compare the two solutions:
 
-<brbr>
+<br>
 
 **Shopping Customer Service Robot**
 
@@ -41,7 +41,7 @@ DAY 10 User asks: The dog has diarrhea eating this dog food. I want to change to
 
 **MemOS Solution**
 
-```pythonpython
+```python
 # Retrieve relevant memories based on user input, perceive that the user's dog is a three-month-old Golden Retriever puppy, dislikes chicken, and needs a recommendation for puppy food that won't cause diarrhea. Retrieved memories:
 
 1. The user has a three-month-old Golden Retriever weighing about 12 catties.
@@ -59,7 +59,7 @@ DAY 10 User asks: The dog has diarrhea eating this dog food. I want to change to
 
 **Background**
 
-```pythonpython
+```python
 DAY 1 Employee asks: My computer is a MacBook Pro 13-inch, Intel chip. How do I install the company intranet proxy?
 DAY 1 Assistant provided the installation steps for the Intel version.
 DAY 20 Employee asks: The intranet proxy won't open. Which version should I reinstall?
@@ -67,7 +67,7 @@ DAY 20 Employee asks: The intranet proxy won't open. Which version should I rein
 
 **RAG Solution**
 
-```pythonpython
+```python
 # Retrieve content related to "intranet proxy" and "won't open" based on user input, but fail to recall "user's device model". Retrieved knowledge:
 
 1. Intranet proxy common troubleshooting
@@ -92,14 +92,14 @@ DAY 20 Employee asks: The intranet proxy won't open. Which version should I rein
 ```
 
 ::note{icon="ri:triangular-flag-fill"}
-**&nbsp;Advantage Summary**<brbr>
-RAG is good at retrieving information semantically similar to the query from the knowledge base, but it is RAG is good at retrieving information semantically similar to the query from the knowledge base, but it is RAG is good at retrieving information semantically similar to the query from the knowledge base, but it is RAG is good at retrieving information semantically similar to the query from the knowledge base, but it is **stateless**: every query is independent, lacking understanding of the specific user and context.: every query is independent, lacking understanding of the specific user and context.: every query is independent, lacking understanding of the specific user and context.: every query is independent, lacking understanding of the specific user and context.<brbrbrbr>
+**&nbsp;Advantage Summary**<br>
+RAG is good at retrieving information semantically similar to the query from the knowledge base, but it is **stateless**: every query is independent, lacking understanding of the specific user and context.<br>
 
 MemOS can understand information such as **relationships, time, and preferences**, linking current questions with historical memories, and finding and using knowledge with "context":<br>
 
 * **Understand Users**: MemOS knows "who you are" and "what you are doing". Just ask a question, and MemOS will automatically complete the context.<br>
 
-* **Personalization**: For different positions and work habits, MemOS can remember "this client dislikes overly aggressive sales", "you use Python more often than Java", "you consulted the reimbursement policy last time, do you need to enter the application process this time".: For different positions and work habits, MemOS can remember "this client dislikes overly aggressive sales", "you use Python more often than Java", "you consulted the reimbursement policy last time, do you need to enter the application process this time".<brbr>
+* **Personalization**: For different positions and work habits, MemOS can remember "this client dislikes overly aggressive sales", "you use Python more often than Java", "you consulted the reimbursement policy last time, do you need to enter the application process this time".<br>
 
 * **Knowledge Evolution**: When there are "rules of thumb" not written in documents in the actual process, MemOS will precipitate them into new memories, continuously supplementing and perfecting the knowledge system.
 ::
@@ -130,7 +130,7 @@ MemOS Cloud Service currently offers multiple pricing plans from free to enterpr
 
 ::note
 Currently, all versions are free for a limited time. Welcome to [Official Website - Pricing](https://memos.openmem.net/cn/pricing) to apply for the version that suits your needs.
-::::
+::
 
 | **Version**   | **Knowledge Base Storage Limit**                        |
 | ---------- | ----------------------------------------- |
@@ -151,7 +151,7 @@ Relevant functions will be restored after usage is adjusted to within the capaci
 
 ### Document Limits
 
-1.  Supported document types: PDF, DOCX, DOC, TXT
+1.  Supported document types: PDF, DOCX, DOC, TXT, JSON, MD, XML
 
 2.  Single file size limit: Not exceeding 100 MB, 500 pages
 
@@ -241,7 +241,7 @@ print(f"result: {res.json()}")
       "id": "1f35642253606ed1e9dd8cd8113a8998",
       "name": "Software_Procurement_Reimbursement_Policy.pdf",
       "sizeMB": 0.06331157684326172,
-      "status": "PROCESSING"
+      "status": "running"
     }
   ],
   "message": "ok"
@@ -295,7 +295,7 @@ print(f"result: {res.json()}")
 
 ### Retrieve Knowledge Base Memory
 
-::note{icon="websymbol:chat"}::note{icon="websymbol:chat"}
+::note{icon="websymbol:chat"}
 &nbsp;Session A: Occurred on 2025-12-12<br>
 <div style="padding-left: 2em;">
 In a new session, the user asks about [Software Reimbursement Policy]. MemOS will automatically recall [Knowledge Base Memory: Software Reimbursement Policy Content] and [User Memory: Creative Platform Designer], thereby providing a more specific and "user-understanding" answer about software reimbursement.
@@ -379,14 +379,14 @@ print(json.dumps(json_res, indent=2, ensure_ascii=False))
 
 ### Feedback to Optimize Knowledge Base
 
-In enterprises, it is common for company policies/knowledge to be updated while the knowledge base is not updated in time. Currently, MemOS supports feedback on knowledge base memories through In enterprises, it is common for company policies/knowledge to be updated while the knowledge base is not updated in time. Currently, MemOS supports feedback on knowledge base memories through **natural language conversation**, used to quickly update knowledge base memories, thereby improving accuracy and timeliness., used to quickly update knowledge base memories, thereby improving accuracy and timeliness.
+In enterprises, it is common for company policies/knowledge to be updated while the knowledge base is not updated in time. Currently, MemOS supports feedback on knowledge base memories through **natural language conversation**, used to quickly update knowledge base memories, thereby improving accuracy and timeliness.
 
 Try it out, drive the knowledge base to always stay up-to-date with the simplest interaction method.
 
-::note{icon="websymbol:chat"}::note{icon="websymbol:chat"}
+::note{icon="websymbol:chat"}
 &nbsp;Session A: Occurred on 2025-12-12<br>
 <div style="padding-left: 2em;">
-In another new session, the financial supervisor provides feedback that [The procurement limit for office software is 600 yuan, not 800 yuan].In another new session, the financial supervisor provides feedback that [The procurement limit for office software is 600 yuan, not 800 yuan].
+In another new session, the financial supervisor provides feedback that [The procurement limit for office software is 600 yuan, not 800 yuan].
 </div>
 ::
 
@@ -503,5 +503,5 @@ The [Console - Knowledge Base](https://memos-dashboard.openmem.net/knowledgeBase
 ![image.png](https://cdn.memtensor.com.cn/img/1766634697599_d1j187_compressed.png)
 
 ::note
-For a complete list of feedback API fields, formats, etc., please refer to For a complete list of feedback API fields, formats, etc., please refer to [Add Feedback API Documentation](/api_docs/message/add_feedback)..
+For a complete list of feedback API fields, formats, etc., please refer to [Add Feedback API Documentation](/api_docs/message/add_feedback).
 ::

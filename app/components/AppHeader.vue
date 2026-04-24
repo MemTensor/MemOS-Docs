@@ -15,9 +15,11 @@ const localizedMenus = computed(() => {
     { label: t('header.menus.welcome'), to: '/' },
     { label: t('header.menus.cloud'), to: '/memos_cloud/overview' },
     { label: t('header.menus.openSource'), to: '/open_source/getting_started/installation' },
+    { label: t('header.menus.selfDevelopedModel'), to: '/self_developed_model/extraction_usage_example' },
+    { label: t('header.menus.openclaw'), to: '/openclaw/guide' },
     { label: t('header.menus.mcpAgent'), to: '/mcp_agent/mcp/guide' },
     { label: t('header.menus.apiDocs'), to: '/api_docs/start/overview' },
-    { label: t('header.menus.samples'), to: '/usecase/financial_assistant' },
+    { label: t('header.menus.samples'), to: '/usecase/knowledge_qa_assistant' },
     { label: t('header.menus.changelog'), to: '/changelog' }
   ]
   return menus.map(m => ({ ...m, to: localePath(m.to) }))
@@ -38,7 +40,7 @@ function gotoHome() {
     :to="homePath"
     :ui="{
       root: 'border-0 h-(--ui-topbar-height)',
-      container: 'lg:px-10',
+      container: 'lg:px-10 @container',
       header: 'h-(--ui-topbar-height)'
     }"
   >
@@ -50,27 +52,28 @@ function gotoHome() {
 
     <UContentSearchButton
       v-if="header?.search"
-      class="cursor-pointer"
+      class="cursor-pointer w-90 @max-3xl:w-60"
       :collapsed="false"
       :kbds="[]"
       :label="$t('header.searchPlaceholder')"
       :ui="{
-        base: 'w-90 h-10 text-[#94A3B8] rounded-lg ring-slate-600'
+        base: 'h-10 text-[#94A3B8] rounded-lg ring-slate-600'
       }"
     />
+    <AssistantCollapse class="ml-2.5" />
 
     <template #right>
-      <LanguageSwitcher />
-      <JoinCommunityButton />
+      <LanguageSwitcher class="shrink-0" />
+      <JoinCommunityButton class="shrink-0 flex @max-2xl:hidden" />
       <button
-        class="hidden sm:flex items-center gap-1.5 h-7 px-2.5 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light rounded-md cursor-pointer"
+        class="hidden sm:flex items-center gap-1.5 h-7 px-2.5 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light rounded-md cursor-pointer shrink-0 whitespace-nowrap"
         @click="gotoHome"
       >
         <UIcon
           name="ri:home-4-line"
           class="size-4"
         />
-        <span class="text-xs font-medium">
+        <span class="text-xs font-medium flex @max-5xl:hidden">
           {{ $t('header.backToHome') }}
         </span>
       </button>

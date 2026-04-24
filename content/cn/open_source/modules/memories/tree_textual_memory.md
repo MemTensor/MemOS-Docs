@@ -1,15 +1,36 @@
 ---
-title: "TreeTextMemory: 分层结构的明文记忆"
+title: "TreeTextMemory: 树形明文记忆"
+desc: >
+    让我们在MemOS中构建你的第一个**基于图的、树形明文记忆**！
+    <br>
+    **TreeTextMemory** 支持以结构化方式组织、关联并检索记忆，同时保留丰富的上下文信息与良好的可解释性。
+    <br>
+    MemOS当前使用[Neo4j](/open_source/modules/memories/neo4j_graph_db)作为后端，未来计划支持更多图数据库。
 ---
 
-让我们在MemOS中构建你的第一个**基于图的、树形明文记忆**！
-
-**TreeTextMemory** 支持以结构化方式组织、关联并检索记忆，同时保留丰富的上下文信息与良好的可解释性。
-
-当前使用[Neo4j](/open_source/modules/memories/neo4j_graph_db)作为后端，未来计划支持更多图数据库。
 
 
-## 你将学习到:
+## 目录
+
+- [你将学到什么](#你将学到什么)
+- [核心概念与工作流程](#核心概念与工作流程)
+    - [记忆结构](#记忆结构)
+    - [元数据字段](#元数据字段-treenodetextualmemorymetadata)
+    - [核心工作流](#核心工作流)
+- [API 参考](#api-参考)
+- [动手实践：从 0 到 1](#动手实践从-0-到-1)
+    - [创建 TreeTextMemory 配置](#创建-treetextmemory-配置)
+    - [初始化 TreeTextMemory](#初始化-treetextmemory)
+    - [抽取结构化记忆](#抽取结构化记忆)
+    - [搜索记忆](#搜索记忆)
+    - [从互联网检索记忆（可选）](#从互联网检索记忆可选)
+    - [替换工作记忆](#替换工作记忆)
+    - [备份与恢复](#备份与恢复)
+    - [完整代码示例](#完整代码示例)
+- [为什么选择 TreeTextMemory](#为什么选择-treetextmemory)
+- [下一步](#下一步)
+
+## 你将学到什么
 
 在本指南的最后，你会:
 - 从原始文本或对话中提取结构化记忆
@@ -17,7 +38,7 @@ title: "TreeTextMemory: 分层结构的明文记忆"
 - 将记忆链接成**层次结构**和语义图
 - 使用**向量相似度+图遍历**进行搜索
 
-## 如何工作
+## 核心概念与工作流程
 
 ### 记忆结构
 
@@ -45,12 +66,12 @@ title: "TreeTextMemory: 分层结构的明文记忆"
 | `background`    | `str`                                                 | 附加上下文                        |
 
 
-::注意
+::note
 **最佳实践**<br>
   使用有意义的标签和背景——它们有助于组织你的图进行多跳推理。
 ::
 
-### 核心步骤
+### 核心工作流
 
 当您运行此示例时，您的工作流将:
 
@@ -66,11 +87,11 @@ title: "TreeTextMemory: 分层结构的明文记忆"
 4. **搜索:** 通过向量相似度查询，然后通过图跳数展开结果.
 
 
-::注意
+::note
 **提示**<br>图链接有助于检索纯向量搜索可能遗漏的上下文!
 ::
 
-## API总结(`TreeTextMemory`)
+## API 参考
 
 ### 初始化
 
@@ -96,9 +117,9 @@ TreeTextMemory(config: TreeTextMemoryConfig)
 | `load(dir)`                 | 从保存的JSON文件加载图                     |
 | `drop(keep_last_n)`         | 备份图和删除数据库，保留N个备份       |
 
-## 文件存储
+### 文件存储
 
-当调用 `dump(dir)`, 系统写到:
+当调用 `dump(dir)`, MemOS将树形明文记忆导出为JSON文件:
 
 ```
 <dir>/<config.memory_filename>
@@ -108,13 +129,13 @@ TreeTextMemory(config: TreeTextMemoryConfig)
 
 ---
 
-## 您的第一个TreeTextMemory - 一步一步进行
+## 动手实践：从 0 到 1
 
 ::steps{}
 
 ### 创建 TreeTextMemory 配置
 定义:
-- 你的嵌入（创建向量）,
+- 你的embedding模型（例如，nomic-embed-text:latest）,
 - 你的图数据库后端(Neo4j),
 - 记忆抽取器（基于LLM）（可选）.
 
@@ -137,6 +158,8 @@ tree_memory = TreeTextMemory(config)
 
 使用记忆抽取器将对话、文件或文档解析为多个`TextualMemoryItem`.
 
+#### 使用 SimpleStructMemReader（基础）
+
 ```python
 from memos.mem_reader.simple_struct import SimpleStructMemReader
 
@@ -151,6 +174,159 @@ memories = reader.get_memory(scene_data, type="chat", info={"user_id": "1234"})
 for m_list in memories:
     tree_memory.add(m_list)
 ```
+
+#### 使用 MultiModalStructMemReader（高级）
+
+`MultiModalStructMemReader` 支持处理多模态内容（文本、图片、URL、文件等），能够自动感知（智能路由）到不同的解析器：
+
+```python
+from memos.configs.mem_reader import MultiModalStructMemReaderConfig
+from memos.mem_reader.multi_modal_struct import MultiModalStructMemReader
+
+# 创建 MultiModal Reader 配置
+multimodal_config = MultiModalStructMemReaderConfig(
+    llm={
+        "backend": "openai",
+        "config": {
+            "model_name_or_path": "gpt-4o-mini",
+            "api_key": "your-api-key"
+        }
+    },
+    embedder={
+        "backend": "openai",
+        "config": {
+            "model_name_or_path": "text-embedding-3-small",
+            "api_key": "your-api-key"
+        }
+    },
+    chunker={
+        "backend": "text_splitter",
+        "config": {
+            "chunk_size": 1000,
+            "chunk_overlap": 200
+        }
+    },
+    extractor_llm={
+        "backend": "openai",
+        "config": {
+            "model_name_or_path": "gpt-4o-mini",
+            "api_key": "your-api-key"
+        }
+    },
+    # 可选：指定哪些域名直接返回 Markdown
+    direct_markdown_hostnames=["github.com", "docs.python.org"]
+)
+
+# 初始化 MultiModal Reader
+multimodal_reader = MultiModalStructMemReader(multimodal_config)
+
+# ========================================
+# 示例 1: 处理包含图片的对话
+# ========================================
+scene_with_image = [[
+    {
+        "role": "user",
+        "content": [
+            {"type": "text", "text": "这是我家的花园"},
+            {"type": "image_url", "image_url": {"url": "https://example.com/garden.jpg"}}
+        ]
+    },
+    {
+        "role": "assistant",
+        "content": "你的花园很漂亮！"
+    }
+]]
+
+memories = multimodal_reader.get_memory(
+    scene_with_image,
+    type="chat",
+    info={"user_id": "1234", "session_id": "session_001"}
+)
+for m_list in memories:
+    tree_memory.add(m_list)
+print(f"✓ 已添加 {len(memories)} 条多模态记忆")
+
+# ========================================
+# 示例 2: 处理网页 URL
+# ========================================
+scene_with_url = [[
+    {
+        "role": "user",
+        "content": "请分析这篇文章: https://example.com/article.html"
+    },
+    {
+        "role": "assistant",
+        "content": "我会帮你分析这篇文章"
+    }
+]]
+
+url_memories = multimodal_reader.get_memory(
+    scene_with_url,
+    type="chat",
+    info={"user_id": "1234", "session_id": "session_002"}
+)
+for m_list in url_memories:
+    tree_memory.add(m_list)
+print(f"✓ 已从 URL 提取并添加 {len(url_memories)} 条记忆")
+
+# ========================================
+# 示例 3: 处理本地文件
+# ========================================
+# 支持的文件类型: PDF, DOCX, TXT, Markdown, HTML 等
+file_paths = [
+    "./documents/report.pdf",
+    "./documents/notes.md",
+    "./documents/data.txt"
+]
+
+file_memories = multimodal_reader.get_memory(
+    file_paths,
+    type="doc",
+    info={"user_id": "1234", "session_id": "session_003"}
+)
+for m_list in file_memories:
+    tree_memory.add(m_list)
+print(f"✓ 已从文件提取并添加 {len(file_memories)} 条记忆")
+
+# ========================================
+# 示例 4: 混合模式（文本 + 图片 + URL）
+# ========================================
+mixed_scene = [[
+    {
+        "role": "user",
+        "content": [
+            {"type": "text", "text": "这是我的项目文档:"},
+            {"type": "text", "text": "https://github.com/user/project/README.md"},
+            {"type": "image_url", "image_url": {"url": "https://example.com/diagram.png"}}
+        ]
+    }
+]]
+
+mixed_memories = multimodal_reader.get_memory(
+    mixed_scene,
+    type="chat",
+    info={"user_id": "1234", "session_id": "session_004"}
+)
+for m_list in mixed_memories:
+    tree_memory.add(m_list)
+print(f"✓ 已从混合内容提取并添加 {len(mixed_memories)} 条记忆")
+```
+
+::alert{type="info"}
+**MultiModal Reader 优势**<br>
+- **智能路由**：自动识别内容类型（图片/URL/文件）并选择合适的解析器<br>
+- **格式支持**：支持 PDF、DOCX、Markdown、HTML、图片等多种格式<br>
+- **URL 解析**：自动提取网页内容（包括 GitHub、文档站点等）<br>
+- **大文件处理**：自动分块处理超大文件，避免 token 超限<br>
+- **上下文保持**：使用滑动窗口保持分块间的上下文连续性
+::
+
+::note
+**配置提示**<br>
+- 使用 `direct_markdown_hostnames` 参数可以指定哪些域名直接返回 Markdown 格式<br>
+- 支持 `mode="fast"` 和 `mode="fine"` 两种提取模式，fine 模式提取更详细<br>
+- 查看完整示例: `/examples/mem_reader/multimodal_struct_reader.py`
+::
 
 ### 搜索记忆
 
@@ -243,7 +419,7 @@ tree_memory.load("tmp/tree_memories")
 ::
 
 
-### 完整代码
+### 完整代码示例
 
 该示例整合了上述所有步骤，提供一个端到端的完整流程 —— 复制即可运行！
 
@@ -312,22 +488,22 @@ my_tree_textual_memory.dump("tmp/my_tree_textual_memory")
 my_tree_textual_memory.drop()
 ```
 
-## 是什么让TreeTextMemory不同?
+## 为什么选择 TreeTextMemory
 
 - **结构层次:** 像思维导图一样组织记忆——节点可以有父母、孩子和交叉链接。
 - **图风格的链接:** 超越纯粹的层次结构-建立多跳推理链。
 - **语义搜索+图扩展:** 结合向量和图形的优点。
 - **可解释性:** 追踪记忆是如何连接、合并或随时间演变的.
 
-::注意
+::note
 **尝试一下**<br>从文档或web内容中添加记忆节点。手动链接它们或自动合并类似的节点！
 ::
 
-## 下一步是什么?
+## 下一步
 
 - **了解更多[Neo4j](/open_source/modules/memories/neo4j_graph_db):** treeTextMemory由图数据库后端提供支持。了解Neo4j如何处理节点、边和遍历将帮助您设计更有效的记忆层次结构、多跳推理和上下文链接策略。
 - **添加 [Activation Memory](/open_source/modules/memories/kv_cache_memory):** 使用运行时KV-cache来测试会话状态。
 - **探索图推理:** 为多跳检索和答案合成构建工作流。
-- **更进一步:** 为高级应用检查 [API Reference](/api-reference/configure-memos), 或者在 `examples/`运行更多的示例.
+- **更进一步:** 为高级应用检查 [API Reference](/api-reference/search-memories), 或者在 `examples/`运行更多的示例.
 
-现在你的代理不仅能记住事实，还能记住它们之间的联系！
+现在你的Agent不仅能记住事实，还能记住它们之间的联系！

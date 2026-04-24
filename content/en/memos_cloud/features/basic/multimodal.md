@@ -155,7 +155,7 @@ MemOS currently supports the following media types:
 
 1.  **Images** - JPG, PNG, and other common image formats
     
-2.  **Documents** - PDF, DOCX, DOC, TXT
+2.  **Documents** - PDF, DOCX, DOC, TXT, JSON, MD, XML
     
 
 ## 3. File Upload Limits

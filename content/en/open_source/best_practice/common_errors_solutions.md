@@ -53,7 +53,7 @@ except Exception:
     mem_cube.dump("memory_dir")
 ```
 
-### GPU Memory
+### GPU Out Of Memory
 
 ```python
 import os

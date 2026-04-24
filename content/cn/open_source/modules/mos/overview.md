@@ -1,427 +1,106 @@
 ---
-title: MemOS的MOS API
-desc: "**MOS**（记忆操作系统）是MemOS的核心组件，它作为一个编排层，管理多个记忆模块（MemCubes），并为记忆增强应用程序提供统一的接口."
+title: API 开发指南 (Component & Handler 架构)
+desc: MemOS v2.0 采用了更加模块化和解耦的架构。旧版的 MOS 类已被弃用，现在推荐使用 Components (组件) + Handlers (处理器) 的模式进行开发。
 ---
 
-## API总结 (`MOS`)
 
-### 初始化
-```python
-from memos import MOS
-mos = MOS(config: MOSConfig)
-```
+这种架构将“系统的元件”（Components）与“业务逻辑的执行”（Handlers）分离开来，使得系统更易于扩展、测试和维护。
 
-### 核心方法
+## 1. 核心概念
 
-| 方法 | 描述 |
-|--------|-------------|
-| `register_mem_cube(mem_cube_name_or_path, mem_cube_id=None, user_id=None)` | 从目录或远程仓库为用户注册一个新的记忆立方 |
-| `unregister_mem_cube(mem_cube_id, user_id=None)` | 根据ID取消注册(移除)一个记忆立方 |
-| `add(messages=None, memory_content=None, doc_path=None, mem_cube_id=None, user_id=None)` | 将新记忆（来自消息、字符串或文档）添加到立方体 |
-| `search(query, user_id=None, install_cube_ids=None)` | 通过立方体IDs搜索记忆，跨多个立方体，过滤可选项 |
-| `chat(query, user_id=None)` | 与LLM聊天，通过指定用户的记忆检索增强 |
-| `get(mem_cube_id, memory_id, user_id=None)` | 为用户通过立方体和记忆ID获取特定记忆 |
-| `get_all(mem_cube_id=None, user_id=None)` | 从一个立方体得到所有记忆 |
-| `update(mem_cube_id, memory_id, text_memory_item, user_id=None)` | 通过ID在立方体中为用户更新记忆 |
-| `delete(mem_cube_id, memory_id, user_id=None)` | 通过ID为用户从立方体中删除一个记忆 |
-| `delete_all(mem_cube_id=None, user_id=None)` | 为一个用户从立方体中删除所有记忆 |
-| `clear_messages(user_id=None)` | 清除指定用户会话的聊天记录 |
-
-### 用户管理方法
-
-| 方法 | 描述 |
-|--------|-------------|
-| `create_user(user_id, role=UserRole.USER, user_name=None)` | 使用指定的角色和可选的名称创建新用户 |
-| `list_users()` | 列出所有活跃用户及其信息 |
-| `create_cube_for_user(cube_name, owner_id, cube_path=None, cube_id=None)` | 为特定用户创建一个新的立方体 |
-| `get_user_info()` | 获得当前用户的信息 |
-| `share_cube_with_user(cube_id, target_user_id)` | 和其他用户共享立方体 |
-
-## 类别概述
-
-`MOS` 管理多个 `MemCube` 对象, 每个代表一个用户或会话的记忆。它为记忆操作（增删改查）提供了统一的API，并与LLM集成，通过上下文记忆检索增强聊天功能。MOS支持多用户、多会话场景，并可扩展到新的记忆类型和后端。
-
-## 使用样例
-
-```python
-import uuid
-
-from memos.configs.mem_os import MOSConfig
-from memos.mem_os.main import MOS
-
-
-# 初始化MOS
-mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
-memory = MOS(mos_config)
-
-# 创建用户
-user_id = str(uuid.uuid4())
-memory.create_user(user_id=user_id)
-
-# 为用户注册记忆立方
-memory.register_mem_cube("examples/data/mem_cube_2", user_id=user_id)
-
-# 为用户添加记忆
-memory.add(
-    messages=[
-        {"role": "user", "content": "I like playing football."},
-        {"role": "assistant", "content": "I like playing football too."},
-    ],
-    user_id=user_id,
-)
-# 之后，当您想为用户检索记忆时
-retrieved_memories = memory.search(query="What do you like?", user_id=user_id)
-# 输出明文记忆: I like playing football, act_memories, para_memories
-print(f"text_memories: {retrieved_memories['text_mem']}")
-```
-
-## 核心操作概述
-
-MOS提供了几个与记忆交互的主要操作:
-
-* **添加记忆** - 存储来自对话、文档或直接输入文本中的新信息
-* **搜索记忆** - 基于语义查询检索相关记忆
-* **与记忆对话** - 增强对话与上下文记忆检索
-* **记忆管理** - 组织现有记忆（增删改）
-* **记忆存储** - 将记忆立方导出进行持久存储
-
-## 1. 添加记忆
-
-### 概述
-
-添加操作通过几个步骤处理和存储新信息
-
-
-#### 从对话消息添加
-
-```python
-import uuid
-from memos.configs.mem_os import MOSConfig
-from memos.mem_os.main import MOS
-
-# 初始化MOS
-mos_config = MOSConfig.from_json_file("config/simple_memos_config.json")
-memory = MOS(mos_config)
-
-# 创建用户
-user_id = str(uuid.uuid4())
-memory.create_user(user_id=user_id, user_name="Alice")
-
-# 注册记忆立方
-memory.register_mem_cube("examples/data/mem_cube_2", user_id=user_id)
-
-# 从对话中添加记忆
-memory.add(
-    messages=[
-        {"role": "user", "content": "I like playing football and watching movies."},
-        {"role": "assistant", "content": "That's great! Football is a wonderful sport and movies can be very entertaining."},
-        {"role": "user", "content": "My favorite team is Barcelona."},
-        {"role": "assistant", "content": "Barcelona is a fantastic team with a rich history!"}
-    ],
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-print("Memory added successfully from conversation")
-```
-
-#### 直接添加记忆
-
-```python
-# 直接添加特定的记忆
-memory.add(
-    memory_content="User prefers vegetarian food and enjoys cooking Italian cuisine",
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-# 添加多个记忆项
-memory_items = [
-    "User works as a software engineer",
-    "User lives in San Francisco",
-    "User enjoys hiking on weekends"
-]
-
-for item in memory_items:
-    memory.add(
-        memory_content=item,
-        mem_cube_id="personal_memories",
-        user_id=user_id
-    )
-```
-
-#### 从文档添加
-
-```python
+### 1.1 Components (核心组件)
 
-# 从多个文档添加
-doc_path="./examples/data"
-memory.add(
-    doc_path=doc_path,
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-```
+Components 是 MemOS 的各个“器官”，它们在服务器启动时被初始化（通过 `init_server()`），并在整个生命周期中复用。
 
-## 2. 搜索记忆
-
-### 概述
+核心组件包括：
 
-搜索操作通过搜索API检索记忆:
-
-
-#### 基础的记忆搜索
+#### 核心记忆组件
 
-```python
-# 从相关记忆搜索
-results = memory.search(
-    query="What sports do I like?",
-    user_id=user_id
-)
+1. **MemCube**: 记忆容器, 用于隔离不同用户/不同应用场景的记忆, 并统一管理多种记忆模块.  
+2. **MemReader**: 记忆加工器, 把用户输入的各类素材（聊天, 文档, 图片）解析为系统可写入的记忆片段.  
+3. **MemScheduler**: 后台调度器, 负责管理后台任务队列，将记忆的存储、索引、组织等耗时操作异步处理，支持多任务的并发执行.  
+4. **MemChat**: 对话控制器, 负责在对话过程中自动进行“记忆检索 -> 上下文管理 -> LLM 调度 -> 记忆更新”的对话闭环.  
+5. **MemFeedback**: 记忆纠错器，自动理解用户的自然语言反馈，精准定位冲突记忆并执行原子级修正（纠错/补充/替换）.
 
-# 访问不同类型的记忆
-text_memories = results['text_mem']
-activation_memories = results['act_mem']
-parametric_memories = results['para_mem']
+### 1.2 Handlers (业务处理器)
 
-print(f"Found {len(text_memories)} text memories")
-for memory in text_memories:
-    print(memory)
-```
+Handlers 是 MemOS 的“大脑”，它们封装了具体的业务逻辑（如添加、搜索、对话），通过调用和协调 Components （器官）的各项能力来完成具体的用户任务。
 
-#### 跨立方的记忆搜索
+#### 核心 Handler 概览
 
-```python
-# 只在特定的记忆立方中搜索
-results = memory.search(
-    query="What are my preferences?",
-    user_id=user_id,
-    install_cube_ids=["personal_memories", "shared_knowledge"]
-)
+| Handler | 作用 | 核心方法 |
+| :--- | :--- | :--- |
+| **AddHandler** | 添加记忆 (对话/文档/文本) | `handle_add_memories` |
+| **SearchHandler** | 搜索记忆 (语义检索) | `handle_search_memories` |
+| **ChatHandler** | 对话 (带记忆增强) | `handle_chat_complete`, `handle_chat_stream` |
+| **FeedbackHandler** | 反馈 (修正记忆/人工干预) | `handle_feedback_memories` |
+| **MemoryHandler** | 管理 (获取详情/删除) | `handle_get_memory`, `handle_delete_memories` |
+| **SchedulerHandler** | 调度 (查询异步任务状态) | `handle_scheduler_status`, `handle_scheduler_wait` |
+| **SuggestionHandler** | 建议 (生成推荐问题) | `handle_get_suggestion_queries` |
 
-# 通过立方处理结果
-for cube_memories in results['text_mem']:
-    print(f"\nCube: {cube_memories['cube_id']}")
-    for memory in cube_memories['memories']:
-        print(f"- {memory}")
-```
+## 2. API 详解
 
-## 3. 聊天增强记忆
+### 2.1 初始化 (Initialization)
+初始化是系统启动的基石。所有 Handler 的运行都依赖于统一的组件注册与依赖注入机制。
 
-### 概述
+- 组件加载 ( init_server ) : 系统启动时会初始化所有核心组件，包括 LLM（大语言模型）、存储层（向量数据库、图数据库）、调度器（Scheduler）以及各类 Memory Cube。
+- 依赖注入 ( HandlerDependencies ) : 为了保证代码的解耦与可测试性，所有组件被统一封装到一个依赖容器（`HandlerDependencies`）中。当 Handler 启动时，只需接收这个容器，就能获取所需的 `naive_mem_cube`、`mem_reader`、`feedback_server` 等资源，而无需各自重复创建这些组件。
 
-聊天操作通过以下方式提供记忆增强的对话:
+### 2.2 添加记忆 (AddHandler)
+AddHandler 是大脑的"记忆接纳指令"，负责将外部信息转化并写入系统记忆。它不仅负责接纳和转化各类信息，还能自动识别反馈并路由到专门的反馈处理流程。
 
-1. **记忆检索** - 根据查询搜索相关记忆
-2. **上下文构建** - 将检索到的记忆整合到会话上下文中
-3. **生成响应** - LLM使用记忆上下文生成响应
+- 核心功能 :
+  - 多模态支持 : 能够处理用户对话、文档、图片等多种输入形式，统一转化为系统内部的记忆对象。
+  - 同步与异步模式 : 通过 `async_mode` 参数控制处理方式。**同步模式**（"sync"）：立即处理，调用者阻塞等待结果，适合调试；**异步模式**（"async"）：任务推入后台队列由 MemScheduler 并发处理，API 立即返回任务 ID，适合生产环境提升响应速度。
+  - 自动反馈路由 : 如果请求中标记了 `is_feedback=True`，Handler 会自动提取对话中的最后一条用户消息作为反馈内容，将其转发到 MemFeedback 处理，而不是作为普通新记忆添加。
+  - 多目标写入 : 支持向多个 MemCube 同时写入记忆。当指定多个目标 Cube 时，系统会并行处理所有写入任务；当仅有一个目标时，则使用轻量级的处理方式。
 
+### 2.3 搜索记忆 (SearchHandler)
+SearchHandler 是大脑的"记忆检索指令"，提供基于语义的智能记忆查询能力，是实现 RAG（检索增强生成）的关键组件。
 
+- 核心功能 :
+  - 语义检索 : 利用向量嵌入（Embedding）技术，根据查询语句的语义相似度召回相关记忆，相比简单的关键词匹配，能更准确地理解用户意图。
+  - 灵活的搜索范围 : 支持指定检索的目标数据范围。例如，可以仅在特定用户的记忆库中搜索，也可以跨多个用户搜索共享的公开记忆，满足不同的隐私和业务需求。
+  - 多种检索模式 : 根据应用场景在速度和准确率之间灵活选择。**快速模式**适合实时性要求高的场景，**精细模式**适合追求高记忆精准度的场景，**混合模式**兼顾两者。
+  - 多步推理检索 : 对于复杂问题，支持引入深度推理能力，通过多轮理解和检索逐步逼近最相关的记忆。
 
-#### 基础对话
+### 2.4 对话 (ChatHandler)
+ChatHandler 是大脑的"对话协调指令"，负责将用户的对话需求转化为完整的业务流程。它不直接存储数据，而是通过协调其他 Handler 来完成端到端的对话任务。
 
-```python
-# 简单的聊天记忆增强
-response = memory.chat(
-    query="What do you remember about my interests?",
-    user_id=user_id
-)
-print(f"Assistant: {response}")
-```
+- 核心功能 :
+  - 流程编排 : 自动执行"记忆检索 → LLM 生成 → 记忆保存"的完整对话闭环。用户每次提问都能基于历史记忆获得更智能的回复，同时每一次对话都被沉淀为新的记忆，实现对话即学习。
+  - 上下文管理 : 负责处理 history （历史对话）与 query （当前问题）的拼接，确保 LLM 理解完整的对话语境，避免信息丢失。
+  - 多种交互模式 : 支持标准请求-响应模式（ APIChatCompleteRequest ）和流式响应（Stream）模式，标准模式适合简单问题，流式模式适合长文本回复，满足不同的前端交互需求。
+  - 消息推送（可选） : 支持在生成回复后自动将结果推送到第三方平台（如钉钉），实现多渠道集成。
 
-## 4. 记忆的检索和管理
+### 2.5 反馈与修正 (FeedbackHandler)
+FeedbackHandler 是大脑的"反馈纠正指令"，负责理解用户对 AI 表现的自然语言反馈，自动精准定位并修正相关的记忆内容。
 
-### 生成指定记忆
+- 核心功能 :
+  - 记忆修正 : 当用户指出 AI 的错误（如"会议地点不是北京是上海"）时，Handler 会自动更新或标记相关的旧记忆。系统采用版本管理而非直接删除，保持修改历史的可追溯性。
+  - 正负反馈 : 支持用户通过点赞或点踩的方式标记特定记忆的质量。系统据此调整该记忆的权重和可信度，使后续检索更加准确。
+  - 精准定位 : 支持两种反馈方式。一种是基于对话历史自动定位冲突信息，另一种是用户直接指定具体的记忆来修正，提高反馈的有效性和准确度。
 
-#### 示例代码
+### 2.6 记忆管理 (MemoryHandler)
+MemoryHandler 是大脑的"记忆管理指令"，提供了对记忆数据的底层 CRUD（增删改查）能力，主要用于系统管理后台或数据清理等运维场景。
 
-```python
-# 通过ID获取特定记忆
-memory_item = memory.get(
-    mem_cube_id="personal_memories",
-    memory_id="memory_123",
-    user_id=user_id
-)
+- 核心功能 :
+  - 精细化管理 : 不同于 AddHandler 的业务级写入，此 Handler 允许通过记忆 ID 直接获取单条记忆的详细信息或执行物理删除。这种直接操作方式绕过了业务逻辑的包装，主要用于调试、审计或系统清理。
+  - 底层直通 : 某些管理操作需要直接与底层的记忆器官（naive_mem_cube）交互，以提供最高效和最低延迟的数据操作能力，满足系统运维的需求。
 
-print(f"Memory ID: {memory_item.memory_id}")
-print(f"Content: {memory_item.memory}")
-print(f"Created: {memory_item.created_at}")
-print(f"Metadata: {memory_item.metadata}")
-```
+### 2.7 任务调度状态 (SchedulerHandler)
+SchedulerHandler 是大脑的"任务监控指令"，负责追踪系统中所有异步任务的实时执行状态，让用户能够了解后台任务的进度和结果。
 
-### 获取所有记忆
+- 核心功能 :
+  - 状态追踪 : 配合 Redis 后端，追踪任务的实时状态（Queued 排队中, Running 执行中, Completed 已完成, Failed 已失败）。
+  - 结果获取 : 提供任务结果查询接口。当异步任务完成后，用户可以通过此接口获取最终的执行结果或错误信息，从而了解操作是否成功以及失败的原因。
+  - 同步等待（调试工具） : 在测试和集成测试时，提供将异步任务强制转为同步等待的工具，使开发者能够像调试同步代码一样调试异步流程，提高开发效率。
 
+### 2.8 猜你想问 (SuggestionHandler)
+SuggestionHandler 是大脑的"建议生成指令"，通过预测用户的潜在需求，主动推荐相关问题，帮助用户探索系统能力和发现感兴趣的话题。
 
-
-#### 示例代码
-
-```python
-# 从特定的立方得到全部记忆
-all_memories = memory.get_all(
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-# 从所有可访问的立方得到全部记忆
-all_memories = memory.get_all(user_id=user_id)
-
-# 访问不同的记忆类型
-for cube_memories in all_memories['text_mem']:
-    print(f"\nCube: {cube_memories['cube_id']}")
-    print(f"Total memories: {len(cube_memories['memories'])}")
-
-    for memory in cube_memories['memories']:
-        print(f"- {memory.memory}")
-        print(f"  ID: {memory.memory_id}")
-        print(f"  Created: {memory.created_at}")
-```
-
-## 5. 记忆更新和删除
-
-### 更新记忆
-
-
-
-#### 示例代码
-
-```python
-from memos.memories.textual.item import TextualMemoryItem
-
-# 创建更新后的记忆项
-updated_memory = TextualMemoryItem(
-    memory="User now prefers vegan food and enjoys cooking Mediterranean cuisine",
-    metadata={
-        "updated_at": "2024-01-15",
-        "update_reason": "Dietary preference change"
-    }
-)
-
-# 更新存在的记忆
-memory.update(
-    mem_cube_id="personal_memories",
-    memory_id="memory_123",
-    text_memory_item=updated_memory,
-    user_id=user_id
-)
-
-print("Memory updated successfully")
-```
-
-### 删除记忆
-
-
-```python
-# 删除一个特定记忆
-memory.delete(
-    mem_cube_id="personal_memories",
-    memory_id="memory_123",
-    user_id=user_id
-)
-
-# 从一个特定的立方删除所有记忆
-memory.delete_all(
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-# 删除用户的所有记忆（请谨慎使用！）
-memory.delete_all(user_id=user_id)
-```
-
-## 6. 记忆存储
-
-### 概述
-
-存储操作将记忆立方导出进行持久存储，支持您进行:
-
-* **记忆备份** - 为记忆立方创建持久化副本
-* **记忆迁移** - 在系统中移除记忆立方
-* **记忆归档** - 存储记忆立方以进行长期保存
-* **记忆共享** - 导出记忆立方与其他用户共享
-
-#### 基本存储
-
-```python
-# 将特定记忆立方存储到目录中
-memory.dump(
-    dump_dir="./backup/memories",
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-print("Memory cube dumped successfully")
-```
-
-#### 存储默认立方
-
-```python
-# 存储用户的默认立方（第一个可访问的立方）
-memory.dump(
-    dump_dir="./backup/default_memories",
-    user_id=user_id
-)
-
-print("Default memory cube dumped successfully")
-```
-
-#### 存储默认立方
-
-```python
-# 获取用户信息以查看所有可访问的立方
-user_info = memory.get_user_info()
-
-# 存储每个可访问的立方
-for cube_info in user_info['accessible_cubes']:
-    if cube_info['is_loaded']:
-        memory.dump(
-            dump_dir=f"./backup/{cube_info['cube_name']}",
-            mem_cube_id=cube_info['cube_id'],
-            user_id=user_id
-        )
-        print(f"Dumped cube: {cube_info['cube_name']}")
-```
-
-#### 存储自定义目录结构
-
-```python
-import os
-from datetime import datetime
-
-# 创建带时间戳的备份目录
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-backup_dir = f"./backups/{timestamp}"
-
-# 确保目录存在
-os.makedirs(backup_dir, exist_ok=True)
-
-# 存储具有组织结构的记忆立方
-memory.dump(
-    dump_dir=backup_dir,
-    mem_cube_id="personal_memories",
-    user_id=user_id
-)
-
-print(f"Memory cube dumped to: {backup_dir}")
-```
-
-## 7. 会话管理
-
-### 清除对话历史
-
-
-```python
-# 清除用户会话的聊天记录
-memory.clear_messages(user_id=user_id)
-
-# 验证聊天记录已清除
-user_info = memory.get_user_info()
-print(f"Chat history cleared for user: {user_info['user_name']}")
-```
-
-## 何时使用MOS
-
-当你需要使用MOS时:
-
-- 使用持久的、特定于用户的记忆构建LLM应用程序.
-- 支持多用户、多会话记忆管理.
-- 将记忆增强检索和推理集成到聊天机器人或代理中.
+- 核心功能 :
+  - 双模式生成 :
+    - 基于对话的建议 : 当用户提供了最近的对话记录时，系统分析对话上下文，推断用户可能感兴趣的后续话题，生成 3 个相关的推荐问题。
+    - 基于用户画像的建议 : 当没有对话上下文时，系统从用户的近期记忆中推断其兴趣和状态，生成与用户最近生活或工作相关的推荐问题。这适合在对话开始或话题转换时使用。
+  - 多语言支持 : 推荐问题自动适配用户语言设置，支持中英文等多种语言，提升不同用户的体验。

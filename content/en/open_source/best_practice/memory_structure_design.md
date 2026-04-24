@@ -28,6 +28,53 @@ tree_config = {
 }
 ```
 
+### PreferenceTextMemory
+
+**Best for**：Personalized conversation, intelligent recommendation, customer service
+
+```python
+preference_config = {
+    "backend": "preference_text",
+    "config": {
+        "extractor_llm": {
+            "backend": "ollama",
+            "config": {
+                "model_name_or_path": "qwen3:0.6b",
+            }
+        },
+        "vector_db": {
+            "backend": "milvus",
+            "config": {
+                "collection_name": [
+                    "explicit_preference",
+                    "implicit_preference"
+                ],
+                "vector_dimension": 768,
+                "distance_metric": "cosine",
+                "uri": "./milvus_demo.db"
+            }
+        },
+        "embedder": {
+            "backend": "ollama",
+            "config": {
+                "model_name_or_path": "nomic-embed-text:latest"
+            }
+        },
+        "reranker": {
+            "backend": "cosine_local",
+            "config": {
+                "level_weights": {
+                    "topic": 1.0,
+                    "concept": 1.0,
+                    "fact": 1.0
+                },
+                "level_field": "background"
+            }
+        }
+    }
+}
+```
+
 ### GeneralTextMemory
 
 **Best for**: Conversational AI, personal assistants, FAQ systems

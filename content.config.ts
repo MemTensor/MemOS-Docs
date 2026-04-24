@@ -28,7 +28,8 @@ export default defineContentConfig({
   collections: {
     docs: defineCollection({
       source: {
-        include: '**'
+        include: '**',
+        exclude: ['**/*.json']
       },
       type: 'page',
       schema
@@ -36,48 +37,12 @@ export default defineContentConfig({
     openapi: defineCollection({
       type: 'data',
       source: 'api.json',
-      schema: z.object({
-        openapi: z.string(),
-        info: z.record(z.string(), z.any()).optional(),
-        servers: z.array(z.object({
-          url: z.string(),
-          description: z.string().optional(),
-          variables: z.record(z.string(), z.object({
-            default: z.string(),
-            description: z.string().optional(),
-            enum: z.array(z.string()).optional()
-          })).optional()
-        })).optional(),
-        security: z.array(z.record(z.string(), z.array(z.string()))).optional(),
-        paths: z.record(
-          z.string(),
-          z.record(z.string(), z.any())
-        ),
-        components: z.record(z.string(), z.any()).optional()
-      }).passthrough()
+      schema: z.object({}).passthrough()
     }),
     dashboardApi: defineCollection({
       type: 'data',
       source: '**/api_docs/api.json',
-      schema: z.object({
-        openapi: z.string(),
-        info: z.record(z.string(), z.any()).optional(),
-        servers: z.array(z.object({
-          url: z.string(),
-          description: z.string().optional(),
-          variables: z.record(z.string(), z.object({
-            default: z.string(),
-            description: z.string().optional(),
-            enum: z.array(z.string()).optional()
-          })).optional()
-        })).optional(),
-        security: z.array(z.record(z.string(), z.array(z.string()))).optional(),
-        paths: z.record(
-          z.string(),
-          z.record(z.string(), z.any())
-        ),
-        components: z.record(z.string(), z.any()).optional()
-      }).passthrough()
+      schema: z.object({}).passthrough()
     })
   }
 })

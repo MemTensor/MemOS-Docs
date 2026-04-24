@@ -17,7 +17,7 @@ For example, you could distill structured or stable knowledge into parametric fo
 
 ## Design Goals
 
-::list
+::list{icon="ph:check-circle-duotone"}
 -  **Controllability** — Generate, load, swap, or compose parametric modules
    on demand.
 -  **Plasticity** — Evolve alongside plaintext and activation memories; support knowledge distillation and rollback.

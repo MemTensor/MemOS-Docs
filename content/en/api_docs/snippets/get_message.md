@@ -22,20 +22,6 @@ res = requests.post(url=url, headers=headers, data=json.dumps(data))
 
 print(f"result: {res.json()}")
 ```
-```python [Python (SDK)]
-# Please ensure that MemoS has been installed (pip install MemoryOS -U).
-from memos.api.client import MemOSClient
-
-# Initialize MemOS client with API Key to start sending requests
-client = MemOSClient(api_key="YOUR_API_KEY")
-
-user_id = "memos_user_123"
-conversation_id = "0610"
-
-res = client.get_message(user_id=user_id, conversation_id=conversation_id)
-
-print(f"result: {res}")
-```
 ```bash [Curl]
 curl --request POST \
   --url https://memos.memtensor.cn/api/openmem/v1/get/message \

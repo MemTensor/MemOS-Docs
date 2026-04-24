@@ -9,6 +9,8 @@ export default {
       welcome: 'Welcome',
       cloud: 'MemOS Cloud',
       openSource: 'Open Source',
+      selfDevelopedModel: 'Self-developed Models',
+      openclaw: 'Agent',
       mcpAgent: 'MCP & Agent Framework',
       apiDocs: 'API Documentation',
       samples: 'Sample Projects',
@@ -33,6 +35,7 @@ export default {
     memosCloud: 'MemOS Cloud',
     memoryAssistant: 'Mind Dock',
     mcpService: 'MCP',
+    playground: 'Playground',
     githubProject: 'Github',
     apiDocs: 'Docs',
     blog: 'Blog',
@@ -40,15 +43,19 @@ export default {
     aboutUs: 'About Us',
     memtensor: 'Memtensor',
     openmem: 'OpenMem',
-    comminity: 'Join the community',
+    community: 'Join the community',
     joinUs: 'Job openings',
+    contactUs: 'Contact us',
     icpFilingNumber: 'ICP License No. 2025129722-3',
-    filingNumber: 'Public Security Filing No. 33010002000070'
+    filingNumber: 'Public Security Filing No. 33010002000070',
+    officialAccount: 'Memtensor official account',
+    wechatGroup: 'WeChat group'
   },
   homepage: {
     title: 'Don\'t let your AI forget again, Empower it with MemOS!',
     description: 'Here, you\'ll find everything to quickly integrate MemOS into your AI applications and deploy it in production',
     buttonText: 'Get Started Now',
+    openclawButton: 'Agent Configuration',
     items: [
       {
         title: 'MemOS Cloud',
@@ -57,6 +64,10 @@ export default {
       {
         title: 'Open Source',
         description: 'Explore MemOS’ open-source SDK, core components, and sample projects. Understand how MemOS works and customize or extend it in your own local or private environment'
+      },
+      {
+        title: 'Self-developed Models',
+        description: 'Introduces MemOS in-house memory models and memory services that are more flexible and better aligned with developers\' needs.'
       },
       {
         title: 'MCP & Agent Framework',
@@ -89,5 +100,12 @@ export default {
     response: 'Response',
     showChildAttrs: 'Show child attributes',
     hideChildAttrs: 'Hide child attributes'
+  },
+  assistant: {
+    title: 'Assistant',
+    suggestions: 'Suggestions',
+    inputPlaceholder: 'Type your messages here...',
+    welcome: 'Hi, I\'m Xiao Yi, your MemOS Knowledge Base Assistant. Feel free to ask me anything you\'d like to know!',
+    systemError: 'System is busy, please try again later'
   }
 }

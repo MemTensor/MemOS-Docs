@@ -60,16 +60,24 @@ src/memos/
     api/           # API definitions
     chunkers/      # Text chunking utilities
     configs/       # Configuration schemas
+    context/       # Log context
     embedders/     # Embedding models
     graph_dbs/     # Graph database backends (e.g., Neo4j)
     vec_dbs/       # Vector database backends (e.g., Qdrant)
     llms/          # LLM connectors
+    mem_agent/     # Deep search
     mem_chat/      # Memory-augmented chat logic
     mem_cube/      # MemCube management
+    mem_feedback   # Memory feedback
     mem_os/        # MOS orchestration
     mem_reader/    # Memory readers
+    mem_scheduler/ # Memory scheduling module
     memories/      # Memory type implementations
+    multi_mem_cube/# Multi-view Cube
     parsers/       # Parsing utilities
+    reranker/      # Reranker module
+    templates/     # Prompt templates
+    types/         # Type definitions
 ```
 
 ::note

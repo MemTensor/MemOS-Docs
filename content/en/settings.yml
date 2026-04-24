@@ -22,6 +22,7 @@ nav:
       - "(ri:message-3-line) Add Message": memos_cloud/mem_operations/add_message.md
       - "(ri:search-2-line) Search Memory": memos_cloud/mem_operations/search_memory.md
       - "(ri:delete-bin-line) Delete Memory": memos_cloud/mem_operations/delete_memory.md
+      - "(ri:feedback-line)Add Feedback": memos_cloud/mem_operations/add_feedback.md
 
     - "(ri:function-line) Features":
       - "(ri:flag-line) Basic Features":
@@ -30,67 +31,74 @@ nav:
         - "(ri:image-add-line) Multimodal Messages": memos_cloud/features/basic/multimodal.md
         - "(ri:price-tag-3-line) Custom Tags": memos_cloud/features/basic/custom_tags.md
       - "(ri:vip-diamond-line) Advanced Features":
+        - "(ri:function-line) Skill": memos_cloud/features/advanced/skill.md
         - "(ri:book-read-line) Knowledge Base": memos_cloud/features/advanced/knowledge_base.md
         - "(ri:tools-line) Tool Calling": memos_cloud/features/advanced/tool_calling.md
-        # - "(ri:chat-history-line) Continuous Dialogue": memos_cloud/features/advanced/continuous_dialogue.md
+        - "(ri:chat-history-line) Continuous Dialogue": memos_cloud/features/advanced/continuous_dialogue.md
 
   - "(ri:github-line) Open Source":
     - "(ri:rocket-line) Getting Started":
-      - "(ri:install-line) Installation": open_source/getting_started/installation.md
-      - "(ri:play-line) Quick Start": open_source/getting_started/quick_start.md
+      - "(ri:install-line) Installation Guide": open_source/getting_started/installation.md
       - "(ri:bookmark-line) Your First Memory": open_source/getting_started/your_first_memory.md
       - "(ri:lightbulb-line) Core Concepts": open_source/home/core_concepts.md
       - "(ri:building-2-line) Architecture": open_source/home/architecture.md
       - "(ri:file-code-line) REST API Server": open_source/getting_started/rest_api_server.md
-      - "(ri:code-line) Examples": open_source/getting_started/examples.md
+      - "(ri:code-line) MemOS Examples": open_source/getting_started/examples.md
 
     - "(ri:cpu-line) MOS":
-      - "(ri:eye-line) Overview": open_source/modules/mos/overview.md
-      - "(ri:book-open-line) MemOS NEO": open_source/modules/mos/memos_neo.md
-      - "(ri:tools-line) MemOS MCP": open_source/modules/mos/memos_mcp.md
-      - "(ri:team-line) Users": open_source/modules/mos/users.md
-      - "(ri:settings-3-line) Users Configurations": open_source/modules/mos/users_configurations.md
+      - "(ri:eye-line) API Development Guide": open_source/modules/mos/overview.md
       - "(ri:checkbox-multiple-blank-line) MemCube": open_source/modules/mem_cube.md
       - "(ri:book-open-line) MemReader": open_source/modules/mem_reader.md
       - "(ri:calendar-line) MemScheduler": open_source/modules/mem_scheduler.md
-      - "(ri:robot-2-line) LLMs and Embeddings": open_source/modules/model_backend.md
+      - "(ri:calendar-line) MemChat": open_source/modules/mem_chat.md
+      - "(ri:feedback-line) MemFeedback": open_source/modules/mem_feedback.md
+
 
     - "(ri:brain-line) Memories":
-      - "(ri:database-2-line) KV Cache Memory": open_source/modules/memories/kv_cache_memory.md
+      - "(ri:database-2-line) Memory Modules Overview": open_source/modules/memories/overview.md
       - "(ri:book-2-line) Plaintext Memory":
+        - "(ri:file-text-line) Naive Textual Memory": open_source/modules/memories/naive_textual_memory.md
         - "(ri:file-text-line) General Textual Memory": open_source/modules/memories/general_textual_memory.md
+        - "(ri:user-heart-line) Preference Textual Memory": open_source/modules/memories/preference_textual_memory.md
         - "(ri:tree-line) Tree Textual Memory": open_source/modules/memories/tree_textual_memory.md
         - "(ri:database-line) Neo4j Graph Database": open_source/modules/memories/neo4j_graph_db.md
-        - "(ri:database-line) Nebula Graph Database": open_source/modules/memories/nebula_graph_db.md
+        - "(ri:database-line) PolarDB Graph Database": open_source/modules/memories/polardb_graph_db.md
+      - "(ri:database-2-line) KV Cache Memory": open_source/modules/memories/kv_cache_memory.md
       - "(ri:cpu-line) Parametric Memory": open_source/modules/memories/parametric_memory.md
-
-    - "(ri:history-line) Scenario Examples":
-      - "(ri:database-2-line) Overview": open_source/cookbook/overview.md
-      - "(ri:seedling-line) Chapter 1: Your First MemCube":
-        - "(ri:cloud-line) API": open_source/cookbook/chapter1/api.md
-        - "(ri:node-tree) OLLAMA": open_source/cookbook/chapter1/ollama.md
-      - "(ri:database-2-line) Chapter 2: TreeNodeTextualMemoryMetadata":
-        - "(ri:cloud-line) API": open_source/cookbook/chapter2/api.md
-        - "(ri:node-tree) OLLAMA": open_source/cookbook/chapter2/ollama.md
-      - "(ri:search-2-line) Chapter 3: Intelligent Novel Analysis System": open_source/cookbook/chapter3/overview.md
-      - "(ri:graduation-cap-line) Chapter 4: Using MemOS to Build a Production-Grade Knowledge Q&A System": open_source/cookbook/chapter4/overview.md
 
     - "(ri:star-line) Best Practice":
       - "(ri:speed-line) Performance Tuning": open_source/best_practice/performance_tuning.md
-      - "(ri:building-3-line) Memory Structure Design": open_source/best_practice/memory_structure_design.md
-      - "(ri:wifi-line) Network Workarounds": open_source/best_practice/network_workarounds.md
+      - "(ri:wifi-line) Network Environment Adaptation": open_source/best_practice/network_workarounds.md
       - "(ri:error-warning-line) Common Errors & Solutions": open_source/best_practice/common_errors_solutions.md
-      - "(ri:tools-line) MCP for Coze Space and Tools": open_source/best_practice/mcp_for_cozespace_and_tools.md
+      - "(ri:tools-line) Configuring Memos MCP in Coze Space": open_source/best_practice/mcp_for_cozespace_and_tools.md
 
     - "(ri:heart-line) Contribution":
-      - "(ri:eye-line) Overview": open_source/contribution/overview.md
+      - "(ri:eye-line) Contributing to MemOS": open_source/contribution/overview.md
       - "(ri:tools-line) Setting Up": open_source/contribution/setting_up.md
       - "(ri:git-branch-line) Development Workflow": open_source/contribution/development_workflow.md
       - "(ri:git-commit-line) Commit Guidelines": open_source/contribution/commit_guidelines.md
-      - "(ri:article-line) Writing Docs": open_source/contribution/writing_docs.md
-      - "(ri:flask-line) Writing Tests": open_source/contribution/writing_tests.md
+      - "(ri:article-line) Documentation Writing Guidelines": open_source/contribution/writing_docs.md
+      - "(ri:flask-line) How to Write Unit Tests": open_source/contribution/writing_tests.md
 
-    - "(ri:file-code-line) API Reference": api-reference/configure-memos
+    - "(ri:file-code-line) API Reference": api-reference/search-memories
+
+  - "(ri:cpu-line) Self-developed Models Overview":
+    - "(ri:filter-3-line) Extraction Model":
+      - "(ri:book-open-line) Usage Examples": self_developed_model/extraction_usage_example.md
+    - "(ri:sort-desc) Reranker Model":
+      - "(ri:book-open-line) Usage Examples": self_developed_model/reranker_usage_example.md
+
+  - "(ri:robot-line) Agent":
+    - "(ri:book-open-line) Cloud Plugin vs Local Plugin": openclaw/plugin_compare.md
+    - "(ri:file-list-3-line) Changelog": openclaw/changes.md
+    - "(ri:download-line) Installation Guide": 
+      - "(ri:cloud-line) OpenClaw Cloud Plugin": openclaw/guide.md
+      - "(ri:computer-line) OpenClaw Local Plugin": openclaw/local_plugin.md
+      - "(ri:server-line) Hermes Local Plugin": openclaw/hermes_local_plugin.md
+    - "(ri:flask-line) Usage Examples": 
+      - "(ri:team-line) Multi-Agent Memory Isolation": openclaw/examples/multi_agent.md
+      - "(ri:filter-3-line) Secondary Filtering for Memory Recall": openclaw/examples/recall_filter.md
+      - "(ri:terminal-box-line) Hermes Local Plugin Usage": openclaw/examples/hermes_usage.md
 
   - "(ri:puzzle-line) MCP and Agent Framework Support":
     - "(ri:tools-line) MCP Services":
@@ -107,15 +115,20 @@ nav:
     - "(ri:edit-box-line) Core Operations":
       - "(ri:message-3-line) Add Message": api_docs/core/add_message.md
       - "(ri:search-2-line) Search Memory": api_docs/core/search_memory.md
+      - "(ri:file-list-line) Get Memory": api_docs/core/get_memory.md
       - "(ri:delete-bin-line) Delete Memory": api_docs/core/delete_memory.md
+      - "(ri:feedback-line) Add Feedback": api_docs/message/add_feedback.md
+
+    - "(ri:cpu-line) Self-developed Models":
+      - "(ri:flask-line) Extract Memory": api_docs/core/extract_memory.md
+      - "(ri:sort-desc) Rerank Memory": api_docs/core/rerank.md
 
     - "(ri:chat-1-line) Messages":
-      - "(ri:feedback-line) Add Feedback": api_docs/message/add_feedback.md
       - "(ri:file-list-line) Get Message": api_docs/message/get_message.md
       - "(ri:task-line) Get Task Status": api_docs/message/get_status.md
 
-    # - "(ri:chat-smile-2-line) Chat":
-    #   - "(ri:chat-4-line) Chat": api_docs/chat/chat.md
+    - "(ri:chat-smile-2-line) Chat":
+      - "(ri:chat-4-line) Chat": api_docs/chat/chat.md
 
     - "(ri:book-read-line) Knowledge Base":
       - "(ri:add-box-line) Create Knowledgebase": api_docs/knowledge/create_kb.md
@@ -129,6 +142,7 @@ nav:
 
   - "(ri:projector-line) Use Cases":
     - "(ri:lightbulb-line) Best Practice":
+      - "(ri:customer-service-2-line) Knowledge Q&A Assistant": usecase/knowledge_qa_assistant.md
       - "(ri:money-dollar-circle-line) Financial Assistant": usecase/financial_assistant.md
       - "(ri:edit-line) Writing Assistant": usecase/writting_assistant.md
       - "(ri:heart-line) Life Assistant": usecase/home_assistant.md

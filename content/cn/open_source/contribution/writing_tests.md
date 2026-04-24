@@ -16,7 +16,7 @@ desc: 本项目使用 [pytest](https://docs.pytest.org/) 进行单元测试。
 
 def test_addition():
     assert 1 + 1 == 2
-````
+```
 
 ## 运行测试
 

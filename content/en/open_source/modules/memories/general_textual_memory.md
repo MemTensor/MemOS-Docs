@@ -3,6 +3,20 @@ title: "GeneralTextMemory: General-Purpose Textual Memory"
 desc: "`GeneralTextMemory` is a flexible, vector-based textual memory module in MemOS, designed for storing, searching, and managing unstructured knowledge. It is suitable for conversational agents, personal assistants, and any system requiring semantic memory retrieval."
 ---
 
+## Table of Contents
+
+- [Memory Structure](#memory-structure)
+  - [Metadata Fields (`TextualMemoryMetadata`)](#metadata-fields-textualmemorymetadata)
+- [API Summary (`GeneralTextMemory`)](#api-summary-generaltextmemory)
+  - [Initialization](#initialization)
+  - [Core Methods](#core-methods)
+- [File Storage](#file-storage)
+- [Example Usage](#example-usage)
+- [Extension: Internet Retrieval](#extension-internet-retrieval)
+- [Advanced: Using MultiModal Reader](#advanced-using-multimodal-reader)
+- [Developer Notes](#developer-notes)
+
+
 ## Memory Structure
 
 Each memory is represented as a `TextualMemoryItem`:
@@ -28,6 +42,20 @@ Each memory is represented as a `TextualMemoryItem`:
 
 All values are validated. Invalid values will raise errors.
 
+### Search Mechanism
+Unlike NaiveTextMemory, which relies on keyword matching, GeneralTextMemory utilizes vector-based semantic search.
+
+## Algorithm Comparison
+
+| Feature            | Keyword Matching  | Vector Semantic Search  |
+| ------------------ | ---------------------------------- | ------------------------------------------ |
+| **Semantic Understanding** | ❌ Doesn't understand synonyms  | ✅ Understands similar concepts            |
+| **Resource Usage** | ✅ Extremely low                   | ⚠️ Requires embedding model and vector DB  |
+| **Execution Speed** | ✅ Fast (O(n))                    | ⚠️ Slower (indexing + querying)            |
+| **Suitable Scale** | < 1K memories                     | 10K - 100K memories                        |
+| **Predictability** | ✅ Intuitive results               | ⚠️ Black box model  
+
+
 ## API Summary (`GeneralTextMemory`)
 
 ### Initialization
@@ -52,7 +80,7 @@ GeneralTextMemory(config: GeneralTextMemoryConfig)
 
 ## File Storage
 
-When calling `dump(dir)`, the system writes to:
+When calling `dump(dir)`, the system stores the memories to:
 
 ```
 <dir>/<config.memory_filename>
@@ -63,6 +91,7 @@ This file contains a JSON list of all memory items, which can be reloaded using 
 ## Example Usage
 
 ```python
+import os
 from memos.configs.memory import MemoryConfigFactory
 from memos.memories.factory import MemoryFactory
 
@@ -96,6 +125,18 @@ m.delete([memory_id])
 m.dump("tmp/mem")
 m.load("tmp/mem")
 ```
+
+::note
+**Extension: Internet Retrieval**<br>
+GeneralTextMemory can be combined with Internet Retrieval to extract content from web pages and add to memory.<br>
+View example: [Retrieve Memories from the Internet](./tree_textual_memory#retrieve-memories-from-the-internet-optional)
+::
+
+::note
+**Advanced: Using MultiModal Reader**<br>
+For processing images, URLs, or files within conversations, see the comprehensive MultiModal Reader examples.<br>
+View documentation: [Using MultiModalStructMemReader](./tree_textual_memory#using-multimodalstructmemreader-advanced)
+::
 
 ## Developer Notes
 

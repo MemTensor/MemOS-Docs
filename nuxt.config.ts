@@ -20,7 +20,11 @@ const config: NuxtConfig = {
     head: {
       script: [
         { src: 'https://cdn.memtensor.com.cn/file/js-cookie-3.0.5.min.js', type: 'text/javascript' },
-        { src: 'https://cdn.memtensor.com.cn/file/locale.1.1.2.min.js', type: 'text/javascript' }
+        { src: 'https://cdn.memtensor.com.cn/file/locale.1.1.2.min.js', type: 'text/javascript' },
+        {
+          innerHTML: `(function(){var h=location.hostname;if(h.indexOf('-pre.')!==-1||h==='localhost')return;(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","wfn83tdrco");window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-7J1J9RW0T1');var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id=G-7J1J9RW0T1';document.head.appendChild(s);})();`,
+          type: 'text/javascript'
+        }
       ]
     }
   },
@@ -30,27 +34,14 @@ const config: NuxtConfig = {
     '@nuxt/image',
     '@nuxt/ui-pro',
     '@nuxt/content',
-    [
-      'nuxt-openapi-docs-module',
-      {
-        folder: './content',
-        name: 'Api Docs',
-        list: true,
-        prefix: '/api',
-        files: function () {
-          return {
-            'api.json': 'API Proxy'
-          }
-        }
-      }
-    ],
     '@nuxtjs/i18n'
   ],
 
   runtimeConfig: {
     public: {
       ...envConfig,
-      version: pkg.version
+      version: pkg.version,
+      apiBase: 'https://apigw.memtensor.cn'
     }
   },
 
@@ -82,7 +73,10 @@ const config: NuxtConfig = {
   vite: {
     plugins: [
       yaml()
-    ]
+    ],
+    optimizeDeps: {
+      include: ['debug']
+    }
   },
 
   ssr: true,
@@ -98,7 +92,7 @@ const config: NuxtConfig = {
     build: {
       markdown: {
         highlight: {
-          langs: ['bash', 'shell', 'ts', 'typescript', 'diff', 'vue', 'json', 'yml', 'css', 'mdc', 'python', 'py', 'mermaid']
+          langs: ['bash', 'shell', 'ts', 'typescript', 'diff', 'vue', 'json', 'yml', 'css', 'mdc', 'python', 'py', 'mermaid', 'markdown', 'md']
         }
       }
     }

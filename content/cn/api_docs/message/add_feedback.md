@@ -1,5 +1,5 @@
 ---
-title: 添加反馈
+title: Add Feedback
 openapi: "POST /add/feedback"
 ---
 <!-- Menu Mapping -->

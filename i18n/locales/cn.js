@@ -9,6 +9,8 @@ export default {
       welcome: '欢迎',
       cloud: 'MemOS Cloud',
       openSource: '开源项目',
+      selfDevelopedModel: '自研模型',
+      openclaw: 'Agent',
       mcpAgent: 'MCP与Agent框架支持',
       apiDocs: 'API接口文档',
       samples: '示例项目',
@@ -33,6 +35,7 @@ export default {
     memosCloud: 'MemOS Cloud',
     memoryAssistant: '个人记忆助手',
     mcpService: 'MCP服务',
+    playground: 'Playground',
     githubProject: 'Github项目',
     apiDocs: '开发者文档',
     blog: '博客',
@@ -42,13 +45,17 @@ export default {
     openmem: 'OpenMem社区',
     community: '加入社群',
     joinUs: '岗位招聘',
+    contactUs: '联系我们',
     icpFilingNumber: '沪ICP备2025129722号-3',
-    filingNumber: '沪公网安备 33010002000070号'
+    filingNumber: '沪公网安备 33010002000070号',
+    officialAccount: 'Memtensor 公众号',
+    wechatGroup: '微信交流群'
   },
   homepage: {
     title: '别让你的 AI 再忘来忘去，用 MemOS',
     description: '在这里，你将找到从上手入门到生产部署的一切指南，帮助你在最短时间内把 MemOS 集成到你的 AI 应用中',
     buttonText: '现在就去',
+    openclawButton: 'Agent 配置指南',
     items: [
       {
         title: 'MemOS Cloud',
@@ -57,6 +64,10 @@ export default {
       {
         title: '开源项目',
         description: '涵盖 MemOS 的开源 SDK、核心组件与示例项目。帮助你理解 MemOS 的运行机制，并在本地或自有环境中自由定制与扩展'
+      },
+      {
+        title: '自研模型',
+        description: '介绍 MemOS 的自研记忆模型，为开发者提供更灵活、更符合开发需求的记忆服务。'
       },
       {
         title: 'MCP与Agent框架支持',
@@ -89,5 +100,12 @@ export default {
     response: '响应体',
     showChildAttrs: '展示属性',
     hideChildAttrs: '隐藏属性'
+  },
+  assistant: {
+    title: '助手',
+    suggestions: '参考问题',
+    inputPlaceholder: '请输入你想了解的问题...',
+    welcome: 'Hi，我是MemOS知识库助手小忆，您有什么问题可以直接向我提问！',
+    systemError: '系统繁忙，请稍后再试'
   }
 }

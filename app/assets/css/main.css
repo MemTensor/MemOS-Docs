@@ -8,6 +8,7 @@
   --font-sans: 'Public Sans', sans-serif;
   --color-linear-primary: #1D4ED8;
   --color-primary-light: #01C6FA;
+  --color-copyright: #64748B;
 }
 
 :root {
@@ -51,6 +52,14 @@ img[alt="MemOS Banner"] {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+.mdc-live p {
+  margin: 6px !important;
+  line-height: 1.5;
+}
+.mdc-live code {
+  word-break: break-word;
 }
 
 html {
@@ -232,4 +241,14 @@ html::-webkit-scrollbar {
       --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     }
   }
+}
+
+/* Nuxt Content may render an extra <br> after horizontal rules in prose pages. */
+div + br,
+hr + br,
+p + br,
+ul + br,
+ol + br,
+blockquote + br {
+  display: none;
 }

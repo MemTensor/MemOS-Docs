@@ -225,7 +225,10 @@ function generateSampleFromSchema(schema: SchemaObject, api: OASDocument): unkno
         Object.entries(schema.properties).forEach(([key, propSchema]) => {
           obj[key] = generateSampleFromSchema(propSchema as SchemaObject, api)
         })
+      } else if ('items' in schema) {
+        return generateSampleFromSchema((schema as any).items as SchemaObject, api)
       }
+
       return obj
     }
 

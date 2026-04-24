@@ -181,22 +181,23 @@ print(json.dumps(res.json(), indent=2, ensure_ascii=False))
     "relativity": 0.44700349055540967
   },
   {
-    "id": "56215e5d-6827-429d-a862-068ea5935e8e",
+    "id": "4b208707-991a-481c-9dd6-c7f0577ff371",
     "tool_type": "ToolTrajectoryMemory",
-    "tool_value": "The user asked about the current weather in Beijing. The assistant attempted to call a weather retrieval tool named 'get_weather' with the argument specifying the location as Beijing. The tool successfully executed and returned the weather information indicating a temperature of 7°C and a cloudy condition. The assistant did not provide a final answer in this instance.",
+    "tool_value": "User asked about the current weather in Beijing -> Tool 'get_weather' was called with the parameter 'location' set to 'Beijing' -> The tool returned the weather information: temperature is 7°C and condition is Cloudy.",
     "tool_used_status": [
       {
         "used_tool": "get_weather",
         "error_type": "",
-        "experience": "This tool is commonly used to retrieve weather information based on location parameters. It typically returns temperature and weather conditions in a structured format, allowing for straightforward interpretation.",
-        "success_rate": 1.0
+        "success_rate": 1.0,
+        "tool_experience": "The 'get_weather' tool requires a valid location parameter and provides current weather information for that location." # New: Experience with this tool in the current trajectory.
       }
     ],
-    "create_time": 1765793446220,
+    "create_time": 1768390489180,
     "conversation_id": "demo-conv-id",
     "status": "activated",
-    "update_time": 1765793446221,
-    "relativity": 5.027827501180582e-05
+    "update_time": 1768390489181,
+    "relativity": 0.47883897395535013,
+    "experience": "when encountering weather inquiry tasks, then ensure to call the 'get_weather' tool with the correct location parameter." # New: Procedural experience of the entire trajectory, serving as overall guidance for task completion.
   }
 ]
 ```

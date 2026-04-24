@@ -17,17 +17,26 @@ desc: "Congratulations - you've mastered the Quick Start and built your first wo
   :::card
   ---
   icon: ri:tree-line
-  title: TreeTextMemory Only
-  to: /open_source/getting_started/examples#example-2-treetextmemory-only
+  title: Adding and retrieving multiple information sources
+  to: /open_source/getting_started/examples#example-2-multi-modal
   ---
-  Use Neo4j-backed hierarchical memory to build structured, multi-hop knowledge graphs.
+  Adding multi-source messages—including text, images, files, and tool calls—into memory and enabling their retrieval.
+  :::
+
+  :::card
+  ---
+  icon: ri:apps-line
+  title: Multi-Cube addition and retrieval
+  to: /open_source/getting_started/examples#example-3-multi-cube
+  ---
+  Add different memories to different Cubes and retrieve them simultaneously during a search.
   :::
 
   :::card
   ---
   icon: ri:database-2-line
   title: KVCacheMemory Only
-  to: /open_source/getting_started/examples#example-3-kvcachememory-only
+  to: /open_source/getting_started/examples#example-4-kvcachememory-only
   ---
   Speed up sessions with short-term KV cache for fast context injection.
   :::
@@ -36,7 +45,7 @@ desc: "Congratulations - you've mastered the Quick Start and built your first wo
   ---
   icon: hugeicons:share-07
   title: Hybrid TreeText + KVCache
-  to: /open_source/getting_started/examples#example-4-hybrid
+  to: /open_source/getting_started/examples#example-5-hybrid
   ---
   Combine explainable graph memory with fast KV caching in a single MemCube.
   :::
@@ -45,7 +54,7 @@ desc: "Congratulations - you've mastered the Quick Start and built your first wo
   ---
   icon: ri:calendar-check-line
   title: Multi-Memory Scheduling
-  to: /open_source/getting_started/examples#example-5-multi-memory-scheduling
+  to: /open_source/getting_started/examples#example-6-multi-memory-scheduling
   ---
   Run dynamic memory orchestration for multi-user, multi-session agents.
   :::
@@ -57,108 +66,270 @@ desc: "Congratulations - you've mastered the Quick Start and built your first wo
 
 ### When to Use:
 - You want the smallest possible working example.
-- You only need simple plaintext memories stored in a vector DB.
-- Best for getting started or testing your embedding + vector pipeline.
+- You only need simple plaintext memories stored in a vector DB and retrieve them.
 
 ### Key Points:
-- Uses GeneralTextMemory only (no graph, no KV cache).
-- Add, search, update and dump memories.
-- Integrates a basic MOS pipeline.
+- Supports basic personal memory integration and search.
 
 ### Full Example Code
 ```python
-import uuid
-from memos.configs.mem_os import MOSConfig
-from memos.mem_os.main import MOS
+import json
+from memos.api.routers.server_router import add_memories, search_memories
+from memos.api.product_models import APIADDRequest, APISearchRequest
 
-
-# init MOSConfig
-mos_config = MOSConfig.from_json_file("examples/data/config/simple_memos_config.json")
-mos = MOS(mos_config)
-
-# Create a user and register a memory cube
-user_id = str(uuid.uuid4())
-mos.create_user(user_id=user_id)
-mos.register_mem_cube("examples/data/mem_cube_2", user_id=user_id)
-
-# Add a simple conversation
-mos.add(
-    messages=[
-        {"role": "user", "content": "I love playing football."},
-        {"role": "assistant", "content": "That's awesome!"}
+user_id = "test_user_1"
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_1"],
+    messages = [
+      {"role": "user", "content": "I’ve planned to travel to Guangzhou during the summer vacation. What chain hotels are available for accommodation?"},
+      {"role": "assistant", "content": "You can consider [7 Days Inn, Ji Hotel, Hilton], etc."},
+      {"role": "user", "content": "I’ll choose 7 Days Inn."},
+      {"role": "assistant", "content": "Okay, feel free to ask me if you have any other questions."}
     ],
-    user_id=user_id
+    async_mode="sync",
+    mode="fine",
 )
 
-# Search the memory
-result = mos.search(query="What do you love?", user_id=user_id)
-print("Memories found:", result["text_mem"])
+add_rsp = add_memories(add_req)
+print("add_memories rsp: \n\n", add_rsp)
 
-# Dump and reload
-mos.dump("tmp/my_mem_cube")
-mos.load("tmp/my_mem_cube")
+search_req = APISearchRequest(
+    user_id=user_id,
+    readable_cube_ids=["cube_test_user_1"],
+    query="Please recommend a hotel that I haven’t stayed at before.",
+    include_preference=True,
+)
+
+search_rsp = search_memories(search_req).data
+print("\n\nsearch_rsp: \n\n", json.dumps(search_rsp, indent=2, ensure_ascii=False))
 ```
 
-##  Example 2: TreeTextMemory Only
+##  Example 2: Adding and retrieving multi-source memories
 
 ### When to Use:
-- You need hierarchical graph-based memories with explainable relations.
-- You want to store structured knowledge and trace connections.
-- Suitable for knowledge graphs, concept trees, and multi-hop reasoning.
+- In addition to plain text conversations, you need to add files, image content, or tool call history to memory.
+- At the same time, you want to retrieve memories from these multiple sources.
 
 ### Key Points:
-- Uses TreeTextMemory backed by Neo4j.
-- Requires extractor_llm + dispatcher_llm.
-- Stores nodes, edges, and supports traversal queries.
+- Adding memories from multiple information sources.
+- Needs to include downloadable file and image URLs.
+- The added information must strictly follow the OpenAI Messages format.
+- The tool schema in the system prompt needs to be wrapped in <tool_schema> </tool_schema>.
 
 ### Full Example Code
+Adding text and files to memory
 ```python
-from memos.configs.embedder import EmbedderConfigFactory
-from memos.configs.memory import TreeTextMemoryConfig
-from memos.configs.mem_reader import SimpleStructMemReaderConfig
-from memos.embedders.factory import EmbedderFactory
-from memos.mem_reader.simple_struct import SimpleStructMemReader
-from memos.memories.textual.tree import TreeTextMemory
+import json
+from memos.api.routers.server_router import add_memories, search_memories
+from memos.api.product_models import APIADDRequest, APISearchRequest
 
-# Setup Embedder
-embedder_config = EmbedderConfigFactory.model_validate({
-    "backend": "ollama",
-    "config": {"model_name_or_path": "nomic-embed-text:latest"}
-})
-embedder = EmbedderFactory.from_config(embedder_config)
-
-# Create TreeTextMemory
-tree_config = TreeTextMemoryConfig.from_json_file("examples/data/config/tree_config.json")
-my_tree_textual_memory = TreeTextMemory(tree_config)
-my_tree_textual_memory.delete_all()
-
-# Setup Reader
-reader_config = SimpleStructMemReaderConfig.from_json_file(
-    "examples/data/config/simple_struct_reader_config.json"
+user_id = "test_user_2"
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_2"],
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Please read this file, summarize the key points, and provide a final conclusion."
+                },
+                {
+                    "type": "file",
+                    "file": {
+                    "file_id": "file_123",
+                    "filename": "report.md",
+                    "file_data": "@http://139.196.232.20:9090/graph-test/algorithm/2025_11_13/1763043889_1763043782_PM1%E8%BD%A6%E9%97%B4PMT%E9%9D%B4%E5%8E%8B%E8%BE%B9%E5%8E%8B%E5%8E%8B%E5%8A%9B%E6%97%A0%E6%B3%95%E5%BB%BA%E7%AB%8B%E6%95%85%E9%9A%9C%E6%8A%A5%E5%91%8A20240720.md"
+                    }
+                },
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Final Summary: During the PMT boot-pressure startup test of the PM1 workshop on July 20, 2024, the drive could not run because the edge pressures on both sides failed to reach the 2.5-bar interlock requirement. After troubleshooting, the PLC output signals, hydraulic pipelines, and valves were all found to be normal. The root cause was ultimately identified as poor contact at the negative terminal of the proportional valve’s DC 24V power supply inside the PLC cabinet, caused by a short-jumpered terminal block. After re-connecting the negative incoming lines in parallel, the equipment returned to normal operation. It is recommended to replace terminal blocks in batches, inspect instruments with uncertain service life, and optimize the troubleshooting process by tracing common-mode issues from shared buses and power supply sources."
+                }
+            ]
+        }
+    ],
+    async_mode="sync",
+    mode="fine",
 )
-reader = SimpleStructMemReader(reader_config)
 
-# Extract from conversation
-scene_data = [[
-    {"role": "user", "content": "Tell me about your childhood."},
-    {"role": "assistant", "content": "I loved playing in the garden with my dog."}
-]]
-memory = reader.get_memory(scene_data, type="chat", info={"user_id": "1234", "session_id": "2222"})
-for m_list in memory:
-    my_tree_textual_memory.add(m_list)
+add_rsp = add_memories(add_req)
+print("add_memories rsp: \n\n", add_rsp)
 
-# Search
-results = my_tree_textual_memory.search(
-    "Talk about the user's childhood story?",
-    top_k=10
+search_req = APISearchRequest(
+    user_id=user_id,
+    readable_cube_ids=["cube_test_user_2"],
+    query="Workshop PMT boot pressure startup test",
+    include_preference=False,
+)
+search_rsp = search_memories(search_req).data
+print("\n\nsearch_rsp: \n\n", json.dumps(search_rsp, indent=2, ensure_ascii=False))
+```
+Adding messages from multiple mixed information sources to memory
+```python
+import json
+from memos.api.routers.server_router import add_memories, search_memories
+from memos.api.product_models import APIADDRequest, APISearchRequest
+
+user_id = "test_user_2"
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_2"],
+    messages = [
+  {
+    "role": "system",
+    "content": [
+      {
+        "type": "text",
+        "text": "You are a professional industrial fault analysis assistant. Please read the PDF, images, and instructions provided by the user and provide a professional technical summary.\n\n<tool_schema>\n[\n  {\n    \"name\": \"file_reader\",\n    \"description\": \"Used to read the content of files uploaded by the user and return the text data (in JSON string format).\",\n    \"parameters\": [\n      {\"name\": \"file_id\", \"type\": \"string\", \"required\": true, \"description\": \"The file ID to be read\"}\n    ],\n    \"returns\": {\"type\": \"text\", \"description\": \"Returns the extracted text content of the file\"}\n  }\n]\n</tool_schema>"
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "content": [
+      {
+        "type": "text",
+        "text": "Please read this file and image, summarize the key points, and provide a final conclusion."
+      },
+      {
+        "type": "file",
+        "file": {
+          "file_id": "file_123",
+          "filename": "report.pdf",
+          "file_data": "@http://139.196.232.20:9090/graph-test/algorithm/2025_11_13/1763043889_1763043782_PM1%E8%BD%A6%E9%97%B4PMT%E9%9D%B4%E5%8E%8B%E8%BE%B9%E5%8E%8B%E5%8E%8B%E5%8A%9B%E6%97%A0%E6%B3%95%E5%BB%BA%E7%AB%8B%E6%95%85%E9%9A%9C%E6%8A%A5%E5%91%8A20240720.md"
+        }
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "https://play-groud-test-1.oss-cn-shanghai.aliyuncs.com/%E5%9B%BE%E7%89%871.jpeg"
+        }
+      }
+    ]
+  },
+  {
+    "role": "assistant",
+    "tool_calls": [
+      {
+        "id": "call_file_reader_001",
+        "type": "function",
+        "function": {
+          "name": "file_reader",
+          "arguments": "{\"file_id\": \"file_123\"}"
+        }
+      }
+    ]
+  },
+  {
+    "role": "tool",
+    "tool_call_id": "call_file_reader_001",
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"file_id\":\"file_123\",\"extracted_text\":\"PM1 workshop PMT boot pressure startup test record… Final fault cause: poor contact at the negative terminal of the DC 24V power supply circuit due to a short-jumped terminal block.\"}"
+      }
+    ]
+  },
+  {
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "Final Summary: During the PMT boot-pressure startup test of the PM1 workshop on July 20, 2024, the drive could not run because the edge pressures on both sides failed to reach the 2.5-bar interlock requirement. After troubleshooting, the PLC output signals, hydraulic pipelines, and valves were all found to be normal. The root cause was ultimately identified as poor contact at the negative terminal of the proportional valve’s DC 24V power supply inside the PLC cabinet, caused by a short-jumpered terminal block. After re-connecting the negative incoming lines in parallel, the equipment returned to normal operation. It is recommended to replace terminal blocks in batches, inspect instruments with uncertain service life, and optimize the troubleshooting process by tracing common-mode issues from shared buses and power supply sources."
+      }
+    ]
+  }
+],
+    async_mode="sync",
+    mode="fine",
 )
 
-# [Optional] Dump & Drop
-my_tree_textual_memory.dump("tmp/my_tree_textual_memory")
-my_tree_textual_memory.drop()
+add_rsp = add_memories(add_req)
+
+print("add_memories rsp: \n\n", add_rsp)
+
+
+
+search_req = APISearchRequest(
+    user_id=user_id,
+    readable_cube_ids=["cube_test_user_2"],
+    query="Workshop PMT boot pressure startup test",
+    include_preference=False,
+)
+
+search_rsp = search_memories(search_req).data
+print("\n\nsearch_rsp: \n\n", json.dumps(search_rsp, indent=2, ensure_ascii=False))
 ```
 
-## Example 3: KVCacheMemory Only
+## Example 3: Multi-Cube addition and retrieval
+
+### When to Use:
+
+- Add memories to separate, isolated Cube spaces
+- You want to retrieve memories from different Cube spaces simultaneously
+
+### Key Points:
+
+- Input a readable_cube_ids list containing multiple cube IDs during retrieval
+
+### Full Example Code
+
+```python
+import json
+from memos.api.routers.server_router import add_memories, search_memories
+from memos.api.product_models import APIADDRequest, APISearchRequest
+
+user_id = "test_user_3"
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_3_1"] ,
+    messages = [
+      {"role": "user", "content": "I’ve planned to travel to Guangzhou during the summer vacation. What chain hotels are available for accommodation?"},
+      {"role": "assistant", "content": "You can consider [7 Days Inn, Ji Hotel, Hilton], etc."},
+      {"role": "user", "content": "I’ll choose 7 Days Inn."},
+      {"role": "assistant", "content": "Okay, feel free to ask me if you have any other questions."}
+    ],
+    async_mode="sync",
+    mode="fine",
+)
+
+add_rsp = add_memories(add_req)
+print("add_memories rsp: \n\n", add_rsp)
+
+add_req = APIADDRequest(
+    user_id=user_id,
+    writable_cube_ids=["cube_test_user_3_2"] ,
+    messages = [
+      {"role": "user", "content": "I love you, I need you."},
+      {"role": "assistant", "content": "Wow, I love you too"},
+    ],
+    async_mode="sync",
+    mode="fine",
+)
+
+add_rsp = add_memories(add_req)
+print("add_memories rsp: \n\n", add_rsp)
+
+search_req = APISearchRequest(
+    user_id=user_id,
+    readable_cube_ids=["cube_test_user_3_1", "cube_test_user_3_2"],
+    query="Please recommend a hotel, Love u u",
+    include_preference=True,
+)
+
+search_rsp = search_memories(search_req).data
+print("\n\nsearch_rsp: \n\n", json.dumps(search_rsp, indent=2, ensure_ascii=False))
+```
+
+## Example 4: KVCacheMemory Only
 
 ### When to Use:
 - You want short-term working memory for faster multi-turn conversation.
@@ -230,7 +401,7 @@ kv_mem.load("tmp/kv_mem")
 print("Loaded caches:", kv_mem.get_all())
 ```
 
-## Example 4: Hybrid
+## Example 5: Hybrid
 
 ### When to Use:
 - You want long-term explainable memory and short-term fast context together.
@@ -297,7 +468,7 @@ while True:
 print("📢 [System] MemChat has stopped.")
 ```
 
-## Example 5: Multi-Memory Scheduling
+## Example 6: Multi-Memory Scheduling
 
 ### When to Use:
 - You want to manage multiple users, multiple MemCubes, or dynamic memory flows.

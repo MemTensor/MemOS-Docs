@@ -19,78 +19,74 @@ nav:
       - "(ri:question-line) FAQs 常见问题解答": memos_cloud/faq.md
 
     - "(ri:edit-box-line) 记忆操作":
-      - "(ri:message-3-line) 添加消息": memos_cloud/mem_operations/add_message.md
-      - "(ri:search-2-line) 检索记忆": memos_cloud/mem_operations/search_memory.md
-      - "(ri:delete-bin-line) 删除记忆": memos_cloud/mem_operations/delete_memory.md
+      - "(ri:message-3-line) Add Message": memos_cloud/mem_operations/add_message.md
+      - "(ri:search-2-line) Search Memory": memos_cloud/mem_operations/search_memory.md
+      - "(ri:delete-bin-line) Delete Memory": memos_cloud/mem_operations/delete_memory.md
+      - "(ri:feedback-line)Add Feedback": memos_cloud/mem_operations/add_feedback.md
 
     - "(ri:function-line) 功能介绍":
       - "(ri:flag-line) 基础功能":
-        - "(ri:filter-3-line) 记忆过滤器": memos_cloud/features/basic/filters.md
-        - "(ri:timer-flash-line) 异步模式": memos_cloud/features/basic/async_mode.md
+        - "(ri:filter-3-line) 记忆过滤Filter": memos_cloud/features/basic/filters.md
+        - "(ri:timer-flash-line) 异步模式AsyncMode": memos_cloud/features/basic/async_mode.md
         - "(ri:image-add-line) 多模态消息": memos_cloud/features/basic/multimodal.md
-        - "(ri:price-tag-3-line) 自定义标签": memos_cloud/features/basic/custom_tags.md
+        - "(ri:price-tag-3-line) 自定义标签Tags": memos_cloud/features/basic/custom_tags.md
       - "(ri:vip-diamond-line) 高级功能":
-        - "(ri:book-read-line) 知识库": memos_cloud/features/advanced/knowledge_base.md
-        - "(ri:tools-line) 工具调用": memos_cloud/features/advanced/tool_calling.md
-        # - "(ri:chat-history-line) 持续对话": memos_cloud/features/advanced/continuous_dialogue.md
+        - "(ri:function-line) 技能Skills": memos_cloud/features/advanced/skill.md
+        - "(ri:book-read-line) 知识库Knowledgebase": memos_cloud/features/advanced/knowledge_base.md
+        - "(ri:tools-line) 工具调用Tool Call": memos_cloud/features/advanced/tool_calling.md
+        - "(ri:chat-history-line) 持续对话Chat": memos_cloud/features/advanced/continuous_dialogue.md
 
   - "(ri:github-line) 开源项目":
     - "(ri:rocket-line) 快速入门":
       - "(ri:install-line) 安装指南": open_source/getting_started/installation.md
-      - "(ri:play-line) 快速启动": open_source/getting_started/quick_start.md
       - "(ri:bookmark-line) 创建你的第一个记忆": open_source/getting_started/your_first_memory.md
       - "(ri:lightbulb-line) 核心概念": open_source/home/core_concepts.md
       - "(ri:building-2-line) 架构设计": open_source/home/architecture.md
       - "(ri:file-code-line) REST API 服务": open_source/getting_started/rest_api_server.md
-      - "(ri:code-line) 示例": open_source/getting_started/examples.md
+      - "(ri:code-line) MemOS 示例": open_source/getting_started/examples.md
 
     - "(ri:cpu-line) MemOS":
-      - "(ri:eye-line) 概览": open_source/modules/mos/overview.md
-      - "(ri:book-open-line) 简化版本": open_source/modules/mos/memos_neo.md
-      - "(ri:tools-line) MCP服务": open_source/modules/mos/memos_mcp.md
-      - "(ri:team-line) 用户管理": open_source/modules/mos/users.md
-      - "(ri:settings-3-line) 用户配置": open_source/modules/mos/users_configurations.md
-      - "(ri:checkbox-multiple-blank-line) 记忆立方": open_source/modules/mem_cube.md
-      - "(ri:book-open-line) 记忆读取": open_source/modules/mem_reader.md
-      - "(ri:calendar-line) 记忆调度": open_source/modules/mem_scheduler.md
-      - "(ri:robot-2-line) 大模型与Embedding调用": open_source/modules/model_backend.md
+      - "(ri:eye-line) API 开发指南": open_source/modules/mos/overview.md
+      - "(ri:checkbox-multiple-blank-line) MemCube记忆立方": open_source/modules/mem_cube.md
+      - "(ri:book-open-line) MemReader 记忆读取": open_source/modules/mem_reader.md
+      - "(ri:calendar-line) MemScheduler 记忆调度": open_source/modules/mem_scheduler.md
+      - "(ri:calendar-line) MemChat 使用记忆进行聊天": open_source/modules/mem_chat.md
+      - "(ri:feedback-line) MemFeedback 记忆反馈": open_source/modules/mem_feedback.md
+
 
     - "(ri:brain-line) 记忆系统":
-      - "(ri:database-2-line) KV cache 记忆": open_source/modules/memories/kv_cache_memory.md
+      - "(ri:database-2-line) 记忆模块总览": open_source/modules/memories/overview.md
       - "(ri:book-2-line) 明文记忆":
+        - "(ri:file-text-line) 简单明文记忆": open_source/modules/memories/naive_textual_memory.md
         - "(ri:file-text-line) 通用明文记忆": open_source/modules/memories/general_textual_memory.md
+        - "(ri:user-heart-line) 偏好明文记忆": open_source/modules/memories/preference_textual_memory.md
         - "(ri:tree-line) 树形明文记忆": open_source/modules/memories/tree_textual_memory.md
         - "(ri:database-line) Neo4j 图数据库": open_source/modules/memories/neo4j_graph_db.md
-        - "(ri:database-line) Nebula 图数据库": open_source/modules/memories/nebula_graph_db.md
-      - "(ri:cpu-line) 参数记忆": open_source/modules/memories/parametric_memory.md
-
-    - "(ri:history-line) 场景案例":
-      - "(ri:database-2-line) 概览": open_source/cookbook/overview.md
-      - "(ri:seedling-line) 第一章 你的第一个 MemCube":
-        - "(ri:cloud-line) API": open_source/cookbook/chapter1/api.md
-        - "(ri:node-tree) OLLAMA": open_source/cookbook/chapter1/ollama.md
-      - "(ri:database-2-line) 第二章 TreeNodeTextualMemoryMetadata":
-        - "(ri:cloud-line) API": open_source/cookbook/chapter2/api.md
-        - "(ri:node-tree) OLLAMA": open_source/cookbook/chapter2/ollama.md
-      - "(ri:search-2-line) 第三章 智能小说分析系统": open_source/cookbook/chapter3/overview.md
-      - "(ri:graduation-cap-line) 第四章 使用 MemOS 构建生产级知识问答系统": open_source/cookbook/chapter4/overview.md
+        - "(ri:database-line) PolarDB 图数据库": open_source/modules/memories/polardb_graph_db.md
+      - "(ri:database-2-line) KVCache 记忆": open_source/modules/memories/kv_cache_memory.md
+      - "(ri:cpu-line) 参数记忆 (正在开发中)": open_source/modules/memories/parametric_memory.md
 
     - "(ri:star-line) 最佳实践":
       - "(ri:speed-line) 性能调优": open_source/best_practice/performance_tuning.md
-      - "(ri:building-3-line) 记忆结构设计": open_source/best_practice/memory_structure_design.md
-      - "(ri:wifi-line) 网络环境适配": open_source/best_practice/network_workarounds.md
+      - "(ri:wifi-line) 网络问题解决方案": open_source/best_practice/network_workarounds.md
       - "(ri:error-warning-line) 常见错误与解决方案": open_source/best_practice/common_errors_solutions.md
-      - "(ri:tools-line) Coze空间配置Memos的MCP": open_source/best_practice/mcp_for_cozespace_and_tools.md
+      - "(ri:tools-line) MemOS MCP集成指南": open_source/best_practice/mcp_for_cozespace_and_tools.md
 
     - "(ri:heart-line) 贡献指南":
-      - "(ri:eye-line) 总览": open_source/contribution/overview.md
-      - "(ri:tools-line) 环境配置": open_source/contribution/setting_up.md
+      - "(ri:eye-line) 参与 MemOS 开发": open_source/contribution/overview.md
+      - "(ri:tools-line) 配置开发环境": open_source/contribution/setting_up.md
       - "(ri:git-branch-line) 开发流程": open_source/contribution/development_workflow.md
       - "(ri:git-commit-line) 提交规范": open_source/contribution/commit_guidelines.md
-      - "(ri:article-line) 文档编写": open_source/contribution/writing_docs.md
-      - "(ri:flask-line) 测试编写": open_source/contribution/writing_tests.md
+      - "(ri:article-line) 文档编写指南": open_source/contribution/writing_docs.md
+      - "(ri:flask-line) 如何编写测试": open_source/contribution/writing_tests.md
 
-    - "(ri:file-code-line) API 参考文档": api-reference/configure-memos
+    - "(ri:file-code-line) API 参考文档": api-reference/search-memories
+
+  - "(ri:cpu-line) 自研模型说明":
+    - "(ri:filter-3-line) 抽取模型":
+      - "(ri:book-open-line) 使用示例": self_developed_model/extraction_usage_example.md
+    - "(ri:sort-desc) 重排模型":
+      - "(ri:book-open-line) 使用示例": self_developed_model/reranker_usage_example.md
 
   - "(ri:puzzle-line) MCP与Agent框架支持":
     - "(ri:tools-line) MCP 服务":
@@ -99,23 +95,40 @@ nav:
     - "(ri:robot-line) Agent开发":
       - "(ri:book-open-line) 使用指南": mcp_agent/agent/guide.md
 
+  - "(ri:robot-line) Agent":
+    - "(ri:book-open-line) 云插件 vs 本地插件": openclaw/plugin_compare.md
+    - "(ri:file-list-3-line) 更新日志": openclaw/changes.md
+    - "(ri:download-line) 安装指南": 
+      - "(ri:cloud-line) OpenClaw 云插件": openclaw/guide.md
+      - "(ri:computer-line) OpenClaw 本地插件": openclaw/local_plugin.md
+      - "(ri:server-line) Hermes 本地插件": openclaw/hermes_local_plugin.md
+    - "(ri:flask-line) 使用示例": 
+      - "(ri:team-line) 多智能体记忆隔离": openclaw/examples/multi_agent.md
+      - "(ri:filter-3-line) 记忆召回的二次过滤": openclaw/examples/recall_filter.md
+      - "(ri:terminal-box-line) Hermes 本地插件使用": openclaw/examples/hermes_usage.md
+
   - "(ri:file-code-line) API文档":
     - "(ri:rocket-line) 开始使用":
       - "(ri:eye-line) 概述": api_docs/start/overview.md
       - "(ri:settings-3-line) 项目配置": api_docs/start/configuration.md
 
     - "(ri:edit-box-line) 核心操作":
-      - "(ri:message-3-line) 添加消息": api_docs/core/add_message.md
-      - "(ri:search-2-line) 检索记忆": api_docs/core/search_memory.md
-      - "(ri:delete-bin-line) 删除记忆": api_docs/core/delete_memory.md
+      - "(ri:message-3-line) Add Message": api_docs/core/add_message.md
+      - "(ri:search-2-line) Search Memory": api_docs/core/search_memory.md
+      - "(ri:file-list-line) Get Memory": api_docs/core/get_memory.md
+      - "(ri:delete-bin-line) Delete Memory": api_docs/core/delete_memory.md
+      - "(ri:feedback-line) Add Feedback": api_docs/message/add_feedback.md
+
+    - "(ri:cpu-line) 自研模型":
+      - "(ri:filter-3-line) Extract Memory": api_docs/core/extract_memory.md
+      - "(ri:sort-desc) Rerank Memory": api_docs/core/rerank.md
 
     - "(ri:chat-1-line) 消息":
-      - "(ri:feedback-line) 添加反馈": api_docs/message/add_feedback.md
-      - "(ri:file-list-line) 获取消息": api_docs/message/get_message.md
-      - "(ri:task-line) 获取任务状态": api_docs/message/get_status.md
+      - "(ri:file-list-line) Get Message": api_docs/message/get_message.md
+      - "(ri:task-line) Get Task Status": api_docs/message/get_status.md
 
-    # - "(ri:chat-smile-2-line) 对话":
-    #   - "(ri:chat-4-line) 对话": api_docs/chat/chat.md
+    - "(ri:chat-smile-2-line) 对话":
+      - "(ri:chat-4-line) Chat": api_docs/chat/chat.md
 
     - "(ri:book-read-line) 知识库":
       - "(ri:add-box-line) 创建知识库": api_docs/knowledge/create_kb.md
@@ -129,6 +142,7 @@ nav:
 
   - "(ri:projector-line) 示例项目":
     - "(ri:lightbulb-line) 最佳实践":
+      - "(ri:customer-service-2-line) 问答助手": usecase/knowledge_qa_assistant.md
       - "(ri:money-dollar-circle-line) 理财助手": usecase/financial_assistant.md
       - "(ri:edit-line) 写作助手": usecase/writting_assistant.md
       - "(ri:heart-line) 家庭生活助手": usecase/home_assistant.md

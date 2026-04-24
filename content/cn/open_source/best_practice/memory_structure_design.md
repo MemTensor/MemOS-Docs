@@ -26,11 +26,58 @@ tree_config = {
         }
     }
 }
-````
+```
+
+### 偏好明文记忆
+
+**最适用于**：个性化对话、智能推荐、客户服务
+
+```python
+preference_config = {
+    "backend": "preference_text",
+    "config": {
+        "extractor_llm": {
+            "backend": "ollama",
+            "config": {
+                "model_name_or_path": "qwen3:0.6b",
+            }
+        },
+        "vector_db": {
+            "backend": "milvus",
+            "config": {
+                "collection_name": [
+                    "explicit_preference",
+                    "implicit_preference"
+                ],
+                "vector_dimension": 768,
+                "distance_metric": "cosine",
+                "uri": "./milvus_demo.db"
+            }
+        },
+        "embedder": {
+            "backend": "ollama",
+            "config": {
+                "model_name_or_path": "nomic-embed-text:latest"
+            }
+        },
+        "reranker": {
+            "backend": "cosine_local",
+            "config": {
+                "level_weights": {
+                    "topic": 1.0,
+                    "concept": 1.0,
+                    "fact": 1.0
+                },
+                "level_field": "background"
+            }
+        }
+    }
+}
+```
 
 ### 通用明文记忆（带向量索引）
 
-**适用于**：对话式 AI、私人助理、问答系统
+**最适用于**：对话式 AI、私人助理、问答系统
 
 ```python
 general_config = {

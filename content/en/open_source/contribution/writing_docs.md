@@ -88,15 +88,68 @@ Use `steps` to create step-by-step guides from document headings. The `steps` co
 class: "[&>div]:*:w-full"
 ---
   :::steps{level="4"}
-  #### Install MemOS
+  #### Fork & Clone the Repository
+  
+  Set up the repository on your local machine:
+  
+  - Fork the repository on GitHub
+  - Clone your fork to your local machine:
+  
+    ```bash
+    git clone https://github.com/YOUR-USERNAME/MemOS.git
+    cd MemOS
+    ```
+  
+  - Add the upstream repository as a remote:
+  
+    ```bash
+    git remote add upstream https://github.com/MemTensor/MemOS.git
+    ```
+  
+  #### Prepare Development Dependencies
+  
+  Ensure the following are installed locally:
+  
+  - Git
+  - Python 3.9+
+  - Make
+  
+  Verify Python:
   
   ```bash
-  pip install MemoryOS
+  python3 --version
   ```
   
-  #### Create a Minimal Config
+  #### Install Poetry
   
-  For this Quick Start, we'll use the built-in GeneralTextMemory.
+  MemOS uses Poetry for dependency management. We recommend using the official installer:
+  
+  ```bash
+  curl -sSL https://install.python-poetry.org | python3 -
+  ```
+  
+  Verify the installation:
+  
+  ```bash
+  poetry --version
+  ```
+  
+  If you see `poetry: command not found`, please add the Poetry executable directory to your PATH as prompted by the installer, then restart your terminal and verify again.
+  
+  For more installation options, see the [official installation guide](https://python-poetry.org/docs/#installing-with-the-official-installer).
+  
+  #### Install Dependencies and Set Up Pre-commit Hooks
+  
+  Install all project dependencies and development tools in the repository root:
+  
+  ```bash
+  make install
+  ```
+  
+  Tip:
+  
+  - If you switch branches or dependencies change, you may need to **re-run `make install`** to keep the environment consistent.
+  :::
   
   ```python
   from memos.configs.mem_os import MOSConfig
