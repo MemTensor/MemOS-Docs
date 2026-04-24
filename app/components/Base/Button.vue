@@ -11,15 +11,15 @@ const props = withDefaults(defineProps<{
 
 const bgClasses = computed(() => {
   if (props.type === 'primary') {
-    return 'inset-shadow-default bg-linear-270 from-15% from-[#1D4ED8] to-118% to-[#01C6FA]'
+    return 'text-white inset-shadow-default bg-linear-270 from-0% from-[#408DFC] via-[#4044ED] via-51% to-100% to-[#AA75EF] dark:from-[#5A9CFC] dark:via-[#5D60F3] dark:to-[#9F80F5]'
   }
   if (props.type === 'success') {
-    return 'inset-shadow-default bg-linear-270 from-15% from-[#219C5F] to-118% to-[#29EB8B]'
+    return 'text-white inset-shadow-default bg-linear-270 from-15% from-[#219C5F] to-118% to-[#29EB8B]'
   }
   if (props.type === 'ghost') {
-    return 'border border-[#1E40AF]'
+    return 'border border-slate-300 dark:border-primary'
   }
-  return 'inset-shadow-default bg-[#232E60] bg-linear-249 -from-5% from-black/42 to-100% to-white bg-blend-soft-light'
+  return 'inset-shadow-default bg-slate-200 dark:bg-[#232E60] text-slate-900 dark:text-white bg-linear-249 dark:-from-5% dark:from-black/42 dark:to-100% dark:to-white dark:bg-blend-soft-light'
 })
 
 function handleClick() {
@@ -46,14 +46,14 @@ function handleClick() {
       :name="leadingIcon"
     />
     <template v-if="type === 'ghost'">
-      <span class="bg-linear-270 from-15% from-linear-primary to-118 to-primary-light bg-clip-text text-transparent">
+      <span class="bg-linear-270 from-15% from-linear-primary to-118% to-primary-light bg-clip-text text-transparent">
         <slot />
       </span>
     </template>
     <slot v-else />
     <UIcon
       v-if="trailingIcon"
-      class="size-5"
+      :class="type === 'ghost' ? 'size-5 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light' : 'size-5'"
       :name="trailingIcon"
     />
   </button>

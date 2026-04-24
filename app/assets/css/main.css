@@ -6,24 +6,273 @@
 @theme static {
   --container-8xl: 90rem;
   --font-sans: 'Public Sans', sans-serif;
-  --color-linear-primary: #1D4ED8;
-  --color-primary-light: #01C6FA;
+  --color-linear-primary: #4044ED;
+  --color-primary-light: #AA75EF;
   --color-copyright: #64748B;
 }
 
 :root {
   --ui-container: var(--container-8xl);
   --ui-max-container: 1240px;
-  --ui-topbar-height: 66px;
-  --ui-header-height: 136px;
+  --ui-topbar-height: 60px;
+  --ui-header-height: 100px;
+  --ui-primary: #4044ED;
+}
+
+html.dark {
   --ui-bg: #02020b;
   --ui-bg-muted: #0e1219;
   --ui-border-muted: #222a35;
-  --ui-primary: #5478DC;
+  --ui-primary: #7275F7;
+  --color-linear-primary: #5D60F3;
+  --color-primary-light: #9F80F5;
 }
 
 header>div {
-  max-width: 100vw !important;
+  max-width: var(--ui-container) !important;
+}
+
+@media (min-width: 1024px) {
+  header > div,
+  main > div {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
+
+.doc-sidebar-nav {
+  border-right: 1px solid var(--ui-border-muted, #e2e8f0);
+  padding: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 20px !important;
+  padding-inline-start: 0 !important;
+  padding-inline-end: 20px !important;
+  margin: 0 !important;
+  margin-inline-start: 0 !important;
+}
+
+@media (min-width: 1024px) {
+
+  .doc-sidebar-nav > div {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .doc-page-grid {
+    gap: 2rem !important;
+  }
+}
+
+/* 顶层大标题：隐藏折叠 icon、禁止折叠、始终展开 */
+.doc-sidebar-nav > div > nav > ul > li > button .iconify {
+  display: none !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li > button {
+  pointer-events: none;
+  cursor: default;
+}
+
+.doc-sidebar-nav > div > nav > ul > li > [data-state="closed"] {
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+  --reka-accordion-content-height: auto !important;
+}
+
+/* 二级列表与大标题对齐（去掉缩进和左边框） */
+.doc-sidebar-nav > div > nav > ul > li > div > ul {
+  margin-inline-start: 0 !important;
+  border-inline-start: none !important;
+  padding-inline-start: 0 !important;
+}
+
+/* hover 背景四角圆角：给 before 伪元素留出圆角空间 */
+.doc-sidebar-nav :where(a, button)::before {
+  left: 4px !important;
+  right: 4px !important;
+  inset-inline-start: 4px !important;
+  inset-inline-end: 4px !important;
+  border-radius: 0.375rem !important;
+}
+
+/* 副标题折叠 icon：缩小 + 淡色 */
+.doc-sidebar-nav > div > nav > ul > li li button .iconify {
+  width: 14px;
+  height: 14px;
+  opacity: 0.3;
+  transition: opacity 0.15s;
+}
+
+.doc-sidebar-nav > div > nav > ul > li li button:hover .iconify {
+  opacity: 0.5;
+}
+
+/* 页面描述文字加深 */
+.doc-page-header .text-muted {
+  color: rgb(51 65 85) !important;
+}
+
+html.dark .doc-page-header .text-muted {
+  color: rgb(203 213 225) !important;
+}
+
+/* 文档左侧导航：默认项字色略加深（Nuxt UI 默认 text-muted 偏浅） */
+.doc-sidebar-nav :where(a, button).text-muted:not([data-state="open"]) {
+  color: rgb(71 85 105);
+}
+
+html.dark .doc-sidebar-nav :where(a, button).text-muted:not([data-state="open"]) {
+  color: rgb(203 213 225);
+}
+
+.doc-sidebar-nav .text-dimmed {
+  color: rgb(100 116 139);
+}
+
+html.dark .doc-sidebar-nav .text-dimmed {
+  color: rgb(148 163 184);
+}
+
+.doc-page-header h1 {
+  color: rgb(15 23 42);
+}
+
+html.dark .doc-page-header h1 {
+  color: rgb(248 250 252);
+}
+
+.doc-page-body {
+  color: rgb(51 65 85);
+}
+
+html.dark .doc-page-body {
+  color: rgb(203 213 225);
+}
+
+.doc-page-body h2 {
+  margin-top: 3.25rem;
+  margin-bottom: 1.1rem;
+  font-size: 1.35rem;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  font-weight: 760;
+  color: rgb(15 23 42);
+}
+
+html.dark .doc-page-body h2 {
+  color: rgb(248 250 252);
+}
+
+.doc-page-body h3 {
+  margin-top: 2.1rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  font-weight: 630;
+  color: rgb(30 41 59);
+}
+
+html.dark .doc-page-body h3 {
+  color: rgb(226 232 240);
+}
+
+.doc-page-body p,
+.doc-page-body li {
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.doc-page-body p + p,
+.doc-page-body p + ul,
+.doc-page-body p + ol,
+.doc-page-body ul + p,
+.doc-page-body ol + p,
+.doc-page-body ul + ul,
+.doc-page-body ol + ol,
+.doc-page-body ul + ol,
+.doc-page-body ol + ul {
+  margin-top: 1.05rem;
+}
+
+.doc-page-body ul,
+.doc-page-body ol {
+  padding-left: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.doc-page-body li + li {
+  margin-top: 0.15rem;
+}
+
+.doc-page-body li p {
+  margin: 0;
+}
+
+.doc-page-body img:not([alt="MemOS Banner"]) {
+  margin-top: 1.6rem;
+  margin-bottom: 1.9rem;
+}
+
+/* 表格 */
+.doc-page-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.doc-page-body thead th {
+  padding: 0.6rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: rgb(71 85 105);
+  background: rgb(248 250 252);
+  border-bottom: 2px solid rgb(226 232 240);
+  text-align: left;
+}
+
+html.dark .doc-page-body thead th {
+  color: rgb(148 163 184);
+  background: rgb(15 23 42);
+  border-bottom-color: rgb(30 41 59);
+}
+
+.doc-page-body tbody td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid rgb(241 245 249);
+  vertical-align: top;
+}
+
+html.dark .doc-page-body tbody td {
+  border-bottom-color: rgb(30 41 59);
+}
+
+.doc-page-body tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.doc-page-body tbody tr:hover {
+  background: rgb(248 250 252);
+}
+
+html.dark .doc-page-body tbody tr:hover {
+  background: rgb(15 23 42 / 0.5);
+}
+
+:root:not(.dark) [class*="--spotlight-color"] {
+  --spotlight-color: color-mix(in srgb, var(--ui-primary) 30%, transparent) !important;
+}
+
+html.dark [class*="--spotlight-color"] {
+  --spotlight-color: color-mix(in srgb, var(--ui-primary) 40%, transparent) !important;
 }
 
 /* open-api-docs-module reset styles */
@@ -139,7 +388,7 @@ html::-webkit-scrollbar {
 }
 @supports not (color: color-mix(in lab, red, red)) {
   .bg-primary\/10 {
-    background-color: rgba(96, 165, 250, 0.1)
+    background-color: rgba(99, 102, 241, 0.1)
   }
   .bg-info\/10 {
     background-color: rgba(81, 162, 255, 0.1)
@@ -154,7 +403,7 @@ html::-webkit-scrollbar {
     background-color: rgba(251, 191, 36, 0.1)
   }
   .border-primary\/25 {
-    border-color: rgba(96, 165, 250, 0.06)
+    border-color: rgba(99, 102, 241, 0.06)
   }
   .border-info\/25 {
     border-color: rgba(81, 162, 255, 0.06)

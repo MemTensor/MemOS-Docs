@@ -210,7 +210,7 @@ function handleTabChange(val: string | number) {
           <template #body="{ version }">
             <div class="space-y-6 changelog-info rounded-lg">
               <div class="flex flex-col items-start">
-                <span class="text-xl text-white font-bold">{{ version.name }}</span>
+                <span class="text-xl text-slate-900 dark:text-white font-bold">{{ version.name }}</span>
               </div>
               <div v-for="(items, category) in version.changedInfo" :key="String(category)" class="space-y-4">
                 <div class="flex text-lg items-center gap-2 font-medium font-bold text-[#10B981]" :class="getCategoryClass(String(category))">
@@ -218,7 +218,7 @@ function handleTabChange(val: string | number) {
                   {{ category }}
                 </div>
                 <div v-for="item in items" :key="item.type" class="space-y-2">
-                  <div class="text-l text-white flex items-center gap-2 changelog-info-title">
+                  <div class="text-l text-slate-900 dark:text-white flex items-center gap-2 changelog-info-title">
                     {{ item.type }}:
                   </div>
                   <ul class="text-sm list-disc list-inside space-y-1 ml-4">
@@ -242,10 +242,10 @@ function handleTabChange(val: string | number) {
           <template #body="{ version }">
             <ol class="list-decimal list-inside space-y-2 changelog-list">
               <div class="flex flex-col items-start mb-[24px]">
-                <span class="text-xl text-white font-bold">{{ version.name }}</span>
+                <span class="text-xl text-slate-900 dark:text-white font-bold">{{ version.name }}</span>
               </div>
               <li v-for="(change, idx) in version.changedInfo" :key="idx" class="flex flex-wrap items-start gap-x-1">
-                <span class="text-highlight text-white font-bold flex items-center gap-2">
+                <span class="text-highlight text-slate-900 dark:text-white font-bold flex items-center gap-2">
                   <UIcon :name="getCategoryIcon(change.type)" class="w-4 h-4 flex-shrink-0" />
                   {{ change.type }}:
                 </span>

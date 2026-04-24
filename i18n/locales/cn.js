@@ -6,8 +6,8 @@ export default {
     docs: '文档',
     openmem: '组织架构',
     menus: {
-      welcome: '欢迎',
-      cloud: 'MemOS Cloud',
+      welcome: '导览',
+      cloud: '云服务',
       openSource: '开源项目',
       selfDevelopedModel: '自研模型',
       openclaw: 'Agent',
@@ -18,11 +18,20 @@ export default {
     },
     community: {
       button: '加入社群',
+      shortLabel: '社群',
+      tooltip: '扫码加入微信或 Discord 交流群',
       title: '欢迎来到开发者社区',
       wechat: '微信'
     },
     backToHome: '回到首页',
-    searchPlaceholder: '搜索'
+    dashboard: '控制台',
+    searchPlaceholder: '搜索',
+    toggleColorMode: '切换浅色 / 深色模式',
+    switchLanguage: '切换语言（中文 / English）'
+  },
+  pageToc: {
+    navLabel: '本页导航',
+    onPage: '本页目录'
   },
   community: {
     title: '社区',
@@ -32,7 +41,7 @@ export default {
   footer: {
     copyright: '© 2025 记忆张量（上海）科技有限公司 版权所有',
     product: '产品',
-    memosCloud: 'MemOS Cloud',
+    memosCloud: 'MemOS 云服务',
     memoryAssistant: '个人记忆助手',
     mcpService: 'MCP服务',
     playground: 'Playground',
@@ -53,33 +62,35 @@ export default {
   },
   homepage: {
     title: '别让你的 AI 再忘来忘去，用 MemOS',
-    description: '在这里，你将找到从上手入门到生产部署的一切指南，帮助你在最短时间内把 MemOS 集成到你的 AI 应用中',
-    buttonText: '现在就去',
+    titlePrefix: '别让你的 AI 再忘来忘去，用',
+    titleSuffix: '',
+    description: '提供从上手入门到生产部署的一切指南，帮你最短时间集成 MemOS',
+    buttonText: '写入你的第一条记忆',
     openclawButton: 'Agent 配置指南',
     items: [
       {
-        title: 'MemOS Cloud',
-        description: '介绍如何在云端快速接入 MemOS，包括创建项目、获取 API Key等使用云服务的最佳方式——几分钟即可上线'
+        title: 'MemOS 云服务',
+        description: '生产级记忆服务托管平台，开箱即用，五分钟完成首次集成与调试。'
       },
       {
-        title: '开源项目',
-        description: '涵盖 MemOS 的开源 SDK、核心组件与示例项目。帮助你理解 MemOS 的运行机制，并在本地或自有环境中自由定制与扩展'
+        title: 'MemOS 开源项目',
+        description: '自托管开源记忆方案，私有部署、安全可控，支持自由定制与深度扩展。'
       },
       {
         title: '自研模型',
-        description: '介绍 MemOS 的自研记忆模型，为开发者提供更灵活、更符合开发需求的记忆服务。'
+        description: '专为记忆场景训练的自研模型，提升抽取与召回质量，即插即用。'
       },
       {
         title: 'MCP与Agent框架支持',
-        description: '介绍如何通过 MCP调用 MemOS 记忆能力，以及如何将MemOS无缝接入coze、dify等主流 Agent框架中，作为统一的记忆后端'
+        description: '通过 MCP 或 SDK 一键接入 Coze、Dify 等主流 Agent 框架，统一记忆后端。'
       },
       {
         title: 'API接口文档',
-        description: '涵盖 MemOS 的开源 SDK、核心组件与示例项目。帮助你理解 MemOS 的运行机制，并在本地或自有环境中自由定制与扩展'
+        description: '完整的 REST API 与 SDK 参考，涵盖鉴权、记忆读写、检索等核心接口。'
       },
       {
         title: '示例项目',
-        description: 'MemOS 提供面向真实业务的实战教程，通过清晰示例和最佳范式，帮助你快速构建拥有长期记忆、可直接上线的 AI 体验'
+        description: '面向真实业务场景的实战示例，助你快速搭建可上线的长期记忆 AI 应用。'
       }
     ]
   },

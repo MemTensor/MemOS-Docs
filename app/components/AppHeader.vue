@@ -25,14 +25,7 @@ const localizedMenus = computed(() => {
   return menus.map(m => ({ ...m, to: localePath(m.to) }))
 })
 
-function gotoHome() {
-  navigateTo(homePath.value, {
-    external: true,
-    open: {
-      target: '_blank'
-    }
-  })
-}
+const dashboardUrl = computed(() => useDashboardUrl('/quickstart/', locale.value))
 </script>
 
 <template>
@@ -40,12 +33,15 @@ function gotoHome() {
     :to="homePath"
     :ui="{
       root: 'border-0 h-(--ui-topbar-height)',
-      container: 'lg:px-10 @container',
+      container: '@container',
       header: 'h-(--ui-topbar-height)'
     }"
   >
     <template #left>
-      <NuxtLink :to="homePath">
+      <NuxtLink
+        :to="homePath"
+        class="text-slate-900 dark:text-white"
+      >
         <LogoPro class="w-auto h-10 shrink-0" />
       </NuxtLink>
     </template>
@@ -57,26 +53,29 @@ function gotoHome() {
       :kbds="[]"
       :label="$t('header.searchPlaceholder')"
       :ui="{
-        base: 'h-10 text-[#94A3B8] rounded-lg ring-slate-600'
+        base: 'h-8 text-slate-600 dark:text-slate-400 rounded-lg ring-slate-200 dark:ring-slate-600',
+        leadingIcon: 'size-4'
       }"
     />
     <AssistantCollapse class="ml-2.5" />
 
     <template #right>
-      <LanguageSwitcher class="shrink-0" />
-      <JoinCommunityButton class="shrink-0 flex @max-2xl:hidden" />
-      <button
-        class="hidden sm:flex items-center gap-1.5 h-7 px-2.5 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light rounded-md cursor-pointer shrink-0 whitespace-nowrap"
-        @click="gotoHome"
+      <NuxtLink
+        :to="dashboardUrl"
+        target="_blank"
+        class="hidden sm:flex items-center gap-1.5 h-8 px-2.5 rounded-md cursor-pointer shrink-0 whitespace-nowrap border border-slate-300 text-slate-700 hover:border-primary hover:text-primary dark:border-0 dark:text-white dark:bg-linear-270 dark:from-15% dark:from-linear-primary dark:to-118% dark:to-primary-light"
       >
         <UIcon
-          name="ri:home-4-line"
+          name="ri:dashboard-line"
           class="size-4"
         />
-        <span class="text-xs font-medium flex @max-5xl:hidden">
-          {{ $t('header.backToHome') }}
+        <span class="text-sm font-medium flex @max-5xl:hidden">
+          {{ $t('header.dashboard') }}
         </span>
-      </button>
+      </NuxtLink>
+      <LanguageSwitcher class="shrink-0" />
+      <ColorModeToggle />
+      <JoinCommunityButton class="shrink-0 @max-2xl:hidden" />
     </template>
 
     <template #body>
@@ -102,7 +101,7 @@ function gotoHome() {
     </template>
   </UHeader>
   <AppMenus
-    class="hidden sm:block sticky z-12 top-(--ui-topbar-height) pt-3 bg-default/75 backdrop-blur"
+    class="hidden sm:block sticky z-12 top-(--ui-topbar-height) pt-1.5 bg-default/75 backdrop-blur"
     :items="localizedMenus"
   />
 </template>

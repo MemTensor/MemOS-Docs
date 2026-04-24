@@ -58,12 +58,12 @@ function normalizePlugins(plugins?: ReleasePlugin[]) {
             >
               {{ plugin.title }}
             </div>
-            <div class="mb-2.25 text-[19px] font-bold text-white">
+            <div class="mb-2.25 text-[19px] font-bold text-slate-900 dark:text-white">
               {{ plugin.version }}
             </div>
             <div
               v-if="plugin.summary"
-              class="-mt-0.75 mb-3 leading-[1.7] text-[#cbd5e1]"
+              class="-mt-0.75 mb-3 leading-[1.7] text-slate-500 dark:text-[#cbd5e1]"
             >
               {{ plugin.summary }}
             </div>

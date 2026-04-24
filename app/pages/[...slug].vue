@@ -116,10 +116,61 @@ useHead({
 
       <UContentSurround :surround="surround" />
     </template>
-    <UPage v-else-if="page">
+    <UPage
+      v-else-if="page"
+      class="doc-page-grid"
+    >
+      <template #left>
+        <UPageAside
+          v-if="navigation?.length"
+          class="doc-sidebar-nav overflow-auto scrollbar-hide"
+        >
+          <keep-alive>
+            <UContentNavigation
+              :key="route.path"
+              :navigation="navigation"
+              highlight
+              :ui="{
+                linkTrailingBadge: 'font-semibold uppercase',
+                linkLeadingIcon: 'hidden'
+              }"
+            >
+              <template #link-title="{ link }">
+                <UTooltip
+                  :text="link.title"
+                  :delay-duration="100"
+                  class="w-full min-w-0"
+                >
+                  <span class="inline-flex items-center gap-2 w-full min-w-0 max-w-full">
+                    <UIcon
+                      v-if="link.icon && typeof link.icon === 'string'"
+                      :name="link.icon as string"
+                      class="w-4 h-4 flex-shrink-0"
+                    />
+                    <span class="truncate flex-1 min-w-0">{{ link.title }}</span>
+                    <UIcon
+                      v-if="link.target === '_blank'"
+                      name="i-ri-external-link-line"
+                      class="w-3 h-3 flex-shrink-0 text-gray-400"
+                    />
+                  </span>
+                </UTooltip>
+              </template>
+            </UContentNavigation>
+          </keep-alive>
+        </UPageAside>
+      </template>
+
       <UPageHeader
         :title="page.title"
         :links="page.links"
+        class="doc-page-header max-w-[720px] mx-auto"
+        :ui="{
+          title: 'text-[1.95rem] sm:text-[2.15rem] leading-[1.14] tracking-[-0.02em] font-[650]',
+          description: 'text-base sm:text-[1.0625rem] leading-7 text-muted',
+          wrapper: 'flex flex-col gap-2.5',
+          root: 'relative border-b border-default py-7'
+        }"
       >
         <template #description>
           <div
@@ -143,7 +194,7 @@ useHead({
       </UPageHeader>
 
       <!-- Document content -->
-      <UPageBody>
+      <UPageBody class="doc-page-body max-w-[720px] mx-auto">
         <ContentRenderer
           v-if="page"
           :value="page"
@@ -157,12 +208,47 @@ useHead({
         #right
       >
         <UContentToc
-          :title="toc?.title"
+          :default-open="false"
+          highlight
           :links="page.body?.toc?.links"
           :ui="{
-            root: 'top-(--ui-topbar-height) lg:top-(--ui-header-height)'
+            root: 'top-(--ui-topbar-height) lg:top-(--ui-header-height) lg:-mx-0 lg:px-0',
+            container:
+              'pt-0 pb-2.5 sm:pb-4.5 lg:pt-8 lg:pb-8 border-b border-dashed border-default lg:border-0 flex flex-col gap-0',
+            trigger:
+              'group w-full min-h-14 py-4 px-5 sm:px-6 -mx-4 sm:-mx-6 text-left !items-start gap-3 rounded-none border-0 border-b border-default bg-default/80 hover:bg-elevated/60 dark:hover:bg-elevated/40',
+            title: 'flex flex-col gap-1 min-w-0 flex-1 items-stretch text-left',
+            trailing: 'ms-auto self-center shrink-0 pt-0.5'
           }"
         >
+          <template
+            v-if="page.body?.toc?.links?.length"
+            #leading
+          >
+            <UIcon
+              name="i-lucide-panel-left"
+              class="size-5 shrink-0 text-muted lg:hidden"
+              aria-hidden="true"
+            />
+          </template>
+          <template
+            v-if="page.body?.toc?.links?.length"
+            #default
+          >
+            <div class="min-w-0 flex-1 text-left">
+              <div class="flex flex-col gap-0.5 lg:hidden">
+                <span class="text-xs font-medium text-muted">
+                  {{ $t('pageToc.navLabel') }}
+                </span>
+                <span class="text-sm font-semibold text-highlighted line-clamp-2">
+                  {{ page.title }}
+                </span>
+              </div>
+              <span class="hidden text-base font-medium text-default lg:inline">
+                {{ toc?.title || $t('pageToc.onPage') }}
+              </span>
+            </div>
+          </template>
           <template
             v-if="toc?.bottom"
             #bottom

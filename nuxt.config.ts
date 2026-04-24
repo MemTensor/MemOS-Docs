@@ -85,7 +85,13 @@ const config: NuxtConfig = {
 
   ui: {
     fonts: false,
-    colorMode: false
+    colorMode: true
+  },
+
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark',
+    storageKey: 'memos-docs-color-mode'
   },
 
   content: {

@@ -6,7 +6,7 @@ export default {
     docs: 'Docs',
     openmem: 'OpenMem',
     menus: {
-      welcome: 'Welcome',
+      welcome: 'Guide',
       cloud: 'MemOS Cloud',
       openSource: 'Open Source',
       selfDevelopedModel: 'Self-developed Models',
@@ -18,11 +18,20 @@ export default {
     },
     community: {
       button: 'Join the community',
+      shortLabel: 'Community',
+      tooltip: 'Scan the QR code to join on WeChat or Discord',
       title: 'Welcome to the community',
       wechat: 'WeChat'
     },
     backToHome: 'Home',
-    searchPlaceholder: 'Search'
+    dashboard: 'Dashboard',
+    searchPlaceholder: 'Search',
+    toggleColorMode: 'Toggle color mode',
+    switchLanguage: 'Switch language (English / 中文)'
+  },
+  pageToc: {
+    navLabel: 'Navigation',
+    onPage: 'On this page'
   },
   community: {
     title: 'Community',
@@ -53,33 +62,35 @@ export default {
   },
   homepage: {
     title: 'Don\'t let your AI forget again, Empower it with MemOS!',
-    description: 'Here, you\'ll find everything to quickly integrate MemOS into your AI applications and deploy it in production',
+    titlePrefix: 'Don\'t let your AI forget again, Empower it with',
+    titleSuffix: '!',
+    description: 'Guides from onboarding through production deployment—integrate MemOS in the shortest time.',
     buttonText: 'Get Started Now',
     openclawButton: 'Agent Configuration',
     items: [
       {
         title: 'MemOS Cloud',
-        description: 'Learn how to quickly integrate MemOS in the cloud, including project creation, API Key setup, and best practices for using cloud services—get live in just a few minutes'
+        description: 'Production-grade memory hosting, ready out of the box—complete your first integration in five minutes.'
       },
       {
         title: 'Open Source',
-        description: 'Explore MemOS’ open-source SDK, core components, and sample projects. Understand how MemOS works and customize or extend it in your own local or private environment'
+        description: 'Self-hosted open-source memory—deploy privately, stay in control, customize and extend freely.'
       },
       {
         title: 'Self-developed Models',
-        description: 'Introduces MemOS in-house memory models and memory services that are more flexible and better aligned with developers\' needs.'
+        description: 'Purpose-built models for memory extraction and recall—plug in and go.'
       },
       {
         title: 'MCP & Agent Framework',
-        description: 'Learn how to call MemOS memory capabilities via MCP, and seamlessly integrate MemOS as a unified memory backend into popular Agent frameworks like Coze and Dify'
+        description: 'One-click integration with Coze, Dify, and other Agent frameworks via MCP or SDK as a unified memory backend.'
       },
       {
         title: 'API Documentation',
-        description: 'MemOS provides hands-on tutorials for real-world business applications. With clear examples and best practices, you\'ll quickly build an AI experience with long-term memory that\'s ready for production'
+        description: 'Complete REST API and SDK reference covering auth, memory read/write, retrieval, and more.'
       },
       {
         title: 'Sample Projects',
-        description: 'MemOS offers practical tutorials for real-world applications, with clear examples and best practices to help you quickly build AI experiences with long-term memory, ready for production'
+        description: 'Real-world examples to help you quickly build production-ready AI apps with long-term memory.'
       }
     ]
   },

@@ -12,8 +12,7 @@ if (props.error?.statusCode === 404) {
 
 useHead({
   htmlAttrs: {
-    lang: 'en',
-    class: 'dark'
+    lang: 'en'
   }
 })
 

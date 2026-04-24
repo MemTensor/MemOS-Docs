@@ -1,44 +1,56 @@
 <template>
   <UPopover
+    :content="{ side: 'bottom', align: 'end', sideOffset: 12 }"
     :ui="{
-      content: 'bg-[#080F21]'
+      content: 'bg-default ring ring-default rounded-xl p-0'
     }"
   >
-    <button class="flex items-center gap-2.5 h-7 px-2.5 cursor-pointer bg-white rounded-md">
-      <span class="text-xs font-medium text-[#0F172B]">
-        {{ $t('header.community.button') }}
+    <button
+      type="button"
+      class="group inline-flex h-8 min-w-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-slate-300 px-0 hover:border-slate-400 2xl:w-auto 2xl:min-w-0 2xl:justify-start 2xl:px-2.5 dark:border-slate-600 dark:hover:border-slate-100"
+      :aria-label="$t('header.community.button')"
+      :title="$t('header.community.tooltip')"
+    >
+      <UIcon
+        name="i-lucide-qr-code"
+        class="size-4 shrink-0 text-slate-600 group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100"
+      />
+      <span class="hidden max-w-24 truncate text-left text-xs font-medium text-slate-700 2xl:inline dark:text-slate-200">
+        {{ $t('header.community.shortLabel') }}
       </span>
     </button>
     <template #content>
-      <div class="py-4.5 px-4">
-        <div class="mb-4 sm:text-xl text-base text-white leading-7 text-center">
+      <div class="w-64 p-4">
+        <p class="mb-3 text-center text-sm font-medium text-default">
           {{ $t('header.community.title') }}
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-2">
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col items-center gap-2">
             <img
               src="https://statics.memtensor.com.cn/landing-v2/qrcode-wechat-v2.webp"
-              class="size-30"
+              alt=""
+              class="h-26 w-26 shrink-0 rounded object-cover"
             >
-            <div class="flex items-center justify-center gap-1.5">
+            <div class="flex items-center gap-1 text-xs leading-5 text-muted">
               <UIcon
                 name="i-ic:baseline-wechat"
-                class="size-5"
+                class="size-4 shrink-0"
               />
-              <span class="text-slate-300 leading-5.5">{{ $t('header.community.wechat') }}</span>
+              <span>{{ $t('header.community.wechat') }}</span>
             </div>
           </div>
-          <div class="space-y-2">
+          <div class="flex flex-col items-center gap-2">
             <img
               src="https://statics.memtensor.com.cn/landing-v2/qrcode-discord-v2.webp"
-              class="size-30"
+              alt=""
+              class="h-26 w-26 shrink-0 rounded object-cover"
             >
-            <div class="flex items-center justify-center gap-1.5">
+            <div class="flex items-center gap-1 text-xs leading-5 text-muted">
               <UIcon
                 name="ic:baseline-discord"
-                class="size-5"
+                class="size-4 shrink-0"
               />
-              <span class="text-slate-300 leading-5.5">Discord</span>
+              <span>Discord</span>
             </div>
           </div>
         </div>
