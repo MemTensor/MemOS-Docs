@@ -42,12 +42,9 @@ header>div {
 
 .doc-sidebar-nav {
   --doc-sidebar-row-height: 2rem;
-  --doc-sidebar-active-bg: color-mix(in srgb, var(--ui-primary) 10%, transparent);
-  --doc-sidebar-active-hover-bg: color-mix(in srgb, var(--ui-primary) 14%, transparent);
+  --doc-sidebar-active-bg: color-mix(in srgb, var(--ui-primary) 8%, transparent);
+  --doc-sidebar-active-hover-bg: color-mix(in srgb, var(--ui-primary) 11%, transparent);
   border-right: 1px solid var(--ui-border-muted, #e2e8f0);
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--ui-primary) 4%, transparent), transparent 54%),
-    color-mix(in srgb, var(--ui-bg, #fff) 96%, #f8fafc);
   padding: 0 !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -60,11 +57,8 @@ header>div {
 }
 
 html.dark .doc-sidebar-nav {
-  --doc-sidebar-active-bg: color-mix(in srgb, var(--ui-primary) 18%, transparent);
-  --doc-sidebar-active-hover-bg: color-mix(in srgb, var(--ui-primary) 24%, transparent);
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--ui-primary) 8%, transparent), transparent 58%),
-    color-mix(in srgb, var(--ui-bg, #02020b) 94%, #0f172a);
+  --doc-sidebar-active-bg: color-mix(in srgb, var(--ui-primary) 14%, transparent);
+  --doc-sidebar-active-hover-bg: color-mix(in srgb, var(--ui-primary) 18%, transparent);
 }
 
 @media (min-width: 1024px) {
@@ -121,7 +115,6 @@ html.dark .doc-sidebar-nav {
 
 .doc-sidebar-nav :where(a, button).text-primary::before {
   background: var(--doc-sidebar-active-bg) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ui-primary) 12%, transparent);
 }
 
 .doc-sidebar-nav :where(a, button).text-primary:hover::before {
@@ -129,10 +122,7 @@ html.dark .doc-sidebar-nav {
 }
 
 .doc-sidebar-nav :where(a, button).text-primary::after {
-  width: 3px !important;
-  inset-block: 0.42rem !important;
-  inset-inline-start: 0 !important;
-  border-radius: 999px !important;
+  display: none !important;
 }
 
 .doc-sidebar-nav :where(a, button) .iconify {
@@ -191,13 +181,13 @@ html.dark .doc-sidebar-nav > div > nav > ul > li > button {
 /* 二级可折叠项像目录分组，具体页面项像可点击导航。 */
 .doc-sidebar-nav > div > nav > ul > li li > button {
   margin-top: 0.45rem;
-  color: rgb(30 41 59) !important;
+  color: rgb(71 85 105) !important;
   font-size: 0.875rem !important;
-  font-weight: 660 !important;
+  font-weight: 560 !important;
 }
 
 html.dark .doc-sidebar-nav > div > nav > ul > li li > button {
-  color: rgb(226 232 240) !important;
+  color: rgb(203 213 225) !important;
 }
 
 .doc-sidebar-nav > div > nav > ul > li li > button .iconify {
