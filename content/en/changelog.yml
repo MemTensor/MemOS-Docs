@@ -1,4 +1,26 @@
 versions:
+  - name: v2.0.14
+    date: 2026-04-24
+    changedInfo:
+      New Features:
+        - type: Code Architecture
+          changedInfo:
+            - Introduced lightweight plugin mechanism
+      Improvements:
+        - type: Scheduler Module
+          changedInfo:
+            - Optimized scheduling tasks
+      Bug Fixes:
+        - type: PolarDB Database
+          changedInfo:
+            - Fixed metadata nesting bug in PolarDB get_node and get_nodes
+        - type: MemReader Component
+          changedInfo:
+            - Fixed memreader chunking bug
+        - type: Memory Version Management
+          changedInfo:
+            - Fixed memory version bug where chunks from the same memory source text would affect each other
+
   - name: v2.0.0
     date: 2025-12-24
     changedInfo:

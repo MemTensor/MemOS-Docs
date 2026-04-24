@@ -1,4 +1,26 @@
 versions:
+  - name: v2.0.14
+    date: 2026-04-24
+    changedInfo:
+      New Features:
+        - type: 代码架构
+          changedInfo:
+            - 引入轻量级插件机制
+      Improvements:
+        - type: 调度模块
+          changedInfo:
+            - 调度任务优化
+      Bug Fixes:
+        - type: PolarDB数据库
+          changedInfo:
+            - 修复polardb get_node和get_nodes的metadata嵌套bug
+        - type: MemReader组件
+          changedInfo:
+            - 修复memreader chunking bug
+        - type: 记忆版本管理
+          changedInfo:
+            - 修复记忆版本对同一段memory原文分出的chunks之间也会生效的bug
+
   - name: v2.0.0
     date: 2025-12-24
     changedInfo:
