@@ -41,38 +41,144 @@ header>div {
 }
 
 .doc-sidebar-nav {
+  --doc-sidebar-row-height: 2rem;
+  --doc-sidebar-active-bg: color-mix(in srgb, var(--ui-primary) 10%, transparent);
+  --doc-sidebar-active-hover-bg: color-mix(in srgb, var(--ui-primary) 14%, transparent);
   border-right: 1px solid var(--ui-border-muted, #e2e8f0);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--ui-primary) 4%, transparent), transparent 54%),
+    color-mix(in srgb, var(--ui-bg, #fff) 96%, #f8fafc);
   padding: 0 !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   padding-left: 0 !important;
-  padding-right: 20px !important;
+  padding-right: 18px !important;
   padding-inline-start: 0 !important;
-  padding-inline-end: 20px !important;
+  padding-inline-end: 18px !important;
   margin: 0 !important;
   margin-inline-start: 0 !important;
+}
+
+html.dark .doc-sidebar-nav {
+  --doc-sidebar-active-bg: color-mix(in srgb, var(--ui-primary) 18%, transparent);
+  --doc-sidebar-active-hover-bg: color-mix(in srgb, var(--ui-primary) 24%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--ui-primary) 8%, transparent), transparent 58%),
+    color-mix(in srgb, var(--ui-bg, #02020b) 94%, #0f172a);
 }
 
 @media (min-width: 1024px) {
 
   .doc-sidebar-nav > div {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding-top: 1.35rem;
+    padding-bottom: 1.75rem;
   }
 
   .doc-page-grid {
-    gap: 2rem !important;
+    gap: 2.1rem !important;
   }
 }
 
+.doc-sidebar-nav nav > ul {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.doc-sidebar-nav ul ul {
+  margin-inline-start: 0 !important;
+  border-inline-start: 0 !important;
+  padding-inline-start: 0 !important;
+}
+
+.doc-sidebar-nav li {
+  margin-inline-start: 0 !important;
+  padding-inline-start: 0 !important;
+}
+
+.doc-sidebar-nav :where(a, button) {
+  min-height: var(--doc-sidebar-row-height);
+  border-radius: 0.5rem !important;
+  gap: 0.5rem !important;
+  padding-top: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+  padding-inline-start: 0.625rem !important;
+  padding-inline-end: 0.625rem !important;
+}
+
+.doc-sidebar-nav :where(a, button)::before {
+  inset: 0 !important;
+  border-radius: 0.5rem !important;
+}
+
+.doc-sidebar-nav :where(a, button):hover::before {
+  background: color-mix(in srgb, var(--ui-primary) 7%, transparent) !important;
+}
+
+.doc-sidebar-nav :where(a, button).text-primary {
+  color: var(--ui-primary) !important;
+  font-weight: 650 !important;
+}
+
+.doc-sidebar-nav :where(a, button).text-primary::before {
+  background: var(--doc-sidebar-active-bg) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ui-primary) 12%, transparent);
+}
+
+.doc-sidebar-nav :where(a, button).text-primary:hover::before {
+  background: var(--doc-sidebar-active-hover-bg) !important;
+}
+
+.doc-sidebar-nav :where(a, button).text-primary::after {
+  width: 3px !important;
+  inset-block: 0.42rem !important;
+  inset-inline-start: 0 !important;
+  border-radius: 999px !important;
+}
+
+.doc-sidebar-nav :where(a, button) .iconify {
+  color: rgb(100 116 139);
+  opacity: 0.86;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+html.dark .doc-sidebar-nav :where(a, button) .iconify {
+  color: rgb(148 163 184);
+}
+
+.doc-sidebar-nav :where(a, button):hover .iconify,
+.doc-sidebar-nav :where(a, button).text-primary .iconify {
+  color: currentColor;
+  opacity: 1;
+}
+
 /* 顶层大标题：隐藏折叠 icon、禁止折叠、始终展开 */
-.doc-sidebar-nav > div > nav > ul > li > button .iconify {
+.doc-sidebar-nav > div > nav > ul > li > button {
+  min-height: 1.65rem;
+  margin-top: 1.25rem;
+  padding-inline-start: 0.125rem !important;
+  padding-inline-end: 0.125rem !important;
+  pointer-events: none;
+  cursor: default;
+  color: rgb(15 23 42) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 760 !important;
+  letter-spacing: 0 !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li:first-child > button {
+  margin-top: 0;
+}
+
+html.dark .doc-sidebar-nav > div > nav > ul > li > button {
+  color: rgb(226 232 240) !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li > button::before {
   display: none !important;
 }
 
-.doc-sidebar-nav > div > nav > ul > li > button {
-  pointer-events: none;
-  cursor: default;
+.doc-sidebar-nav > div > nav > ul > li > button .iconify {
+  display: none !important;
 }
 
 .doc-sidebar-nav > div > nav > ul > li > [data-state="closed"] {
@@ -82,32 +188,25 @@ header>div {
   --reka-accordion-content-height: auto !important;
 }
 
-/* 二级列表与大标题对齐（去掉缩进和左边框） */
-.doc-sidebar-nav > div > nav > ul > li > div > ul {
-  margin-inline-start: 0 !important;
-  border-inline-start: none !important;
-  padding-inline-start: 0 !important;
+/* 二级可折叠项像目录分组，具体页面项像可点击导航。 */
+.doc-sidebar-nav > div > nav > ul > li li > button {
+  margin-top: 0.45rem;
+  color: rgb(30 41 59) !important;
+  font-size: 0.875rem !important;
+  font-weight: 660 !important;
 }
 
-/* hover 背景四角圆角：给 before 伪元素留出圆角空间 */
-.doc-sidebar-nav :where(a, button)::before {
-  left: 4px !important;
-  right: 4px !important;
-  inset-inline-start: 4px !important;
-  inset-inline-end: 4px !important;
-  border-radius: 0.375rem !important;
+html.dark .doc-sidebar-nav > div > nav > ul > li li > button {
+  color: rgb(226 232 240) !important;
 }
 
-/* 副标题折叠 icon：缩小 + 淡色 */
-.doc-sidebar-nav > div > nav > ul > li li button .iconify {
-  width: 14px;
-  height: 14px;
-  opacity: 0.3;
-  transition: opacity 0.15s;
+.doc-sidebar-nav > div > nav > ul > li li > button .iconify {
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
-.doc-sidebar-nav > div > nav > ul > li li button:hover .iconify {
-  opacity: 0.5;
+.doc-sidebar-nav > div > nav > ul > li li li :where(a, button) {
+  padding-inline-start: 1.85rem !important;
 }
 
 /* 页面描述文字加深 */
