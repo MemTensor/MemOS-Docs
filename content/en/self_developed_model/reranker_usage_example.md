@@ -3,7 +3,7 @@ title: Usage Examples
 desc: Rerank memory relevance based on the self-developed memos-reranker small model.
 ---
 
-MemOS provides a memory reranking API based on the **memos-reranker** small model (base model uses qwen-reranker post-training). Developers can directly pass a user query and a list of candidate memories to complete memory relevance reranking in one call.
+MemOS provides a memory reranking API based on the **memos-reranker** model series (including 0.6B lightweight and 4B enhanced versions, base model uses qwen-reranker post-training). Developers can directly pass a user query and a list of candidate memories to complete memory relevance reranking in one call.
 
 ::callout{.rerank-usage-api-hint color="warning"}
 Request/response fields and OpenAPI: [Rerank Memory](/en/api_docs/core/rerank).<br />
@@ -48,6 +48,7 @@ os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
+    # Available models: memos-reranker-0.6b (lightweight) or memos-reranker-4b (enhanced)
     "model": "memos-reranker-0.6b",
     "query": "Any liquor recommendations for me?",
     "documents": [
@@ -75,6 +76,7 @@ os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
+    # Available models: memos-reranker-0.6b (lightweight) or memos-reranker-4b (enhanced)
     "model": "memos-reranker-0.6b",
     "query": "What are the user's hobbies?",
     "documents": [
@@ -109,7 +111,7 @@ print(f"result: {res.json()}")
 | --- | --- | --- |
 | Core behavior | Precision ranking of candidate docs, outputting relevance scores | Semantic similarity recall, fast coarse filtering |
 | Storage | ❌ Does not write to the MemOS memory store | ❌ Does not write to the MemOS memory store |
-| Model | 0.6B small model, low latency | Embedding model |
+| Model | 0.6B/4B reranking models | Embedding model |
 | Precision | ✅ High (cross-encoding, query-doc interaction) | General (dual-tower encoding, independent representation) |
 | Speed | Slower (requires pair-by-pair computation) | ✅ Fast (vector approximate retrieval) |
 | Async | Not supported | Not supported |

@@ -2544,7 +2544,11 @@
           "model": {
             "type": "string",
             "title": "Model",
-            "description": "Model name to use. E.g. memos-reranker-0.6b."
+            "description": "Model name to use.",
+            "enum": [
+              "memos-reranker-0.6b",
+              "memos-reranker-4b"
+            ]
           },
           "query": {
             "type": "string",

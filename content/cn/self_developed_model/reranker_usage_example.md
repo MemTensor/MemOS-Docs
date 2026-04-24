@@ -1,9 +1,9 @@
 ---
 title: 使用示例
-desc: 基于自研 memos-reranker 小模型，提供记忆相关性重排能力。
+desc: 基于自研 memos-reranker 模型，提供记忆相关性重排能力。
 ---
 
-MemOS 提供记忆重排接口，基于 **memos-reranker** 小模型（基础模型采用 qwen-reranker 后训练），开发者可直接传入用户查询与候选记忆列表，一键完成记忆相关性重排。
+MemOS 提供记忆重排接口，基于 **memos-reranker** 系列模型（包括 0.6B 轻量版和 4B 增强版，基础模型采用 qwen-reranker 后训练），开发者可直接传入用户查询与候选记忆列表，一键完成记忆相关性重排。
 
 ::callout{.rerank-usage-api-hint color="warning"}
 接口字段与 OpenAPI 说明：[Rerank Memory](/cn/api_docs/core/rerank)。<br />
@@ -48,6 +48,7 @@ os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
+    # 可选模型：memos-reranker-0.6b（轻量版）或 memos-reranker-4b（增强版）
     "model": "memos-reranker-0.6b",
     "query": "有什么酒可以推荐给我呢",
     "documents": [
@@ -75,6 +76,7 @@ os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
+    # 可选模型：memos-reranker-0.6b（轻量版）或 memos-reranker-4b（增强版）
     "model": "memos-reranker-0.6b",
     "query": "用户有什么兴趣爱好",
     "documents": [
@@ -109,7 +111,7 @@ print(f"result: {res.json()}")
 | --- | --- | --- |
 | 核心能力 | 对候选文档精排，输出相关性分数 | 语义相似度召回，快速粗筛 |
 | 记忆存储 | ❌ 不写入 MemOS 记忆库 | ❌ 不写入 MemOS 记忆库 |
-| 推理模型 | 0.6B 小模型，低延迟 | Embedding 模型 |
+| 推理模型 | 0.6B/4B 重排模型 | Embedding 模型 |
 | 精度 | ✅ 高（交叉编码，query-doc 交互） | 一般（双塔编码，独立表征） |
 | 速度 | 较慢（需逐对计算） | ✅ 快（向量近似检索） |
 | 异步模式 | 暂不支持 | 暂不支持 |

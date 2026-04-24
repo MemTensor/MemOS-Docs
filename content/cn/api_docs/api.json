@@ -2583,7 +2583,11 @@
           "model": {
             "type": "string",
             "title": "Model",
-            "description": "模型名称，固定为 memos-reranker-0.6b。"
+            "description": "模型名称。",
+            "enum": [
+              "memos-reranker-0.6b",
+              "memos-reranker-4b"
+            ]
           },
           "query": {
             "type": "string",
