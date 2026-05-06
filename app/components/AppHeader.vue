@@ -25,7 +25,7 @@ const localizedMenus = computed(() => {
   return menus.map(m => ({ ...m, to: localePath(m.to) }))
 })
 
-const dashboardUrl = computed(() => useDashboardUrl('/quickstart/', locale.value))
+const dashboardUrl = computed(() => useDashboardLoginUrl('/quickstart/', locale.value))
 </script>
 
 <template>

@@ -43,7 +43,7 @@ const columns = computed(() => [
     children: [
       {
         label: t('footer.memosCloud'),
-        to: useDashboardUrl('/quickstart/', locale.value),
+        to: useDashboardLoginUrl('/quickstart/', locale.value),
         target: '_blank'
       },
       {
