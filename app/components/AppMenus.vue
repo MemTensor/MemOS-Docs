@@ -7,6 +7,9 @@ const props = defineProps<{
     to: string
   }>
 }>()
+const emit = defineEmits<{
+  visibleChange: [visible: boolean]
+}>()
 
 const { defaultLocale, locale } = useI18n()
 const localeRoute = useLocaleRoute()
@@ -15,7 +18,8 @@ const normalizedPath = computed(() => switchLocalePath(defaultLocale))
 
 const active = ref<string>('0')
 const wrapRef = ref<HTMLElement | null>(null)
-const canShow = ref(true)
+const canShow = ref(false)
+const isMeasuring = ref(true)
 /** tab 栏完整展示所需的最小宽度，首次渲染后锁定 */
 let naturalWidth = 0
 
@@ -24,20 +28,43 @@ function captureNaturalWidth() {
   if (!root) return
   const list = root.querySelector<HTMLElement>('[role="tablist"]')
   if (!list) return
-  naturalWidth = list.scrollWidth
+  const triggers = Array.from(list.querySelectorAll<HTMLElement>('[role="tab"]'))
+  const triggersWidth = triggers.reduce((total, trigger) => {
+    const style = window.getComputedStyle(trigger)
+    const marginX = Number.parseFloat(style.marginLeft || '0') + Number.parseFloat(style.marginRight || '0')
+
+    return total + trigger.getBoundingClientRect().width + marginX
+  }, 0)
+
+  naturalWidth = Math.ceil(triggersWidth || list.scrollWidth)
 }
 
 function measureFit() {
   if (!naturalWidth) return
-  canShow.value = window.innerWidth >= naturalWidth
+  const root = wrapRef.value
+  const list = root?.querySelector<HTMLElement>('[role="tablist"]')
+  const availableWidth = root?.parentElement?.getBoundingClientRect().width || window.innerWidth
+  const listRect = list?.getBoundingClientRect()
+  const triggers = list ? Array.from(list.querySelectorAll<HTMLElement>('[role="tab"]')) : []
+  const firstTriggerRect = triggers[0]?.getBoundingClientRect()
+  const lastTriggerRect = triggers[triggers.length - 1]?.getBoundingClientRect()
+  const visuallyOverflowing = !!(listRect && firstTriggerRect && lastTriggerRect && (
+    firstTriggerRect.left < listRect.left || lastTriggerRect.right > listRect.right
+  ))
+  const safetyGap = locale.value === 'en' ? 96 : 8
+
+  canShow.value = availableWidth >= naturalWidth + safetyGap && !visuallyOverflowing
+  emit('visibleChange', canShow.value)
 }
 
 function recaptureAndMeasure() {
+  isMeasuring.value = true
   canShow.value = true
   nextTick(() => {
     requestAnimationFrame(() => {
       captureNaturalWidth()
       measureFit()
+      isMeasuring.value = false
     })
   })
 }
@@ -68,6 +95,7 @@ onMounted(() => {
     requestAnimationFrame(() => {
       captureNaturalWidth()
       measureFit()
+      isMeasuring.value = false
     })
   })
 })
@@ -85,8 +113,9 @@ function onChange(index: string | number) {
 <template>
   <div
     ref="wrapRef"
-    v-show="canShow"
+    v-show="canShow || isMeasuring"
     class="min-w-0"
+    :class="isMeasuring ? 'pointer-events-none absolute left-0 top-0 w-full opacity-0' : ''"
   >
     <UTabs
       v-model="active"

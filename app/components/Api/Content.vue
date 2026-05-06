@@ -18,7 +18,7 @@ const normalizeName = computed(() => {
 </script>
 
 <template>
-  <div class="relative box-border flex w-full min-w-0 flex-col xl:mx-[18.4062px] xl:w-[520px] xl:min-w-[520px] xl:max-w-[520px] xl:flex-none xl:shrink-0">
+  <div class="relative box-border flex w-full min-w-0 flex-col xl:min-w-[400px] xl:max-w-[640px] xl:flex-1">
     <div>
       <header class="relative flex flex-col items-start">
         <!-- 不用 div：全局 main.css 里 header>div 会强制左右 10px padding，章节标题需与 h1 左对齐 -->

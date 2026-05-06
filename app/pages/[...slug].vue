@@ -174,7 +174,7 @@ useHead({
             />
           </template>
         </ApiMain>
-        <div class="xl:mx-[18.4062px] xl:w-[520px] xl:max-w-[520px]">
+        <div class="w-full min-w-0 xl:max-w-[640px]">
           <USeparator
             v-if="surround?.length"
             :ui="{

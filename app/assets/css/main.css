@@ -134,8 +134,16 @@ html.dark .doc-sidebar-nav {
     grid-template-columns: 280px minmax(0, 1fr) 280px !important;
   }
 
+  .doc-api-page-grid {
+    grid-template-columns: 280px minmax(0, 1fr) !important;
+  }
+
   .doc-page-grid > nav {
     display: block !important;
+  }
+
+  .doc-api-page-grid > nav {
+    display: none !important;
   }
 }
 
