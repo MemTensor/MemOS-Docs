@@ -107,21 +107,42 @@ const normalizeName = computed(() => {
 
 <style lang="css" scoped>
 @media (min-width: 1280px) {
+  .request-display :deep(style) {
+    display: none !important;
+  }
+
+  .request-display :deep([role="tablist"]),
+  :deep(.code-block > div:first-child) {
+    flex: 0 0 auto;
+  }
+
+  .request-display :deep(button[role="tab"]),
+  :deep(.code-block > div:first-child button) {
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+  }
+
   :deep(.request-display),
   :deep(.code-block) {
     margin-top: 0.75rem !important;
     margin-bottom: 0.75rem !important;
   }
 
-  :deep(.request-display pre[role="tabpanel"]),
+  :deep(.code-block) {
+    width: 100% !important;
+  }
+
+  :deep(.request-display pre[role="tabpanel"]:not([hidden])),
   :deep(.code-block > div:last-child) {
-    max-height: clamp(10rem, calc((100vh - var(--ui-header-height, 0px) - 12rem) / 2), 13.5rem);
+    max-height: calc((100vh - var(--ui-header-height, 0px) - 3rem) / 2);
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
 
-  :deep(.request-display pre[role="tabpanel"]::-webkit-scrollbar),
+  :deep(.request-display pre[role="tabpanel"]:not([hidden])::-webkit-scrollbar),
   :deep(.code-block > div:last-child::-webkit-scrollbar) {
     display: none;
   }
