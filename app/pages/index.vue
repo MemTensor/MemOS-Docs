@@ -85,7 +85,7 @@ const items = computed(() => localeItems.value.map((item, index) => ({
               class="relative z-10 size-10 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light"
             />
           </div>
-          <div class="flex min-h-0 flex-1 flex-col justify-end gap-1 px-4 py-3.5">
+          <div class="flex min-h-0 flex-1 flex-col justify-start gap-1 px-4 py-3.5">
             <div class="text-slate-900 dark:text-slate-50 text-sm font-bold lg:text-base">
               {{ item.title }}
             </div>
