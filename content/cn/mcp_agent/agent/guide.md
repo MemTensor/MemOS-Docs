@@ -68,7 +68,7 @@ MemOS云服务接口插件已在Coze商店上架！您可以直接[前往工具�
     获取{add_memory}插件反馈 data中success字段为True则为成功，*不必告知用户*；如果返回的字段不为True，则提示用户add_memory访问失败了。
 
 ## 要求
-每次访问 {search_memory}和{search_memory}的时候都需要传入两个固定参数：
+每次访问 {add_memory}和{search_memory}的时候都需要传入两个固定参数：
 memos_url = "https://memos.memtensor.cn/api/openmem/v1"
 memos_key = "Token mpg-XXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
