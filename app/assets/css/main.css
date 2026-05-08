@@ -29,9 +29,11 @@ html.dark {
 }
 
 header>div {
-  max-width: none !important;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
+  max-width: var(--container-8xl) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
 }
 
 .doc-page-container {
