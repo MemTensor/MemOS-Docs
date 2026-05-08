@@ -95,7 +95,7 @@
     "/search/memory": {
       "post": {
         "summary": "Search Memory",
-        "description": "This API allows you to query a user’s memory and returns the fragments most relevant to the input. These can serve as references for the model when generating responses. As shown in the examples bellow, You can retrieve memory in real time during a user’s conversation with the AI, or perform a global search across their entire memory to create user profiles or support personalized recommendations, improving both dialogue coherence and personalization.<br><br>In the latest update, in addition to “Fact Memory”, the system now supports “Preference Memory”, enabling LLM to respond in a way that better understands the user.",
+        "description": "This API queries a user’s memory and returns the fragments most relevant to the input for the Agent to use. Returned memory can include Fact Memory, Preference Memory, Tool Memory, and Skill. Skills can be auto-generated from user conversations or uploaded as custom Skill files in a Knowledge Base.",
         "operationId": "search_memory",
         "requestBody": {
           "required": true,
@@ -105,9 +105,40 @@
                 "$ref": "#/components/schemas/SearchMemoryRequest"
               },
               "example": {
-                "query": "Any suggestions for where to go during National Day?",
+                "query": "Summarize my memories related to reading this year",
                 "user_id": "memos_user_123",
-                "conversation_id": "0928"
+                "conversation_id": "0928",
+                "knowledgebase_ids": [
+                  "kb_xxx"
+                ],
+                "filter": {
+                  "knowledgebase": {
+                    "and": [
+                      {
+                        "tags": {
+                          "contains": "reading"
+                        }
+                      },
+                      {
+                        "create_time": {
+                          "gte": "2025-01-01"
+                        }
+                      },
+                      {
+                        "create_time": {
+                          "lte": "2025-12-31"
+                        }
+                      }
+                    ]
+                  },
+                  "user": {
+                    "and": [
+                      {
+                        "scene": "chat"
+                      }
+                    ]
+                  }
+                }
               }
             }
           }
@@ -460,7 +491,7 @@
     "/add/knowledgebase-file": {
       "post": {
         "summary": "Create Knowledgebase File",
-        "description": "Upload a document to a specified knowledgebase.",
+        "description": "Upload files to a specified Knowledge Base. By default, files are uploaded as documents. When file[].type is skill, upload a Markdown Skill file or ZIP Skill package.",
         "operationId": "add_knowledgebase-file",
         "requestBody": {
           "required": true,
@@ -489,7 +520,7 @@
     "/get/knowledgebase-file": {
       "post": {
         "summary": "Get Knowledgebase File",
-        "description": "Get information about a specified document.",
+        "description": "Get file information in one of two ways: pass file_ids to retrieve specific file details, or pass knowledgebase_id to list files under a Knowledge Base. Choose only one mode; passing both knowledgebase_id and file_ids returns an error.",
         "operationId": "get_knowledgebase-file",
         "requestBody": {
           "required": true,
@@ -518,7 +549,7 @@
     "/delete/knowledgebase-file": {
       "post": {
         "summary": "Delete Knowledgebase File",
-        "description": "Delete a document from a specified knowledgebase.",
+        "description": "Delete files from a specified Knowledge Base. When a Skill file is deleted, the associated Skill is deleted as well.",
         "operationId": "delete_knowledgebase-file",
         "requestBody": {
           "required": true,
@@ -590,7 +621,7 @@
               "type": "string"
             },
             "title": "Knowledgebase IDs",
-            "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched.Pass specific Knowledgebase IDs to search within that designated repository; pass \"all\" to search across all associated knowledgebases within the project."
+            "description": "Specifies the scope of Knowledge Bases accessible for the current search. Defaults to empty, meaning no Knowledge Bases are searched. Pass specific Knowledge Base IDs to search ordinary documents and uploaded Skills in those Knowledge Bases; pass \"all\" to search across all associated Knowledge Bases within the project."
           },
           "memory_limit_number": {
             "type": "integer",
@@ -1149,8 +1180,8 @@
           "filter": {
             "type": "object",
             "title": "Filter",
-            "description": "Filter conditions, used to precisely limit the memory scope before retrieval.Available fields include: \"agent_id\", \"app_id\", \"create_time\", \"update_time\", and specific fields in \"info\". Supports logical operators (and, or) and comparison operators (gte, lte, gt, lt). For the \"info\" field, supports filtering by \"business_type\", \"biz_id\", \"scene\", and other custom fields.",
-            "example": "{\"and\": [{\"create_time\":{\"gte\":\"...\"}}]}"
+            "description": "Memory filter conditions used to precisely limit candidate memories before retrieval. Supports two formats: pass a global filter condition composed of and/or directly, or pass source-specific filters under knowledgebase, user, and public. Available fields include agent_id, app_id, tags, create_time, update_time, and custom fields written through info when adding messages, such as business_type, biz_id, and scene. Fields in info are used directly by field name in filter, for example {\"scene\":\"chat\"}; do not wrap them in another info object. Supports comparison operators gte, lte, gt, lt, and tags.contains.",
+            "example": "{\"knowledgebase\":{\"and\":[{\"tags\":{\"contains\":\"reading\"}},{\"create_time\":{\"gte\":\"2025-01-01\"}},{\"create_time\":{\"lte\":\"2025-12-31\"}}]},\"user\":{\"and\":[{\"scene\":\"chat\"}]}}"
           },
           "knowledgebase_ids": {
             "type": "array",
@@ -1195,11 +1226,12 @@
           "include_skill": {
             "type": "boolean",
             "title": "Include Skill",
-            "description": "Whether to enable Skill recall. When enabled, the system will intelligently recall memories related to tools based on the query content. Default is disabled if not provided."
+            "description": "Whether to enable Skill recall. When enabled, the system recalls relevant Skills based on the query, including personalized Skills auto-generated from user conversations and custom Skills uploaded within the knowledgebase_ids scope. Default is disabled if not provided."
           },
           "skill_limit_number": {
-            "type": "number",
-            "title": "Include Skill",
+            "type": "integer",
+            "format": "int32",
+            "title": "Skill Limit Number",
             "description": "Limits the number of returned Skills, controlling the count of recalled skills. Effective only when `include_skill=true`. Default is 6 if not provided, max is 25."
           },
          "relativity": {
@@ -1274,7 +1306,7 @@
           "skill_detail_list": {
             "type": "array",
             "title": "Skill Detail List",
-            "description": "List of skill details returned.",
+            "description": "List of Skill details returned when include_skill is enabled. Sources include Skills auto-generated from user conversations and custom Skills uploaded to Knowledge Bases.",
             "items": {
               "$ref": "#/components/schemas/SkillDetail"
             }
@@ -1583,7 +1615,7 @@
           "skill_value": {
             "type": "object",
             "title": "Skill Value",
-            "description": "The specific content of the Skill.",
+            "description": "Structured Skill content. You can convert it to a string and inject it into the Agent prompt.",
             "items": {
               "$ref": "#/components/schemas/SkillValue"
             }
@@ -1591,7 +1623,7 @@
           "skill_url": {
             "type": "string",
             "title": "Skill Url",
-            "description": "The download link for the Skill, downloaded as reusable skill implementations or configuration files."
+            "description": "Download link for the Skill. A Markdown Skill can be downloaded as SKILL.md; a ZIP Skill package can include SKILL.md, scripts, references, assets, and other attachments."
           },
           "skill_type": {
             "type": "string",
@@ -2244,19 +2276,29 @@
           "file": {
             "type": "array",
             "title": "File",
-            "description": "List of documents to upload",
+            "description": "List of files to upload. Ordinary documents follow the document parsing pipeline; Skill files follow the Skill validation and parsing pipeline.",
             "items": {
               "type": "object",
               "properties": {
                 "name": {
                   "type": "string",
                   "title": "Name",
-                  "description": "File name."
+                  "description": "File name. Recommended when uploading Base64 content; optional when uploading by URL."
+                },
+                "type": {
+                  "type": "string",
+                  "title": "Type",
+                  "enum": [
+                    "document",
+                    "skill"
+                  ],
+                  "default": "document",
+                  "description": "Uploaded file type. document means ordinary Knowledge Base document; skill means Skill file, supporting a .md single file or .zip Skill package."
                 },
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "The file content input supports URL or Base64 encoding, and the supported document types include PDF, DOCX, DOC, TXT, JSON, MD and XML.Supports uploading up to 20 documents at a time; each document must be no larger than 100 MB, 500 pages, or 20,000 tokens."
+                  "description": "File content. Supports URL or Base64 encoding. For supported formats, size limits, and quantity limits for ordinary documents and Skill files, see <a href=\"/memos_cloud/features/advanced/knowledge_base\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Knowledge Base requirements</a>."
                 }
               }
             }
@@ -2277,33 +2319,46 @@
             "description": "API status code. See <a href=\"/api_docs/help/error_codes\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Error Code</a> for details."
           },
           "data": {
-            "type": "object",
+            "type": "array",
             "title": "Data",
-            "properties": {
-              "id": {
-                "type": "string",
-                "title": "ID",
-                "description": "Document ID"
-              },
-              "name": {
-                "type": "string",
-                "title": "Name",
-                "description": "Document Name"
-              },
-              "sizeMB": {
-                "type": "integer",
-                "title": "Size MB",
-                "description": "Document Size"
-              },
-              "status": {
-                "type": "string",
-                "title": "Status",
-                "description": "Document processing status",
-                "enum":[
-                  "running",
-                  "completed",
-                  "failed"
-                ]
+            "description": "Processing results for uploaded files.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "title": "ID",
+                  "description": "File ID"
+                },
+                "type": {
+                  "type": "string",
+                  "title": "Type",
+                  "enum": [
+                    "document",
+                    "skill"
+                  ],
+                  "description": "File type. document means ordinary document; skill means Skill file."
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Name",
+                  "description": "File name"
+                },
+                "sizeMB": {
+                  "type": "number",
+                  "title": "Size MB",
+                  "description": "File size in MB"
+                },
+                "status": {
+                  "type": "string",
+                  "title": "Status",
+                  "description": "File processing status",
+                  "enum":[
+                    "running",
+                    "completed",
+                    "failed"
+                  ]
+                }
               }
             }
           },
@@ -2317,17 +2372,43 @@
       },
       "GetFileRequest": {
         "type": "object",
-        "required": [
-          "file_ids"
-        ],
+        "description": "Supports two query modes: pass file_ids to retrieve specific file details; or pass knowledgebase_id to list files under a Knowledge Base, optionally with type, page, and page_size for filtering and pagination. Choose exactly one mode. Passing both knowledgebase_id and file_ids returns an error; passing neither also returns an error.",
         "properties": {
+          "knowledgebase_id": {
+            "type": "string",
+            "title": "Knowledgebase ID",
+            "description": "Query mode 1: target Knowledge Base ID. Returns files under the Knowledge Base and can be used with type, page, and page_size. Do not pass it together with file_ids."
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "enum": [
+              "document",
+              "skill"
+            ],
+            "description": "File type filter, effective only when querying by knowledgebase_id. document returns only ordinary documents; skill returns only Skill files; omit this field to return all files. Do not use it with the file_ids query mode."
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "title": "Page",
+            "description": "Page number, effective only when querying by knowledgebase_id. Do not use it with the file_ids query mode.",
+            "default": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "format": "int32",
+            "title": "Page Size",
+            "description": "Items per page, effective only when querying by knowledgebase_id. Do not use it with the file_ids query mode.",
+            "default": 20
+          },
           "file_ids": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "title": "File IDs",
-            "description": "List of file IDs"
+            "description": "Query mode 2: file ID list. Returns details for the specified files. When using this mode, pass only file_ids and do not pass knowledgebase_id, type, page, or page_size."
           }
         },
         "title": "GetFileRequest"
@@ -2348,6 +2429,24 @@
             "type": "object",
             "title": "Data",
             "properties": {
+              "total": {
+                "type": "integer",
+                "format": "int32",
+                "title": "Total",
+                "description": "Total number of matched files"
+              },
+              "page": {
+                "type": "integer",
+                "format": "int32",
+                "title": "Page",
+                "description": "Current page number"
+              },
+              "page_size": {
+                "type": "integer",
+                "format": "int32",
+                "title": "Page Size",
+                "description": "Items per page"
+              },
               "file_detail_list": {
                 "type": "array",
                 "items": {
@@ -2356,22 +2455,31 @@
                     "id": {
                       "type": "string",
                       "title": "ID",
-                      "description": "Document ID"
+                      "description": "File ID"
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Type",
+                      "enum": [
+                        "document",
+                        "skill"
+                      ],
+                      "description": "File type. document means ordinary document; skill means Skill file."
                     },
                     "name": {
                       "type": "string",
                       "title": "Name",
-                      "description": "Document Name"
+                      "description": "File name"
                     },
                     "size": {
                       "type": "string",
                       "title": "Size",
-                      "description": "Document Size"
+                      "description": "File size"
                     },
                     "status": {
                       "type": "string",
                       "title": "Status",
-                      "description": "Document processing status",
+                      "description": "File processing status",
                       "enum":[
                         "running",
                         "completed",
@@ -2404,7 +2512,7 @@
               "type": "string"
             },
             "title": "File IDs",
-            "description": "List of document IDs to delete"
+            "description": "List of file IDs to delete. You can pass ordinary document IDs or Skill file IDs."
           }
         },
         "title": "DeleteFileRequest"

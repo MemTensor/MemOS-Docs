@@ -6,52 +6,24 @@
 @theme static {
   --container-8xl: 90rem;
   --font-sans: 'Public Sans', sans-serif;
-  --color-linear-primary: #4044ED;
-  --color-primary-light: #AA75EF;
+  --color-linear-primary: #1D4ED8;
+  --color-primary-light: #01C6FA;
   --color-copyright: #64748B;
 }
 
 :root {
   --ui-container: var(--container-8xl);
   --ui-max-container: 1240px;
-  --ui-topbar-height: 60px;
-  --ui-header-height: 100px;
-  --ui-primary: #4044ED;
-}
-
-html.dark {
+  --ui-topbar-height: 66px;
+  --ui-header-height: 136px;
   --ui-bg: #02020b;
   --ui-bg-muted: #0e1219;
   --ui-border-muted: #222a35;
-  --ui-primary: #7275F7;
-  --color-linear-primary: #5D60F3;
-  --color-primary-light: #9F80F5;
-}
-
-header {
-  border-bottom: 0 !important;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  position: static !important;
-}
-
-.app-header-wrapper {
-  margin-left: 20px !important;
-  margin-right: 20px !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
-}
-
-.header-bottom-line {
-  position: relative;
-  left: calc(50% - 50vw);
-  width: 100vw;
+  --ui-primary: #5478DC;
 }
 
 header>div {
-  max-width: var(--container-8xl) !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  max-width: none !important;
   padding-left: 10px !important;
   padding-right: 10px !important;
 }
@@ -426,6 +398,12 @@ html.dark .doc-page-header h1 {
 }
 
 .doc-page-body {
+  --doc-space-2xs: 0.3rem;
+  --doc-space-xs: 0.45rem;
+  --doc-space-sm: 0.7rem;
+  --doc-space-md: 0.75rem;
+  --doc-space-lg: 1.45rem;
+  --doc-space-xl: 2.6rem;
   color: rgb(51 65 85);
 }
 
@@ -434,8 +412,8 @@ html.dark .doc-page-body {
 }
 
 .doc-page-body h2 {
-  margin-top: 3.25rem;
-  margin-bottom: 1.1rem;
+  margin-top: var(--doc-space-xl);
+  margin-bottom: 0;
   font-size: 1.35rem;
   line-height: 1.28;
   letter-spacing: -0.015em;
@@ -448,11 +426,11 @@ html.dark .doc-page-body h2 {
 }
 
 .doc-page-body h3 {
-  margin-top: 2.1rem;
-  margin-bottom: 0.8rem;
-  font-size: 1.05rem;
-  line-height: 1.45;
-  font-weight: 630;
+  margin-top: 2rem;
+  margin-bottom: 0;
+  font-size: 1.18rem;
+  line-height: 1.4;
+  font-weight: 680;
   color: rgb(30 41 59);
 }
 
@@ -460,33 +438,84 @@ html.dark .doc-page-body h3 {
   color: rgb(226 232 240);
 }
 
+.doc-page-body h4 {
+  margin-top: var(--doc-space-lg);
+  margin-bottom: 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  font-weight: 650;
+  color: rgb(71 85 105);
+}
+
+html.dark .doc-page-body h4 {
+  color: rgb(203 213 225);
+}
+
+.doc-page-body > h2:first-child,
+.doc-page-body > h3:first-child,
+.doc-page-body > h4:first-child {
+  margin-top: 0;
+}
+
+.doc-page-body h2 + :is(p, ul, ol, pre, div, table, blockquote) {
+  margin-top: var(--doc-space-sm) !important;
+}
+
+.doc-page-body h3 + :is(p, ul, ol, pre, div, table, blockquote) {
+  margin-top: 0.6rem !important;
+}
+
+.doc-page-body h4 + :is(p, ul, ol, pre, div, table, blockquote) {
+  margin-top: 0.5rem !important;
+}
+
 .doc-page-body p,
 .doc-page-body li {
+  margin-top: 0;
+  margin-bottom: 0;
   font-size: 1rem;
-  line-height: 1.9;
+  line-height: 1.75;
 }
 
 .doc-page-body p + p,
-.doc-page-body p + ul,
-.doc-page-body p + ol,
 .doc-page-body ul + p,
 .doc-page-body ol + p,
 .doc-page-body ul + ul,
 .doc-page-body ol + ol,
 .doc-page-body ul + ol,
 .doc-page-body ol + ul {
-  margin-top: 1.05rem;
+  margin-top: var(--doc-space-md);
+}
+
+.doc-page-body p + ul,
+.doc-page-body p + ol {
+  margin-top: var(--doc-space-2xs);
+}
+
+.doc-page-body p + pre,
+.doc-page-body p + div:has(pre),
+.doc-page-body p + div[data-orientation="horizontal"] {
+  margin-top: var(--doc-space-xs) !important;
+}
+
+.doc-page-body :is(pre, div[data-orientation="horizontal"], .overflow-x-auto:has(pre)) {
+  margin-top: var(--doc-space-sm) !important;
+  margin-bottom: var(--doc-space-lg) !important;
+}
+
+.doc-page-body :is(p, li) + :is(pre, div[data-orientation="horizontal"], .overflow-x-auto:has(pre)) {
+  margin-top: var(--doc-space-xs) !important;
 }
 
 .doc-page-body ul,
 .doc-page-body ol {
   padding-left: 1.25rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: var(--doc-space-sm);
+  margin-bottom: var(--doc-space-sm);
 }
 
 .doc-page-body li + li {
-  margin-top: 0.15rem;
+  margin-top: 0.2rem;
 }
 
 .doc-page-body li p {
@@ -494,15 +523,15 @@ html.dark .doc-page-body h3 {
 }
 
 .doc-page-body img:not([alt="MemOS Banner"]) {
-  margin-top: 1.6rem;
-  margin-bottom: 1.9rem;
+  margin-top: var(--doc-space-lg);
+  margin-bottom: var(--doc-space-lg);
 }
 
 /* 表格外层容器允许溢出以显示完整表格，并保证上下间距 */
-.doc-page-body .overflow-x-auto {
+.doc-page-body .overflow-x-auto:not(:has(pre)) {
   max-width: none;
-  margin-top: 1.5rem !important;
-  margin-bottom: 1.5rem !important;
+  margin-top: var(--doc-space-lg) !important;
+  margin-bottom: var(--doc-space-lg) !important;
 }
 
 /* 表格 */
@@ -523,7 +552,7 @@ html.dark .doc-page-body h3 {
   letter-spacing: 0.03em;
   color: rgb(71 85 105);
   background: rgb(248 250 252);
-  border-bottom: 2px solid rgb(226 232 240);
+  border-bottom: 1px solid rgb(226 232 240);
   text-align: left;
 }
 
@@ -565,6 +594,13 @@ html.dark [class*="--spotlight-color"] {
 
 /* open-api-docs-module reset styles */
 .oapi {
+  color: var(--color-black) !important;
+  background-color: transparent !important;
+
+  .bg-default {
+    background-color: transparent !important;
+  }
+
   code {
     word-break: break-all;
     overflow-wrap: break-word;
@@ -669,7 +705,7 @@ html::-webkit-scrollbar {
 }
 @supports not (color: color-mix(in lab, red, red)) {
   .bg-primary\/10 {
-    background-color: rgba(99, 102, 241, 0.1)
+    background-color: rgba(96, 165, 250, 0.1)
   }
   .bg-info\/10 {
     background-color: rgba(81, 162, 255, 0.1)
@@ -684,7 +720,7 @@ html::-webkit-scrollbar {
     background-color: rgba(251, 191, 36, 0.1)
   }
   .border-primary\/25 {
-    border-color: rgba(99, 102, 241, 0.06)
+    border-color: rgba(96, 165, 250, 0.06)
   }
   .border-info\/25 {
     border-color: rgba(81, 162, 255, 0.06)
@@ -783,6 +819,16 @@ html::-webkit-scrollbar {
 }
 
 /* Callout 内行内 code 底色改为半透明，与 callout 色调融合 */
+.doc-page-body .group.relative.block.rounded-md :is(p, li) {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.doc-page-body .group.relative.block.rounded-md :is(ul, ol) {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .doc-page-body .group.relative.block.rounded-md code {
   background: rgba(0, 0, 0, 0.05) !important;
 }
@@ -794,6 +840,24 @@ html.dark .doc-page-body .group.relative.block.rounded-md code {
 /* Code group：语言选择标签与代码内容无缝衔接 */
 .doc-page-body div[data-orientation="horizontal"] > [role="tablist"] {
   margin: 0 !important;
+}
+
+.doc-page-body pre {
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+  white-space: pre !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.doc-page-body pre code {
+  display: block;
+  min-width: max-content;
+  white-space: pre !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
 }
 
 .doc-page-body div[data-orientation="horizontal"] pre {

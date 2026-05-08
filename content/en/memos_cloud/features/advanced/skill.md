@@ -1,256 +1,433 @@
 ---
-title: Skills
-desc: Generate reusable Skill files for Agents by adding user conversation messages.
+title: Skill
+desc: Retrieve reusable relevant skills for Agents, supporting both auto-generation from conversations and custom uploads.
 ---
 
-## 1. What are MemOS Skills?
+## What is a Skill?
 
-**Skills** are **modular capability packages** that an Agent can dynamically invoke while executing tasks. They are automatically dispatched and injected by the Agent based on the conversation context, requiring no manual intervention from the user. These skills are typically built by developers collaborating with LLMs, based on open-source projects or original concepts, and are continuously optimized through actual use.
+In the context of AI Agents, a **Skill** is a reusable task-handling method. It tells an Agent "what to do when it encounters a certain type of task", for example:
 
-MemOS advocates that "Memory is Asset." We believe that the resolution paths and user preferences precipitated in real conversations are essentially the most valuable materials for skills. Based on this philosophy, MemOS **now supports automatically extracting skills from user memories**—solidifying fragmented interaction histories into reusable, personalized professional capabilities.
+- How to plan a trip
+- How to process a return ticket
+- How to generate a weekly report following company standards
 
-::note
-**How are MemOS Skills different from existing memories?**
+Skills help compensate for the fact that execution experience is hard to accumulate in long-running LLM applications:
 
-* **Static Facts → Dynamic Execution**
+- Maintainable: turn stable real-world workflows into structured methods that can be iterated over time.
+- On-demand: let the Agent retrieve relevant skills for the current task, instead of placing every workflow into the context.
+- Personalized: turn different users' preferences, habits, and constraints into reusable execution methods.
 
-Memories are usually static and factual, such as: "I live in Shanghai" or "I like concise replies." This information provides the necessary context for Agent reasoning.
+---
 
-Skills are executable behavioral capabilities built upon memory. They encapsulate a clear set of task-processing logic, such as "How to plan a complete travel itinerary," guiding the Agent's decisions and actions.
+## How MemOS Provides Skills for Agents
 
-* **Fragmented → Structured**
+### 1. Auto-generate Personalized Skills
 
-Memories are often fragmented, with each entry describing a single fact or preference.
+MemOS believes "memory is an asset". The solution paths and user preferences accumulated in real conversations are the most valuable raw material for skills.
 
-Skills are highly structured, integrating multiple related memories into a complete task solution that can be reused across different tasks.
-::
+You do not need to prepare any files. As long as you add the original conversation history between the user and the Agent, MemOS **automatically extracts skills from user memories** and turns scattered interaction history into reusable, personalized professional capabilities.
 
-## 2. How It Works
+### 2. Upload Custom Skills
+
+MemOS also supports uploading existing skill files directly. Upload a Markdown file or ZIP package to a knowledge base, and MemOS can return relevant skills to the Agent during retrieval.
+
+---
+
+## Auto-generate Personalized Skills
+
+### How It Works
 
 ![image.png](https://cdn.memtensor.com.cn/img/1769759436251_3tx57c_compressed.png)
 
-The diagram above illustrates the complete interaction flow between the end-user, your AI Agent, and MemOS:
+The diagram above shows the full interaction flow between end users, the AI Agent you build, and MemOS:
 
-1.  Call the `add/message` interface to pass the user's conversation messages into MemOS.
+1. Call the `add/message` API to send the user's conversation messages to MemOS.
+2. After receiving the request, MemOS processes the messages in sequence and generates Skill files:
 
-2.  Upon receiving the request, MemOS processes it in sequence to generate a Skill file:
+    a. **Intelligent chunking**: identify task boundaries in historical conversations and split them into task text chunks.
 
-    a.  **Intelligent Slicing**: Identifies task boundaries in historical conversations and slices them into task text blocks.
+    b. **Cluster extraction**: cluster similar task text chunks and combine them with the user's historical memories to extract structured skill text.
 
-    b.  **Clustering & Extraction**: Clusters similar task blocks and combines them with the user's historical memory to extract structured skill text.
+    c. **Skill conversion**: convert the skill into a runnable and recognizable Skill file.
+3. Call the `search/memory` API to retrieve memories. MemOS returns user facts, preferences, tool memories, and matching Skill files related to the current context in a unified response.
+4. Download the Skill file and pass both memories and the Skill file to your self-hosted LLM, enabling effective use of long-term experience and automatically generated skills.
 
-    c.  **Skill Transformation**: Converts the skill into an executable and recognizable Skill file.
+The entire process does not require manually uploading any skill files.
 
-3.  Call the `search/memory` interface to retrieve memories. MemOS will return a unified result including context-related user facts, preferences, tool memories, and matching Skill files.
+### Travel Planning Example
 
-4.  Download the Skill file and pass both the memories and the Skill file to your self-deployed LLM, enabling the effective utilization of long-term experience and automatically generated skills.
+Using "Travel Planning" as an example to show how the same task generates different skills for different users.
 
-## 3. Usage Example
+#### 1. Add Conversations
 
-The following demonstrates an example of MemOS generating a "Travel Planning" skill based on historical conversations.
-
-### 1. **Add Messages**
-
-Add a conversation between a "High-Energy J-type person" and a "Travel Planning Assistant." The user expresses several requirements for the trip:
-
-* Dislikes backtracking; "Special Forces" style (intensive) travel.
-
-* Prefers cultural attractions.
-
-* Needs to confirm weather and temperature in advance.
+The user expresses travel planning preferences in conversation: no backtracking, compact routes, cultural attractions, and weather checks in advance.
 
 ```python
 import os
-import requests
 import json
+import requests
 
-# Replace with your API Key
 os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
-    "user_id": "memos_user_123",
-    "conversation_id": "0127",
+    "user_id": "memos_user_j",
+    "conversation_id": "travel_0127",
     "messages": [
-      {"role": "user", "content": "I'm going to Chengdu next week. Help me plan a 5-day trip. I like 'Special Forces' style travel without backtracking. Please mark delicious local food along the way."},
-      {"role": "assistant", "content": "...omitted..."},
-      {"role": "user", "content": "I prefer visiting cultural sites; I'm not very interested in shopping malls."},
-      {"role": "assistant", "content": "...omitted..."},
-      {"role": "user", "content": "When planning, please check the weather and temperature in advance so I can pack my luggage."},
-      {"role": "assistant", "content": "...omitted..."}
+        {
+            "role": "user",
+            "content": "I'm going to Chengdu next week for 5 days. I like intense, no-backtracking trips. Also mark the must-try food along the route."
+        },
+        {"role": "assistant", "content": "...omitted..."},
+        {
+            "role": "user",
+            "content": "I prefer cultural attractions. Not interested in shopping malls."
+        },
+        {"role": "assistant", "content": "...omitted..."},
+        {
+            "role": "user",
+            "content": "Check the weather and temperature in advance so I can pack properly."
+        },
+        {"role": "assistant", "content": "...omitted..."}
     ]
-  }
+}
+
 headers = {
-  "Content-Type": "application/json",
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
+    "Content-Type": "application/json",
+    "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
 }
 url = f"{os.environ['MEMOS_BASE_URL']}/add/message"
 
 res = requests.post(url=url, headers=headers, data=json.dumps(data))
-
 print(f"result: {res.json()}")
-
 ```
 
-### 2. **Retrieve Memory**
+#### 2. Retrieve Skills
 
-Suppose the user makes another travel planning request. Pass the user's query and enable skill recall:
+When the same user makes a similar request next time, pass `include_skill=true`:
 
 ```python
-import os
-import requests
-import json
+data = {
+    "query": "I'm planning a 7-day trip to Yunnan for the spring holiday.",
+    "user_id": "memos_user_j",
+    "conversation_id": "travel_0301",
+    "include_skill": True
+}
 
-# Replace with your API Key
+res = requests.post(
+    url=f"{os.environ['MEMOS_BASE_URL']}/search/memory",
+    headers=headers,
+    data=json.dumps(data)
+)
+print(f"result: {res.json()}")
+```
+
+#### 3. Generated Skill Example
+
+For the same "Travel Planning" task, MemOS does not apply one template to every user. It turns each user's long-term conversational preferences into a dedicated, reusable capability.
+As shown below, MemOS may generate a skill like this for the high-energy planner:
+
+```markdown
+---
+name: Travel Itinerary Planning
+description: Design multi-day itineraries for high-energy travelers, including efficient routes, cultural attractions, food spots, and weather-adapted suggestions.
+---
+
+## Procedure
+1. Determine trip duration, destination, and user preferences
+2. Collect cultural attractions, food spots, and transit info
+3. Plan daily routes by area to avoid backtracking
+4. Weave food spots into the transit route
+5. Check weather forecast and adjust routes and packing advice
+
+## Experience
+- Prioritize cultural attractions over shopping
+- Keep routes compact for high-energy travel
+- Plan each day geographically to move forward
+
+## User Preferences
+- No backtracking
+- Prefers cultural attractions
+- Wants weather checked in advance
+```
+
+If another user is a "low-energy relaxed traveler" who mentions being a night owl, hating early mornings, not wanting long commutes, and preferring hidden gems, MemOS generates a noticeably different skill:
+
+```markdown
+---
+name: Travel Itinerary Planning
+description: Help low-energy travelers plan relaxed, flexible itineraries focused on afternoon and evening experiences.
+---
+
+## Procedure
+1. Confirm user's energy level, wake-up time, and max commute tolerance
+2. Prioritize nearby, easy-access spots that don't require early starts
+3. Focus activities on afternoon, evening, and nighttime
+4. Include hidden gems, avoid overly popular crowded routes
+5. Keep flexible time slots for spontaneous changes
+
+## Experience
+- Avoid scheduling early-morning activities
+- Avoid long commutes and packed schedules
+- Recommend places reachable by subway or short taxi rides
+
+## User Preferences
+- Night owl, can't wake up early
+- Dislikes long commutes
+- Likes niche, less conventional experiences
+```
+
+---
+
+## Upload Custom Skills
+
+### Customer Return Example
+
+When you already have a clear standard workflow, upload the skill file directly to a knowledge base. MemOS will retrieve and return relevant skills in a unified way. The following example uses "Customer Service Agent Return Processing" to walk through the full flow from skill upload to retrieval.
+
+#### 1. Upload to the Knowledge Base via API
+
+Upload a skill file that guides a customer service Agent to help users complete product returns.
+
+:::code-group
+
+```python [URL Upload]
+import os
+import json
+import requests
+
 os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
-data = {
-  "query": "I plan to go to Yunnan during the Qingming Festival. Help me plan a 7-day itinerary.",
-  "user_id": "memos_user_123",
-  "conversation_id": "0301",
-  "include_skill": True # Enable skill
-}
+
 headers = {
-  "Content-Type": "application/json",
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
+    "Content-Type": "application/json",
+    "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
 }
-url = f"{os.environ['MEMOS_BASE_URL']}/search/memory"
+
+data = {
+    "knowledgebase_id": "kb_xxx",  # Replace with your knowledge base ID
+    "file": [
+        {
+            "type": "skill",
+            "content": "https://cdn.memtensor.com.cn/file/SKILL.md"  # Replace with your public file URL
+        }
+    ]
+}
+
+url = f"{os.environ['MEMOS_BASE_URL']}/add/knowledgebase-file"
 
 res = requests.post(url=url, headers=headers, data=json.dumps(data))
-
 print(f"result: {res.json()}")
-
 ```
 
-### 3. **Result Display**
+```python [Base64 Upload]
+import os
+import json
+import base64
+import requests
 
-In the retrieval results below, the skill includes:
+os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
+os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
-* Planning "Special Forces" itineraries.
-* Recommending cultural attractions.
-* Focusing on weather/temperature and recommending suitable clothing.
-
-```markdown
-# Below is the Skill.md generated by MemOS 
-
----
-name: Travel Itinerary Planning
-description: Design multi-day itineraries for travelers, including attraction arrangements, transportation, and weather adaptation suggestions.
+skill_markdown = """---
+name: Customer Return Processing
+description: Guide customer service to handle user return requests following standard procedures
 ---
 
 ## Procedure
-1. Determine the traveler's interests and preferences 2. Gather information on attractions and activities at the destination 3. Plan the daily itinerary, ensuring high efficiency and no backtracking 4. Add local food recommendations to enrich the experience 5. Provide transportation and accommodation suggestions, balancing convenience and comfort 6. Check weather forecasts, adjust the itinerary, and prepare luggage
+
+1. Verify user identity and order number
+2. Confirm return reason meets policy requirements
+3. Guide user to select return method (pickup / self-ship)
+4. Generate return tracking number and notify user
+5. Track logistics status and notify user upon refund completion
 
 ## Experience
-1. Efficient route design reduces commute time
-2. Prioritize attractions; avoid overly commercialized places
-3. Food recommendations increase the richness of the experience
-4. Weather adaptation ensures comfortable travel
+
+- No-reason returns accepted within 7 days of receipt
+- Fresh products do not support returns; use after-sales compensation
+- High-value items (>$70) require supervisor approval
 
 ## User Preferences
-- Itinerary arrangements without backtracking
-- Priority for cultural attractions, focusing on history and cultural experiences
-- Adjust itinerary and prepare luggage based on weather
+
+- Recommend pickup service first to reduce user effort
+- Default refund to original payment method
 
 ## Examples
 
-### Example 1
+### Example 1: Standard product return
+User: I want to return the headphones I bought three days ago.
+Assistant: Got it. I've confirmed your order is within the 7-day no-reason return window. Would you prefer pickup or self-shipping?
+"""
 
-# Travel Itinerary Planning Example
-## Day 1
-- **Itinerary**: Panda Base → Eastern Suburb Memory → Jianshe Road Food Street
-- **Weather Adaptation**: Cloudy and windy, suitable for visiting cultural districts
-- **Food Recommendation**: Juntun Guokui (Pot-baked pancake), Soy milk
-- **Transportation**: Subway + Walking
+encoded_skill = base64.b64encode(skill_markdown.encode("utf-8")).decode("utf-8")
 
-## Day 2
-- **Itinerary**: People's Park → Chengdu Museum → Wenshu Monastery
-- **Weather Adaptation**: Light rain, focus on indoor museums
-- **Food Recommendation**: Zhong Dumplings, Chen Mapo Tofu
-- **Transportation**: Subway + Ride-hailing
+data = {
+    "knowledgebase_id": "kb_xxx",  # Replace with your knowledge base ID
+    "file": [
+        {
+            "type": "skill",
+            "name": "customer-return-sop.md",
+            "content": f"data:text/markdown;base64,{encoded_skill}"
+        }
+    ]
+}
 
-...
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
+}
+url = f"{os.environ['MEMOS_BASE_URL']}/add/knowledgebase-file"
+
+res = requests.post(url=url, headers=headers, data=json.dumps(data))
+print(f"result: {res.json()}")
+```
+
+:::
+
+#### 2. Upload Skill Files via Dashboard
+
+Go to [Dashboard - Knowledge Base](https://memos-dashboard.openmem.net/knowledgeBase/), select the target knowledge base, click "Upload Document", and drag in your `.md` or `.zip` file. Select "Skill file" as the upload type.
+
+![image](https://cdn.memtensor.com.cn/img/1778148193764_flblvp_compressed.png)
+
+#### 3. Retrieve Skills
+
+After upload succeeds, pass `knowledgebase_ids` and enable `include_skill` during retrieval. MemOS will return skills relevant to the query. As shown below, the Agent can follow the "Customer Return Processing" flow to guide the user through the return.
+
+```python
+data = {
+    "query": "The user wants to return headphones bought three days ago",
+    "user_id": "memos_user_123",
+    "conversation_id": "session_001",
+    "knowledgebase_ids": ["kb_xxx"],
+    "include_skill": True
+}
+
+res = requests.post(
+    url=f"{os.environ['MEMOS_BASE_URL']}/search/memory",
+    headers=headers,
+    data=json.dumps(data)
+)
+print(f"result: {res.json()}")
+```
+
+### Skill File Specification
+
+#### 1. `.md` Single File
+
+- The constraints are as follows:
+  - Size limit: ≤ 100KB
+  - File content: must include `name` and `description`
+
+- Recommended body structure:
+
+```text
+---
+name: (Skill name)
+description: (One-sentence description of purpose and scenario)
+---
+
+## Procedure
+1. Step one
+2. Step two
+3. Step three
+
+## Experience
+- Experience or note one
+- Experience or note two
+
+## User Preferences
+- Preference setting one
+- Preference setting two
+
+## Examples
+
+### Example 1: (Scenario description)
+(Complete input/output example)
 
 ## Additional Information
-
-### Luggage Preparation Guide
-Based on destination weather characteristics, use the "onion layering" method for easy adjustment.
-
-### Cultural Attraction Reservation Guide
-Provide reservation channels, ticket prices, and opening hours.
-
+(Additional notes, such as reference links or special rules)
 ```
 
-::note
-**Two Ways to Use Skills** 
+#### 2. `.zip` Skill Package
 
-* If the Model/Agent you call has the capability to use Skill files, you can directly download the file from the `skill_url` link.
-* If the Model/Agent you call does not have the capability to use Skill files, you can directly convert `skill_value` into a string and add it to the prompt.
-::
+- The constraints are as follows:
 
-### 4. **Build Your Personalized Skills**
+| Constraint | Requirement |
+| --- | --- |
+| Format | Standard ZIP, no rar/7z |
+| Zip size | ≤ 20MB |
+| File count after extraction | ≤ 200 |
+| Single file after extraction | ≤ 10MB |
+| SKILL.md | ≤ 100KB, `name`/`description` required; must be at the first level of the archive |
 
-Based on different users' conversation messages, MemOS can create skills exclusive to individuals. For instance, we constructed another conversation between a "Low-Energy P-type person" and a "Travel Planning Assistant." When they requested:
+- Recommended structure:
 
-* Night owl, can't get up early.
-* Doesn't want to go to far-off places that require rushing.
-* Interspersed with niche attractions, off the beaten path.
-
-The Skill file built by MemOS included:
-
-* Planning afternoon-to-evening, relaxed itineraries.
-* Recommending routes that aren't too far or rushed.
-* Interspersing niche attractions.
-
-```markdown
-# Below is the Skill.md generated by MemOS 
----
-name: Travel Itinerary Planning
-description: Help users plan travel itineraries, ensuring comfortable and efficient exploration of the destination.
+```text
+refund-sop-v1.zip
+├── SKILL.md
+├── references/
+│   └── return_policy_summary.md
+├── scripts/
+│   └── check_order.py
+└── assets/
+    └── flowchart.png
+```
 
 ---
 
-## Procedure
+## How to Use Retrieved Skills
 
-1. Determine travel purpose and preferences 2. Gather information on destination attractions and activities 3. Filter attractions based on user preferences 4. Arrange daily schedules, including transportation and dining 5. Provide tips and precautions
+### Returned Skill Details
 
-## Experience
+Regardless of whether the skill is auto-generated or uploaded to a knowledge base, each skill in `skill_detail_list` contains two fields:
 
-1. Avoid long-distance travel; choose attractions with convenient transportation
-2. Reasonably arrange daily schedules, balancing leisure and exploration
-3. Fully utilize nighttime activities and attractions to enhance the travel experience
-4. Discover niche attractions to avoid crowds and enjoy unique experiences
+| Field | Description |
+| --- | --- |
+| `skill_value` | Structured skill content; can be converted to a string and injected into the Agent's prompt |
+| `skill_url` | Download link for the skill file; for ZIP packages, the Agent can download scripts, references, and other attachments |
 
-## User Preferences
+### Usage Reference
 
-- User prefers waking up late and avoiding long-distance travel
-- Priority for attractions directly accessible by subway
-- Values nighttime activities and experiences
-- Explores niche and non-traditional travel routes
+Choose the usage method based on whether your Agent can use Skill files.
 
-## Examples
+#### 1. The Agent Supports Skill Files
 
-### Example 1
+Provide `skill_url` to the Agent so it can download the file. You can write it into the prompt:
 
-### Day 1: Giant Panda Afternoon + Niche Old Street Night Tour
-- **Noon**: Wake up naturally + Huixinglou Street Food
-- **Afternoon**: Chengdu Research Base of Giant Panda Breeding
-- **Evening**: Night tour of Shizi Alley + Guihua Alley + Paotongshu Street
-...
+```python
+skill_detail = result["skill_detail_list"][0]
+skill_url = skill_detail.get("skill_url")
 
-### Example 2
+system_prompt = f"""You are a customer service assistant. Use the following Skill file when handling the task:
 
-### Day 2: Three Kingdoms Culture + Dongmen Market Night Market
-- **Noon**: Wake up naturally + Wuhouci Street Food
-- **Afternoon**: Wuhou Shrine + Red Walls and Bamboo Shadows
-- **Evening**: Dongmen Market + Jiuyanqiao Bar Street
-...
-
+{skill_url}
+"""
 ```
 
-::note
-**Start exploring MemOS Skills now! 🚀**
+#### 2. The Agent Does Not Support Skill Files
 
-* Go to the [Console - Skill Page](https://memos-dashboard.openmem.net/skill/) to view Skill files automatically generated based on user conversation history.
-* Don't have any skills yet? Just [Add Messages](/memos_cloud/mem_operations/add_message) to trigger generation.
-::
+Convert `skill_value` to a string and add it to the prompt:
+
+```python
+skill_detail = result["skill_detail_list"][0]
+skill = str(skill_detail["skill_value"])
+
+system_prompt = f"""You are a customer service assistant. Refer to this skill when handling the task:
+
+{skill}
+"""
+```
+
+:::tip
+During retrieval, MemOS searches both auto-generated personal skills and uploaded knowledge base skills, returning them in a unified ranked list. You do not need to distinguish the source.
+:::
+
+---
+
+**Start exploring MemOS Skills now!**
+
+- Go to the [Dashboard - Skills page](https://memos-dashboard.openmem.net/cn/skill/) to view auto-generated skills.
+- Don't have any skills yet? [Add messages](/memos_cloud/mem_operations/add_message) to trigger generation.
+- Want to upload custom skills? Go to [Dashboard - Knowledge Base](https://memos-dashboard.openmem.net/knowledgeBase/) to upload.

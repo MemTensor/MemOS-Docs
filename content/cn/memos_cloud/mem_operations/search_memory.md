@@ -30,7 +30,7 @@ desc: 通过语义检索和过滤功能，MemOS召回相关记忆。
 
 *   **查询内容（query）**：用户的提问内容，用于检索的自然语言问题或陈述，系统将基于语义匹配相关记忆。
 
-*   **记忆过滤（filter）**：基于 JSON 的逻辑条件，用于过滤 agent、create_time、tags、info 等字段，缩小记忆检索的范围；例如，仅检索“近30天的记忆”。
+*   **记忆过滤（filter）**：基于 JSON 的逻辑条件，用于过滤 agent、create_time、tags、info 等字段，缩小记忆检索的范围；也可以分别对用户记忆、公共记忆和知识库记忆设置过滤条件。
 
 *   **相关性阈值（relativity）**：相关性是指召回的记忆与用户提问内容的语义匹配程度，相关性越高，该记忆与当前用户提问越相关。相关性阈值用于约束召回记忆的匹配程度，当前系统默认值为 0.45，低于该值的记忆将被过滤。
 
@@ -248,49 +248,60 @@ print(f"result: {res.json()}")
 
 ### 精确过滤检索的记忆范围
 
-MemOS 提供了强大的记忆过滤器功能，允许开发者根据检索的记忆进行精确过滤。这一功能在需要根据记忆的特定特征进行检索时尤为有用，例如根据记忆的创建时间、标签、元信息等。
+MemOS 提供了强大的记忆过滤器功能，不仅支持全局过滤所有记忆，还支持对用户、知识库、公共记忆召回单独设置过滤条件，提升复杂 Agent 场景下的检索准确性。
 
-::note
-以下是一个使用记忆过滤器的示例，假设用户希望对今年所有有关“阅读”的“对话”做出年终总结，那么可以通过过滤出所有标签中包含"阅读"、创建时间为2025年、且场景为“对话”的记忆：
-::
+<br>**设置全局过滤条件**
 
-::code-group
-```python [Python (HTTP)]
-import os
-import json
-import requests
+假设用户希望对今年所有有关“阅读”的“对话”做出年终总结，那么可以通过过滤出所有标签中包含"阅读"、创建时间为2025年、且场景为“对话”的记忆：
 
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
-
-# headers 和 base URL
-headers = {
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
-  "Content-Type": "application/json"
-}
-BASE_URL = os.environ['MEMOS_BASE_URL']
-
-query_text = "我的阅读年终总结"
-
+```python
 data = {
     "user_id": "memos_user_123",
-    "query": query_text,
+    "query": "整理我今年和阅读相关的要点",
     "filter": {
         "and": [
-            {"tags": {"contains": "阅读"}}, # MemOS 提炼的标签
-            {"create_time": {"gte": "2025-01-01"}}, # MemOS 创建记忆的时间
-            {"create_time": {"gte": "2025-12-31"}}, # MemOS 创建记忆的时间
-            {"info":{"scene":"chat"}} #add message时由开发者自定义传入
-        ]
-    } # 通过传入filter字段，过滤所有标签中包含"阅读"、创建时间为2025年、且场景为“对话”的记忆。
+            {"tags": {"contains": "阅读"}},
+            {"create_time": {"gte": "2025-01-01"}},
+            {"create_time": {"lte": "2025-12-31"}},
+            {"scene": "chat"},
+        ],
+    },
+}
+```
+
+**单独设置过滤条件**
+
+如果希望对用户的记忆、知识库内容、公共记忆分别设置过滤条件进行精确的召回，可以参考以下示例：
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "query": "结合已有知识库中的制度、我的对话记录和项目公告，整理一份合规要点",
+    "knowledgebase_ids": ["kb_xxx"],
+    "filter": {
+        "knowledgebase": {
+            "and": [
+                {"tags": {"contains": "制度"}},
+                {"create_time": {"gte": "2025-01-01"}},
+                {"create_time": {"lte": "2025-12-31"}},
+            ]
+        },
+        "user": {
+            "and": [
+                {"agent_id": "compliance_assistant"},
+                {"scene": "chat"},
+                {"create_time": {"gte": "2025-06-01"}},
+            ]
+        },
+        "public": {
+            "and": [
+                {"tags": {"contains": "公告"}},
+            ]
+        },
+    },
 }
 
-# 调用 /search/memory 查询相关记忆
-res = requests.post(f"{BASE_URL}/search/memory", headers=headers, data=json.dumps(data))
-
-print(f"result: {res.json()}")
 ```
-::
 
 ::note
 有关过滤器中更多筛选选项，请参考[记忆过滤器](/memos_cloud/features/basic/filters)。
@@ -307,7 +318,7 @@ data = {
     "user_id": "memos_user_123",
     "query": "为我规划5天的成都游。",
     "relativity": 0.8, # 相关性阈值，不传则默认为0，表示限制返回的记忆相关性。
-    "memory_limit_number" = 9 # 召回的记忆上限条数，不传则默认为9，表示默认召回9条最相关的记忆。
+    "memory_limit_number": 9, # 召回的记忆上限条数，不传则默认为9，表示默认召回9条最相关的记忆。
 }
 ```
 请注意，当前`relativity`仅对事实、偏好记忆生效。
@@ -322,5 +333,5 @@ data = {
 | -------------- | --------------------------------------------------- | ------------------------------------------------------------ |
 | 召回偏好记忆   | `include_preference`<br><span style="line-height:0.6;">&nbsp;</span><br>`preference_limit_number`   | 偏好记忆是 MemOS 基于用户历史消息分析生成的用户偏好信息。开启后，可在检索结果中召回用户偏好记忆。 |
 | 召回工具记忆   | `include_tool_memory`<br><span style="line-height:0.6;">&nbsp;</span><br>`tool_memory_limit_number` | 工具记忆是 MemOS 对已添加的工具调用信息进行分析后生成的记忆。开启后，可在检索结果中召回工具记忆，详见[工具调用](/memos_cloud/features/advanced/tool_calling)。 |
-| 召回技能   | `include_skill`<br><span style="line-height:0.6;">&nbsp;</span><br>`skill_limit_number` | 技能是 MemOS 基于用户记忆生成的 Agent 可复用的执行能力。开启后，可在检索结果中召回技能，详见[技能](/memos_cloud/features/advanced/skill)。 |
+| 召回技能   | `include_skill`<br><span style="line-height:0.6;">&nbsp;</span><br>`skill_limit_number` | 技能是 Agent 可复用的执行能力，既可以由 MemOS 基于用户对话自动生成，也可以由开发者上传自定义技能文件。开启后，可在检索结果中召回匹配技能，详见[技能](/memos_cloud/features/advanced/skill)。 |
 | 检索指定知识库 | `knowledgebase_ids`                                 | 用于指定本次检索可访问的项目关联知识库范围。开发者可借此实现精细的权限控制，灵活定义不同终端用户可访问的知识库集合，详见[知识库](/memos_cloud/features/advanced/knowledge_base)。     |

@@ -14,21 +14,23 @@ MemOS provides a complete set of interfaces. Through simple API requests, you ca
 
 Start using MemOS API through these two simple core steps:
 
-*   [**Add Message**](/api_docs/core/add_message): Store original message content from user conversations and generate memories;
-    
-*   [**Search Memory**](/api_docs/core/search_memory): Retrieve and recall relevant user memory fragments to provide reference for model-generated responses.
-    
+* [**Add Message**](/api_docs/core/add_message): Store original message content from user conversations and generate memories;
+
+* [**Search Memory**](/api_docs/core/search_memory): Retrieve and recall relevant user memory fragments to provide reference for model-generated responses.
 
 ## 3. Interface Categories
 
 Explore the rich functional interfaces provided by MemOS:
 
-*   [**Core API**](/api_docs/core/add_message): Provides core memory operation capabilities, realizing the full process from memory production to consumption.
+* [**Core Operations API**](/api_docs/core/add_message): Provides core memory operation capabilities, realizing the full process from memory production to consumption.
 
-*   [**Message API**](/api_docs/message/add_feedback): Used for uploading and managing original message content data.
+* [**Message API**](/api_docs/message/add_feedback): Used for uploading and managing original message content data.
 
-*   [**Knowledge Base API**](/api_docs/knowledge/create_kb): Used for uploading and managing knowledge bases and their documents.
+* [**Knowledge Base API**](/api_docs/knowledge/create_kb): Used for uploading and managing knowledge bases and their documents.
 
+* [**Chat API**](/api_docs/chat/chat): Used to generate chat responses with memory recall and knowledge base enhancement.
+
+* [**Self-developed Model API**](/api_docs/core/extract_memory): Used to call memory extraction and reranking model capabilities.
 
 ## 4. Authentication
 
@@ -40,6 +42,6 @@ Do not expose your API key in client-side code or public repositories. All reque
 
 ## 5. Next Steps
 
-*   👉 [**Add Message**](/api_docs/core/add_message): Generate your first memory;
-    
-*   👉 [**Search Memory**](/api_docs/core/search_memory): Use memory filters to implement advanced memory retrieval.
+* 👉 [**Add Message**](/api_docs/core/add_message): Generate your first memory;
+
+* 👉 [**Search Memory**](/api_docs/core/search_memory): Use memory filters to implement advanced memory retrieval.

@@ -104,7 +104,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         { root: panel, threshold: 0 }
       )
 
-      const headings = panel.querySelectorAll<HTMLElement>('h2[id], h3[id]')
+      const headings = panel.querySelectorAll<HTMLElement>('h2[id], h3[id], h4[id]')
       headings.forEach((h) => observer.observe(h))
 
       // Give the observer a moment to deliver initial entries

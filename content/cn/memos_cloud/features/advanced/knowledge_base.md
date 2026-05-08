@@ -129,11 +129,7 @@ DAY 20 员工询问：内网代理打不开了，我该重新装哪个版本？
 
 ### 容量限制
 
-MemOS 云服务目前为所有开发者提供了从免费版到企业版的多种定价方案，不同版本对应的知识库容量与数量限制不同。
-
-::note
-目前，所有版本限时免费，欢迎前往[官网-价格](https://memos.openmem.net/cn/pricing)，申请符合你需求的版本。
-::
+MemOS 云服务目前为所有开发者提供了从免费版到企业版的多种定价方案，不同版本对应的知识库容量与数量限制不同。目前，所有版本限时免费，欢迎前往[官网-价格](https://memos.openmem.net/cn/pricing)，申请符合你需求的版本。
 
 | **版本**   | **知识库存储限制**                        |
 | ---------- | ----------------------------------------- |
@@ -141,18 +137,19 @@ MemOS 云服务目前为所有开发者提供了从免费版到企业版的多�
 | **入门版** | 知识库个数：30个；单知识库存储空间：10G   |
 | **专业版** | 知识库个数：100个；单知识库存储空间：100G |
 
-
 ::warning
-&nbsp;注意<br>
-当你的服务等级发生降级时，若现有知识库已超出当前版本的容量限制，MemOS <strong>不会清空已有知识库数据</strong>，但将限制以下操作：<br>
+注意<br>
+当你的服务等级发生降级时，若现有知识库已超出当前版本的容量限制，MemOS <strong>不会清空已有知识库数据</strong>，但将限制以下操作：
 
-* 无法创建新的知识库
-* 无法继续上传新文档
+- 无法创建新的知识库
+- 无法继续上传新文档
 
-需将使用量调整至当前版本的容量范围内后，相关功能可恢复。
+<br>需将使用量调整至当前版本的容量范围内后，相关功能可恢复。
 ::
 
-### 文档限制
+
+### 知识文档限制
+
 
 1.  支持上传的文档类型：PDF、DOCX、DOC、TXT、JSON、MD、XML
 
@@ -161,10 +158,29 @@ MemOS 云服务目前为所有开发者提供了从免费版到企业版的多�
 3.  单次上传的文件数量上限：不超过20个
 
 ::warning
-&nbsp;注意<br>
-当单次上传的文件数量、单文件大小或页数超过上述限制时，该次上传任务将被判定为<strong>处理失败</strong>。<br>
-请根据限制要求调整文件后，重新发起上传请求。
+注意<br>
+当单次上传的文件数量、单文件大小或页数超过上述限制时，该次上传任务将被判定为**处理失败**。<br>请根据限制要求调整文件后，重新发起上传请求。
 ::
+
+
+### 技能文档限制
+
+除了普通知识文档，知识库也支持上传自定义技能（Skill）文档。技能文档用于沉淀可复用的任务处理流程，检索时可与其他记忆一起返回给 Agent。格式要求如下所示：
+
+1. **单文件 `.md`**
+
+* 大小限制：≤ 100KB
+* 文件内容：必须包含 `name` 和 `description`
+
+2. **技能压缩包 `.zip`**
+
+| 约束 | 要求 |
+| --- | --- |
+| 格式 | 标准 ZIP，不支持 rar/7z |
+| zip 大小 | ≤ 20MB |
+| 解压后文件数 | ≤ 200 |
+| 解压后单文件 | ≤ 10MB |
+| SKILL.md | ≤ 100KB，`name`/`description` 必填，须在压缩包第一层 |
 
 ## 4. 使用示例
 
@@ -505,6 +521,51 @@ print(json.dumps(json_res, indent=2, ensure_ascii=False))
 
 ![image.png](https://cdn.memtensor.com.cn/img/1765970178683_5tuxe4_compressed.png)
 
-::note
+:::note
 有关反馈 API 字段、格式等信息的完整列表，详见[Add Feedback 接口文档](/api_docs/message/add_feedback)。
-::
+:::
+
+## 5. 更多功能：上传技能文档
+
+如果你希望知识库不仅返回知识内容，还能返回可复用的任务处理流程，可以在知识库中上传技能（Skill）文档。与普通文档不同，上传技能文档时需要将文件类型标记为 `skill`。
+
+上传成功后，检索时可同时召回知识库记忆和匹配的技能。
+
+:::note
+技能文件的详细工作原理与使用示例，请查看 [技能 Skill](/memos_cloud/features/advanced/skill) 中的完整示例。
+:::
+
+:::code-group
+```python [Python (HTTP)]
+import os
+import requests
+import json
+
+# 替换成你的 MemOS API Key
+os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
+os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+
+data = {
+    "knowledgebase_id": "idxxxxx",  # 替换成你的知识库ID
+    "file": [
+        {
+            "type": "skill",
+            "content": "https://cdn.memtensor.com.cn/file/SKILL.md"
+        }
+    ]
+}
+
+headers = {
+  "Content-Type": "application/json",
+  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
+}
+url = f"{os.environ['MEMOS_BASE_URL']}/add/knowledgebase-file"
+
+res = requests.post(url=url, headers=headers, data=json.dumps(data))
+
+print(f"result: {res.json()}")
+```
+:::
+
+
+

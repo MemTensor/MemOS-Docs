@@ -163,6 +163,25 @@ When the number of files, single file size, or number of pages in a single uploa
 Please adjust the files according to the requirements and re-initiate the upload request.
 ::
 
+### Skill Document Limits
+
+In addition to regular knowledge documents, a knowledge base also supports uploading custom Skill documents. Skill documents are used to capture reusable task-handling workflows and can be returned to the Agent together with other memories during retrieval. The format requirements are as follows:
+
+1. **Single `.md` file**
+
+* Size limit: ≤ 100KB
+* File content: must include `name` and `description`
+
+2. **Skill package `.zip`**
+
+| Constraint | Requirement |
+| --- | --- |
+| Format | Standard ZIP, no rar/7z |
+| Zip size | ≤ 20MB |
+| File count after extraction | ≤ 200 |
+| Single file after extraction | ≤ 10MB |
+| SKILL.md | ≤ 100KB, `name`/`description` required, must be at the first level of the archive |
+
 ## 4. Usage Example
 
 Here is a complete knowledge base usage example to help you quickly get started with building your exclusive "Knowledge Base Assistant".
@@ -502,6 +521,50 @@ The [Console - Knowledge Base](https://memos-dashboard.openmem.net/knowledgeBase
 
 ![image.png](https://cdn.memtensor.com.cn/img/1766634697599_d1j187_compressed.png)
 
-::note
+:::note
 For a complete list of feedback API fields, formats, etc., please refer to [Add Feedback API Documentation](/api_docs/message/add_feedback).
-::
+:::
+
+
+## 5. More: Upload Skill Documents
+
+If you want the knowledge base to return not only knowledge content but also reusable task-handling workflows, you can upload Skill documents to the knowledge base. Unlike regular documents, Skill documents must be marked with `type: "skill"` when uploaded.
+
+After upload succeeds, pass `knowledgebase_ids` and enable `include_skill` during retrieval to return both knowledge base memories and matching skills.
+
+:::note
+For the detailed workflow and usage examples of Skill files, see the complete examples in [Skill](/memos_cloud/features/advanced/skill).
+:::
+
+:::code-group
+```python [Python (HTTP)]
+import os
+import requests
+import json
+
+# Replace with your MemOS API Key
+os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
+os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+
+data = {
+    "knowledgebase_id": "idxxxxx",  # Replace with your knowledge base ID
+    "file": [
+        {
+            "type": "skill",
+            "content": "https://cdn.memtensor.com.cn/file/SKILL.md"
+        }
+    ]
+}
+
+headers = {
+  "Content-Type": "application/json",
+  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
+}
+url = f"{os.environ['MEMOS_BASE_URL']}/add/knowledgebase-file"
+
+res = requests.post(url=url, headers=headers, data=json.dumps(data))
+
+print(f"result: {res.json()}")
+```
+:::
+
