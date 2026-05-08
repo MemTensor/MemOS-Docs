@@ -5,6 +5,19 @@ title: OpenClaw Plugin Changelog
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-05-08'
+    plugins:
+      - title: 'Cloud Plugin'
+        version: 'v0.1.15'
+        sections:
+          - title: 'Added'
+            items:
+              - 'Added `activation.onCapabilities: ["hook"]` to the OpenClaw, Moltbot, and ClawDBot plugin manifests.'
+              - 'Added compatibility with the plugin loading mechanism introduced in OpenClaw 5.3 and later. OpenClaw evaluates capability declarations before plugin registration; this declaration ensures the plugin is recognized and loaded as a lifecycle hook plugin, allowing hooks such as `before_agent_start` and `agent_end` to continue registering correctly.'
+          - title: 'Improved'
+            items:
+              - 'Adjusted the automatic `hooks.allowConversationAccess: true` patching flow to run after the gateway is ready, allowing the host config update to trigger a gateway restart and apply the required hook permission.'
+
   - date: '2026-05-06'
     plugins:
       - title: 'Cloud Plugin'
