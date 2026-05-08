@@ -14,6 +14,15 @@ export function useDashboardUrl(basePath: string = '/', locale: string = 'cn') {
   return `${baseUrl}${prefix}${basePath}`
 }
 
+export function useDashboardLoginUrl(redirectPath: string = '/quickstart/', locale: string = 'cn') {
+  const { $config } = useNuxtApp()
+  const baseUrl = $config.public.dashboardUrl || 'https://memos-dashboard.openmem.net'
+  const prefix = locale === 'cn' ? '/cn' : ''
+  const fromPath = `${prefix}${redirectPath}`
+
+  return `${baseUrl}${prefix}/login/?from=${encodeURIComponent(fromPath)}`
+}
+
 export function usePlaygroundUrl(basePath: string = '/', locale: string = 'cn') {
   const { $config } = useNuxtApp()
   const baseUrl = $config.public.playgroundUrl || 'https://memos-playground.openmem.net'

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
   apiData: any
+  headline?: string
   showRequestCode?: boolean
   showSurround?: boolean
 }>(), {
+  headline: '',
   showRequestCode: false,
   showSurround: true
 })
@@ -13,69 +15,26 @@ const normalizeName = computed(() => {
   return props.apiData?.path?.replace(/^\//, '').replace(/\//g, '_')
 })
 
-const sidebarRef = ref<HTMLElement>()
-const contentRef = ref<HTMLElement>()
-const isSticky = ref(true)
-const sidebarTop = ref(0)
-
-const sidebarStyle = computed(() => {
-  return {
-    top: `${sidebarTop.value}px`
-  }
-})
-
-const handleScroll = () => {
-  if (!sidebarRef.value || !contentRef.value) return
-
-  const contentRect = contentRef.value.getBoundingClientRect()
-  const sidebarRect = sidebarRef.value.getBoundingClientRect()
-  const viewportHeight = window.innerHeight
-  const stickyTop = 80
-
-  const contentBottom = contentRect.bottom + 32
-  const sidebarBottomWhenSticky = stickyTop + sidebarRect.height
-
-  if (sidebarBottomWhenSticky <= viewportHeight) {
-    const shouldStick = contentBottom >= sidebarBottomWhenSticky
-    isSticky.value = shouldStick
-    sidebarTop.value = shouldStick ? 40 : contentRect.height - sidebarRect.height
-  } else {
-    if (sidebarRect.bottom > viewportHeight) {
-      isSticky.value = false
-      sidebarTop.value = 0
-    } else if (contentBottom > viewportHeight) {
-      isSticky.value = true
-      sidebarTop.value = viewportHeight - sidebarBottomWhenSticky
-    } else {
-      isSticky.value = false
-      sidebarTop.value = contentRect.height - sidebarRect.height
-    }
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-  handleScroll()
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 <template>
-  <div class="flex flex-col box-border w-full relative grow mx-auto max-w-xl 2xl:max-w-2xl xl:w-[calc(100%-28rem)]">
-    <div ref="contentRef">
-      <header class="relative">
-        <h1 class="inline-block text-2xl sm:text-3xl text-gray-900 tracking-tight dark:text-gray-200 font-semibold">
+  <div class="relative box-border flex w-full min-w-0 flex-col xl:min-w-[400px] xl:max-w-[640px] xl:flex-1">
+    <div>
+      <header class="relative flex flex-col items-start">
+        <!-- 不用 div：全局 main.css 里 header>div 会强制左右 10px padding，章节标题需与 h1 左对齐 -->
+        <span
+          v-if="headline"
+          class="mb-2 block w-full text-left text-sm font-medium text-primary"
+        >
+          {{ headline }}
+        </span>
+        <h1 class="block w-full text-left text-2xl sm:text-3xl text-gray-900 tracking-tight dark:text-gray-200 font-semibold">
           {{ apiData?.summary }}
         </h1>
-        <div class="mt-2 text-lg">
-          <p
-            class="text-gray-400 text-base"
-            v-html="apiData?.description"
-          />
-        </div>
+        <p
+          class="mt-2 m-0 w-full text-left text-base leading-7 text-gray-600 dark:text-gray-400"
+          v-html="apiData?.description"
+        />
       </header>
       <ApiPath
         :path="apiData?.path"
@@ -124,12 +83,7 @@ onUnmounted(() => {
     <ApiSurround v-if="showSurround" />
   </div>
   <div
-    ref="sidebarRef"
-    :class="[
-      'hidden xl:flex self-start xl:flex-col max-w-[28rem] h-fit',
-      isSticky ? 'sticky h-[calc(100vh-4rem)]' : 'relative'
-    ]"
-    :style="sidebarStyle"
+    class="hidden w-full max-w-[28rem] shrink-0 xl:flex xl:h-fit xl:self-start xl:sticky xl:top-[var(--ui-header-height,0px)] xl:max-h-none xl:flex-col xl:overflow-hidden"
   >
     <template v-if="showRequestCode">
       <CodeSnippet
@@ -152,7 +106,49 @@ onUnmounted(() => {
 </template>
 
 <style lang="css" scoped>
+@media (min-width: 1280px) {
+  .request-display :deep(style) {
+    display: none !important;
+  }
+
+  .request-display :deep([role="tablist"]),
+  :deep(.code-block > div:first-child) {
+    flex: 0 0 auto;
+  }
+
+  .request-display :deep(button[role="tab"]),
+  :deep(.code-block > div:first-child button) {
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+  }
+
+  :deep(.request-display),
+  :deep(.code-block) {
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  :deep(.code-block) {
+    width: 100% !important;
+  }
+
+  :deep(.request-display pre[role="tabpanel"]:not([hidden])),
+  :deep(.code-block > div:last-child) {
+    max-height: calc((100vh - var(--ui-header-height, 0px) - 3rem) / 2);
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  :deep(.request-display pre[role="tabpanel"]:not([hidden])::-webkit-scrollbar),
+  :deep(.code-block > div:last-child::-webkit-scrollbar) {
+    display: none;
+  }
+}
+
 :deep(.shiki) {
-  max-height: 420px;
+  max-height: none;
 }
 </style>

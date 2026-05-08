@@ -8,6 +8,8 @@ const localePath = useLocalePath()
 const homePath = computed(() => {
   return getHomePath('/', locale.value)
 })
+const topMenusVisible = ref(false)
+const headerOpen = ref(false)
 // docs navigation for mobile
 const navigation = inject<ContentNavigationItem[]>('navigation', [])
 const localizedMenus = computed(() => {
@@ -25,84 +27,169 @@ const localizedMenus = computed(() => {
   return menus.map(m => ({ ...m, to: localePath(m.to) }))
 })
 
-function gotoHome() {
-  navigateTo(homePath.value, {
-    external: true,
-    open: {
-      target: '_blank'
-    }
-  })
-}
+const dashboardUrl = computed(() => useDashboardLoginUrl('/quickstart/', locale.value))
 </script>
 
 <template>
-  <UHeader
-    :to="homePath"
-    :ui="{
-      root: 'border-0 h-(--ui-topbar-height)',
-      container: 'lg:px-10 @container',
-      header: 'h-(--ui-topbar-height)'
-    }"
-  >
-    <template #left>
-      <NuxtLink :to="homePath">
-        <LogoPro class="w-auto h-10 shrink-0" />
-      </NuxtLink>
-    </template>
-
-    <UContentSearchButton
-      v-if="header?.search"
-      class="cursor-pointer w-90 @max-3xl:w-60"
-      :collapsed="false"
-      :kbds="[]"
-      :label="$t('header.searchPlaceholder')"
+  <div class="app-header-wrapper sticky top-0 z-50 bg-default/75 backdrop-blur">
+    <UHeader
+      v-model:open="headerOpen"
+      :to="homePath"
       :ui="{
-        base: 'h-10 text-[#94A3B8] rounded-lg ring-slate-600'
+        root: 'border-0 h-(--ui-topbar-height) bg-transparent! backdrop-blur-none!',
+        container: '@container',
+        header: 'h-(--ui-topbar-height)',
+        toggle: topMenusVisible ? 'hidden!' : 'flex! lg:flex!',
+        content: topMenusVisible ? undefined : 'lg:block! lg:h-screen lg:max-h-screen lg:overflow-hidden',
+        overlay: topMenusVisible ? undefined : 'lg:block!',
+        body: 'max-h-[calc(100vh-var(--ui-topbar-height))] overflow-y-auto overscroll-contain pb-12'
       }"
-    />
-    <AssistantCollapse class="ml-2.5" />
+    >
+      <template #left>
+        <NuxtLink
+          :to="homePath"
+          class="text-slate-900 dark:text-white"
+        >
+          <LogoPro class="w-auto h-10 shrink-0" />
+        </NuxtLink>
+      </template>
 
-    <template #right>
-      <LanguageSwitcher class="shrink-0" />
-      <JoinCommunityButton class="shrink-0 flex @max-2xl:hidden" />
-      <button
-        class="hidden sm:flex items-center gap-1.5 h-7 px-2.5 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light rounded-md cursor-pointer shrink-0 whitespace-nowrap"
-        @click="gotoHome"
-      >
-        <UIcon
-          name="ri:home-4-line"
-          class="size-4"
+      <UContentSearchButton
+        v-if="header?.search"
+        class="cursor-pointer w-90 @max-3xl:w-60"
+        :collapsed="false"
+        :kbds="[]"
+        :label="$t('header.searchPlaceholder')"
+        :ui="{
+          base: 'h-8 text-slate-600 dark:text-slate-400 rounded-lg ring-slate-200 dark:ring-slate-600',
+          leadingIcon: 'size-4'
+        }"
+      />
+      <AssistantCollapse class="ml-2.5" />
+
+      <template #right>
+        <NuxtLink
+          :to="dashboardUrl"
+          target="_blank"
+          class="hidden sm:flex items-center gap-1.5 h-8 px-2.5 rounded-md cursor-pointer shrink-0 whitespace-nowrap border-0 text-white bg-linear-270 from-15% from-linear-primary to-118% to-primary-light"
+        >
+          <UIcon
+            name="ri:dashboard-line"
+            class="size-4"
+          />
+          <span class="text-sm font-medium flex @max-5xl:hidden">
+            {{ $t('header.dashboard') }}
+          </span>
+        </NuxtLink>
+        <LanguageSwitcher class="shrink-0" />
+        <ColorModeToggle />
+        <JoinCommunityButton class="shrink-0 @max-2xl:hidden" />
+      </template>
+
+      <template #content>
+        <div class="flex h-screen max-h-screen flex-col overflow-hidden bg-default">
+          <div class="flex h-(--ui-topbar-height) shrink-0 items-center justify-between gap-3 border-b border-default px-[50px]">
+            <NuxtLink
+              :to="homePath"
+              class="text-slate-900 dark:text-white"
+              @click="headerOpen = false"
+            >
+              <LogoPro class="w-auto h-10 shrink-0" />
+            </NuxtLink>
+
+            <div class="hidden min-w-0 flex-1 items-center justify-center lg:flex">
+              <UContentSearchButton
+                v-if="header?.search"
+                class="cursor-pointer w-90 @max-3xl:w-60"
+                :collapsed="false"
+                :kbds="[]"
+                :label="$t('header.searchPlaceholder')"
+                :ui="{
+                  base: 'h-8 text-slate-600 dark:text-slate-400 rounded-lg ring-slate-200 dark:ring-slate-600',
+                  leadingIcon: 'size-4'
+                }"
+              />
+              <AssistantCollapse class="ml-2.5" />
+            </div>
+
+            <div class="flex items-center justify-end gap-1.5">
+              <NuxtLink
+                :to="dashboardUrl"
+                target="_blank"
+                class="hidden sm:flex items-center gap-1.5 h-8 px-2.5 rounded-md cursor-pointer shrink-0 whitespace-nowrap border-0 text-white bg-linear-270 from-15% from-linear-primary to-118% to-primary-light"
+              >
+                <UIcon
+                  name="ri:dashboard-line"
+                  class="size-4"
+                />
+                <span class="text-sm font-medium hidden 2xl:flex">
+                  {{ $t('header.dashboard') }}
+                </span>
+              </NuxtLink>
+              <LanguageSwitcher class="shrink-0" />
+              <ColorModeToggle />
+              <JoinCommunityButton class="shrink-0 @max-2xl:hidden" />
+              <UButton
+                color="neutral"
+                variant="ghost"
+                icon="i-lucide-x"
+                class="-me-1.5"
+                @click="headerOpen = false"
+              />
+            </div>
+          </div>
+
+          <div class="overflow-y-auto overscroll-contain p-4 pb-12 sm:p-6">
+            <UNavigationMenu
+              orientation="vertical"
+              :items="localizedMenus"
+              class="justify-center"
+            >
+              <template #item="{ item }">
+                <div>{{ item.label }}</div>
+              </template>
+            </UNavigationMenu>
+
+            <USeparator
+              type="dashed"
+              class="mt-4 mb-6"
+            />
+
+            <UContentNavigation
+              highlight
+              :navigation="navigation"
+            />
+          </div>
+        </div>
+      </template>
+
+      <template #body>
+        <UNavigationMenu
+          orientation="vertical"
+          :items="localizedMenus"
+          class="justify-center"
+        >
+          <template #item="{ item }">
+            <div>{{ item.label }}</div>
+          </template>
+        </UNavigationMenu>
+
+        <USeparator
+          type="dashed"
+          class="mt-4 mb-6"
         />
-        <span class="text-xs font-medium flex @max-5xl:hidden">
-          {{ $t('header.backToHome') }}
-        </span>
-      </button>
-    </template>
 
-    <template #body>
-      <UNavigationMenu
-        orientation="vertical"
-        :items="localizedMenus"
-        class="justify-center"
-      >
-        <template #item="{ item }">
-          <div>{{ item.label }}</div>
-        </template>
-      </UNavigationMenu>
-
-      <USeparator
-        type="dashed"
-        class="mt-4 mb-6"
-      />
-
-      <UContentNavigation
-        highlight
-        :navigation="navigation"
-      />
-    </template>
-  </UHeader>
-  <AppMenus
-    class="hidden sm:block sticky z-12 top-(--ui-topbar-height) pt-3 bg-default/75 backdrop-blur"
-    :items="localizedMenus"
-  />
+        <UContentNavigation
+          highlight
+          :navigation="navigation"
+        />
+      </template>
+    </UHeader>
+    <AppMenus
+      class="hidden sm:block"
+      :items="localizedMenus"
+      @visible-change="topMenusVisible = $event"
+    />
+    <div class="header-bottom-line h-px bg-(--ui-border-muted,#e2e8f0)" />
+  </div>
 </template>

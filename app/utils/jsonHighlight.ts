@@ -11,12 +11,16 @@ export function escapeHtml(input: string): string {
 export function renderHighlightedJson(value: JSONValue, indent = 0): string {
   const pad = '  '.repeat(indent)
   const nextPad = '  '.repeat(indent + 1)
+  const punctuationClass = 'text-slate-600 dark:text-slate-300'
+  const keyClass = 'text-[#023d7a] dark:text-[#9CDCFE]'
+  const valueClass = 'text-[#0d5c1f] dark:text-[#B5CEA8]'
+  const stringClass = 'text-[#052045] dark:text-[#CE9178]'
 
-  if (value === null) return '<span class="text-[#9cdcfe]">null</span>'
+  if (value === null) return `<span class="${valueClass}">null</span>`
   if (Array.isArray(value)) {
     if (value.length === 0) return '[]'
     const items = value
-      .map((v, i) => `${nextPad}${renderHighlightedJson(v as JSONValue, indent + 1)}${i < value.length - 1 ? '<span class="text-[#f3f7f6]">,</span>' : ''}`)
+      .map((v, i) => `${nextPad}${renderHighlightedJson(v as JSONValue, indent + 1)}${i < value.length - 1 ? `<span class="${punctuationClass}">,</span>` : ''}`)
       .join('\n')
     return `[
 ${items}
@@ -27,13 +31,13 @@ ${pad}]`
     const entries = Object.entries(value)
     if (entries.length === 0) return '{}'
     const inner = entries
-      .map(([k, v], i) => `${nextPad}<span class="text-[#9CDCFE]">"${escapeHtml(k)}"</span><span class="text-[#f3f7f6]">: </span>${renderHighlightedJson(v as JSONValue, indent + 1)}${i < entries.length - 1 ? '<span class=\\"text-[#f3f7f6]\\">,</span>' : ''}`)
+      .map(([k, v], i) => `${nextPad}<span class="${keyClass}">"${escapeHtml(k)}"</span><span class="${punctuationClass}">: </span>${renderHighlightedJson(v as JSONValue, indent + 1)}${i < entries.length - 1 ? `<span class="${punctuationClass}">,</span>` : ''}`)
       .join('\n')
     return `{
 ${inner}
 ${pad}}`
   }
-  if (type === 'number') return `<span class="text-[#B5CEA8]">${value}</span>`
-  if (type === 'boolean') return `<span class="text-[#B5CEA8]">${value}</span>`
-  return `<span class="text-[#CE9178]">"${escapeHtml(String(value))}"</span>`
+  if (type === 'number') return `<span class="${valueClass}">${value}</span>`
+  if (type === 'boolean') return `<span class="${valueClass}">${value}</span>`
+  return `<span class="${stringClass}">"${escapeHtml(String(value))}"</span>`
 }

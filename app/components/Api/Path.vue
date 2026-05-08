@@ -64,7 +64,7 @@ function handleCopy() {
 
 <template>
   <div
-    class="group flex w-full items-center justify-between bg-background-light border-1 border-[#ffffff1a] rounded-2xl mt-6 p-1 cursor-pointer"
+    class="group flex w-full items-center justify-between bg-background-light border border-default rounded-2xl mt-6 p-1 cursor-pointer"
     @click="handleCopy"
   >
     <div class="relative flex gap-2 min-w-0 rounded-xl items-center p-1.5">
@@ -79,7 +79,7 @@ function handleCopy() {
           v-for="(subpath, index) in pathArr"
           :key="index"
         >
-          <div class="text-sm text-gray-400">
+          <div class="text-sm text-gray-600 dark:text-gray-400">
             /
           </div>
           <div

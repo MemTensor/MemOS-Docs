@@ -5,6 +5,7 @@ const props = defineProps<{
   code: string
   language: 'python' | 'bash' | 'json' | undefined
 }>()
+const colorMode = useColorMode()
 
 const highlightCode = ref<string>('')
 await generateHighlight()
@@ -17,7 +18,7 @@ async function generateHighlight() {
   if (props.code && props.language) {
     const highlightHtml = await codeToHtml(props.code, {
       lang: props.language,
-      theme: 'material-theme-palenight'
+      theme: colorMode.value === 'dark' ? 'github-dark-default' : 'github-light-high-contrast'
     })
 
     highlightCode.value = highlightHtml
@@ -30,9 +31,16 @@ async function generateHighlight() {
 </template>
 
 <style lang="css" scoped>
-:deep(.shiki.material-theme-palenight) {
-  background-color: #0e1219 !important;
+:deep(.shiki) {
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
+
+:deep(.shiki code) {
+  background: transparent !important;
+}
+
 :deep(.shiki span.line) {
   display: inline-block !important;
 }

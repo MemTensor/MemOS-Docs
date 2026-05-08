@@ -823,7 +823,7 @@
           "messages": {
             "type": "array",
             "title": "Messages",
-            "description": "Array of message objects representing the memory content. The total token limit for the message array is 8k. Each object contains:",
+            "description": "Array of message objects representing the memory content. The total token limit for the message array is 20k. Each object contains:",
             "items": {
               "$ref": "#/components/schemas/MessageInput"
             }
@@ -2643,7 +2643,6 @@
       "RerankRequest": {
         "type": "object",
         "required": [
-          "model",
           "query",
           "documents"
         ],

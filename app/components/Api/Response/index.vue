@@ -76,7 +76,7 @@ const selectedSchema = computed(() => {
       >
         <p
           v-if="selectedResponse.description"
-          class="whitespace-pre-line text-gray-400"
+          class="whitespace-pre-line text-gray-600 dark:text-gray-400"
         >
           {{ selectedResponse.description }}
         </p>
@@ -87,7 +87,7 @@ const selectedSchema = computed(() => {
         v-if="selectedSchema?.description"
         class="pt-6 pb-4"
       >
-        <p class="whitespace-pre-line text-gray-400 text-sm">
+        <p class="whitespace-pre-line text-gray-600 dark:text-gray-400 text-sm">
           {{ selectedSchema?.description }}
         </p>
       </div>
@@ -107,7 +107,7 @@ const selectedSchema = computed(() => {
               <div class="mt-4">
                 <p
                   v-if="item.description"
-                  class="whitespace-pre-line text-gray-400 text-sm"
+                  class="whitespace-pre-line text-gray-600 dark:text-gray-400 text-sm"
                   v-html="item.description"
                 />
                 <ApiResponseSubItem
@@ -121,7 +121,7 @@ const selectedSchema = computed(() => {
                 <template v-else>
                   <div
                     v-if="item.example !== undefined && item.example !== null"
-                    class="flex mt-6 gap-1.5 text-sm text-gray-400"
+                    class="flex mt-6 gap-1.5 text-sm text-gray-600 dark:text-gray-400"
                   >
                     <span>Example: </span>
                     <span class="flex items-center px-2 py-0.5 rounded-md bg-gray-100/50 dark:bg-white/5 text-gray-600 dark:text-gray-200 font-medium text-sm break-all">

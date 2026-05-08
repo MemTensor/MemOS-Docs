@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="relative w-full flex gap-x-8 pt-10 lg:pt-10">
+  <div class="relative flex w-full min-w-0 flex-nowrap items-start gap-x-[2.1rem] pt-10 lg:pt-10">
     <ApiContent
       v-if="data"
       v-bind="$attrs"

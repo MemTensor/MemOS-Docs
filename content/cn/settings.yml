@@ -2,7 +2,7 @@ nav:
   # You can include icons using the syntax `(ri:icon-name)`.
   # The frontend will render these as actual icons.
   # You can find available icons at https://icones.js.org/
-  - "(ri:cloud-line) MemOS Cloud":
+  - "(ri:cloud-line) MemOS 云服务":
     - "(ri:book-line) 开始使用":
       - "(ri:eye-line) 概览": memos_cloud/overview.md
       - "(ri:rocket-line) 快速开始": memos_cloud/quick_start.md

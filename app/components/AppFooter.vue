@@ -43,7 +43,7 @@ const columns = computed(() => [
     children: [
       {
         label: t('footer.memosCloud'),
-        to: useDashboardUrl('/quickstart/', locale.value),
+        to: useDashboardLoginUrl('/quickstart/', locale.value),
         target: '_blank'
       },
       {
@@ -146,7 +146,7 @@ const qrcodeData = computed(() => [
         list: 'mt-4 xl:min-w-[190px]',
         linkLabelExternalIcon: 'hidden',
         left: 'sm:mb-10 mb-6',
-        link: 'text-sm lg:text-base leading-5.5 text-[#94A3B8] hover:text-white/80! cursor-pointer'
+        link: 'text-sm lg:text-base leading-5.5 text-slate-500 dark:text-[#94A3B8] hover:text-slate-900! dark:hover:text-white/80! cursor-pointer'
       }"
     >
       <template #left>
@@ -154,9 +154,9 @@ const qrcodeData = computed(() => [
           <div class="flex flex-row items-center gap-3.5 w-fit ">
             <img
               src="https://statics.memtensor.com.cn/logo/memtensor-w.png"
-              class="sm:w-20 w-15"
+              class="sm:w-20 w-15 dark:invert-0 invert"
             >
-            <p class="sm:mt-1.5 text-[28px] leading-10 font-semibold bg-linear-180 from-8% from-white to-100% to-white/60 bg-clip-text text-transparent">
+            <p class="sm:mt-1.5 text-[28px] leading-10 font-semibold bg-linear-180 from-8% from-slate-900 dark:from-white to-100% to-slate-900/60 dark:to-white/60 bg-clip-text text-transparent">
               {{ $t('footer.memtensor') }}
             </p>
           </div>
@@ -183,7 +183,7 @@ const qrcodeData = computed(() => [
                   variant="ghost"
                   :leading-icon="item.icon"
                   :ui="{
-                    leadingIcon: `${item.iconClass ?? 'size-6'} bg-slate-100`
+                    leadingIcon: `${item.iconClass ?? 'size-6'} bg-slate-600 dark:bg-slate-100`
                   }"
                 />
 
@@ -205,7 +205,7 @@ const qrcodeData = computed(() => [
                 :src="item.img"
                 class="size-22.5"
               >
-              <span class="text-sm leading-4.5 text-slate-300 max-w-30 text-center">
+              <span class="text-sm leading-4.5 text-slate-500 dark:text-slate-300 max-w-30 text-center">
                 {{ item.label }}
               </span>
             </div>
@@ -214,7 +214,7 @@ const qrcodeData = computed(() => [
             <p class="text-copyright sm:text-base text-xs leading-5.5 whitespace-nowrap">
               {{ $t('footer.icpFilingNumber') }}
             </p>
-            <span class="hidden sm:inline-block w-px h-3.5 bg-slate-800" />
+            <span class="hidden sm:inline-block w-px h-3.5 bg-slate-300 dark:bg-slate-800" />
             <p class="text-copyright sm:text-base text-xs leading-5.5 whitespace-nowrap">
               {{ $t('footer.filingNumber') }}
             </p>
@@ -226,42 +226,44 @@ const qrcodeData = computed(() => [
         <template v-if="link.key === 'footer.community'">
           <UPopover
             :ui="{
-              content: 'bg-[#080F21]'
+              content: 'bg-[#080F21] w-72 max-w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-white/10 p-0 shadow-lg'
             }"
           >
-            <div class="text-sm sm:text-base leading-5.5 text-[#94A3B8] hover:text-white/80! cursor-pointer">
+            <div class="text-sm sm:text-base leading-5.5 text-slate-500 dark:text-[#94A3B8] hover:text-slate-900! dark:hover:text-white/80! cursor-pointer">
               {{ t('header.community.button') }}
             </div>
             <template #content>
-              <div class="py-4.5 px-4">
-                <div class="mb-4 text-xl text-white leading-7 text-center">
+              <div class="p-4">
+                <div class="mb-3 text-center text-sm font-medium leading-snug text-white">
                   {{ t('header.community.title') }}
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                  <div class="space-y-2">
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="flex flex-col items-center gap-2">
                     <img
                       src="https://statics.memtensor.com.cn/landing-v2/qrcode-wechat-v2.webp"
-                      class="size-30"
+                      alt=""
+                      class="h-28 w-28 shrink-0 rounded-md object-cover"
                     >
-                    <div class="flex items-center justify-center gap-1.5">
+                    <div class="flex items-center justify-center gap-1.5 text-xs leading-5 text-slate-300">
                       <UIcon
                         name="i-ic:baseline-wechat"
-                        class="size-5"
+                        class="size-4 shrink-0"
                       />
-                      <span class="text-slate-300 leading-5.5">{{ t('header.community.wechat') }}</span>
+                      <span>{{ t('header.community.wechat') }}</span>
                     </div>
                   </div>
-                  <div class="space-y-2">
+                  <div class="flex flex-col items-center gap-2">
                     <img
                       src="https://statics.memtensor.com.cn/landing-v2/qrcode-discord-v2.webp"
-                      class="size-30"
+                      alt=""
+                      class="h-28 w-28 shrink-0 rounded-md object-cover"
                     >
-                    <div class="flex items-center justify-center gap-1.5">
+                    <div class="flex items-center justify-center gap-1.5 text-xs leading-5 text-slate-300">
                       <UIcon
                         name="ic:baseline-discord"
-                        class="size-5"
+                        class="size-4 shrink-0"
                       />
-                      <span class="text-slate-300 leading-5.5">Discord</span>
+                      <span>Discord</span>
                     </div>
                   </div>
                 </div>

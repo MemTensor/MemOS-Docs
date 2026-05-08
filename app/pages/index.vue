@@ -9,10 +9,10 @@ const localeItems = computed(() => tm('homepage.items') as ItemProps[])
 const rawItems = [
   { to: '/memos_cloud/overview', icon: 'ri:file-cloud-fill' },
   { to: '/open_source/getting_started/installation', icon: 'ri:open-source-fill' },
-  { to: '/self_developed_model/extraction_usage_example', icon: 'ri:cpu-line' },
+  { to: '/usecase/financial_assistant', icon: 'ri:book-read-fill' },
   { to: '/mcp_agent/mcp/guide', icon: 'material-symbols:switch-access-3' },
   { to: '/api_docs/start/overview', icon: 'ant-design:api-filled' },
-  { to: '/usecase/financial_assistant', icon: 'ri:book-read-fill' }
+  { to: '/self_developed_model/extraction_usage_example', icon: 'ri:cpu-line' }
 ]
 const items = computed(() => localeItems.value.map((item, index) => ({
   title: rt(item.title),
@@ -24,15 +24,23 @@ const items = computed(() => localeItems.value.map((item, index) => ({
 <template>
   <UMain class="max-w-(--ui-max-container) mx-auto">
     <UPageHero
-      :title="$t('homepage.title')"
       :description="$t('homepage.description')"
       :ui="{
-        container: 'pt-20! pb-15!',
-        title: 'text-2xl leading-8.5 sm:text-3xl sm:leading-10.5 lg:text-4xl lg:leading-12.5 font-black',
-        description: 'text-sm leadig-4.5 sm:text-sm sm:leading-5 lg:text-base lg:leading-5.5 mt-3',
-        footer: 'mt-8'
+        container: 'pt-[38px]! pb-[38px]! max-w-[92%]! xl:max-w-[1120px]! mx-auto! px-4 sm:px-6 lg:px-0!',
+        header: 'pt-0',
+        title: 'text-2xl leading-8.5 sm:text-3xl sm:leading-10.5 lg:text-4xl lg:leading-12.5 font-black [-webkit-text-stroke:0.22px_currentColor] [paint-order:stroke_fill]',
+        description: 'text-sm leading-4.5 sm:text-sm sm:leading-5 lg:text-base lg:leading-5.5 mt-1.5 sm:mt-2',
+        footer: 'mt-6 sm:mt-8',
+        links: 'gap-x-6 gap-y-3 sm:gap-x-8 sm:gap-y-4'
       }"
     >
+      <template #title>
+        <span class="inline-flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-balance">
+          <span>{{ $t('homepage.titlePrefix') }}</span>
+          <LogoWordmark />
+          <span>{{ $t('homepage.titleSuffix') }}</span>
+        </span>
+      </template>
       <template #links>
         <BaseButton
           type="primary"
@@ -42,6 +50,7 @@ const items = computed(() => localeItems.value.map((item, index) => ({
           {{ $t('homepage.buttonText') }}
         </BaseButton>
         <BaseButton
+          type="default"
           trailing-icon="ri:arrow-right-line"
           to="/openclaw/guide"
         >
@@ -49,41 +58,66 @@ const items = computed(() => localeItems.value.map((item, index) => ({
         </BaseButton>
       </template>
     </UPageHero>
-    <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-12 max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-0">
+    <div class="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-12 max-w-[92%] xl:max-w-[1020px] mx-auto px-4 sm:px-6 lg:px-0">
       <UPageCard
         v-for="(item, index) in items"
         :key="index"
         spotlight
         spotlight-color="primary"
         :class="[
-          'group',
+          'group h-full',
           'xl:col-span-4',
           index === items.length - 2 && items.length === 5 ? 'xl:col-start-3' : '',
           index === items.length - 1 && items.length === 5 ? 'xl:col-start-7' : ''
         ]"
         :ui="{
-          root: 'rounded-[20px]',
-          container: 'gap-y-0'
+          root: 'rounded-2xl h-full flex flex-col overflow-hidden',
+          container: 'gap-y-0 flex h-full min-h-0 flex-1 flex-col !p-0'
         }"
         :to="item.to"
       >
-        <div
-          class="flex items-center justify-center h-40 bg-[#171823] bg-cover rounded-xl mb-8 bg-[url(https://cdn.memtensor.com.cn/img/1766476630033_bbjhot_compressed.png)] group-hover:bg-[url(https://cdn.memtensor.com.cn/img/1766476753478_f7b4hm_compressed.png)]"
-        >
-          <UIcon
-            :name="item.icon!"
-            class="size-14 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light"
-          />
-        </div>
-        <div class="text-slate-50 text-base lg:text-xl font-bold mb-5">
-          {{ item.title }}
-          <div class="h-1 w-15 mt-2 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light" />
-        </div>
-        <div class="text-slate-400 leading-7">
-          {{ item.description }}
+        <div class="flex min-h-0 flex-1 flex-col">
+          <div
+            class="card-icon-area flex shrink-0 items-center justify-center bg-indigo-50 bg-cover dark:bg-[#171823] h-40 dark:bg-[url(https://cdn.memtensor.com.cn/img/1766476630033_bbjhot_compressed.png)] dark:group-hover:bg-[url(https://cdn.memtensor.com.cn/img/1766476753478_f7b4hm_compressed.png)]"
+          >
+            <UIcon
+              :name="item.icon!"
+              class="relative z-10 size-10 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light"
+            />
+          </div>
+          <div class="flex min-h-0 flex-1 flex-col justify-start gap-1 px-4 py-3.5">
+            <div class="text-slate-900 dark:text-slate-50 text-sm font-bold lg:text-base">
+              {{ item.title }}
+            </div>
+            <div class="text-slate-600 dark:text-slate-400 text-sm leading-6">
+              {{ item.description }}
+            </div>
+          </div>
         </div>
       </UPageCard>
     </div>
-    <AppFooter class="mt-28.5" />
   </UMain>
 </template>
+
+<style scoped>
+.card-icon-area {
+  position: relative;
+}
+
+.card-icon-area::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgb(148 163 184 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(148 163 184 / 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+:root.dark .card-icon-area::before {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.02) 1px, transparent 1px);
+}
+</style>

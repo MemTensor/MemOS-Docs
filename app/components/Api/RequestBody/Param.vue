@@ -48,7 +48,7 @@ const arrayItemEnum = computed(() => {
       <div class="mt-4">
         <div
           v-if="schema.description"
-          class="text-gray-400 text-sm [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:mt-0 [&_ul]:mb-0 [&_ul]:space-y-2 [&_ul]:pl-4 [&_ul]:list-disc [&_ul]:text-gray-400 [&_li]:leading-relaxed [&_code]:rounded [&_code]:bg-gray-100/50 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-gray-700 dark:[&_code]:bg-white/5 dark:[&_code]:text-gray-200 [&_a]:text-primary [&_a]:underline-offset-2 hover:[&_a]:underline"
+          class="text-gray-600 dark:text-gray-400 text-sm [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:mt-0 [&_ul]:mb-0 [&_ul]:space-y-2 [&_ul]:pl-4 [&_ul]:list-disc [&_ul]:text-gray-600 dark:[&_ul]:text-gray-400 [&_li]:leading-relaxed [&_code]:rounded [&_code]:bg-gray-100/50 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-gray-700 dark:[&_code]:bg-white/5 dark:[&_code]:text-gray-200 [&_a]:text-primary [&_a]:underline-offset-2 hover:[&_a]:underline"
           v-html="schema.description"
         />
         <div

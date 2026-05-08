@@ -5,6 +5,25 @@ title: OpenClaw 插件更新日志
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-05-08'
+    plugins:
+      - title: '云插件'
+        version: 'v0.1.15'
+        sections:
+          - title: '新增'
+            items:
+              - '为 OpenClaw / Moltbot / ClawDBot 插件清单新增 `activation.onCapabilities: ["hook"]` 能力声明。'
+              - '适配 OpenClaw 5.3 及其之后版本的插件加载机制：OpenClaw 会在插件注册前基于能力声明判断插件是否应被加载。该声明确保本插件作为 lifecycle hook 插件能够被正确识别和加载，从而继续注册 `before_agent_start`、`agent_end` 等 hook。'
+          - title: '改进'
+            items:
+              - '调整 `hooks.allowConversationAccess: true` 的自动补充时机，在 gateway 就绪后再写入宿主配置，使宿主配置更新能够触发 gateway 自动重启并应用所需的 hook 权限。'
+
+  - date: '2026-04-29'
+    plugins:
+      - title: '云插件'
+        version: 'v0.1.14'
+        summary: '适配 OpenClaw 2026.4.23 及其之后版本对 agent_end 的权限限制：插件会在启动 gateway 时自动检查配置，并为插件补充 `hooks.allowConversationAccess: true`，帮助用户避免因缺少该配置导致记忆写入相关 hook 无法正常工作。'
+
   - date: '2026-04-16'
     plugins:
       - title: '云插件'

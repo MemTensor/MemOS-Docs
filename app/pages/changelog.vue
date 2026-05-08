@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import releasesData from '../../content/releases.json'
-import enChangelogData from '../../content/en/changelog.yml'
-import cnChangelogData from '../../content/cn/changelog.yml'
-
 const { t, locale } = useI18n()
+
+const { data: releasesData } = await useAsyncData('releases', () => import('../../content/releases.json').then(m => m.default))
+const { data: enChangelogData } = await useAsyncData('changelog-en', () => import('../../content/en/changelog.yml').then(m => m.default))
+const { data: cnChangelogData } = await useAsyncData('changelog-cn', () => import('../../content/cn/changelog.yml').then(m => m.default))
 
 interface ChangelogItem {
   type: string
@@ -38,9 +38,8 @@ interface ChangelogData {
   versions: ChangelogVersion[]
 }
 
-// Get changelog data based on current language
 const changelogData = computed(() => {
-  return locale.value === 'cn' ? cnChangelogData : enChangelogData
+  return locale.value === 'cn' ? cnChangelogData.value : enChangelogData.value
 })
 
 const activeTab = ref('0')
@@ -127,12 +126,11 @@ const getCategoryClass = (category: string) => {
   return categoryClass[category] || 'text-[#10B981]'
 }
 
-// Transform changelog data to match ChangelogVersions component format
 const highlightVersions = computed(() => {
   const data = changelogData.value as unknown as ChangelogData
+  if (!data?.versions) return []
   return data.versions.map(version => ({
     ...version,
-    // Keep original structure for display
     changedInfo: version.changedInfo,
     ui: {
       container: 'max-w-3xl'
@@ -141,7 +139,7 @@ const highlightVersions = computed(() => {
 })
 
 const opensourceVersions = computed<Version[]>(() => {
-  const versions = releasesData.versions as Version[]
+  const versions = (releasesData.value?.versions ?? []) as Version[]
 
   return versions
     .map(version => ({
@@ -153,7 +151,6 @@ const opensourceVersions = computed<Version[]>(() => {
         container: 'max-w-3xl'
       }
     }))
-    // 过滤掉没有符合类型的版本
     .filter(version => version.changedInfo.length > 0)
 })
 
@@ -210,7 +207,7 @@ function handleTabChange(val: string | number) {
           <template #body="{ version }">
             <div class="space-y-6 changelog-info rounded-lg">
               <div class="flex flex-col items-start">
-                <span class="text-xl text-white font-bold">{{ version.name }}</span>
+                <span class="text-xl text-slate-900 dark:text-white font-bold">{{ version.name }}</span>
               </div>
               <div v-for="(items, category) in version.changedInfo" :key="String(category)" class="space-y-4">
                 <div class="flex text-lg items-center gap-2 font-medium font-bold text-[#10B981]" :class="getCategoryClass(String(category))">
@@ -218,7 +215,7 @@ function handleTabChange(val: string | number) {
                   {{ category }}
                 </div>
                 <div v-for="item in items" :key="item.type" class="space-y-2">
-                  <div class="text-l text-white flex items-center gap-2 changelog-info-title">
+                  <div class="text-l text-slate-900 dark:text-white flex items-center gap-2 changelog-info-title">
                     {{ item.type }}:
                   </div>
                   <ul class="text-sm list-disc list-inside space-y-1 ml-4">
@@ -242,10 +239,10 @@ function handleTabChange(val: string | number) {
           <template #body="{ version }">
             <ol class="list-decimal list-inside space-y-2 changelog-list">
               <div class="flex flex-col items-start mb-[24px]">
-                <span class="text-xl text-white font-bold">{{ version.name }}</span>
+                <span class="text-xl text-slate-900 dark:text-white font-bold">{{ version.name }}</span>
               </div>
               <li v-for="(change, idx) in version.changedInfo" :key="idx" class="flex flex-wrap items-start gap-x-1">
-                <span class="text-highlight text-white font-bold flex items-center gap-2">
+                <span class="text-highlight text-slate-900 dark:text-white font-bold flex items-center gap-2">
                   <UIcon :name="getCategoryIcon(change.type)" class="w-4 h-4 flex-shrink-0" />
                   {{ change.type }}:
                 </span>

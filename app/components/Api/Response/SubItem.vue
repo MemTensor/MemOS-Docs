@@ -64,7 +64,7 @@ const displaySchema = computed((): ArrayItemType | null => {
             <div class="mt-3">
               <p
                 v-if="subitem.description"
-                class="whitespace-pre-line text-gray-400 text-sm"
+                class="whitespace-pre-line text-gray-600 dark:text-gray-400 text-sm"
                 v-html="subitem.description"
               />
               <div
@@ -95,13 +95,13 @@ const displaySchema = computed((): ArrayItemType | null => {
     <!-- Primitive schema fallback -->
     <template v-else-if="displaySchema">
       <div class="py-6">
-        <div class="text-sm text-gray-400">
+        <div class="text-sm text-gray-600 dark:text-gray-400">
           <span>Type: </span>
           <span class="font-mono">{{ displaySchema.type }}</span>
         </div>
         <p
           v-if="displaySchema.description"
-          class="mt-2 whitespace-pre-line text-gray-400 text-sm"
+          class="mt-2 whitespace-pre-line text-gray-600 dark:text-gray-400 text-sm"
         >
           {{ displaySchema.description }}
         </p>
