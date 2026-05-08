@@ -5,6 +5,11 @@ title: OpenClaw Plugin Changelog
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-05-06'
+    plugins:
+      - title: 'Cloud Plugin'
+        version: 'v0.1.14'
+        summary: 'Added compatibility support for the new OpenClaw agent_end permission restriction: when the gateway starts, the plugin automatically checks the host config and adds `hooks.allowConversationAccess: true` for this plugin, helping users avoid memory-write hook failures caused by missing permissions.'
   - date: '2026-04-16'
     plugins:
       - title: 'Cloud Plugin'

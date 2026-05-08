@@ -65,7 +65,10 @@ function normalizePlugins(plugins?: ReleasePlugin[]) {
               v-if="plugin.summary"
               class="-mt-0.75 mb-3 leading-[1.7] text-slate-500 dark:text-[#cbd5e1]"
             >
-              {{ plugin.summary }}
+              <MDC
+                tag="div"
+                :value="plugin.summary"
+              />
             </div>
             <template
               v-for="(section, index) in normalizeSections(plugin.sections)"

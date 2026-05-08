@@ -5,6 +5,12 @@ title: OpenClaw 插件更新日志
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-05-06'
+    plugins:
+      - title: '云插件'
+        version: 'v0.1.14'
+        summary: '适配新版 OpenClaw 对 agent_end 的权限限制：插件会在启动 gateway 时自动检查配置，并为插件补充 `hooks.allowConversationAccess: true`，帮助用户避免因缺少该配置导致记忆写入相关 hook 无法正常工作。'
+
   - date: '2026-04-16'
     plugins:
       - title: '云插件'
