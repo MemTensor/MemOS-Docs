@@ -18,7 +18,7 @@ releases:
             items:
               - 'Adjusted the automatic `hooks.allowConversationAccess: true` patching flow to run after the gateway is ready, allowing the host config update to trigger a gateway restart and apply the required hook permission.'
 
-  - date: '2026-05-06'
+  - date: '2026-04-29'
     plugins:
       - title: 'Cloud Plugin'
         version: 'v0.1.14'
