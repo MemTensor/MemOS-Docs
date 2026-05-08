@@ -113,7 +113,7 @@
     "/search/memory": {
       "post": {
         "summary": "Search Memory",
-        "description": "该接口用于检索指定用户的记忆，返回与输入查询内容最相关的记忆片段，供Agent使用。召回的记忆片段包括“事实记忆”、“偏好记忆”、“工具记忆”。",
+        "description": "该接口用于检索指定用户的记忆，返回与输入查询内容最相关的记忆片段，供 Agent 使用。召回的记忆片段包括“事实记忆”、“偏好记忆”、“工具记忆”和“技能 Skill”。Skill 既可以来自用户对话自动生成，也可以来自知识库中上传的自定义 Skill 文件。",
         "operationId": "search_memory",
         "requestBody": {
           "required": true,
@@ -123,9 +123,40 @@
                 "$ref": "#/components/schemas/SearchMemoryRequest"
               },
               "example": {
-                "query": "我国庆想出去玩，帮我推荐个没去过的城市，以及没住过的酒店品牌",
+                "query": "帮我总结今年和阅读相关的记忆",
                 "user_id": "memos_user_123",
-                "conversation_id": "0928"
+                "conversation_id": "0928",
+                "knowledgebase_ids": [
+                  "kb_xxx"
+                ],
+                "filter": {
+                  "knowledgebase": {
+                    "and": [
+                      {
+                        "tags": {
+                          "contains": "阅读"
+                        }
+                      },
+                      {
+                        "create_time": {
+                          "gte": "2025-01-01"
+                        }
+                      },
+                      {
+                        "create_time": {
+                          "lte": "2025-12-31"
+                        }
+                      }
+                    ]
+                  },
+                  "user": {
+                    "and": [
+                      {
+                        "scene": "chat"
+                      }
+                    ]
+                  }
+                }
               }
             }
           }
@@ -477,8 +508,8 @@
     },
     "/add/knowledgebase-file": {
       "post": {
-        "summary": "添加知识库文档",
-        "description": "向指定知识库上传文档",
+        "summary": "添加知识库文件",
+        "description": "向指定知识库上传文件。默认上传普通文档；当 file[].type 为 skill 时，上传 Markdown Skill 文件或 ZIP 技能包。",
         "operationId": "add_knowledgebase-file",
         "requestBody": {
           "required": true,
@@ -506,8 +537,8 @@
     },
     "/get/knowledgebase-file": {
       "post": {
-        "summary": "获取知识库文档",
-        "description": "获取指定文档信息",
+        "summary": "获取知识库文件",
+        "description": "通过两种方式获取文件信息：传 file_ids 获取指定文件详情，或传 knowledgebase_id 获取某个知识库下的文件列表。两种方式只能选择一种；同时传 knowledgebase_id 和 file_ids 会报错。",
         "operationId": "get_knowledgebase-file",
         "requestBody": {
           "required": true,
@@ -535,8 +566,8 @@
     },
     "/delete/knowledgebase-file": {
       "post": {
-        "summary": "删除知识库文档",
-        "description": "从指定知识库中删除文档",
+        "summary": "删除知识库文件",
+        "description": "从指定知识库中删除文件。删除 Skill 文件时，与该文件关联的 Skill 会同步删除。",
         "operationId": "delete_knowledgebase-file",
         "requestBody": {
           "required": true,
@@ -608,7 +639,7 @@
               "type": "string"
             },
             "title": "Knowledgebase IDs",
-            "description": "该字段用于限制当次搜索可访问的知识库范围，默认为空（即不检索任何知识库）。传入具体知识库 ID，则可检索指定的知识库；传入all，则可检索该项目下所有关联知识库。"
+            "description": "该字段用于限制当次搜索可访问的知识库范围，默认为空（即不检索任何知识库）。传入具体知识库 ID，则可检索指定知识库中的普通文档和已上传的 Skill；传入 all，则可检索该项目下所有关联知识库。"
           },
           "memory_limit_number": {
             "type": "integer",
@@ -1163,8 +1194,8 @@
           "filter": {
             "type": "object",
             "title": "Filter",
-            "description": "记忆过滤的条件，用于在检索记忆前精确限定记忆范围。可用字段包括：\"agent_id\", \"app_id\", \"create_time\", \"update_time\"以及\"info\"中的字段。支持逻辑运算符（and，or）和比较运算符（gte、lte、gt、lt）。对于\"info\"字段，支持过滤传入的\"business_type\", \"biz_id\", \"scene\"和其他自定义字段。",
-            "example": "{\"and\": [{\"create_time\":{\"gte\":\"...\"}}]}"
+            "description": "记忆过滤条件，用于在检索前精确限定候选记忆范围。支持两种写法：直接传入由 and/or 组成的全局过滤条件；或按记忆来源分别传入 knowledgebase、user、public 过滤条件。可用字段包括 agent_id、app_id、tags、create_time、update_time，以及添加消息时通过 info 写入的 business_type、biz_id、scene 等自定义字段。info 中的字段在 filter 中直接按字段名使用，例如 {\"scene\":\"chat\"}，不需要包一层 info。支持比较运算符 gte、lte、gt、lt，以及 tags.contains。",
+            "example": "{\"knowledgebase\":{\"and\":[{\"tags\":{\"contains\":\"阅读\"}},{\"create_time\":{\"gte\":\"2025-01-01\"}},{\"create_time\":{\"lte\":\"2025-12-31\"}}]},\"user\":{\"and\":[{\"scene\":\"chat\"}]}}"
           },
           "knowledgebase_ids": {
             "type": "array",
@@ -1209,11 +1240,12 @@
           "include_skill": {
             "type": "boolean",
             "title": "Include Skill",
-            "description": "是否启用技能（Skill）召回。开启后，系统会根据查询内容智能召回工具相关的记忆。不传时该功能默认关闭。"
+            "description": "是否启用技能（Skill）召回。开启后，系统会根据查询内容召回相关 Skill，包括用户对话自动生成的个性化 Skill，以及 knowledgebase_ids 范围内上传的自定义 Skill。不传时该功能默认关闭。"
           },
           "skill_limit_number": {
-            "type": "number",
-            "title": "Include Skill",
+            "type": "integer",
+            "format": "int32",
+            "title": "Skill Limit Number",
             "description": "限定返回的技能（Skill）条数，用于控制召回的技能个数,仅在 include_skill=true 时生效。不传时使用系统默认值6，最大值为25。"
           },
           "relativity": {
@@ -1527,7 +1559,7 @@
           "skill_value": {
             "type": "object",
             "title": "Skill Value",
-            "description": "技能 Skill 的具体内容。",
+            "description": "技能 Skill 的结构化内容，可直接转为字符串后注入 Agent 的 prompt。",
             "items": {
               "$ref": "#/components/schemas/SkillValue"
             }
@@ -1535,7 +1567,7 @@
           "skill_url": {
             "type": "string",
             "title": "Skill Url",
-            "description": "技能 Skill 的下载链接，下载为可复用的技能实现或配置文件。"
+            "description": "技能 Skill 的下载链接。Markdown Skill 可下载为 SKILL.md；ZIP 技能包可下载后获取 SKILL.md、脚本、参考资料等附件。"
           },
           "skill_type": {
             "type": "string",
@@ -1621,7 +1653,7 @@
           "skill_detail_list": {
             "type": "array",
             "title": "Skill Detail List",
-            "description": "返回的技能 Skill 详情列表。",
+            "description": "返回的技能 Skill 详情列表。开启 include_skill 后返回，来源包括用户对话自动生成的 Skill 和知识库中上传的自定义 Skill。",
             "items": {
               "$ref": "#/components/schemas/SkillDetail"
             }
@@ -2258,19 +2290,29 @@
           "file": {
             "type": "array",
             "title": "File",
-            "description": "上传文档列表",
+            "description": "上传文件列表。普通文档按文档解析流程处理；Skill 文件按 Skill 校验和解析流程处理。",
             "items": {
               "type": "object",
               "properties": {
                 "name": {
                   "type": "string",
                   "title": "Name",
-                  "description": "上传的文档名称"
+                  "description": "上传的文件名称。上传 Base64 内容时建议填写；上传 URL 时可不填。"
+                },
+                "type": {
+                  "type": "string",
+                  "title": "Type",
+                  "enum": [
+                    "document",
+                    "skill"
+                  ],
+                  "default": "document",
+                  "description": "上传文件类型。document 表示普通知识库文档；skill 表示 Skill 文件，支持 .md 单文件或 .zip 技能包。"
                 },
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "文档内容输入方式支持 URL 或 Base64 编码，可上传的文档类型包括：PDF、DOCX、DOC、TXT、JSON、MD、XML。支持单次上传最多20个文档，单个文档不超过100MB、500页、20,000 Token数。"
+                  "description": "文件内容，支持 URL 或 Base64 编码。普通文档和 Skill 文件的支持格式、大小与数量限制，请查看<a href=\"/memos_cloud/features/advanced/knowledge_base\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">知识库要求</a>。"
                 }
               }
             }
@@ -2291,33 +2333,46 @@
             "description": "接口状态码，更多内容可查阅<a href=\"/api_docs/help/error_codes\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">错误码列表</a>了解详情。"
           },
           "data": {
-            "type": "object",
+            "type": "array",
             "title": "Data",
-            "properties": {
-              "id": {
-                "type": "string",
-                "title": "ID",
-                "description": "文档ID"
-              },
-              "name": {
-                "type": "string",
-                "title": "Name",
-                "description": "文档名称"
-              },
-              "sizeMB": {
-                "type": "integer",
-                "title": "Size MB",
-                "description": "文档大小"
-              },
-              "status": {
-                "type": "string",
-                "title": "Status",
-                "description": "文档处理状态",
-                "enum":[
-                  "running",
-                  "completed",
-                  "failed"
-                ]
+            "description": "上传文件的处理结果列表。",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "title": "ID",
+                  "description": "文件 ID"
+                },
+                "type": {
+                  "type": "string",
+                  "title": "Type",
+                  "enum": [
+                    "document",
+                    "skill"
+                  ],
+                  "description": "文件类型。document 表示普通文档；skill 表示 Skill 文件。"
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Name",
+                  "description": "文件名称"
+                },
+                "sizeMB": {
+                  "type": "number",
+                  "title": "Size MB",
+                  "description": "文件大小，单位 MB"
+                },
+                "status": {
+                  "type": "string",
+                  "title": "Status",
+                  "description": "文件处理状态",
+                  "enum":[
+                    "running",
+                    "completed",
+                    "failed"
+                  ]
+                }
               }
             }
           },
@@ -2331,17 +2386,43 @@
       },
       "GetFileRequest": {
         "type": "object",
-        "required": [
-          "file_ids"
-        ],
+        "description": "获取指定文件列表或指定知识库下的文件列表信息",
         "properties": {
+          "knowledgebase_id": {
+            "type": "string",
+            "title": "Knowledgebase ID",
+            "description": "目标知识库 ID，不能与 file_ids 同时传。"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "enum": [
+              "document",
+              "skill"
+            ],
+            "description": "文件类型筛选，仅在使用 knowledgebase_id 查询时生效。document 仅返回普通文档；skill 仅返回技能文件；不传则返回全部文件。"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "title": "Page",
+            "description": "分页页码，仅在使用 knowledgebase_id 查询时生效。",
+            "default": 1
+          },
+          "page_size": {
+            "type": "integer",
+            "format": "int32",
+            "title": "Page Size",
+            "description": "每页条数，仅在使用 knowledgebase_id 查询时生效。",
+            "default": 20
+          },
           "file_ids": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "title": "File IDs",
-            "description": "文件ID列表"
+            "description": "目标文件 ID 列表，传入后返回指定文件详情。"
           }
         },
         "title": "GetFileRequest"
@@ -2362,6 +2443,24 @@
             "type": "object",
             "title": "Data",
             "properties": {
+              "total": {
+                "type": "integer",
+                "format": "int32",
+                "title": "Total",
+                "description": "符合条件的文件总数"
+              },
+              "page": {
+                "type": "integer",
+                "format": "int32",
+                "title": "Page",
+                "description": "当前页码"
+              },
+              "page_size": {
+                "type": "integer",
+                "format": "int32",
+                "title": "Page Size",
+                "description": "每页条数"
+              },
               "file_detail_list": {
                 "type": "array",
                 "items": {
@@ -2370,22 +2469,31 @@
                     "id": {
                       "type": "string",
                       "title": "ID",
-                      "description": "文档ID"
+                      "description": "文件 ID"
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Type",
+                      "enum": [
+                        "document",
+                        "skill"
+                      ],
+                      "description": "文件类型。document 表示知识文档；skill 表示技能文件。"
                     },
                     "name": {
                       "type": "string",
                       "title": "Name",
-                      "description": "文档名称"
+                      "description": "文件名称"
                     },
                     "size": {
                       "type": "string",
                       "title": "Size",
-                      "description": "文档大小"
+                      "description": "文件大小"
                     },
                     "status": {
                       "type": "string",
                       "title": "Status",
-                      "description": "文档处理状态",
+                      "description": "文件处理状态",
                       "enum":[
                         "running",
                         "completed",
@@ -2418,7 +2526,7 @@
               "type": "string"
             },
             "title": "File IDs",
-            "description": "要删除的文档 ID 列表"
+            "description": "要删除的文件 ID 列表。可传入普通文档 ID 或 Skill 文件 ID。"
           }
         },
         "title": "DeleteFileRequest"

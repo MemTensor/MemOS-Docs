@@ -62,6 +62,64 @@ const description = computed(() => {
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
 })
 
+type TocLink = {
+  id: string
+  text: string
+  depth: number
+  children?: TocLink[]
+}
+
+function extractTextFromMdcNode(node: unknown): string {
+  if (typeof node === 'string') return node
+  if (Array.isArray(node)) {
+    return node.slice(2).map(extractTextFromMdcNode).join('')
+  }
+  if (node && typeof node === 'object' && 'value' in node) {
+    return String((node as { value?: unknown }).value ?? '')
+  }
+  return ''
+}
+
+const pageTocLinks = computed(() => {
+  const bodyValue = page.value?.body?.value
+  if (!Array.isArray(bodyValue)) return page.value?.body?.toc?.links || []
+
+  const rootLinks: TocLink[] = []
+  const stack: TocLink[] = []
+
+  bodyValue.forEach((node) => {
+    if (!Array.isArray(node)) return
+    const tag = node[0]
+    if (!['h2', 'h3', 'h4'].includes(tag)) return
+
+    const props = node[1] as { id?: string } | undefined
+    if (!props?.id) return
+
+    const link: TocLink = {
+      id: props.id,
+      text: extractTextFromMdcNode(node),
+      depth: Number(tag.slice(1)),
+      children: []
+    }
+
+    while (stack.length && stack[stack.length - 1]!.depth >= link.depth) {
+      stack.pop()
+    }
+
+    const parent = stack[stack.length - 1]
+    if (parent) {
+      parent.children ||= []
+      parent.children.push(link)
+    } else {
+      rootLinks.push(link)
+    }
+
+    stack.push(link)
+  })
+
+  return rootLinks.length ? rootLinks : page.value?.body?.toc?.links || []
+})
+
 const links = computed(() => {
   const links = []
   if (toc?.bottom?.edit) {
@@ -157,22 +215,44 @@ useHead({
         #right
       >
         <UContentToc
-          :title="toc?.title"
-          :links="page.body?.toc?.links"
+          :default-open="false"
+          highlight
+          :links="pageTocLinks"
           :ui="{
             root: 'top-(--ui-topbar-height) lg:top-(--ui-header-height)'
           }"
         >
+          <template
+            v-if="pageTocLinks.length"
+            #leading
+          >
+            <UIcon
+              name="i-lucide-panel-left"
+              class="size-5 shrink-0 text-muted lg:hidden"
+              aria-hidden="true"
+            />
+          </template>
+          <template
+            v-if="pageTocLinks.length"
+            #default
+          >
+            <span class="text-sm font-semibold text-highlighted truncate lg:hidden">
+              {{ page.title }}
+            </span>
+            <span class="hidden text-base font-medium text-default lg:inline">
+              {{ toc?.title || $t('pageToc.onPage') }}
+            </span>
+          </template>
           <template
             v-if="toc?.bottom"
             #bottom
           >
             <div
               class="hidden lg:block space-y-6"
-              :class="{ '!mt-6': page.body?.toc?.links?.length }"
+              :class="{ '!mt-6': pageTocLinks.length }"
             >
               <USeparator
-                v-if="page.body?.toc?.links?.length"
+                v-if="pageTocLinks.length"
                 type="dashed"
               />
 

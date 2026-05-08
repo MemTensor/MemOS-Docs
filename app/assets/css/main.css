@@ -23,7 +23,573 @@
 }
 
 header>div {
-  max-width: 100vw !important;
+  max-width: none !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.doc-page-container {
+  max-width: var(--container-8xl) !important;
+  width: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+.doc-sidebar-nav {
+  --doc-sidebar-row-height: 2rem;
+  --doc-sidebar-active-bg: color-mix(in srgb, var(--ui-primary) 8%, transparent);
+  --doc-sidebar-active-hover-bg: color-mix(in srgb, var(--ui-primary) 11%, transparent);
+  border-right: 0 !important;
+  padding: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 18px !important;
+  padding-inline-start: 0 !important;
+  padding-inline-end: 18px !important;
+  margin: 0 !important;
+  margin-inline-start: 0 !important;
+  overscroll-behavior: contain;
+}
+
+.sidebar-right-line {
+  display: none !important;
+}
+
+html.dark .doc-sidebar-nav {
+  --doc-sidebar-active-bg: color-mix(in srgb, var(--ui-primary) 14%, transparent);
+  --doc-sidebar-active-hover-bg: color-mix(in srgb, var(--ui-primary) 18%, transparent);
+}
+
+@media (min-width: 1024px) {
+
+  .doc-sidebar-nav > div {
+    padding-top: 1.35rem;
+    padding-bottom: 1.75rem;
+  }
+
+  .doc-page-grid {
+    position: relative;
+    gap: 2.1rem !important;
+    grid-template-columns: 280px minmax(0, 1fr) !important;
+  }
+
+  .doc-page-grid > aside,
+  .doc-page-grid > div,
+  .doc-page-grid > nav {
+    grid-column: auto !important;
+  }
+
+  /* 主文栏中间列：左右内边距为 0，正文宽度由 max-width 控制 */
+  .doc-page-grid > div.lg\:col-span-6 {
+    padding-inline: 0;
+  }
+
+  .doc-page-grid > nav {
+    display: none !important;
+  }
+
+  .doc-page-grid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 280px;
+    width: 1px;
+    background: var(--ui-border-muted, #e2e8f0);
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 1280px) {
+  .doc-page-grid {
+    grid-template-columns: 280px minmax(0, 1fr) 280px !important;
+  }
+
+  .doc-api-page-grid {
+    grid-template-columns: 280px minmax(0, 1fr) !important;
+  }
+
+  .doc-page-grid > nav {
+    display: block !important;
+  }
+
+  .doc-api-page-grid > nav {
+    display: none !important;
+  }
+}
+
+/* API 页：上一篇 / 下一篇——保持在内容列宽度内，参考 mem0 样式 */
+.doc-api-page-grid .doc-api-surround {
+  display: flex !important;
+  grid-template-columns: none !important;
+  width: 100%;
+  max-width: 100%;
+  gap: 1rem;
+}
+
+.doc-api-page-grid .doc-api-surround > a,
+.doc-api-page-grid .doc-api-surround > span {
+  flex: 1 1 0%;
+  min-width: 0;
+  max-width: none !important;
+  width: auto !important;
+  margin-left: 0 !important;
+}
+
+.doc-sidebar-nav nav > ul {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.doc-sidebar-nav ul ul {
+  margin-inline-start: 0 !important;
+  border-inline-start: 0 !important;
+  padding-inline-start: 0 !important;
+}
+
+/* 第三层及更深的列表（如「核心概念」展开后的子项）向右缩进 8px */
+.doc-sidebar-nav ul ul ul {
+  padding-inline-start: 8px !important;
+}
+
+.doc-sidebar-nav li {
+  margin-inline-start: 0 !important;
+  padding-inline-start: 0 !important;
+}
+
+/* 主题 itemWithChildren 会带 ps-1.5，与上一规则叠在一起时保证侧栏 li 无左缩进 */
+.doc-sidebar-nav li[class*="ps-1"] {
+  padding-inline-start: 0 !important;
+}
+
+/* 首个根级分区底部间距与后续分区保持一致 */
+.doc-sidebar-nav > div > nav > ul > li.flex.flex-col:first-child {
+  padding-bottom: 16px !important;
+}
+
+/* 仅根级两大分区之间一条横线（独立伪元素，可控间距/长度） */
+.doc-sidebar-nav > div > nav > ul > li.flex.flex-col + li.flex.flex-col {
+  border-top: 0 !important;
+  position: relative;
+  margin-top: 0;
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li.flex.flex-col + li.flex.flex-col::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 4px;
+  right: 4px;
+  height: 1px;
+  background: var(--ui-border-muted, #e2e8f0);
+}
+
+/* 嵌套 ul 内 li 之间不要横线、不要间距 */
+.doc-sidebar-nav > div > nav > ul ul > li + li {
+  border-top: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.doc-sidebar-nav > div > nav > ul ul > li + li::before {
+  display: none !important;
+}
+
+.doc-sidebar-nav > div > nav > ul ul > li {
+  margin-bottom: 2px !important;
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 0 !important;
+}
+
+.doc-sidebar-nav :where(a, button) {
+  min-height: unset !important;
+  border-radius: 0.5rem !important;
+  gap: 0.5rem !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  padding-inline-start: 0.625rem !important;
+  padding-inline-end: 0.625rem !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.doc-sidebar-nav :where(a, button)::before {
+  inset: 0 !important;
+  border-radius: 0.5rem !important;
+}
+
+.doc-sidebar-nav :where(a, button):hover::before {
+  background: rgb(241 245 249 / 0.7) !important;
+}
+
+html.dark .doc-sidebar-nav :where(a, button):hover::before {
+  background: rgb(30 41 59 / 0.4) !important;
+}
+
+.doc-sidebar-nav :where(a, button).text-primary {
+  color: var(--ui-primary) !important;
+  font-weight: 650 !important;
+}
+
+.doc-sidebar-nav :where(a, button).text-primary::before {
+  background: var(--doc-sidebar-active-bg) !important;
+}
+
+.doc-sidebar-nav :where(a, button).text-primary:hover::before {
+  background: var(--doc-sidebar-active-hover-bg) !important;
+}
+
+.doc-sidebar-nav :where(a, button).text-primary::after {
+  display: none !important;
+}
+
+.doc-sidebar-nav :where(a, button) .iconify {
+  color: rgb(100 116 139);
+  opacity: 0.86;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+html.dark .doc-sidebar-nav :where(a, button) .iconify {
+  color: rgb(148 163 184);
+}
+
+.doc-sidebar-nav :where(a, button):hover .iconify,
+.doc-sidebar-nav :where(a, button).text-primary .iconify {
+  color: currentColor;
+  opacity: 1;
+}
+
+/* 暗黑下 html.dark 侧栏图标规则特异性更高，会盖住 .text-primary / :hover 的 currentColor，需显式恢复 */
+html.dark .doc-sidebar-nav :where(a, button).text-primary .iconify,
+html.dark .doc-sidebar-nav :where(a, button):hover .iconify {
+  color: currentColor;
+}
+
+/* 顶层大标题：禁止折叠、始终展开。侧栏里 ul ul / li 的缩进已被上面规则清零，二级图标实际只比行左缘多出与 a、button 相同的左 padding，故大标题左内边距与之相同即可与图标列对齐（勿再加已不存在的 ms-5+ps-1.5） */
+.doc-sidebar-nav > div > nav > ul > li > button {
+  min-height: 1.65rem;
+  margin-top: 0 !important;
+  margin-bottom: 4px !important;
+  padding-inline-start: 0.625rem !important;
+  padding-inline-end: 0.125rem !important;
+  pointer-events: none;
+  cursor: default;
+  color: rgb(15 23 42) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 760 !important;
+  letter-spacing: 0 !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li:first-child > button {
+  margin-top: 0;
+}
+
+html.dark .doc-sidebar-nav > div > nav > ul > li > button {
+  color: rgb(226 232 240) !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li > button::before {
+  display: none !important;
+}
+
+/* 顶层分区标题：隐藏 Yaml 区图标（w-4）与右侧折叠箭头 */
+.doc-sidebar-nav > div > nav > ul > li > button span.inline-flex .iconify.w-4 {
+  display: none !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li > button > span:last-child .iconify {
+  display: none !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li > [data-state="closed"] {
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+  --reka-accordion-content-height: auto !important;
+}
+
+/* 二级可折叠分组标题（开始使用、记忆操作等） */
+.doc-sidebar-nav > div > nav > ul > li li > button {
+  margin-top: 0 !important;
+  color: rgb(71 85 105) !important;
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+}
+
+/* 非首个二级分组标题 */
+.doc-sidebar-nav > div > nav > ul > li > div > ul > li + li > button {
+  margin-top: 0 !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li > div > ul > li li > button {
+  margin-top: 0 !important;
+}
+
+/* 嵌套 ul 内行距清零，所有子项（包括首行「快速开始」）与上方分组标题紧贴 */
+.doc-sidebar-nav nav ul ul > li :where(a, button) {
+  margin-top: 0 !important;
+}
+
+/* 展开态 Accordion 项默认 mb-1.5，会在相邻分组间留缝 */
+.doc-sidebar-nav li.flex.flex-col[data-state="open"] {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.dark .doc-sidebar-nav > div > nav > ul > li li > button {
+  color: rgb(203 213 225) !important;
+}
+
+.doc-sidebar-nav > div > nav > ul > li li > button .iconify {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* 侧栏折叠箭头：使用 chevron-down 图标，展开时朝下（0°），收起时旋转 -90° 朝右 */
+.doc-sidebar-nav button[data-state="closed"] span.iconify[class*="chevron-down"] {
+  transform: rotate(-90deg) !important;
+}
+
+.doc-sidebar-nav button[data-state="open"] span.iconify[class*="chevron-down"] {
+  transform: rotate(180deg) !important;
+}
+
+/* 页面描述文字加深 */
+.doc-page-header .text-muted {
+  color: rgb(51 65 85) !important;
+}
+
+html.dark .doc-page-header .text-muted {
+  color: rgb(203 213 225) !important;
+}
+
+/* 文档左侧导航：默认项字色略加深（Nuxt UI 默认 text-muted 偏浅） */
+.doc-sidebar-nav :where(a, button).text-muted:not([data-state="open"]) {
+  color: rgb(71 85 105);
+}
+
+html.dark .doc-sidebar-nav :where(a, button).text-muted:not([data-state="open"]) {
+  color: rgb(203 213 225);
+}
+
+.doc-sidebar-nav .text-dimmed {
+  color: rgb(100 116 139);
+}
+
+html.dark .doc-sidebar-nav .text-dimmed {
+  color: rgb(148 163 184);
+}
+
+.doc-page-header h1 {
+  color: rgb(15 23 42);
+}
+
+html.dark .doc-page-header h1 {
+  color: rgb(248 250 252);
+}
+
+.doc-page-body {
+  --doc-space-2xs: 0.3rem;
+  --doc-space-xs: 0.45rem;
+  --doc-space-sm: 0.7rem;
+  --doc-space-md: 0.75rem;
+  --doc-space-lg: 1.45rem;
+  --doc-space-xl: 2.6rem;
+  color: rgb(51 65 85);
+}
+
+html.dark .doc-page-body {
+  color: rgb(203 213 225);
+}
+
+.doc-page-body h2 {
+  margin-top: var(--doc-space-xl);
+  margin-bottom: 0;
+  font-size: 1.35rem;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  font-weight: 760;
+  color: rgb(15 23 42);
+}
+
+html.dark .doc-page-body h2 {
+  color: rgb(248 250 252);
+}
+
+.doc-page-body h3 {
+  margin-top: 2rem;
+  margin-bottom: 0;
+  font-size: 1.18rem;
+  line-height: 1.4;
+  font-weight: 680;
+  color: rgb(30 41 59);
+}
+
+html.dark .doc-page-body h3 {
+  color: rgb(226 232 240);
+}
+
+.doc-page-body h4 {
+  margin-top: var(--doc-space-lg);
+  margin-bottom: 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  font-weight: 650;
+  color: rgb(71 85 105);
+}
+
+html.dark .doc-page-body h4 {
+  color: rgb(203 213 225);
+}
+
+.doc-page-body > h2:first-child,
+.doc-page-body > h3:first-child,
+.doc-page-body > h4:first-child {
+  margin-top: 0;
+}
+
+.doc-page-body h2 + :is(p, ul, ol, pre, div, table, blockquote) {
+  margin-top: var(--doc-space-sm) !important;
+}
+
+.doc-page-body h3 + :is(p, ul, ol, pre, div, table, blockquote) {
+  margin-top: 0.6rem !important;
+}
+
+.doc-page-body h4 + :is(p, ul, ol, pre, div, table, blockquote) {
+  margin-top: 0.5rem !important;
+}
+
+.doc-page-body p,
+.doc-page-body li {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.doc-page-body p + p,
+.doc-page-body ul + p,
+.doc-page-body ol + p,
+.doc-page-body ul + ul,
+.doc-page-body ol + ol,
+.doc-page-body ul + ol,
+.doc-page-body ol + ul {
+  margin-top: var(--doc-space-md);
+}
+
+.doc-page-body p + ul,
+.doc-page-body p + ol {
+  margin-top: var(--doc-space-2xs);
+}
+
+.doc-page-body p + pre,
+.doc-page-body p + div:has(pre),
+.doc-page-body p + div[data-orientation="horizontal"] {
+  margin-top: var(--doc-space-xs) !important;
+}
+
+.doc-page-body :is(pre, div[data-orientation="horizontal"], .overflow-x-auto:has(pre)) {
+  margin-top: var(--doc-space-sm) !important;
+  margin-bottom: var(--doc-space-lg) !important;
+}
+
+.doc-page-body :is(p, li) + :is(pre, div[data-orientation="horizontal"], .overflow-x-auto:has(pre)) {
+  margin-top: var(--doc-space-xs) !important;
+}
+
+.doc-page-body ul,
+.doc-page-body ol {
+  padding-left: 1.25rem;
+  margin-top: var(--doc-space-sm);
+  margin-bottom: var(--doc-space-sm);
+}
+
+.doc-page-body li + li {
+  margin-top: 0.2rem;
+}
+
+.doc-page-body li p {
+  margin: 0;
+}
+
+.doc-page-body img:not([alt="MemOS Banner"]) {
+  margin-top: var(--doc-space-lg);
+  margin-bottom: var(--doc-space-lg);
+}
+
+/* 表格外层容器允许溢出以显示完整表格，并保证上下间距 */
+.doc-page-body .overflow-x-auto:not(:has(pre)) {
+  max-width: none;
+  margin-top: var(--doc-space-lg) !important;
+  margin-bottom: var(--doc-space-lg) !important;
+}
+
+/* 表格 */
+.doc-page-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.doc-page-body thead th {
+  padding: 0.6rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: rgb(71 85 105);
+  background: rgb(248 250 252);
+  border-bottom: 1px solid rgb(226 232 240);
+  text-align: left;
+}
+
+html.dark .doc-page-body thead th {
+  color: rgb(148 163 184);
+  background: rgb(15 23 42);
+  border-bottom-color: rgb(30 41 59);
+}
+
+.doc-page-body tbody td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid rgb(241 245 249);
+  vertical-align: top;
+}
+
+html.dark .doc-page-body tbody td {
+  border-bottom-color: rgb(30 41 59);
+}
+
+.doc-page-body tbody tr:last-child td {
+  border-bottom: 1px solid rgb(241 245 249);
+}
+
+.doc-page-body tbody tr:hover {
+  background: rgb(248 250 252);
+}
+
+html.dark .doc-page-body tbody tr:hover {
+  background: rgb(15 23 42 / 0.5);
+}
+
+:root:not(.dark) [class*="--spotlight-color"] {
+  --spotlight-color: color-mix(in srgb, var(--ui-primary) 30%, transparent) !important;
+}
+
+html.dark [class*="--spotlight-color"] {
+  --spotlight-color: color-mix(in srgb, var(--ui-primary) 40%, transparent) !important;
 }
 
 /* open-api-docs-module reset styles */
@@ -241,6 +807,71 @@ html::-webkit-scrollbar {
       --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     }
   }
+}
+
+/* UContentToc renders the trigger twice (mobile <button> + desktop <p>).
+   The base theme trigger class includes `flex`, which overrides `hidden`
+   on the desktop <p> in Tailwind v4, causing a duplicate "本页导航" on mobile. */
+@media (max-width: 1023.98px) {
+  .doc-page-grid > nav > div > p {
+    display: none !important;
+  }
+}
+
+/* Callout 内行内 code 底色改为半透明，与 callout 色调融合 */
+.doc-page-body .group.relative.block.rounded-md :is(p, li) {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.doc-page-body .group.relative.block.rounded-md :is(ul, ol) {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.doc-page-body .group.relative.block.rounded-md code {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+html.dark .doc-page-body .group.relative.block.rounded-md code {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Code group：语言选择标签与代码内容无缝衔接 */
+.doc-page-body div[data-orientation="horizontal"] > [role="tablist"] {
+  margin: 0 !important;
+}
+
+.doc-page-body pre {
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+  white-space: pre !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.doc-page-body pre code {
+  display: block;
+  min-width: max-content;
+  white-space: pre !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.doc-page-body div[data-orientation="horizontal"] pre {
+  border-top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Code group 选中标签指示器（已由统一代码块变量控制） */
+
+/* Code group：恢复 Pre 容器定位，让复制按钮正确定位到代码区域 */
+.doc-page-body div[data-orientation="horizontal"] > [role="tabpanel"] {
+  position: relative !important;
 }
 
 /* Nuxt Content may render an extra <br> after horizontal rules in prose pages. */

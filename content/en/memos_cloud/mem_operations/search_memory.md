@@ -30,7 +30,7 @@ Memory retrieval refers to how MemOS, upon receiving a user's query, returns the
 
 *   **Query Content (query)**: The user's question or statement, expressed in natural language, used to retrieve relevant memories through semantic matching.
 
-*   **Memory Filter (filter)**: Logic conditions in JSON format to filter on agent, create_time, tags, info, and other fields, narrowing the scope of memory retrieval. For example, retrieve only "memories from the last 30 days".
+*   **Memory Filter (filter)**: Logic conditions in JSON format to filter on agent, create_time, tags, info, and other fields, narrowing the scope of memory retrieval. You can also set separate filters for user memories, public memories, and Knowledge Base memories.
 
 *   **Relevance Threshold (relativity)**: Relevance refers to the semantic similarity between retrieved memories and the user's query; the higher the relevance score, the more closely the memory matches the current question. The relevance threshold controls the minimum matching level for retrieval. Default is 0.45, and memories below this value will be filtered out.
 
@@ -247,14 +247,10 @@ print(f"result: {res.json()}")
 
 ### Precisely Filter the Memory Retrieval Scope
 
-MemOS provides powerful memory filter functionality, allowing developers to accurately filter retrieved memories. This is especially useful for searching by memory characteristics such as creation time, tags, or metadata.
-
-::note
-Below is an example of using memory filters. Suppose a user wants an annual summary of all "chat" memories tagged with "reading" from 2025. You can filter for memories tagged "reading", created in 2025, and where the scene is "chat":
-::
+MemOS provides powerful memory filter functionality, allowing developers to narrow the candidate memory scope before semantic retrieval. Below are two patterns: conditions at the root of `filter` (global), and per-source branches (`knowledgebase` / `user` / `public`).
 
 ::code-group
-```python [Python (HTTP)]
+```python [Global filter]
 import os
 import json
 import requests
@@ -262,31 +258,81 @@ import requests
 os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
-# Headers and base URL
 headers = {
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
-  "Content-Type": "application/json"
+    "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
+    "Content-Type": "application/json",
 }
-BASE_URL = os.environ['MEMOS_BASE_URL']
+BASE_URL = os.environ["MEMOS_BASE_URL"]
 
-query_text = "My yearly reading summary"
+query_text = "Summarize my reading-related highlights this year"
 
 data = {
     "user_id": "memos_user_123",
     "query": query_text,
     "filter": {
         "and": [
-            {"tags": {"contains": "reading"}}, # Tags extracted by MemOS
-            {"create_time": {"gte": "2025-01-01"}}, # Memory creation time
-            {"create_time": {"gte": "2025-12-31"}}, # Memory creation time
-            {"info":{"scene":"chat"}} # Custom field set by developer when adding message
-        ]
-    } # Filter for all memories tagged "reading", created in 2025, in "chat" scene.
+            {"tags": {"contains": "reading"}},
+            {"create_time": {"gte": "2025-01-01"}},
+            {"create_time": {"lte": "2025-12-31"}},
+            {"scene": "chat"},
+        ],
+    },
 }
 
-# Call /search/memory to retrieve relevant memories
-res = requests.post(f"{BASE_URL}/search/memory", headers=headers, data=json.dumps(data))
+res = requests.post(
+    f"{BASE_URL}/search/memory", headers=headers, data=json.dumps(data)
+)
+print(f"result: {res.json()}")
+```
+::
 
+::code-group
+```python [Source-scoped filter]
+import os
+import json
+import requests
+
+os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
+os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+
+headers = {
+    "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
+    "Content-Type": "application/json",
+}
+BASE_URL = os.environ["MEMOS_BASE_URL"]
+
+query_text = "From KB policies, my chat history, and project announcements, summarize compliance points"
+
+data = {
+    "user_id": "memos_user_123",
+    "query": query_text,
+    "knowledgebase_ids": ["kb_xxx"],
+    "filter": {
+        "knowledgebase": {
+            "and": [
+                {"tags": {"contains": "policy"}},
+                {"create_time": {"gte": "2025-01-01"}},
+                {"create_time": {"lte": "2025-12-31"}},
+            ]
+        },
+        "user": {
+            "and": [
+                {"agent_id": "compliance_assistant"},
+                {"scene": "chat"},
+                {"create_time": {"gte": "2025-06-01"}},
+            ]
+        },
+        "public": {
+            "and": [
+                {"tags": {"contains": "announcement"}},
+            ]
+        },
+    },
+}
+
+res = requests.post(
+    f"{BASE_URL}/search/memory", headers=headers, data=json.dumps(data, ensure_ascii=False)
+)
 print(f"result: {res.json()}")
 ```
 ::
@@ -322,5 +368,5 @@ Note: Currently, the `relativity` field only takes effect for factual and prefer
 | ------------------ | --------------------------------------------------- | ------------------------------------------------------------------- |
 | Recall preference memories   | `include_preference`<br><span style="line-height:0.6;">&nbsp;</span><br>`preference_limit_number`   | Preference memories are user preference information generated by MemOS based on user chat history. Enable this to recall user preferences in results. |
 | Recall tool memories   | `include_tool_memory`<br><span style="line-height:0.6;">&nbsp;</span><br>`tool_memory_limit_number` | Tool memories are generated by MemOS from tool invocation information you've added. Enable this to recall tool memories, see [Tool Calling](/memos_cloud/features/advanced/tool_calling). |
-| Recall skills   | `include_skill`<br><span style="line-height:0.6;">&nbsp;</span><br>`skill_limit_number` | Skills are reusable agent abilities generated from user memories. Enable this to recall skills, see [Skills](/memos_cloud/features/advanced/skill). |
+| Recall skills   | `include_skill`<br><span style="line-height:0.6;">&nbsp;</span><br>`skill_limit_number` | Skills are reusable Agent capabilities. They can be auto-generated by MemOS from user conversations or uploaded by developers as custom skill files. Enable this to recall matching skills, see [Skills](/memos_cloud/features/advanced/skill). |
 | Specify knowledge bases | `knowledgebase_ids`                                 | Use this to restrict retrieval to specified project knowledge bases. This supports fine-grained permission control and flexible definition of accessible knowledge bases per user. See [Knowledge Base](/memos_cloud/features/advanced/knowledge_base).     |
