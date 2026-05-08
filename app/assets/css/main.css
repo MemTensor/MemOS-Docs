@@ -6,20 +6,26 @@
 @theme static {
   --container-8xl: 90rem;
   --font-sans: 'Public Sans', sans-serif;
-  --color-linear-primary: #1D4ED8;
-  --color-primary-light: #01C6FA;
+  --color-linear-primary: #4044ED;
+  --color-primary-light: #AA75EF;
   --color-copyright: #64748B;
 }
 
 :root {
   --ui-container: var(--container-8xl);
   --ui-max-container: 1240px;
-  --ui-topbar-height: 66px;
-  --ui-header-height: 136px;
+  --ui-topbar-height: 60px;
+  --ui-header-height: 100px;
+  --ui-primary: #4044ED;
+}
+
+html.dark {
   --ui-bg: #02020b;
   --ui-bg-muted: #0e1219;
   --ui-border-muted: #222a35;
-  --ui-primary: #5478DC;
+  --ui-primary: #7275F7;
+  --color-linear-primary: #5D60F3;
+  --color-primary-light: #9F80F5;
 }
 
 header>div {
