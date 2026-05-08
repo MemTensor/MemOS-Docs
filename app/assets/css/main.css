@@ -29,18 +29,21 @@ html.dark {
 }
 
 header>div {
-  max-width: none !important;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
+  width: calc(100% - 40px) !important;
+  max-width: var(--container-8xl) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 .doc-page-container {
+  width: calc(100% - 40px) !important;
   max-width: var(--container-8xl) !important;
-  width: auto !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 .doc-sidebar-nav {
