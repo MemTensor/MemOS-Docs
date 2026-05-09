@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const { t, locale } = useI18n()
 
+useHead({ title: () => t('changelog.title', '更新日志') })
+
 const { data: releasesData } = await useAsyncData('releases', () => import('../../content/releases.json').then(m => m.default))
 const { data: enChangelogData } = await useAsyncData('changelog-en', () => import('../../content/en/changelog.yml').then(m => m.default))
 const { data: cnChangelogData } = await useAsyncData('changelog-cn', () => import('../../content/cn/changelog.yml').then(m => m.default))

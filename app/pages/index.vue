@@ -4,8 +4,10 @@ interface ItemProps {
   description: string
 }
 
-const { rt, tm } = useI18n()
+const { t, rt, tm } = useI18n()
 const localeItems = computed(() => tm('homepage.items') as ItemProps[])
+
+useHead({ title: () => t('homepage.title') })
 const rawItems = [
   { to: '/memos_cloud/overview', icon: 'ri:file-cloud-fill' },
   { to: '/open_source/getting_started/installation', icon: 'ri:open-source-fill' },
