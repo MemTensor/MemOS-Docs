@@ -66,40 +66,43 @@ If you need to adjust timeout and failure strategy, you can specify them in the 
 
 ## Local Plugin
 
-The MemOS Openclaw local plugin supports secondary memory filtering with an LLM to remove irrelevant content after recall.
+`@memtensor/memos-local-plugin` includes multi-stage local retrieval filtering. It first recalls candidates from Skill, Trace/Episode, and World Model tiers, then applies RRF + MMR for fusion and deduplication. If an LLM is configured, it can also run a final relevance check before injection to drop items that only share surface keywords with the current task.
 
-### Configuration Example
+### How to Configure
 
-You can configure the model manually in Memory Viewer, or configure it in `~/.openclaw/openclaw.json`:
+Configure this directly in the Memory Viewer for the target agent:
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "memorySearch": { "enabled": false }
-    }
-  },
-  "plugins": {
-    "entries": {
-      "memos-local-openclaw-plugin": {
-        "enabled": true,
-        "config": {
-          "summarizer": {
-            "provider": "openai_compatible",
-            "endpoint": "https://your-api-endpoint/v1",
-            "apiKey": "${OPENAI_API_KEY}",
-            "model": "gpt-4o-mini",
-            "temperature": 0
-          }
-        }
-      }
-    }
-  }
-}
+| Agent | Memory Viewer |
+| --- | --- |
+| OpenClaw | `http://127.0.0.1:18799` |
+| Hermes | `http://127.0.0.1:18800` |
+
+Steps:
+
+1. Open the Memory Viewer.
+2. Go to **Settings → AI Models**.
+3. In the **LLM** section, choose a provider and fill in endpoint, API Key, model, and related fields.
+4. Click **Test** to confirm the model works.
+5. Save the settings. The Viewer restarts the plugin and loads the new config.
+
+After saving, local retrieval can use that LLM for a relevance check after recall and RRF/MMR ranking. If no LLM is configured, the plugin still uses built-in multi-channel recall and mechanical threshold filtering.
+
+### Local Retrieval Flow
+
+```text
+User request
+→ Build retrieval query and tags
+→ Tier 1: Skill candidates
+→ Tier 2: Trace / Episode candidates
+→ Tier 3: World Model candidates
+→ Multi-channel recall: vector / FTS5 / pattern / error signatures
+→ RRF fusion + MMR diversity control
+→ Optional LLM relevance check
+→ Inject into the agent
 ```
 
 ### Expected Results
 
-- In each auto-recall round, candidates are recalled first and then filtered by an LLM
-- Injected memories are more focused with less noise
-- If the model is unavailable, it automatically falls back without affecting basic recall
+- Injected memory context is more focused and less noisy
+- Skill, Trace/Episode, and World Model hits are not selected by vector similarity alone
+- If the LLM is unavailable, retrieval falls back to stricter mechanical thresholds without breaking basic recall

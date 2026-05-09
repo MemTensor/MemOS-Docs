@@ -1,208 +1,112 @@
 ---
-title: Hermes Local Plugin Usage
-desc: API tools, team sharing, and multi-agent usage examples for the MemOS Hermes local plugin.
+title: Local Plugin Usage
+desc: Basic usage, memory tools, team sharing, and multi-agent examples for the MemOS local plugin in OpenClaw and Hermes.
 ---
 
 ## Basic Usage
 
-After installation, run `hermes chat` to start a conversation. Every turn is auto-stored in memory. Visit `http://127.0.0.1:18901` to access the Memory Viewer for management.
+`@memtensor/memos-local-plugin` supports both OpenClaw and Hermes. After installation, start the agent you use as usual. The plugin injects local memory context before each task and writes Trace, Policy, World Model, and Skill data after the task finishes.
 
-```bash
-hermes chat
-```
+| Agent | How to start | Viewer |
+| --- | --- | --- |
+| OpenClaw | Start or restart the OpenClaw gateway normally | `http://127.0.0.1:18799` |
+| Hermes | `hermes chat` | `http://127.0.0.1:18800` |
 
 ### Verify Memory is Working
 
-1. Have a conversation with your Hermes Agent about anything.
-2. Open the Memory Viewer at `http://127.0.0.1:18901` and check that the conversation appears.
+1. Have a conversation with OpenClaw or Hermes.
+2. Open the corresponding Memory Viewer and confirm the conversation appears in **Memories** / **Tasks**.
 3. In a new conversation, ask the agent to recall what you discussed:
 
-```
+```text
 You: Do you remember what I asked you to help me with before?
 Agent: (Calls memory_search) Yes, we previously discussed...
 ```
 
 ---
 
-## API Tools
+## Memory Tools
 
-The Hermes plugin provides the following tools for Agent interaction. The Agent can call them on demand during conversations.
+The local plugin exposes memory tools through each agent host. Exact tool presentation may differ by host, but the core capabilities are shared.
 
-### memory_search — Memory Search
+| Tool | Purpose |
+| --- | --- |
+| `memory_search` | Search across Skill, Trace/Episode, and World Model tiers. |
+| `memory_get` | Fetch a memory detail. |
+| `memory_timeline` | Inspect an episode / task timeline. |
+| `skill_list` | List currently available Skills. |
+| `skill_get` | Fetch a Skill invocation guide. |
+| `memory_environment` | Query L3 World Models for project structure, environment behavior, and constraints. |
 
-Parameters: `query` (required), `maxResults` (default 20), `minScore` (default 0.45), `role`.
-
-Returns excerpts + chunkId/task_id, no summary; LLM relevance filter applied.
-
-```text
-Agent call example:
-  memory_search(query="Nginx deployment config")
-  → Returns relevant memory excerpts with chunkId and task_id
-```
-
-### memory_get — Get Full Memory Text
-
-Retrieves the full original text of a memory chunk by `chunkId`. Optional `maxChars` to limit response length.
-
-### memory_timeline — Context Neighbors
-
-Gets neighboring memory chunks around a `chunkId` anchor. Parameter `window` defaults to 2.
-
-### task_summary — Task Summary
-
-Gets structured task summary (goal/steps/result/key details) by `taskId` or `query`.
+### Call Examples
 
 ```text
-Agent call example:
-  memory_search(query="database migration") → returns task_id: "task_42"
-  task_summary(taskId="task_42") → returns full structured task summary
+Agent call:
+  memory_search("Nginx deployment config")
+  → Returns relevant Skills, Trace snippets, and environment knowledge
+
+Agent call:
+  skill_get("nginx-proxy")
+  → Returns executable steps, applicability, and caveats
 ```
 
-### skill_get / skill_install — Skill Get & Install
-
-- `skill_get` accepts `skillId` or `taskId` (resolves skill by task)
-- `skill_install` installs the skill to workspace
-
-### memory_write_public — Write Public Memory
-
-Writes public memory (owner="public"), discoverable by all agents. Parameters: `content` (required), `summary` (optional).
-
-### skill_search — Skill Search
-
-Searches skills via FTS5 + vector dual channel, RRF fusion, then LLM relevance judgment.
-
-Parameters: `query` (required), `scope` ("mix" | "self" | "public", default "mix").
-
-### skill_publish / skill_unpublish — Skill Publish
-
-- `skill_publish` makes a skill public and discoverable via `skill_search`
-- `skill_unpublish` sets it private
-
-### memory_viewer — Viewer URL
-
-Returns the Memory Viewer access URL.
+The plugin also records tool successes and failures for later decision repair.
 
 ---
 
 ## Team Sharing
 
-Team Sharing connects multiple Hermes instances into a collaborative network. One instance serves as the **Hub** (team server) while others connect as **Clients**. Private data stays local — only explicitly shared tasks, memories, and skills are visible to the team.
+By default, OpenClaw and Hermes use separate local databases. For collaboration, enable Team Sharing from the Memory Viewer to share locally crystallized Skills and optional trace excerpts with other instances on the same LAN / VPN.
 
-### Start a Hub (Team Server)
+### How to Configure
 
-Configure via Viewer settings page or Bridge Config JSON:
+Open the Memory Viewer for the target agent, go to **Settings → Team Sharing**, fill in the team address and tokens as prompted, then save. The Viewer restarts the plugin and loads the new settings.
 
-```json
-{
-  "sharing": {
-    "enabled": true,
-    "role": "hub",
-    "hub": {
-      "teamName": "My Team",
-      "teamToken": "${MEMOS_TEAM_TOKEN}"
-    }
-  }
-}
-```
+### Expected Results
 
-### Join a Hub (Client)
-
-```json
-{
-  "sharing": {
-    "enabled": true,
-    "role": "client",
-    "client": {
-      "hubAddress": "192.168.1.100:18902"
-    }
-  }
-}
-```
-
-::tip
-You can also configure sharing through the **Viewer → Settings → Team Sharing** panel without editing JSON.
-::
-
-### Admin Features
-
-| Feature | Description |
-|---------|-------------|
-| Approve/Reject | Approve or reject pending members |
-| Promote/Demote | Promote members to admin or demote to regular member; affected users receive notifications |
-| Remove Member | Remove team members (with confirmation, self-removal prevented) |
-| Team Overview | View team name, total members, active member count |
-| Shutdown Notify | All clients notified automatically when Hub shuts down |
-
-### Team Sharing API Tools
-
-| Tool | Description |
-|------|-------------|
-| `task_share` / `task_unshare` | Push task to / remove from team |
-| `skill_publish` / `skill_unpublish` | Publish / unpublish skill to team |
-| `network_memory_detail` | Fetch full team memory content |
-| `network_skill_pull` | Pull team skill bundle locally |
-| `network_team_info` | Show current team connection state |
-
-### Multi-Instance Deployment
-
-Run multiple Hermes instances on the same machine with full isolation:
-
-| Resource | Isolation | Example |
-|----------|-----------|---------|
-| Viewer | MEMOS_VIEWER_PORT | 18901 / 18903 |
-| Daemon | MEMOS_DAEMON_PORT | 18992 / 18994 |
-| Database | MEMOS_STATE_DIR | ~/.hermes/memos-state/ / ~/hermes-work/memos-state/ |
+- Private local data stays in the current agent's runtime home by default.
+- Explicitly shared Skills can be discovered and reused by other instances.
+- Hub is not on the algorithm critical path. If sharing fails, local writes, retrieval, and Skill lookup continue to work.
 
 ---
 
-## Multi-Agent Collaboration
+## Multi-Agent Scenarios
 
-MemOS natively supports multi-agent scenarios. Each agent's memories and tasks are isolated via an `owner` field (Hermes defaults to `hermes`); retrieval automatically filters to current agent + public.
+When OpenClaw and Hermes are installed on the same machine, their ports and data are isolated:
 
-- **Memory Isolation**: Agent A cannot retrieve Agent B's private memories
-- **Public Memory**: Use `memory_write_public` to write owner="public" memories discoverable by all agents
-- **Skill Sharing**: Use `skill_publish` to make skills public; other agents discover and install via `skill_search`
-- **Skill Discovery**: `skill_search` supports scope (mix/self/public), FTS + vector dual channel + RRF fusion + LLM relevance judgment
-
-### Example Workflow
+| Resource | OpenClaw | Hermes |
+| --- | --- | --- |
+| Viewer | `18799` | `18800` |
+| Data directory | `~/.openclaw/memos-plugin/` | `~/.hermes/memos-plugin/` |
+| Config entry | Viewer → Settings | Viewer → Settings |
 
 ```text
-Agent Alpha:
+OpenClaw:
   memory_search("deploy config")
-  → sees own + public memories only
-  memory_write_public("shared deploy config")
-  skill_publish("nginx-proxy") ✓ now public
+  → prioritizes OpenClaw's local experience
 
-Agent Beta:
-  memory_search("alpha private deploy detail")
-  → no alpha private memories
-  memory_search("shared deploy config")
-  → found public memory
-  skill_search("nginx deployment")
-  → Found: nginx-proxy (public)
-  skill_install("nginx-proxy") ✓ installed
+Hermes:
+  memory_search("deploy config")
+  → prioritizes Hermes' local experience
+
+With Hub enabled:
+  both can explicitly reuse team-shared Skills
 ```
 
 ---
 
-## Viewer HTTP API
+## Viewer Management
 
-The Memory Viewer provides the following HTTP endpoints:
+The Memory Viewer provides these common entry points:
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | / | Memory Viewer HTML |
-| POST | /api/auth/* | setup / login / reset / logout |
-| GET | /api/memories | Memory list (pagination, filters) |
-| GET | /api/search | Hybrid search (vector minScore 0.64 + FTS5 fallback) |
-| POST/PUT/DELETE | /api/memory/:id | Memory CRUD |
-| GET | /api/tasks | Task list (status filter) |
-| GET/PUT/DELETE | /api/task/:id | Task detail/edit/delete |
-| POST | /api/task/:id/retry-skill | Retry skill generation |
-| GET | /api/skills | Skill list |
-| GET/PUT/DELETE | /api/skill/:id | Skill detail/edit/delete |
-| PUT | /api/skill/:id/visibility | Set public/private |
-| GET | /api/skill/:id/download | Download as ZIP |
-| GET | /api/stats, /api/metrics | Stats & metrics |
-| GET | /api/logs | Tool call logs |
-| GET/PUT | /api/config | Online configuration |
+| Page | Purpose |
+| --- | --- |
+| Overview | Inspect core status, version, event stream, and health. |
+| Memories | Inspect L1 Traces and raw execution records. |
+| Tasks | Inspect conversations and execution results grouped by task. |
+| Policies | Inspect strategies induced from multiple Traces. |
+| World Models | Inspect environment knowledge and constraints. |
+| Skills | Inspect, search, or retire crystallized Skills. |
+| Import | Import legacy plugin data, OpenClaw session JSONL, Hermes `MEMORY.md`, or import/export JSON backups. |
+| Settings | Configure models, team sharing, logs, and telemetry. |
+| Help | Look up field meanings such as `V`, `α`, `R_human`, `η`, support, and gain. |

@@ -65,40 +65,43 @@ MEMOS_RECALL_FILTER_MODEL="qwen2.5_7b"
 
 ## 本地插件
 
-MemOS Openclaw 本地插件支持大模型二次过滤记忆，用于在召回后筛掉不相关内容。
+`@memtensor/memos-local-plugin` 的本地检索内置多阶段过滤。它会先从 Skill、Trace/Episode、World Model 三层召回候选，再通过 RRF + MMR 做融合与去冗余；如果配置了可用 LLM，还可以在注入前做相关性复核，进一步筛掉表面关键词相似但对当前任务帮助不大的内容。
 
-### 配置示例
+### 如何配置
 
-可在 Memory Viewer 里手动配置模型，也可在 `～/.openclaw/openclaw.json` 里配置模型：
+直接在对应 Agent 的 Memory Viewer 里配置：
 
-```json
-{
-  "agents": {
-    "defaults": {
-      "memorySearch": { "enabled": false }
-    }
-  },
-  "plugins": {
-    "entries": {
-      "memos-local-openclaw-plugin": {
-        "enabled": true,
-        "config": {
-          "summarizer": {
-            "provider": "openai_compatible",
-            "endpoint": "https://your-api-endpoint/v1",
-            "apiKey": "${OPENAI_API_KEY}",
-            "model": "gpt-4o-mini",
-            "temperature": 0
-          }
-        }
-      }
-    }
-  }
-}
+| Agent | Memory Viewer |
+| --- | --- |
+| OpenClaw | `http://127.0.0.1:18799` |
+| Hermes | `http://127.0.0.1:18800` |
+
+配置步骤：
+
+1. 打开 Memory Viewer。
+2. 进入 **Settings → AI Models**。
+3. 在 **LLM** 区域选择 provider，并填写 endpoint、API Key、model 等信息。
+4. 点击 **Test** 确认模型可用。
+5. 保存设置；Viewer 会自动重启插件并加载新配置。
+
+保存后，本地检索会在召回、RRF/MMR 排序之后使用该 LLM 做相关性复核。未配置 LLM 时，插件仍会使用内置的多通道召回和机械阈值过滤。
+
+### 本地召回流程
+
+```text
+用户问题
+→ 构建检索 query 与标签
+→ Tier 1: Skill 候选
+→ Tier 2: Trace / Episode 候选
+→ Tier 3: World Model 候选
+→ 向量 / FTS5 / pattern / 错误特征多通道召回
+→ RRF 融合 + MMR 多样性控制
+→ 可选 LLM 相关性复核
+→ 注入给 Agent
 ```
 
 ### 预期结果
 
-- 每轮 auto-recall 先召回候选，再由大模型过滤
 - 注入上下文的记忆更聚焦，噪音更少
-- 模型不可用时自动回退，不影响基础召回
+- Skill、Trace/Episode、World Model 不会只靠单一向量相似度命中
+- LLM 不可用时会使用更严格的机械阈值回退，不影响基础召回
