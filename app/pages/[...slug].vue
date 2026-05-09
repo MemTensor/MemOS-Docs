@@ -9,14 +9,16 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 const { t, locale } = useI18n()
 const config = useRuntimeConfig()
 
-// Remove trailing slash to match content path
-const normalizedPath = route.path.replace(/\/$/, '') || '/'
+// Remove trailing slash to match content path. Keep it reactive because this
+// catch-all page is reused during client-side navigation.
+const normalizedPath = computed(() => route.path.replace(/\/$/, '') || '/')
+const docsPath = computed(() => locale.value === 'cn' ? normalizedPath.value : `/en${normalizedPath.value}`)
 
-const { data: page } = await useAsyncData(normalizedPath, () => {
-  const docsPath = locale.value === 'cn' ? normalizedPath : `/en${normalizedPath}`
-
-  return queryCollection('docs').path(docsPath).first()
-})
+const { data: page } = await useAsyncData(
+  () => `docs-page-${locale.value}-${normalizedPath.value}`,
+  () => queryCollection('docs').path(docsPath.value).first(),
+  { watch: [docsPath] }
+)
 
 // OpenAPI integration
 const apiData = shallowRef<FlatPathProps | undefined>(undefined)
@@ -33,11 +35,6 @@ if (page.value?.meta?.['openapi']) {
   }
 }
 
-// Watch locale changes and refresh content
-watch(locale, async (_newLocale: string) => {
-  await refreshNuxtData(normalizedPath)
-})
-
 const pageValue = page.value as unknown as { body: { value: [string, object][] }, path: string }
 if (import.meta.server) {
   useContent(pageValue)
@@ -47,9 +44,11 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`surround-${normalizedPath}`, () => useSurroundWithDesc(normalizedPath, navigation?.value || [], locale.value, config.public.env), {
-  watch: [locale, navigation]
-})
+const { data: surround } = await useAsyncData(
+  () => `surround-${locale.value}-${normalizedPath.value}`,
+  () => useSurroundWithDesc(normalizedPath.value, navigation?.value || [], locale.value, config.public.env),
+  { watch: [locale, navigation, normalizedPath] }
+)
 
 const parentSection = computed(() => {
   if (!navigation?.value) return ''
@@ -58,7 +57,7 @@ const parentSection = computed(() => {
 
   const find = (items: ContentNavigationItem[], parent: string): string => {
     for (const item of items) {
-      if (item.path && normalize(item.path) === normalizedPath) {
+      if (item.path && normalize(item.path) === normalizedPath.value) {
         return parent
       }
       if (item.children) {

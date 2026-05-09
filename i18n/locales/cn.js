@@ -10,7 +10,7 @@ export default {
       cloud: '云服务',
       openSource: '开源项目',
       selfDevelopedModel: '自研模型',
-      openclaw: 'OpenClaw',
+      openclaw: 'OpenClaw与Hermes',
       mcpAgent: 'MCP与Agent框架支持',
       apiDocs: 'API接口文档',
       samples: '示例项目',

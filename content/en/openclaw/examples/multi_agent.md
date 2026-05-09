@@ -66,36 +66,33 @@ If you need to pin a specific Agent ID, set it in the config:
 
 ## Local Plugin
 
-In multi-agent scenarios, the MemOS Openclaw local plugin supports three capabilities by default: memory isolation, shared public memory, and skill sharing.
+`@memtensor/memos-local-plugin` supports both OpenClaw and Hermes. By default, each agent uses its own runtime home and local database. If multiple sessions / agents share one runtime, retrieval is scoped toward the current agent context. For cross-instance collaboration, enable team sharing from **Viewer → Settings → Team Sharing**.
 
 ### Rules
 
-- Private memory: `owner = agent:{agentId}`, searchable only by the current Agent
-- Public memory: `owner = public`, searchable by all Agents
-- Private skill: `visibility = private`, visible only to the skill owner
-- Public skill: `visibility = public`, searchable and installable by other Agents
+- **Isolated by default**: OpenClaw uses `~/.openclaw/memos-plugin/`, while Hermes uses `~/.hermes/memos-plugin/`. They do not share databases automatically.
+- **Current agent first**: retrieval prioritizes the current agent / session's Traces, Policies, World Models, and Skills.
+- **Optional sharing**: when `hub.enabled` is on, instances can share locally crystallized Skills and optional trace excerpts over a LAN / VPN.
+- **Graceful fallback**: Hub is not on the algorithm critical path. If sharing is unavailable, the plugin falls back to local-only memory.
 
 ### Example Workflow
 
 ```text
-Agent Alpha:
+OpenClaw:
   memory_search("deploy config")
-  → sees own + public memories only
-  memory_write_public("shared deploy config")
-  skill_publish("nginx-proxy") ✓ now public
+  → prioritizes OpenClaw's local Skill / Trace / World Model store
 
-Agent Beta:
-  memory_search("alpha private deploy detail")
-  → no alpha private memories
-  memory_search("shared deploy config")
-  → found public memory
-  skill_search("nginx deployment")
-  → Found: nginx-proxy (public)
-  skill_install("nginx-proxy") ✓ installed
+Hermes:
+  memory_search("deploy config")
+  → prioritizes Hermes' local Skill / Trace / World Model store
+
+With Hub enabled:
+  OpenClaw / Hermes can pull team-shared Skills
+  private Traces remain local to each machine and runtime home by default
 ```
 
 ### Expected Results
 
-- Alpha and Beta cannot see each other's private memories
-- Content written by `memory_write_public` can be searched by both agents
-- After Alpha publishes a public skill, Beta can search and install it
+- OpenClaw and Hermes do not read each other's local database by default
+- Team members can explicitly share high-value Skills to avoid repeating mistakes
+- Local writes, retrieval, and skill lookup continue to work even if Hub is unavailable

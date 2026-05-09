@@ -10,7 +10,7 @@ export default {
       cloud: 'MemOS Cloud',
       openSource: 'Open Source',
       selfDevelopedModel: 'Self-developed Models',
-      openclaw: 'OpenClaw',
+      openclaw: 'OpenClaw & Hermes',
       mcpAgent: 'MCP & Agent Framework',
       apiDocs: 'API Documentation',
       samples: 'Sample Projects',
