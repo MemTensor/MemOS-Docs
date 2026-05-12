@@ -11,4 +11,4 @@ desc: Welcome to the MemOS contribution guide! Learn how to set up your developm
 
 Your contributions make this project better! ✨ If you have any questions, feel free to open an issue or join the discussion or scan the QR codes below to connect with us on Discord or WeChat.
 
-<img src="https://statics.memtensor.com.cn/memos/qr-code.png" alt="QR Code" width="600">
+<img src="https://cdn.memtensor.com.cn/img/qrcode-wechat_compressed.png" alt="QR Code" width="600">

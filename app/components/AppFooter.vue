@@ -124,7 +124,7 @@ const columns = computed(() => [
 ])
 const qrcodeData = computed(() => [
   {
-    img: 'https://statics.memtensor.com.cn/landing-v2/qrcode-wechat-v2.webp',
+    img: 'https://cdn.memtensor.com.cn/img/qrcode-wechat_compressed.png',
     label: t('footer.wechatGroup')
   },
   {
@@ -240,7 +240,7 @@ const qrcodeData = computed(() => [
                 <div class="grid grid-cols-2 gap-3">
                   <div class="flex flex-col items-center gap-2">
                     <img
-                      src="https://statics.memtensor.com.cn/landing-v2/qrcode-wechat-v2.webp"
+                      src="https://cdn.memtensor.com.cn/img/qrcode-wechat_compressed.png"
                       alt=""
                       class="h-28 w-28 shrink-0 rounded-md object-cover"
                     >

@@ -208,7 +208,7 @@ print(f"MemOS版本: {memos.__version__}")
 - **Discord社区**: 加入 [MemOS Discord服务器](https://discord.gg/Txbx3gebZR) 实时交流
 - **官方文档**: 查看 [MemOS官方文档](https://memos-docs.openmem.net/open_source/home/overview/) 了解详细使用指南
 - **API参考**: 查看 [MemOS API文档](https://memos-docs.openmem.net/api-reference/search-memories/) 获取接口详情
-- **微信群**: 扫描 [二维码](https://statics.memtensor.com.cn/memos/qr-code.png) 加入微信技术交流群
+- **微信群**: 扫描 [二维码](https://cdn.memtensor.com.cn/img/qrcode-wechat_compressed.png) 加入微信技术交流群
 
 ---
 

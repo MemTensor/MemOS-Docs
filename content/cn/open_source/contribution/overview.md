@@ -11,5 +11,5 @@ desc: 欢迎阅读 MemOS 贡献指南！了解如何配置开发环境、遵循�
 
 你的贡献让这个项目更加优秀！✨ 如果有任何问题，欢迎提交 issue 或参与讨论，也可以扫描下方二维码加入我们的 Discord 或微信社群与我们联系。
 
-<img src="https://statics.memtensor.com.cn/memos/qr-code.png" alt="QR Code" width="600">
+<img src="https://cdn.memtensor.com.cn/img/qrcode-wechat_compressed.png" alt="QR Code" width="600">
 
