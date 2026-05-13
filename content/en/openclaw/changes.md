@@ -5,6 +5,28 @@ title: OpenClaw Plugin Changelog
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-05-13'
+    plugins:
+      - title: 'Local Plugin'
+        version: 'v2.0.1'
+        sections:
+          - title: 'Added'
+            items:
+              - 'L1 / L2 / L3 layered memory architecture with three-tier retrieval.'
+              - 'Reflection-weighted value backprop for memory ranking signals.'
+              - 'Cross-task policy induction and skill crystallization layers.'
+              - 'OpenClaw and Hermes Agent adapters via a shared algorithm core.'
+              - 'HTTP/SSE bridge server (`bridge.cts` / `bridge:daemon`).'
+              - 'Vite-based viewer for inspecting memory state locally.'
+          - title: 'Improved'
+            items:
+              - 'Stabilized public API surface (`@memtensor/memos-local-plugin`).'
+              - 'Production-ready packaging via `prebuild-install`; no `node-gyp` needed.'
+              - 'Cross-platform native binaries: macOS arm64/x64, Linux x64, Windows x64.'
+          - title: 'Fixed'
+            items:
+              - 'Removed accidental devDependency leakage in published tarball.'
+
   - date: '2026-05-08'
     plugins:
       - title: 'Cloud Plugin'
