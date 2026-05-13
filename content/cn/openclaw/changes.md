@@ -5,6 +5,28 @@ title: OpenClaw 插件更新日志
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-05-13'
+    plugins:
+      - title: '本地插件'
+        version: 'v2.0.1'
+        sections:
+          - title: '新增'
+            items:
+              - 'L1 / L2 / L3 分层记忆架构，支持三层检索。'
+              - '反射加权值反向传播用于记忆排名信号。'
+              - '跨任务策略归纳和技能结晶层。'
+              - '通过共享算法核心的 OpenClaw 和 Hermes Agent 适配器。'
+              - 'HTTP/SSE 桥接服务 (`bridge.cts` / `bridge:daemon`)。'
+              - '基于 Vite 的查看器，用于本地检查记忆状态。'
+          - title: '改进'
+            items:
+              - '稳定了公共 API 接口 (`@memtensor/memos-local-plugin`)。'
+              - '通过 `prebuild-install` 实现生产就绪的打包；不再需要 `node-gyp`。'
+              - '跨平台原生二进制文件：macOS arm64/x64、Linux x64、Windows x64。'
+          - title: '修复'
+            items:
+              - '移除了发布的 tarball 中意外的 devDependency 泄漏。'
+
   - date: '2026-05-08'
     plugins:
       - title: '云插件'
