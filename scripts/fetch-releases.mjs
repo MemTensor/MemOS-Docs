@@ -1,6 +1,8 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs'
 import fetch from 'node-fetch'
 
+const targetPath = new URL('../content/releases.json', import.meta.url)
+
 function processReleases(data) {
   return data.map((release) => {
     // Extract what's changed section from body
@@ -86,8 +88,6 @@ async function fetchReleases() {
       versions: processedData
     }, null, 2)
 
-    const targetPath = new URL('../content/releases.json', import.meta.url)
-
     // Check if there are any new versions or changes
     if (existsSync(targetPath)) {
       const existingContent = readFileSync(targetPath, 'utf8')
@@ -104,6 +104,12 @@ async function fetchReleases() {
     console.log('Successfully generated releases data at content/releases.json')
   } catch (error) {
     console.error('Error processing releases:', error)
+
+    if (existsSync(targetPath)) {
+      console.warn('Using existing content/releases.json because release sync failed.')
+      return
+    }
+
     process.exit(1)
   }
 }
