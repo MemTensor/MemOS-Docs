@@ -3,6 +3,11 @@ title: OpenClaw Cloud Plugin
 desc: Enhance your OpenClaw's memory and reduce token by 72%. MemOS OpenClaw plugin is now live!
 ---
 
+::note
+**Compatibility recommendation**
+To avoid plugin loading or runtime errors, we recommend upgrading OpenClaw after MemOS has completed compatibility adaptation for the latest OpenClaw version.
+::
+
 OpenClaw's going viral lately. But if you've actually used it for a while, you'll find two issues you can hardly avoid:
 
 1. **Tokens burn way too quickly**：OpenClaw can handle many long-tail tasks, but the cost is that each run consumes a huge number of tokens. When you have it monitoring your screen, running scheduled tasks, or handling complex workflows, the token consumption is painfully fast.

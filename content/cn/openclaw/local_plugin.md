@@ -3,6 +3,11 @@ title: 本地插件
 desc: 使用 @memtensor/memos-local-plugin 为 OpenClaw 与 Hermes Agent 提供本地优先的长期记忆、三层检索、技能结晶和可观测管理面板。
 ---
 
+::note
+**兼容性建议**
+为避免插件加载或运行报错，建议在 MemOS 完成对应 Agent 最新版本适配后，再升级 Agent。
+::
+
 `@memtensor/memos-local-plugin` 是 MemOS 新一代本地插件：一套本地优先的记忆核心，同时适配 **OpenClaw** 与 **Hermes Agent**。它不会把记忆数据托管到云端，而是在你的机器上维护 SQLite 数据库、技能包和日志，让 Agent 在本地持续积累可复用经验。
 
 如果你只想为 OpenClaw 快速接入云端托管记忆，请查看 [OpenClaw 云插件](/cn/openclaw/guide)。如果你更看重隐私、本机运行、可观测性，或希望 OpenClaw / Hermes 都使用同一套本地记忆能力，请使用本页面的本地插件。
