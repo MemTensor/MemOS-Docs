@@ -23,15 +23,26 @@ To ensure service stability and security, MemOS Cloud Services imposes the follo
 
 | **API Name**    | **Single Input Limit**  | **Single Output Limit** |
 |-----------------|------------------------|-------------------------|
-| addMessage      | 20,000 tokens          | -                       |
-| searchMemory    | 20,000 tokens          | Factual Memory: 25 items<br>Preference Memory: 25 items<br>Tool Memory: 25 items<br>Skills: 25 items |
+| addMessage      | 40,000 tokens          | -                       |
+| searchMemory    | 40,000 tokens          | Factual Memory: 25 items<br>Preference Memory: 25 items<br>Tool Memory: 25 items<br>Skills: 25 items |
 
-In addition, the document upload feature for the knowledge base currently has the following limitations: each file must not exceed 100MB, 500 pages, or 20,000 tokens, and a maximum of 20 files can be uploaded at one time.
+In addition, the document upload feature for the knowledge base currently has the following limits:
+
+- Supported document types: PDF, DOCX, DOC, TXT, JSON, MD, XML
+- Maximum single-file size: no more than 100 MB and 500 pages
+- Maximum number of files per upload: no more than 20 files
+
+::note
+**Note**
+Knowledge bases now also support uploading Skill files. For detailed limits, see [Knowledge Base](/memos_cloud/features/advanced/knowledge_base).
+::
+
 If you have higher-level or special requirements, please contact the project team for further discussion.
 
 ::note
 **Note**
 - Requests exceeding the per-call limit will return the corresponding error code without deducting quota.
+- The total input tokens per minute must not exceed 400,000 tokens. Requests exceeding this limit will be rate-limited.
 - Additionally, we recommend a maximum QPS ≤ 50 (i.e., up to 50 requests per second). This is not a strict limit, but high concurrency may be affected by platform capacity, so control request frequency according to actual needs.
 ::
 

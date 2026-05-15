@@ -3,6 +3,11 @@ title: OpenClaw 云插件
 desc: 增强 OpenClaw 的记忆能力并减少 72% 的 Token 消耗：MemOS OpenClaw 插件现已上线！
 ---
 
+::note
+**兼容性建议**
+为避免插件加载或运行报错，建议在 MemOS 完成最新 OpenClaw 版本适配后，再升级 OpenClaw。
+::
+
 OpenClaw 近期备受关注，但在实际使用中，用户普遍会遇到两个难以回避的问题：
 
 1. **Token 消耗过快**：OpenClaw 能处理许多长尾任务，但每次运行都会消耗大量 Token。当你让它监控屏幕、运行定时任务或处理复杂工作流时，Token 消耗更是惊人。

@@ -3,6 +3,11 @@ title: Local Plugin
 desc: Use @memtensor/memos-local-plugin to bring local-first long-term memory, three-tier retrieval, skill crystallization, and an observable management panel to OpenClaw and Hermes Agent.
 ---
 
+::note
+**Compatibility recommendation**
+To avoid plugin loading or runtime errors, we recommend upgrading your Agent after MemOS has completed compatibility adaptation for that Agent version.
+::
+
 `@memtensor/memos-local-plugin` is the new MemOS local plugin: one local-first memory core for both **OpenClaw** and **Hermes Agent**. It does not host your memory data in the cloud. Instead, it maintains SQLite data, skill packages, and logs on your own machine so the agent can accumulate reusable experience locally.
 
 If you want a cloud-hosted memory service for OpenClaw with the simplest API Key setup, see the [OpenClaw Cloud Plugin](/openclaw/guide). If you care more about privacy, local runtime, observability, or using the same local memory capability across OpenClaw / Hermes, use this local plugin.
