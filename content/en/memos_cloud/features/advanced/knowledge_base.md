@@ -82,7 +82,7 @@ DAY 20 Employee asks: The intranet proxy won't open. Which version should I rein
 **MemOS Solution**
 
 ```python
-# Retrieve memories related to "intranet proxy" and "won't open" based on the employee's question, automatically identify the employee's device model. Retrieved memories:
+# Retrieve memories related to "intranet proxy" and "won't open" based on the employee's question. Retrieved memories:
 
 1. The user installed the company intranet proxy 20 days ago, and his device is MacBook Pro 13 (Intel).
 2. Intranet proxy common troubleshooting
