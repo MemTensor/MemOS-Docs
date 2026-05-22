@@ -9,22 +9,14 @@ This overview explains the full flow first. You only need to understand four que
 
 ## Full Flow
 
-::note
-The diagram is wide. Scroll horizontally to view the full feedback loop.
-::
+The memory flow can be read as a loop:
 
-::mermaid-diagram
----
-code: |
-  flowchart LR
-    A["1. Write<br/>conversation / event / knowledge"] --> B["2. Produce<br/>extract facts, preferences, skills"]
-    B --> C["3. Store and schedule<br/>index, versions, deduplicate"]
-    C --> D["4. Recall<br/>retrieve, filter, rerank"]
-    D --> E["5. Use<br/>inject into Prompt and respond"]
-    E --> F["6. Feedback<br/>update, deprecate, evolve"]
-    F --> C
----
-::
+1. Write conversations, events, or knowledge.
+2. Produce facts, preferences, skills, and other memory types.
+3. Store, index, version, deduplicate, and schedule memories.
+4. Recall useful memories through retrieval, filtering, and reranking.
+5. Use recalled memories in the prompt to generate a response.
+6. Feed corrections and updates back into storage and scheduling.
 
 ## 1. Write: Send Raw Information to MemOS
 
