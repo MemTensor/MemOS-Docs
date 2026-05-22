@@ -129,7 +129,7 @@ MemOS can understand information such as **relationships, time, and preferences*
 MemOS Cloud Service currently offers multiple pricing plans from free to enterprise versions for all developers. Different versions have different limits on knowledge base capacity and quantity.
 
 ::note
-Currently, all versions are free for a limited time. Welcome to [Official Website - Pricing](https://memos.openmem.net/cn/pricing) to apply for the version that suits your needs.
+Currently, all versions are free for a limited time. Visit [Official Website - Pricing](https://memos.openmem.net/pricing) to apply for the version that suits your needs.
 ::
 
 | **Version**   | **Knowledge Base Storage Limit**                        |
@@ -533,7 +533,7 @@ If you want the knowledge base to return not only knowledge content but also reu
 After upload succeeds, pass `knowledgebase_ids` and enable `include_skill` during retrieval to return both knowledge base memories and matching skills.
 
 :::note
-For the detailed workflow and usage examples of Skill files, see the complete examples in [Skill](/memos_cloud/features/advanced/skill).
+For the detailed workflow and usage examples of Skill files, see the complete examples in [Skill](/memos_cloud/features/skill).
 :::
 
 :::code-group
@@ -567,4 +567,3 @@ res = requests.post(url=url, headers=headers, data=json.dumps(data))
 print(f"result: {res.json()}")
 ```
 :::
-

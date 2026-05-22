@@ -1,59 +1,115 @@
 ---
 title: Delete Memory
-desc: Delete memories from MemOS, supporting batch deletion of memories for multiple users.
-
+desc: Delete memories from MemOS by user or by memory ID.
 ---
-
-::warning
-**[Go directly to API Docs](/api_docs/core/delete_memory)**
-<br>
-<br>
-
-**This article focuses on functional explanation. For detailed interface fields and limits, please click the link above.**
-::
 
 ## 1. Key Parameters
 
-* **Memory ID List (memory\_ids[])**: This parameter accepts a list of memory IDs and is used to delete one or more specific memories.
+::tip
+Deleting all memories for a user and deleting specific memory IDs are two different deletion methods. Choose one based on your scenario.
+::
 
-* **User ID (user_id)**: Used to delete all memories of a specific user. When this field is passed, all memories associated with that user (including facts, preferences, skills, and tool memories) will be deleted.
-
-:::note
-**How to obtain memory IDs for deletion**
-<br>
-<br>
-When retrieving memories via `search/memory` or `get/memory`, each memory item in the returned result contains a unique `id` field, which serves as the unique identifier for that memory.  <br>
-If a memory is found to be expired or does not meet expectations, you can directly take this `id` and pass it as the `memory_ids[]` parameter when calling the `delete/memory` API to delete the corresponding memory entry.
-:::
+- **User ID (`user_id`)**: deletes all memories associated with a user, including facts, preferences, skills, tool memories, and other memory content.
+- **Memory ID list (`memory_ids`)**: deletes one or more specified memories. Each memory ID comes from the `id` field returned by `search/memory` or `get/memory`.
 
 ## 2. Quick Start
 
-```python
-import os
-import requests
-import json
+### Delete User Memories
 
-# Replace with your MemOS API Key
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+::code-group
+
+```python [Python (HTTP)]
+import requests
+
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
-    "memory_ids":["4a50618f-797d-4c3b-b914-94d7d1246c8d"],  # Replace with real memory IDs
-    # "user_id": "12345" If you need to delete all memories of a user, replace with the real user ID
-    ## Note, user_id and memory_ids[] are two different filtering conditions, using both simultaneously will result in an error.
-  }
-headers = {
-  "Content-Type": "application/json",
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
+  "user_id": "memos_user_123"
 }
-url = f"{os.environ['MEMOS_BASE_URL']}/delete/memory"
 
-res = requests.post(url=url, headers=headers, data=json.dumps(data))
+res = requests.post(
+  f"{BASE_URL}/delete/memory",
+  headers={"Authorization": f"Token {API_KEY}"},
+  json=data
+)
 
-print(f"result: {res.json()}")
+print(res.json())
 ```
 
-::note
-&nbsp;Want to know if the deletion was successful?
-Copy the above code and run it, then [Search Memory](/memos_cloud/mem_operations/search_memory) again to see if the memory has been successfully deleted.
+```python [Python (SDK)]
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.delete_memory(user_id="memos_user_123")
+
+print(res)
+```
+
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/delete/memory \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "user_id": "memos_user_123"
+  }'
+```
+
 ::
+
+### Delete Specific Memory IDs
+
+Each memory ID comes from the `id` field returned by `search/memory` or `get/memory`.
+
+::code-group
+
+```python [Python (HTTP)]
+import requests
+
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
+
+data = {
+  "memory_ids": ["6b23b583-f4c4-4a8f-b345-58d0c48fea04"]
+}
+
+res = requests.post(
+  f"{BASE_URL}/delete/memory",
+  headers={"Authorization": f"Token {API_KEY}"},
+  json=data
+)
+
+print(res.json())
+```
+
+```python [Python (SDK)]
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.delete_memory(
+  memory_ids=["6b23b583-f4c4-4a8f-b345-58d0c48fea04"]
+)
+
+print(res)
+```
+
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/delete/memory \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "memory_ids": ["6b23b583-f4c4-4a8f-b345-58d0c48fea04"]
+  }'
+```
+
+::
+
+::note
+`"data.success": "true"` means deletion succeeded. You can also call [Search Memory](/memos_cloud/mem_operations/search_memory) again to check whether the memory is still recalled.
+::
+
+Need the complete field list, request format, and response format? See the [Delete Memory API documentation](/api_docs/core/delete_memory).

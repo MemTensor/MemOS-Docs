@@ -4,22 +4,29 @@ interface ItemProps {
   description: string
 }
 
+interface HomeRouteItem {
+  to: string
+  icon: string
+}
+
 const { t, rt, tm } = useI18n()
+const localePath = useLocalePath()
 const localeItems = computed(() => tm('homepage.items') as ItemProps[])
 
 useHead({ title: () => t('homepage.title') })
-const rawItems = [
-  { to: '/memos_cloud/overview', icon: 'ri:file-cloud-fill' },
+const rawItems: HomeRouteItem[] = [
+  { to: '/memos_cloud/introduction/mem_production', icon: 'ri:brain-line' },
+  { to: '/memos_cloud/getting_started/quick_start', icon: 'ri:file-cloud-fill' },
   { to: '/open_source/getting_started/installation', icon: 'ri:open-source-fill' },
-  { to: '/usecase/financial_assistant', icon: 'ri:book-read-fill' },
+  { to: '/usecase/knowledge_qa_assistant', icon: 'ri:book-read-fill' },
   { to: '/mcp_agent/mcp/guide', icon: 'material-symbols:switch-access-3' },
-  { to: '/api_docs/start/overview', icon: 'ant-design:api-filled' },
-  { to: '/self_developed_model/extraction_usage_example', icon: 'ri:cpu-line' }
+  { to: '/api_docs/start/overview', icon: 'ant-design:api-filled' }
 ]
 const items = computed(() => localeItems.value.map((item, index) => ({
   title: rt(item.title),
   description: rt(item.description),
-  ...rawItems[index]
+  ...rawItems[index],
+  to: localePath(rawItems[index]?.to || '/')
 })))
 </script>
 
@@ -47,14 +54,14 @@ const items = computed(() => localeItems.value.map((item, index) => ({
         <BaseButton
           type="primary"
           trailing-icon="ri:arrow-right-line"
-          to="/memos_cloud/overview"
+          :to="localePath('/memos_cloud/getting_started/quick_start')"
         >
           {{ $t('homepage.buttonText') }}
         </BaseButton>
         <BaseButton
           type="default"
           trailing-icon="ri:arrow-right-line"
-          to="/openclaw/guide"
+          :to="localePath('/openclaw/guide')"
         >
           {{ $t('homepage.openclawButton') }}
         </BaseButton>

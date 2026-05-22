@@ -22,23 +22,37 @@ const bgClasses = computed(() => {
   return 'inset-shadow-default bg-slate-200 dark:bg-[#232E60] text-slate-900 dark:text-white bg-linear-249 dark:-from-5% dark:from-black/42 dark:to-100% dark:to-white dark:bg-blend-soft-light'
 })
 
-function handleClick() {
-  if (!props.to) {
-    return
-  }
-
-  if (props.to.startsWith('http')) {
-    return props.target === '_blank' ? window.open(props.to, props.target) : navigateTo(props.to, { external: true })
-  }
-
-  navigateTo(props.to)
-}
+const buttonClasses = computed(() => `flex items-center justify-center gap-1.5 h-9.5 px-5 text-base font-medium rounded-[48px] cursor-pointer ${bgClasses.value} sm:h-11 sm:px-7`)
 </script>
 
 <template>
+  <NuxtLink
+    v-if="to"
+    :to="to"
+    :target="target"
+    :external="to.startsWith('http')"
+    :class="buttonClasses"
+  >
+    <UIcon
+      v-if="leadingIcon"
+      class="size-5"
+      :name="leadingIcon"
+    />
+    <template v-if="type === 'ghost'">
+      <span class="bg-linear-270 from-15% from-linear-primary to-118% to-primary-light bg-clip-text text-transparent">
+        <slot />
+      </span>
+    </template>
+    <slot v-else />
+    <UIcon
+      v-if="trailingIcon"
+      :class="type === 'ghost' ? 'size-5 bg-linear-270 from-15% from-linear-primary to-118% to-primary-light' : 'size-5'"
+      :name="trailingIcon"
+    />
+  </NuxtLink>
   <button
-    :class="`flex items-center justify-center gap-1.5 h-9.5 px-5 text-base font-medium rounded-[48px] cursor-pointer ${bgClasses} sm:h-11 sm:px-7`"
-    @click="handleClick"
+    v-else
+    :class="buttonClasses"
   >
     <UIcon
       v-if="leadingIcon"

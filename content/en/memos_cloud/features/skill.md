@@ -428,6 +428,6 @@ During retrieval, MemOS searches both auto-generated personal skills and uploade
 
 **Start exploring MemOS Skills now!**
 
-- Go to the [Dashboard - Skills page](https://memos-dashboard.openmem.net/cn/skill/) to view auto-generated skills.
+- Go to the [Dashboard - Skills page](https://memos-dashboard.openmem.net/skill/) to view auto-generated skills.
 - Don't have any skills yet? [Add messages](/memos_cloud/mem_operations/add_message) to trigger generation.
 - Want to upload custom skills? Go to [Dashboard - Knowledge Base](https://memos-dashboard.openmem.net/knowledgeBase/) to upload.

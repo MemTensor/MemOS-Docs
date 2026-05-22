@@ -1,146 +1,132 @@
 ---
 title: Memory Scheduling
-desc: Memory scheduling works like the brain's attention mechanism, dynamically deciding which memories to call up at the right moment.
+desc: Memory scheduling decides which memories should be prepared in advance, prioritized, or temporarily downgraded while conversations and tasks are running.
 ---
 
-## 1. Capability Overview
+## 1. What Is Memory Scheduling
 
-In MemOS, **Memory Scheduling** orchestrates memories with different efficiency tiers (parameters > active > working > other plaintext) so the model can retrieve what the user needs more efficiently and accurately. While conversations or tasks run, it predicts which memories might be required next and proactively loads higher efficiency types such as active or working memories to accelerate reasoning.
+Memory scheduling is MemOS's runtime ability to manage memory availability. It is not just about "which memory is found". Based on the current task, user state, historical topics, and memory heat, it decides which memories should stay closer to model context and which can remain in low-frequency storage.
 
-::note{icon="ri:triangular-flag-fill"}
-**Why is scheduling needed?**
-::
+You can think of memory scheduling as attention management in the memory system. When a user enters a task scenario, the system prepares the memories most likely to be needed and reduces interference from irrelevant history.
 
-In complex interactions, relying only on a basic global search each time can lead to:
+## 2. Why Scheduling Is Needed
 
-* **Too slow**: Waiting until the user finishes before searching causes high first-token latency.
-* **Inaccurate**: Too much history can bury key information and make retrieval harder.
+If every request only performs a full retrieval, the system faces three problems:
 
-<br>
+- **Slower response**: waiting until the user asks before searching all history increases first-token latency.
+- **Context overload**: recalling too much history may bury the information actually needed for the current task.
+- **Unnatural topic switching**: when the user's recent focus changes, the system needs to raise the priority of the new topic and downgrade the old one.
 
-Scheduling equips the system with “just-in-time preparation and rapid response” capabilities:
+The goal of scheduling is not to store more content, but to make the right memories available at the right time.
 
-* **Preloading**: Load the user’s frequently used background right at the start of a conversation.
-* **Predictive fetch**: Prepare likely-to-be-used memories before the user finishes typing.
+## 3. What Scheduling Looks At
 
-<br>
-
-::note
-**How it works — combine task semantics, context, access frequency, lifecycle, and other signals to dynamically arrange memory invocation and storage.**
-::
-
-| Dimension | Description |
+| Signal | Role |
 | --- | --- |
-| What to schedule? | Parameter memories (long-term knowledge and skills)<br><br>Active memories (runtime KV cache and hidden states)<br><br>Plaintext memories (externally editable facts, user preferences, retrieved snippets)<br><br>Supports dynamic migration across `plaintext ⇆ active ⇆ parameter`: frequently used plaintext snippets can be compiled into KV cache in advance, while stable templates can settle into parameters. |
-| When to schedule? | When existing context plus high-efficiency memories are insufficient to answer the user, optimize the memory structure.<br><br>Prepare memories in advance according to user intent and needs.<br><br>During continuous questioning, keep the dialog context efficient and accurate via scheduling. |
-| Who receives it? | The current user, specific agent roles, or cross-task shared contexts. |
-| What form? | Memories are tagged with heat, freshness, and importance. The scheduler uses these signals to decide who loads first, who goes to cold storage, and who needs archiving. |
+| Current task | Determines which topic or scenario the user is working on |
+| Memory relevance | Identifies which memories are closer to the current input, conversation, and business goal |
+| Freshness | Prioritizes information that is still valid and reduces the impact of outdated content |
+| Usage frequency | Frequently used memories are more likely to be prepared in advance or kept active |
+| Permission scope | Ensures scheduling respects user, Agent, tenant, and business isolation rules |
 
-When you use the MemOS Cloud service, you can observe scheduling through the `searchMemory` API:
+Scheduling affects later recall and context injection. Relevant, active, and trustworthy memories are more likely to be used first; low-frequency, outdated, or context-inappropriate memories are delayed.
 
-* It quickly returns relevant memories, avoiding context gaps.
-* Returned content has already been optimized by the scheduler, so results stay relevant without overloading the model input.
+## 4. Example: From Buying a Home to Renovation
 
-## 2. Example: Memory Scheduling in a Home Assistant Scenario
-
-*Earlier:* The user was busy looking for a house.
+**Earlier stage: buying a home is the core topic**
 
 ::card-group
 
   :::card
   ---
-  title: The user often says
+  icon: ri:message-3-line
+  title: User input
   ---
-  * “Help me check the average second-hand price in XX community.”
-  * “Remind me to view houses on Saturday.”
-  * “Record the latest mortgage rate changes.”
+  "Help me check the average second-hand home price around Binjiang."<br>
+  "Remind me to view houses on Saturday."<br>
+  "Record the latest mortgage rate changes."
   :::
 
   :::card
   ---
-  title: ✨ What MemOS does
+  icon: ri:timer-flash-line
+  title: Scheduling result
   ---
-  * The system initially writes these entries as **plaintext memories**.
-  * Because the house-hunting topic appears frequently, the scheduler identifies it as a **core theme** and migrates the related plaintext memories into **active memories** so follow-up queries are faster and more direct.
+  Generate memories about communities, house-viewing schedules, and mortgage rates.<br>
+  Determine that "home buying" is a recent high-frequency topic.<br>
+  Keep home-buying memories at a higher priority.
   :::
 
 ::
 
 <br>
 
-*Recently:* The user bought the house and started renovating.
+**Recently: renovation becomes the new active topic**
 
 ::card-group
 
   :::card
   ---
-  title: The user now says
+  icon: ri:message-3-line
+  title: User input
   ---
-  * “I’m going to look at tiles this weekend.”
-  * “Remind me to confirm electrical and plumbing work with the contractor.”
-  * “Note next week’s furniture delivery schedule.”
+  "I'm going to look at tiles this weekend."<br>
+  "Remind me to confirm plumbing and electrical work with the contractor."<br>
+  "Note next week's furniture delivery time."
   :::
 
   :::card
   ---
-  title: ✨ What MemOS does
+  icon: ri:timer-flash-line
+  title: Scheduling result
   ---
-  * The system keeps generating new **plaintext memories**.
-  * The scheduler detects that “renovation” has become the new high-frequency topic, so it upgrades those entries into **active memories**.
-  * Previously active house-hunting memories are no longer used, so they are automatically **downgraded back to plaintext** to free active capacity.
+  Continue generating renovation-related memories.<br>
+  Determine that "renovation" has become the new high-frequency topic.<br>
+  Move renovation memories to a higher priority.<br>
+  Keep home-buying memories, but gradually downgrade them.
   :::
 
 ::
 
 <br>
 
-*Right now:* The user casually says, “I feel like everything is piling up—please sort it out for me.”
+The user casually says: "I feel like a lot of things are piling up. Please sort them out for me."
 
 ::card-group
 
   :::card
   ---
-  title: Without scheduling, a full-database retrieval would return
+  class: border-amber-200 bg-amber-50/70 dark:border-amber-800/50 dark:bg-amber-950/20
+  color: warning
+  icon: ri:error-warning-line
+  title: Without scheduling: temporary full retrieval
   ---
-  * Check tiles (renovation)
-  * Confirm electrical and plumbing (renovation)
-  * Furniture delivery (renovation)
-  * Check housing prices (house-hunting, outdated)
-  * View houses (house-hunting, outdated)
-  * Grocery shopping (chores)
-  * Watch movies (chores)
+  Needs to retrieve from all memories on the spot.<br>
+  May mix in low-relevance items such as checking housing prices, viewing houses, grocery shopping, or watching movies.<br>
+  The answer is slower and more likely to drift away from the current task.
   :::
 
   :::card
   ---
-  title: ✨ With scheduling, the system quickly returns
+  class: border-emerald-200 bg-emerald-50/70 dark:border-emerald-800/50 dark:bg-emerald-950/20
+  color: success
+  icon: ri:checkbox-circle-line
+  title: With scheduling: prepare the current topic first
   ---
-  * Check tiles
-  * Confirm electrical and plumbing
-  * Furniture delivery
+  Prioritize renovation memories such as looking at tiles, confirming plumbing and electrical work, and furniture delivery.<br>
+  No need to re-evaluate the full history every time.<br>
+  Responses are faster and closer to what the user is currently worried about.
   :::
 
 ::
 
-<br>
+## 5. Relationship with Recall
 
-👉 **User experience improves**
+Scheduling and recall are not the same thing:
 
-* Faster responses (no need for full-database scans).
-* The list contains exactly what the user cares about—so the assistant “really gets me.”
+| Capability | Focus |
+| --- | --- |
+| Memory scheduling | Which memories should be more active and closer to model context at the current stage |
+| Memory recall | Which memories should be retrieved and used in a specific request |
 
-## 3. Advanced: If You Want Deep Customization
-
-Developers can **extend scheduling strategies** to customize system behavior, for example:
-
-| Category | Description | Example Scenario |
-| --- | --- | --- |
-| Permissions & governance | Combine scheduling with access control and compliance checks. | Medical records are visible only to doctors; sensitive content cannot be shared across domains. |
-| Scheduling metrics | Optimize scheduling based on access frequency and latency needs. | High-frequency hot memories gain priority; low-frequency cold memories are downgraded to archival storage. |
-
-## 4. Next Steps
-
-Learn more about MemOS core capabilities:
-
-* [Memory Recall](/overview/quick_start/mem_recall)
-* [Memory Lifecycle Management](/overview/quick_start/mem_lifecycle)
+Scheduling is runtime preparation and priority management. Recall is retrieval and selection for one request. When scheduling works well, recall is usually faster, more accurate, and less affected by irrelevant history.

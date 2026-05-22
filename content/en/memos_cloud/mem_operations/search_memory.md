@@ -1,274 +1,187 @@
 ---
 title: Search Memory
-desc: MemOS recalls relevant memories through semantic retrieval and filtering capabilities.
+desc: MemOS recalls relevant memories through semantic retrieval and filtering.
 ---
 
-::warning
-**[Click here to view the API documentation directly](/api_docs/core/search_memory)**
-<br>
-<br>
+## 1. What Is Memory Retrieval?
 
-**This article focuses on functionality instructions. For detailed interface fields and restrictions, please click the link above.**
-::
-
-## 1. What is Memory Retrieval?
-
-Memory retrieval refers to how MemOS, upon receiving a user's query, returns the most relevant and critical memory content from the memory database, combined with developer-defined filtering conditions. When generating answers, the model refers to these recalled memories to provide more accurate, relevant, and context-aware responses.
+Memory retrieval means that when a user asks a question, MemOS recalls the most relevant and important memories from the memory store, combined with filters predefined by developers. The model can then refer to these memories when generating an answer, making the response more accurate, contextual, and aligned with the user.
 
 ::note
-**&nbsp;Why is memory retrieval needed?**
-<div style="padding-left: 2em;">
+**Why memory retrieval is needed**
 
-*  No need to build context from scratch; directly access correct and reliable memories.
-
-*  Use filters and other methods to ensure that recalled memories are always highly relevant to the current question.
-</div>
+- Get correct and reliable memories directly instead of rebuilding context from scratch.
+- Use filters and other controls to keep recalled memories highly relevant to the current question.
 ::
-
 
 ## 2. Key Parameters
 
-*   **Query Content (query)**: The user's question or statement, expressed in natural language, used to retrieve relevant memories through semantic matching.
-
-*   **Memory Filter (filter)**: Logic conditions in JSON format to filter on agent, create_time, tags, info, and other fields, narrowing the scope of memory retrieval. You can also set separate filters for user memories, public memories, and Knowledge Base memories.
-
-*   **Relevance Threshold (relativity)**: Relevance refers to the semantic similarity between retrieved memories and the user's query; the higher the relevance score, the more closely the memory matches the current question. The relevance threshold controls the minimum matching level for retrieval. Default is 0.45, and memories below this value will be filtered out.
+- **Query (`query`)**: the user's question or statement used for retrieval. MemOS uses semantic matching to find related memories.
+- **Memory filter (`filter`)**: JSON-based logical conditions used to filter fields such as `agent_id`, `create_time`, `tags`, and `info`, narrowing the retrieval scope. You can also set separate filters for user memories, public memories, and knowledge base memories.
+- **Relevance threshold (`relativity`)**: controls how semantically relevant a recalled memory must be. The current default threshold is `0.45`; memories below this value are filtered out.
 
 ## 3. How It Works
 
-- **Query Rewriting**: MemOS cleans and semantically enhances the user’s natural language query, automatically supplementing key information and retrieval intent for improved accuracy.
+- **Query rewriting**: MemOS cleans and semantically enhances the natural-language query, supplementing key information and retrieval intent to improve retrieval accuracy.
+- **Memory recall**: the system retrieves candidate memories from available memory sources.
+- **Hybrid retrieval and ranking**: based on the rewritten query, the system generates embeddings and combines keyword retrieval with vector semantic retrieval, then ranks candidate memories by relevance.
+- **Memory filtering and screening**: structured filters and comparison operators narrow the retrieval scope; the configured relevance threshold controls result quality.
+- **Result deduplication**: candidate memories are deduplicated and semantically aggregated across sources.
+- **Memory output**: final results are returned according to the configured memory limit, usually within 600 ms, for later reasoning and answer generation.
 
-- **Memory Recall**
-
-  - **Hybrid Retrieval and Ranking**: The system generates embedding vectors based on the rewritten query and uses a hybrid of keyword and vector semantic retrieval strategies to recall candidate memories that are then ranked uniformly.
-
-  - **Memory Filtering and Selection**: Logical conditions and comparison operators are used to filter memories structurally, narrowing the retrieval range. Only the memories over the developer-set relevance threshold are kept to ensure quality results.
-
-  - **Deduplication**: Cross-source deduplication and semantic aggregation are conducted on the recalled candidate memories.
-
-- **Output Memories**: The final results are returned up to the set number of memory items, with a response time within 600ms, supporting subsequent reasoning and answer generation.
-
-All these processes are triggered with a single call to the `search/memory` endpoint—no manual memory operations are required.
-
+All of these steps are triggered by calling the `search/memory` API. You do not need to manually operate on user memories.
 
 ## 4. Quick Start
-::code-group
-```python [Python (HTTP)]
-import os
-import requests
-import json
 
-# Replace with your MemOS API Key
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+::code-group
+
+```python [Python (HTTP)]
+import requests
+
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
-  "query": "I want to go out for National Day. Please recommend me a city I haven't been to and a hotel brand I haven't stayed at.",
+  "query": "I want to travel during the National Day holiday. Please recommend a city I have not been to and a hotel brand I have not stayed at.",
   "user_id": "memos_user_123",
-  "conversation_id": "0928" # The current conversation ID (optional). If provided, MemOS gives higher weight to this conversation's memories but won't force a hit.
+  "conversation_id": "0928"
 }
-headers = {
-  "Content-Type": "application/json",
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
-}
-url = f"{os.environ['MEMOS_BASE_URL']}/search/memory"
 
-res = requests.post(url=url, headers=headers, data=json.dumps(data))
+res = requests.post(
+  f"{BASE_URL}/search/memory",
+  headers={"Authorization": f"Token {API_KEY}"},
+  json=data
+)
 
-print(f"result: {res.json()}")
+print(res.json())
 ```
-```python [Output]
-# Example output (simplified for demonstration purposes)
-{
-  # Fact memories
-  memory_detail_list [
-    {
-      "memory_key": "Summer Vacation Guangzhou Travel Plan",
-      "memory_value": "The user plans to travel to Guangzhou during the summer vacation and has chosen 7 Days Inn as their accommodation.",
-      "conversation_id": "0610",
-      "tags": [
-        "travel",
-        "Guangzhou",
-        "accommodation",
-        "hotel"
-      ]
-    }
-  ],
-  # Preference memories
-  preference_detail_list [
-    {
-      "preference_type": "implicit_preference",  # Implicit preference
-      "preference": "The user may prefer cost-effective hotel choices.",
-      "reasoning": "7 Days Inn is generally known for being affordable; the user's choice indicates a preference for good value. Although the user hasn't explicitly mentioned budget or hotel preferences, selecting 7 Days may reflect a focus on price and practicality.",
-      "conversation_id": "0610"
-    }
-  ]
-}
+
+```python [Python (SDK)]
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.search_memory(
+  query="I want to travel during the National Day holiday. Please recommend a city I have not been to and a hotel brand I have not stayed at.",
+  user_id="memos_user_123",
+  conversation_id="0928"
+)
+
+print(res)
 ```
+
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/search/memory \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "query": "I want to travel during the National Day holiday. Please recommend a city I have not been to and a hotel brand I have not stayed at.",
+    "user_id": "memos_user_123",
+    "conversation_id": "0928"
+  }'
+```
+
 ::
 
 ::note
-&nbsp;Note: `user_id` is required; each memory retrieval must specify a single user.
+`user_id` is required. Each memory retrieval request currently targets a single user.
 ::
 
-## 5. Example: Assembling Retrieved Memories into a Prompt
+Need the complete field list, request format, and response format? See the [Search Memory API documentation](/api_docs/core/search_memory).
 
-::note
-**Memory Prompt Assembling**<br>
+## 5. Prompt Template with Memories
 
-Using retrieved memories effectively requires certain techniques; here’s an example.
-::
+Recalled memories can be added directly to the prompt of your AI application. The following template is a practical reference.
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    Expand the full prompt template
+  </summary>
+  <div class="mt-4">
 
 ```text
 # Role
-You are an intelligent assistant (MemOS Assistant) with long-term memory capabilities. Your goal is to use the recalled memory fragments to provide highly personalized, accurate, and logically sound answers for the user.
+You are an intelligent assistant with long-term memory (MemOS Assistant). Your goal is to combine retrieved memory fragments to provide highly personalized, accurate, and logically rigorous answers.
 
 # System Context
-- Current time: 2026-01-06 15:05 (use this as the basis for memory freshness judgment)
+- Current time: 2026-01-06 15:05 (use this as the baseline for judging memory freshness)
 
 # Memory Data
-Below are the relevant facts and preferences retrieved by MemOS, divided into "Facts" and "Preferences".
-- **Facts**: May include user attributes, history, or third-party information.
-- **Caution**: Items tagged with '[assistant’s opinion]' or '[model summary]' indicate past AI inferences, **not** the user’s original words.
-- **Preferences**: Explicit or implicit requirements for answer style, format, or logic.
+The following information was retrieved by MemOS and is divided into facts and preferences.
+- **Facts**: May include user attributes, historical conversations, or third-party information.
+- **Important**: Content marked as '[assistant view]' or '[model summary]' represents past AI inference, not the user's original words.
+- **Preferences**: Explicit or implicit requirements for response style, format, or reasoning.
 
 <memories>
   <facts>
-    -[2025-12-26 21:45] The user plans to travel to Guangzhou during the summer vacation and has chosen 7 Days Inn as their accommodation.
+    -[2025-12-26 21:45] The user plans to travel to Guangzhou during the summer vacation and chose 7 Days Inn as the accommodation option.
     -[2025-12-26 14:26] The user's name is Grace.
   </facts>
 
   <preferences>
-    -[2026-01-04 20:41] [Explicit Preference] The user likes to travel to southern China.
+    -[2026-01-04 20:41] [Explicit Preference] The user likes traveling to southern regions.
     -[2025-12-26 21:45] [Implicit Preference] The user may prefer cost-effective hotel options.
   </preferences>
 </memories>
 
 # Critical Protocol: Memory Safety
-Retrieved memories may contain **AI speculation**, **irrelevant noise**, or **subject errors**. You must strictly execute the following **"Four-Step Judgment"**: if any step fails, **discard** that memory.
+Retrieved memories may contain AI inferences, irrelevant noise, or incorrect subjects. You must apply the following four checks. If a memory fails any check, discard it.
 
-1. **Source Verification**:
-   - **Core**: Distinguish between user’s original words and AI inference.
-   - If the memory is tagged with '[assistant’s opinion]', it is only an AI **assumption** and **must not** be treated as a user’s hard fact.
-   - *Counter-example*: '[assistant’s opinion] The user loves mangoes.' If the user never said it, do NOT assume so to prevent AI feedback loops.
-   - **Principle: AI summaries are for reference only and hold much lower weight than direct user statements.**
+1. Source verification:
+   - Distinguish the user's original words from AI inference.
+   - If a memory is marked as '[assistant view]', treat it as a past hypothesis, not an absolute user fact.
+   - Example: if a memory says '[assistant view] the user loves mangoes' but the user never said so, do not assume the user likes mangoes.
+   - Principle: AI summaries are only references and have much lower authority than direct user statements.
 
-2. **Attribution Check**:
-   - Is the memory’s subject really "the user"?
-   - If the memory describes a **third party** (e.g., "candidate", "interviewee", "fictional character", "case data"), NEVER attribute their qualities to the user.
+2. Attribution check:
+   - Is the subject of the memory definitely the user?
+   - If the memory describes a third party, candidate, fictional role, or case data, never attribute those traits to the user.
 
-3. **Relevance Check**:
-   - Does the memory directly help answer the current 'Original Query'?
-   - If it’s just a keyword match but a totally different context, it MUST be ignored.
+3. Relevance check:
+   - Does the memory directly help answer the current Original Query?
+   - If it is only a keyword match with a different context, ignore it.
 
-4. **Freshness Check**:
-   - Does the memory conflict with the user's latest intent? The 'Original Query' always takes precedence.
+4. Freshness check:
+   - Does the memory conflict with the user's latest intent? Treat the current Original Query as the highest-priority source of truth.
 
 # Instructions
-1. **Examine**: Read '<facts>' and execute the Four-Step Judgment, removing noisy or untrustworthy AI findings.
-2. **Execute**:
-   - Only use filtered memories as background.
-   - Strictly follow style requirements in '<preferences>'.
-3. **Output**: Answer the question directly, and NEVER mention "memory database", "retrieval", "AI opinion", or other system-internal terms.
+1. Review <facts> first, apply the four checks, and remove noise and unreliable AI views.
+2. Use only validated memories as background context.
+3. Follow the style requirements in <preferences>.
+4. Answer directly. Do not mention "memory store," "retrieval," or "AI views."
 
 # Original Query
-I want to go out for National Day. Please recommend me a city I haven't been to and a hotel brand I haven't stayed at.
-
+I want to travel during the National Day holiday. Please recommend a city I have not been to and a hotel brand I have not stayed at.
 ```
 
-## 6. More Usage Methods
-### Retrieve Overall User Profile
+  </div>
+</details>
 
-If you need user analysis for your application, or want to display "key personal impressions" to users in your AI app in real time, you can call MemOS to retrieve user's global memories to help LLMs build personalized profiles. No need to specify `conversation_id`.
+## 6. More Usage
 
-As shown below, if you’ve tried [adding a message](/memos_cloud/mem_operations/add_message) before for `memos_user_123`, you can copy this sample directly to retrieve user memories.
+### `conversation_id`: prioritize memories from the current conversation
 
-::code-group
-```python [Python (HTTP)]
-import os
-import json
-import requests
+When searching memories, you can pass a specific `conversation_id`. MemOS prioritizes memories related to the current conversation. If you omit it, MemOS searches the user's long-term memories globally, which is suitable when you need the user's overall profile.
 
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
-
-# Headers and base URL
-headers = {
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
-  "Content-Type": "application/json"
-}
-BASE_URL = os.environ['MEMOS_BASE_URL']
-
-# Directly ask for a user profile, as query
-query_text = "What are my personal keywords?"
-
+```python
 data = {
     "user_id": "memos_user_123",
-    "query": query_text,
-}
-
-# Call /search/memory to retrieve relevant memories
-res = requests.post(f"{BASE_URL}/search/memory", headers=headers, data=json.dumps(data))
-
-print(f"result: {res.json()}")
-```
-```python [Output]
-# Example output (simplified for demonstration purposes)
-
-{
-  # Fact memories
-  memory_detail_list [
-    {
-      "memory_key": "AI-Assisted Requests",
-      "memory_value": "The user wants AI to help plan daily studies, recommend movies and books, and provide emotional companionship.",
-      "conversation_id": "0610",
-      "tags": [
-        "help",
-        "study plan",
-        "recommend",
-        "companionship"
-      ]
-    },
-    {
-      "memory_key": "Type of Help Wanted from AI",
-      "memory_value": "The user wants AI to provide advice, information lookup, and inspiration.",
-      "conversation_id": "0610",
-      "tags": [
-        "AI",
-        "help",
-        "type"
-      ]
-    }
-  ]
+    "query": "Help me continue planning my National Day trip.",
+    "conversation_id": "0928"
 }
 ```
-::
 
+### `filter`: precisely narrow the retrieval scope
 
-### Precisely Filter the Memory Retrieval Scope
+MemOS supports `filter` to narrow retrieval by tags, time, business fields, and other conditions. You can also set separate filters for user memories, knowledge base memories, and public memories.
 
-MemOS provides powerful memory filter functionality, allowing developers to narrow the candidate memory scope before semantic retrieval. Below are two patterns: conditions at the root of `filter` (global), and per-source branches (`knowledgebase` / `user` / `public`).
+Example 1: retrieve all conversation memories related to reading in 2025.
 
-::code-group
-```python [Global filter]
-import os
-import json
-import requests
-
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
-
-headers = {
-    "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
-    "Content-Type": "application/json",
-}
-BASE_URL = os.environ["MEMOS_BASE_URL"]
-
-query_text = "Summarize my reading-related highlights this year"
-
+```python
 data = {
     "user_id": "memos_user_123",
-    "query": query_text,
+    "query": "Summarize my reading-related points this year.",
     "filter": {
         "and": [
             {"tags": {"contains": "reading"}},
@@ -278,34 +191,14 @@ data = {
         ],
     },
 }
-
-res = requests.post(
-    f"{BASE_URL}/search/memory", headers=headers, data=json.dumps(data)
-)
-print(f"result: {res.json()}")
 ```
-::
 
-::code-group
-```python [Source-scoped filter]
-import os
-import json
-import requests
+Example 2: filter knowledge base, user, and public memories separately.
 
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
-
-headers = {
-    "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
-    "Content-Type": "application/json",
-}
-BASE_URL = os.environ["MEMOS_BASE_URL"]
-
-query_text = "From KB policies, my chat history, and project announcements, summarize compliance points"
-
+```python
 data = {
     "user_id": "memos_user_123",
-    "query": query_text,
+    "query": "Combine knowledge base policies, my conversation records, and project announcements to summarize compliance points.",
     "knowledgebase_ids": ["kb_xxx"],
     "filter": {
         "knowledgebase": {
@@ -329,44 +222,55 @@ data = {
         },
     },
 }
-
-res = requests.post(
-    f"{BASE_URL}/search/memory", headers=headers, data=json.dumps(data, ensure_ascii=False)
-)
-print(f"result: {res.json()}")
 ```
-::
 
 ::note
-For more filter options, see [Memory Filter](/memos_cloud/features/basic/filters).
+For more filter conditions and nested syntax, see [Memory Filters](/memos_cloud/features/filters).
 ::
 
-### Memory Retrieval with Fewer Tokens
+### `relativity` / `memory_limit_number`: control recall quality and quantity
 
-To help the model get higher-quality and more token-efficient memory content (reducing the number of tokens injected), MemOS supports developer-specified **Relevance Threshold (`relativity`)** and **max number of returned memories (`memory_limit_number`)**.
-
-As shown below, setting `relativity = 0.8` and `memory_limit_number = 9` returns up to 9 memories, all with relevance above 0.8.
+Pass `relativity` to raise the relevance threshold. Pass `memory_limit_number` to limit the number of returned memories and reduce the token cost of later prompt injection.
 
 ```python
 data = {
     "user_id": "memos_user_123",
     "query": "Plan a 5-day trip to Chengdu for me.",
-    "relativity": 0.8, # Relevance threshold. If not given, the default is 0 (no min relevance).
-    "memory_limit_number": 9 # Max number of memories to return. Default is 9 if not provided.
+    "relativity": 0.8,
+    "memory_limit_number": 9
 }
 ```
-Note: Currently, the `relativity` field only takes effect for factual and preference memories.
 
+## 7. More Features
 
-## 7. More Functions
+::card-group
+  :::card
+  ---
+  icon: ri:tools-line
+  title: Recall Tool Memories
 
-::note
-&nbsp;For the complete list of API fields, formats, and more, see [Search Memory API documentation](/api_docs/core/search_memory).
+  to: /memos_cloud/features/tool_calling
+  ---
+  Add tool call information and recall tool memories.
+  :::
+
+  :::card
+  ---
+  icon: ri:book-read-line
+  title: Recall Skills
+
+  to: /memos_cloud/features/skill
+  ---
+  Automatically generate skills and recall reusable Skill memories.
+  :::
+
+  :::card
+  ---
+  icon: ri:database-2-line
+  title: Search Knowledge Bases
+
+  to: /memos_cloud/features/knowledge_base
+  ---
+  Enable knowledge bases and specify which knowledge bases can be searched.
+  :::
 ::
-
-| **Function**       | **Related Fields**                                            | **Description**                                                     |
-| ------------------ | --------------------------------------------------- | ------------------------------------------------------------------- |
-| Recall preference memories   | `include_preference`<br><span style="line-height:0.6;">&nbsp;</span><br>`preference_limit_number`   | Preference memories are user preference information generated by MemOS based on user chat history. Enable this to recall user preferences in results. |
-| Recall tool memories   | `include_tool_memory`<br><span style="line-height:0.6;">&nbsp;</span><br>`tool_memory_limit_number` | Tool memories are generated by MemOS from tool invocation information you've added. Enable this to recall tool memories, see [Tool Calling](/memos_cloud/features/advanced/tool_calling). |
-| Recall skills   | `include_skill`<br><span style="line-height:0.6;">&nbsp;</span><br>`skill_limit_number` | Skills are reusable Agent capabilities. They can be auto-generated by MemOS from user conversations or uploaded by developers as custom skill files. Enable this to recall matching skills, see [Skills](/memos_cloud/features/advanced/skill). |
-| Specify knowledge bases | `knowledgebase_ids`                                 | Use this to restrict retrieval to specified project knowledge bases. This supports fine-grained permission control and flexible definition of accessible knowledge bases per user. See [Knowledge Base](/memos_cloud/features/advanced/knowledge_base).     |

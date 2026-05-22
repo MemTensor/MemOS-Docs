@@ -10,7 +10,7 @@ General-purpose LLMs excel at dialogue and reasoning, but turning conversations 
 ## What developers get
 
 - **Capabilities tuned for memory**: Extraction and structuring oriented toward facts, preferences, and related memory types, so you spend less time on prompt hacks and cleanup.
-- **Same integration model as MemOS Cloud**: Auth, base URL, and calling patterns match [Quick Start](/memos_cloud/quick_start)—predictable and easy to adopt.
+- **Same integration model as MemOS Cloud**: Auth, base URL, and calling patterns match [Quick Start](/memos_cloud/getting_started/quick_start)—predictable and easy to adopt.
 - **Composable with cloud memory**: Use extraction and other in-house capabilities alongside existing MemOS Cloud features and grow usage as your product needs evolve.
 
 For pricing and model specs, see the [MemOS pricing page](https://memos.openmem.net/en/pricing). If you already use the cloud service, see [Usage Examples](/self_developed_model/extraction_usage_example) and the [Extract Memory](/api_docs/core/extract_memory) API reference.

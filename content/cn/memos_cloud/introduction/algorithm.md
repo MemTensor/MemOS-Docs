@@ -130,4 +130,4 @@ MemOS 的设计核心，是把「记忆」作为一个独立系统层，和计�
 
 ## 5. 下一步行动
 
-*   了解[云服务与开源方案](/memos_cloud/cloud_and_opensource)，体验MemOS的强大之处吧!
+*   了解[云服务与开源方案](/memos_cloud/getting_started/cloud_and_opensource)，体验MemOS的强大之处吧!

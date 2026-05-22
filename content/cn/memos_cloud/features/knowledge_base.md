@@ -532,7 +532,7 @@ print(json.dumps(json_res, indent=2, ensure_ascii=False))
 上传成功后，检索时可同时召回知识库记忆和匹配的技能。
 
 :::note
-技能文件的详细工作原理与使用示例，请查看 [技能 Skill](/memos_cloud/features/advanced/skill) 中的完整示例。
+技能文件的详细工作原理与使用示例，请查看 [技能 Skill](/memos_cloud/features/skill) 中的完整示例。
 :::
 
 :::code-group
