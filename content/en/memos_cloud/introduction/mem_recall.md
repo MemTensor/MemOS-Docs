@@ -1,54 +1,66 @@
 ---
 title: Memory Recall
-desc: "In MemOS, memory is not just about archiving information, but also about being dynamically retrieved when needed and transformed into executable input."
+desc: Memory recall finds the content that is most relevant, trustworthy, and suitable to inject into context when a user makes a request.
 ---
 
-::warning
-**[Go directly to API Docs](/api_docs/core/search_memory)**
-<br>
-<br>
+## 1. What Is Memory Recall
 
-**This article focuses on functional explanation. For detailed interface fields and limits, please click the link above.**
+Memory recall is the core ability of MemOS when reading memories. After a user sends a new request, MemOS combines the input, conversation context, filters, and memory states to find memories that can help the model complete the current task.
+
+The goal is not to return all history. It is to put the most useful facts, preferences, tool experience, skill clues, or knowledge content into the limited context window.
+
+## 2. Why Context Alone Is Not Enough
+
+If a model only relies on the current conversation window, three problems appear:
+
+- **Users must repeat themselves**: preferences, background, and long-term matters cannot continue naturally.
+- **Historical information is easily lost**: earlier conversations, cross-session behavior, and tool results do not automatically appear in the current context.
+- **Input becomes overloaded**: adding all raw history is costly and makes answers less stable.
+
+The value of memory recall is to turn long-term memories into usable input for the current task when needed.
+
+## 3. What Recall Returns
+
+| Memory category | Typical use |
+| --- | --- |
+| Fact memories | Add clear facts such as user identity, long-term matters, and business status |
+| Preference memories | Continue the user's tone, style, choice habits, or constraints |
+| Tool memories | Help Agents select the right tool and invocation pattern in similar tasks |
+| Skill memories | Reuse execution steps and constraints distilled from multi-turn tasks |
+| Knowledge content | Provide documents, images, multimodal content, or knowledge base evidence |
+
+Recall results usually include source, time, type, tags, confidence, and status. Developers can further filter, rank, or decide whether to inject them into downstream models.
+
+## 4. Key Stages in Recall
+
+| Stage | Role |
+| --- | --- |
+| Understand the request | Decide what background, preferences, or knowledge the current input needs |
+| Filter the scope | Limit candidate memories by user, conversation, time, tags, type, and other conditions |
+| Retrieve candidates | Find semantically relevant or condition-matched memories from the memory base |
+| Rank and select | Combine relevance, confidence, freshness, and status to choose more reliable results |
+| Govern injection | Control which memories enter model context, avoiding excessive, outdated, or non-compliant content |
+
+Together, these stages determine whether recalled memories are actually useful. Too little recall leaves the model without background; too much recall adds noise and cost.
+
+## 5. Next Steps
+
+::card-group
+  :::card
+  ---
+  icon: ri:filter-3-line
+  title: Memory Filters
+  to: /memos_cloud/features/filters
+  ---
+  Use filters to control recall scope and reduce irrelevant memories
+  :::
+
+  :::card
+  ---
+  icon: ri:search-2-line
+  title: Search Memory
+  to: /memos_cloud/mem_operations/search_memory
+  ---
+  View how to integrate memory recall
+  :::
 ::
-
-## 1. Capability Overview
-
-Memory recall is responsible for quickly retrieving the most relevant memory fragments for a task when a user initiates a new request.
-
-*   **Purpose:** Ensures that when generating responses, the model does not "start from scratch," but instead incorporates user history, preferences, and context.
-    
-*   **Returned Results:** The recalled memories can include four types: facts, preferences, tools, and skills.
-    
-    *   Traceability: Each memory is accompanied by its source, timestamp, and confidence.
-        
-    *   High Controllability: Developers have full control over which memories are passed on to downstream logic.
-
-*   **Features:**
-    
-    *   Seamless Recall: Users do not need to repeat their prior choices or preferences.
-        
-    *   Structured Output: Memory types are distinguished, making it easier for developers to control which are injected.
-
-*   **Functional Support:**
-    *   [Set Filters](/memos_cloud/features/basic/filters): e.g., only retrieve conversations from the past 30 days; only return preference memories, not factual ones, etc.
-
-    *   [Adjust Recall Strategies](memos_cloud/mem_operations/search_memory): e.g., increase similarity threshold, only return memories with confidence ≥0.9, etc.
-
-    *   Recall memory content based on the [Knowledge Base](/memos_cloud/features/advanced/knowledge_base) and [Multimodal Messages](/memos_cloud/features/basic/multimodal)
-
-## 2. Advanced: For Deep Customization
-
-In MemOS, the implementation of recall and completion is not a single path, but a combination of multiple strategies and components. Different scenarios may call for different configurations. This section outlines the main stages and customizable points to help you make flexible choices according to your business needs.
-
-| **Layer** | **Customizable Point** | **Example** |
-| --- | --- | --- |
-| Output Governance & Auditing | Safety Guardrails | Automatically add "Please answer in accordance with compliance guidelines" before completion prompts |
-|  | Logging & Traceability | Record every memory entry used and each few-shot selection for every call |
-|  | A/B Testing | Run two stitching templates in parallel and compare user satisfaction differences |
-
-
-## 3. Next Steps
-
-Learn more about MemOS core capabilities:
-
-*   [Memory Lifecycle Management](/memos_cloud/introduction/mem_lifecycle)

@@ -1,134 +1,119 @@
 ---
 title: Memory Lifecycle Management
-desc: In MemOS, memories are not stored statically; they continuously evolve over time and through usage.
+desc: Memory lifecycle management keeps memories evolving through generation, use, merging, archiving, and cleanup, so the memory base stays accurate, clean, and traceable.
 ---
 
-## 1. Capability Overview
-A memory, once generated, may gradually consolidate into a stable long-term preference, or be removed if it becomes outdated or invalid.  
-:::note
-**Tip**<br>
-This evolutionary process is called **Memory Lifecycle Management**, and its goal is to keep the memory base “clean and organized.”<br>
+## 1. What Is Memory Lifecycle Management
 
-* **Recently useful entries** remain active for easy retrieval;<br>
+A memory is not a record that stays unchanged forever after it is written. As user states, task stages, and business facts change, the same kind of memory may need to be updated, merged, downgraded, archived, or cleaned up.
 
-* **Long-term stable facts** are consolidated to reduce duplication and noise;<br>
+Memory lifecycle management focuses on long-term evolution at the storage layer: which memories are still trustworthy, which are outdated, which need historical traces, and which can be removed from the active index.
 
-* **Outdated or conflicting information** is archived or deleted to ensure consistency and compliance.<br>
-:::
-> Note that lifecycle management focuses on **the evolution of memory entries at the storage layer**; whether a specific memory is invoked during reasoning is still determined by the scheduling mechanism.
+## 2. Why Lifecycle Management Is Needed
 
-<br>
+If memories only grow without governance, three problems appear:
 
-:::note{icon="ri:customer-service-2-fill"}
-**Lifecycle Stage Overview**
-:::
+- **Duplicate memories increase**: similar facts and preferences are written repeatedly, increasing recall noise.
+- **Outdated information interferes**: old addresses, old preferences, and completed tasks are still treated as current facts.
+- **Conflicts are hard to judge**: when new and old information conflict, the system needs to know which one should be trusted now.
 
-| **Stage** | **Description** | **System Behavior** |
+The goal of lifecycle management is to preserve memories long term without continuously bringing outdated, duplicate, or low-value information into reasoning.
+
+## 3. Key Lifecycle States
+
+| State | Meaning | Common handling |
 | --- | --- | --- |
-| Generated | Newly created memory object, with metadata such as source, timestamp, and confidence | Initially stored in the storage layer, awaiting future use |
-| Activated | Referenced during reasoning or tasks, entering a high-frequency active state | More likely to be selected by the scheduling mechanism |
-| Merged | Semantically overlaps with historical memories or user-provided data, integrated into a new version | Multiple records are compressed and merged into an updated stable entry |
-| Archived | Not accessed for a long period, downgraded to cold storage | Only enabled during special retrievals or backtracking |
-| Expired (optional) | After archiving, further timeout or policy judgment marks it invalid | Removed from the index, no longer used in reasoning, only minimal logs retained |
-| Frozen (special state) | Critical or compliance-related memories are locked and cannot be modified | Full historical versions are preserved for audit and compliance tracking |
+| Generated | A new memory is written with source, time, type, confidence, and other metadata | Enters the memory base and waits for future use |
+| Activated | A memory is frequently used in recent tasks or scheduled to a higher priority | Easier to recall and inject into context |
+| Merged | Similar or complementary memories are integrated into a more stable expression | Reduces duplication and forms an updated trusted memory |
+| Archived | Long-term low-frequency memories, or memories not suitable for the current task, are downgraded | Participates less in reasoning by default, but remains traceable |
+| Expired | A memory exceeds its validity period or is judged unusable by policy | Removed from the active index; minimal audit info may be retained |
+| Frozen | Compliance, audit, or business-critical memories cannot be automatically rewritten | Preserves full history and limits updates or deletion |
 
-## 2. Example: Memory Lifecycle of an Online Education Assistant
+Specific state names and policies may vary by integration, but the core idea is the same: memories need continuous governance based on time and usage.
 
-:::note{icon="ri:message-2-line"}
-Suppose you are building an **online education assistant** with MemOS to help students solve math problems.
+## 4. Example: Changing Learning Preferences
+
+Suppose you are building an online education assistant with MemOS to help students solve math problems.
+
+:::steps{level="4"}
+#### Generated
+
+The student says for the first time: "I always confuse quadratic functions with linear functions."
+
+The system extracts a memory:
+
+```json
+{
+  "content": "The student often confuses quadratic functions with linear functions",
+  "confidence": 0.99,
+  "create_time": "2025-09-11"
+}
+```
+
+State: `Generated`  
+Behavior: stored in the memory base, waiting for future use.
+
+#### Activated
+
+In the next several problem-solving sessions, the system frequently uses this memory to assist with answers.
+
+State: `Activated`  
+Behavior: prioritized by the scheduling mechanism to improve later retrieval and context injection efficiency.
+
+#### Merged
+
+With more interactions, the system discovers that the student not only confuses linear and quadratic functions, but also struggles with exponential functions.
+
+The system merges multiple similar memories into a new one:
+
+```json
+{
+  "content": "The student is confused about function concepts, especially linear, quadratic, and exponential functions",
+  "history": "The student often confuses quadratic functions with linear functions",
+  "version": "v1"
+}
+```
+
+State: `Merged`  
+Behavior: old entries are compressed into a more complete new version, reducing redundancy.
+
+#### Archived
+
+Three months later, the student has mastered function-related concepts, and this memory has not been scheduled for a long time.
+
+State: `Archived`  
+Behavior: downgraded to a low-frequency state. It does not participate in reasoning by default, but can be used in "learning trajectory backtracking".
+
+#### Expired
+
+Another year later, the student advances to a new grade. The old "junior high function confusion" memory is judged invalid by policy.
+
+State: `Expired`  
+Behavior: removed from the index, retaining only minimal audit information.
+
+```json
+{
+  "deleted_fact_id": "12345",
+  "deleted_at": "2026-09-11"
+}
+```
+
+#### Frozen (special state)
+
+At the same time, the student's "final exam evaluation report" is a compliance file and must not be automatically modified.
+
+State: `Frozen`  
+Behavior: locked against automatic updates, with full modification history retained for audit and compliance review.
 :::
 
-**Generated**
+## 5. Relationship with Production, Scheduling, and Recall
 
-*   A student says for the first time: “I always confuse quadratic functions with linear functions.”
-    
-*   The system extracts the memory:
-    
+| Capability | Focus |
+| --- | --- |
+| Memory production | How raw input is processed into usable memories |
+| Lifecycle management | How memories are updated, merged, archived, and cleaned after writing |
+| Memory scheduling | Which memories should be more active at the current stage |
+| Memory recall | Which memories should be retrieved and used for one request |
 
-```json
-{"value": "The student often confuses quadratic and linear functions", "confidence": 0.8, "timestamp": "2025-09-11"}
-```
-
-*   Status: **Generated**
-    
-*   Behavior: Stored into the memory base, awaiting future use.
-    
-
----
-
-**Activated**
-
-*   In the following problem-solving sessions, the system frequently calls this memory to assist with answers.
-    
-*   Status: **Activated**
-    
-*   Behavior: Prioritized by the scheduling mechanism and cached into the MemoryCube to improve retrieval speed.
-    
-
----
-
-**Merged**
-
-*   With more interactions, the system discovers that the student not only confuses linear and quadratic functions, but also struggles with exponential functions.
-    
-*   The system merges multiple similar memories into:
-    
-
-```json
-{"value": "This student is confused about function concepts, especially linear, quadratic, and exponential functions", "confidence": 0.95}
-```
-
-*   Status: **Merged**
-    
-*   Behavior: Old entries are compressed to form a new version, reducing redundancy.
-    
-
----
-
-**Archived**
-
-*   Three months later, the student has mastered function-related concepts, and this memory hasn’t been scheduled for a long time.
-    
-*   Status: **Archived**
-    
-*   Behavior: Migrated into MemVault (cold storage), excluded from reasoning by default, but available in “learning trajectory backtracking.”
-    
-
----
-
-**Expired**
-
-*   A year later, the student advances to a new grade level. The old “junior high function confusion” memory is judged invalid by policy.
-    
-*   Status: **Expired**
-    
-*   Behavior: Fully removed from the index, retaining only minimal audit info:
-    
-
-```json
-{"deleted_memory_id": "12345", "deleted_at": "2026-09-11"}
-```
----
-
-**Frozen (special state)**
-
-*   Meanwhile, the student’s “final exam evaluation report” is a compliance-related file that must not be modified.
-    
-*   Status: **Frozen**
-    
-*   Behavior: Locked against updates, retaining full history for audit and compliance inspection.
-    
-
-## 3. Advanced: Deep Customization Options
-
-| **Extension Point** | **Description** | **Example** |
-| --- | --- | --- |
-| State transition conditions | Control the triggers for each state | “If unused for 7 days → Archive” |
-| Merge and compression | Define how similar memories are handled | Multiple “likes sci-fi movies” entries merged into one with higher confidence |
-| Conflict resolution | Handle memory conflicts in timestamps or sources | Choose “latest entry overrides” or “preserve in parallel” |
-| Cleanup mechanism | Set deletion rules to control index size | Remove low-confidence or user-retracted memories |
-| Audit trail | Decide whether to retain minimal metadata of deleted items | Enable “trace logs” under compliance requirements |
-
-## 4. Next Steps
-
-Still have questions? Check out [FAQs](/memos_cloud/faq) to see if they can help.
+Lifecycle management provides memory state for scheduling and recall. Active, trustworthy, and unexpired memories are better suited for current reasoning. Archived, expired, or frozen memories need to be handled carefully according to policy.

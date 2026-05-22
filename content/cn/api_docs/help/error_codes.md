@@ -21,11 +21,11 @@ title: 错误码
 | 40130 | 需要 API Key 认证 | 在 Header 中添加有效 API Key |
 | 40132 | API Key 无效或已过期 | 检查 API Key 状态或重新生成 |
 | **配额与限流错误** | | |
-| 40300 | 超过接口调用次数上限 | <a href="/memos_cloud/limit#_4-领取更多额度" target="_blank">获取更多额度</a> |
+| 40300 | 超过接口调用次数上限 | <a href="/memos_cloud/support/limit#_4-领取更多额度" target="_blank">获取更多额度</a> |
 | 40301 | 超过请求 Token 调用上限 | 减少输入内容或获取更多额度 |
 | 40302 | 超过响应 Token 调用上限 | 缩短预期输出或获取更多额度 |
 | 40303 | 单次对话长度超过限制 | 缩减单次输入/输出长度 |
-| 40304 | 账户总 API 调用次数耗尽 | <a href="/memos_cloud/limit#_4-领取更多额度" target="_blank">获取更多额度</a> |
+| 40304 | 账户总 API 调用次数耗尽 | <a href="/memos_cloud/support/limit#_4-领取更多额度" target="_blank">获取更多额度</a> |
 | 40305 | 输入超过单次 Token 上限 | 缩减输入内容 |
 | 40306 | 删除记忆鉴权失败 | 确认是否有权删除该记忆 |
 | 40307 | 删除记忆不存在 | 检查 memory_id 是否有效 |

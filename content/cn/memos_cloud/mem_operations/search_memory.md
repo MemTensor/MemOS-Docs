@@ -1,15 +1,7 @@
 ---
 title: Search Memory
-desc: 通过语义检索和过滤功能，MemOS召回相关记忆。
+desc: 通过语义检索和过滤功能，MemOS 召回相关记忆。
 ---
-
-::warning
-**[直接看 API文档 点这里哦](/api_docs/core/search_memory)**
-<br>
-<br>
-
-**本文聚焦于功能说明，详细接口字段及限制请点击上方文字链接查看**
-::
 
 ## 1. 什么是检索记忆？
 
@@ -17,108 +9,105 @@ desc: 通过语义检索和过滤功能，MemOS召回相关记忆。
 
 ::note
 **&nbsp;为什么需要检索记忆？**
-<div style="padding-left: 2em;">
 
-*  无需从头构建上下文，直接获取正确且可靠的记忆；
-
-*  通过过滤条件等方式，确保召回的记忆始终与当前问题高度相关。
-</div>
+* 无需从头构建上下文，直接获取正确且可靠的记忆；
+* 通过过滤条件等方式，确保召回的记忆始终与当前问题高度相关。
 ::
+
 
 
 ## 2. 关键参数
 
 *   **查询内容（query）**：用户的提问内容，用于检索的自然语言问题或陈述，系统将基于语义匹配相关记忆。
-
 *   **记忆过滤（filter）**：基于 JSON 的逻辑条件，用于过滤 agent、create_time、tags、info 等字段，缩小记忆检索的范围；也可以分别对用户记忆、公共记忆和知识库记忆设置过滤条件。
-
 *   **相关性阈值（relativity）**：相关性是指召回的记忆与用户提问内容的语义匹配程度，相关性越高，该记忆与当前用户提问越相关。相关性阈值用于约束召回记忆的匹配程度，当前系统默认值为 0.45，低于该值的记忆将被过滤。
+
+
 
 
 ## 3. 工作原理
 
 - **查询内容重写**：MemOS 会对输入的自然语言查询进行清理与语义增强，自动补全关键信息与检索意图，以提升后续检索的准确性。
-
 - **记忆召回**
-
-  - **混合检索与排序**：系统基于重写后的查询生成嵌入向量，结合关键词检索与向量语义检索的混合策略召回候选记忆，对候选记忆进行统一排序。
-
+- **混合检索与排序**：系统基于重写后的查询生成嵌入向量，结合关键词检索与向量语义检索的混合策略召回候选记忆，对候选记忆进行相关性排序。
   - **记忆过滤与筛选**：基于逻辑条件与比较运算符对记忆进行结构化过滤，缩小记忆检索的范围；按开发者设定的相关性阈值筛选排序后的记忆，控制召回结果质量。
-
-  - **结果去重**：对召回的候选记忆进行跨源去重与语义聚合处理。
-
-- **输出记忆**：最终结果将按照设定的记忆条数上限返回，将在600ms内响应并返回，用于后续推理与回答生成。
+- **结果去重**：对召回的候选记忆进行跨源去重与语义聚合处理。
+- **输出记忆**：最终结果根据设定的记忆条数上限返回，600ms 内响应并返回，用于后续推理与回答生成。
 
 以上所有流程，仅需调用`search/memory`接口即可触发，无需您对用户的记忆手动操作。
 
 
 ## 4. 快速上手
-::code-group
-```python [Python (HTTP)]
-import os
-import requests
-import json
 
-# 替换成你的 MemOS API Key
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+::code-group
+
+```python [Python (HTTP)]
+import requests
+
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
   "query": "我国庆想出去玩，帮我推荐个没去过的城市，以及没住过的酒店品牌",
   "user_id": "memos_user_123",
-  "conversation_id": "0928" # 当前所在的会话ID，非必填。填写后我们会在召回记忆时优先考虑该会话中的内容，但不是强制命中，仅提升相关性权重。
+  "conversation_id": "0928"
 }
-headers = {
-  "Content-Type": "application/json",
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
-}
-url = f"{os.environ['MEMOS_BASE_URL']}/search/memory"
 
-res = requests.post(url=url, headers=headers, data=json.dumps(data))
+res = requests.post(
+  f"{BASE_URL}/search/memory",
+  headers={"Authorization": f"Token {API_KEY}"},
+  json=data
+)
 
-print(f"result: {res.json()}")
+print(res.json())
 ```
-```python [输出]
-# 示例输出（为了方便理解此处做了简化，仅供参考）
-{
-  # 事实类型的记忆
-  memory_detail_list [
-    {
-      "memory_key": "暑假广州旅游计划",
-      "memory_value": "用户计划在暑假期间前往广州旅游，并选择了七天连锁酒店作为住宿选项。",
-      "conversation_id": "0610",
-      "tags": [
-        "旅游",
-        "广州",
-        "住宿",
-        "酒店"
-      ]
-    }
-  ],
-  # 偏好类型的记忆
-  preference_detail_list [
-    {
-      "preference_type": "implicit_preference",  #隐性偏好
-      "preference": "用户可能偏好性价比较高的酒店选择。",
-      "reasoning": "七天酒店通常以经济实惠著称，而用户选择七天酒店可能表明其在住宿方面倾向于选择性价比较高的选项。虽然用户没有明确提到预算限制或具体酒店偏好，但在提供的选项中选择七天可能反映了对价格和实用性的重视。",
-      "conversation_id": "0610"
-    }
-  ]
-}
+
+```python [Python (SDK)]
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.search_memory(
+  query="我国庆想出去玩，帮我推荐个没去过的城市，以及没住过的酒店品牌",
+  user_id="memos_user_123",
+  conversation_id="0928"
+)
+
+print(res)
 ```
+
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/search/memory \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "query": "我国庆想出去玩，帮我推荐个没去过的城市，以及没住过的酒店品牌",
+    "user_id": "memos_user_123",
+    "conversation_id": "0928"
+  }'
+```
+
 ::
 
 ::note
-&nbsp;请注意，`user_id`为必填项，当前每次检索记忆必须指定单个用户。
+请注意，`user_id` 为必填项，当前每次检索记忆必须指定单个用户。
 ::
 
-## 5. 记忆拼装到Prompt示例
+需要查看完整字段、请求格式和响应格式？详见 [Search Memory 接口文档](/api_docs/core/search_memory)。
 
-::note
-**记忆拼装**<br>
 
-使用召回的记忆需要一定的技巧，下面是拼装示例
-::
+
+## 5. 带记忆的 Prompt 模版
+
+召回的记忆可以直接添加到你开发 AI 应用的 Prompt 中。如下所示，MemOS 为你提供了实践参考。
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    展开查看完整 Prompt 模板
+  </summary>
+  <div class="mt-4">
+
 
 ```text
 # Role
@@ -177,82 +166,28 @@ print(f"result: {res.json()}")
 
 ```
 
+  </div>
+</details>
+
 ## 6. 更多使用方法
-### 获取用户整体画像
 
-如果你需要对自己开发的应用进行用户分析，或者希望在 AI 应用中向用户实时展示他们的“个人关键印象”，可以调用 MemOS 全局检索用户的记忆，帮助大模型生成用户的个性化画像。此时可以不填写`conversation_id`哦～
+### `conversation_id`：优先召回当前会话记忆
 
-如下示例所示，如果你已经尝试[添加消息](/memos_cloud/mem_operations/add_message)，添加过用户`memos_user_123`的历史对话消息，你可以一键复制该示例检索用户记忆。
+检索记忆时，你可以传入指定的`conversation_id`，MemOS 会优先召回与当前会话内容相关的记忆；不传则全局检索用户的长期记忆，适合在你需要直接检索用户全局画像时使用。
 
-::code-group
-```python [Python (HTTP)]
-import os
-import json
-import requests
-
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
-
-# headers 和 base URL
-headers = {
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
-  "Content-Type": "application/json"
-}
-BASE_URL = os.environ['MEMOS_BASE_URL']
-
-# 直接询问人物画像，作为 query
-query_text = "我的人物关键词是什么？"
-
+```python
 data = {
     "user_id": "memos_user_123",
-    "query": query_text,
-}
-
-# 调用 /search/memory 查询相关记忆
-res = requests.post(f"{BASE_URL}/search/memory", headers=headers, data=json.dumps(data))
-
-print(f"result: {res.json()}")
-```
-```python [输出]
-# 示例输出（为了方便理解此处做了简化，仅供参考）
-
-{
-  # 事实类型的记忆
-  memory_detail_list [
-    {
-      "memory_key": "希望AI帮助的事项",
-      "memory_value": "用户希望AI帮助规划日常学习计划、推荐电影和书籍，以及提供心情陪伴。",
-      "conversation_id": "0610",
-      "tags": [
-        "帮助",
-        "学习计划",
-        "推荐",
-        "陪伴"
-      ]
-    },
-    {
-      "memory_key": "希望AI提供的帮助类型",
-      "memory_value": "用户希望AI提供建议、信息查询和灵感。",
-      "conversation_id": "0610",
-      "tags": [
-        "AI",
-        "帮助",
-        "类型"
-      ]
-    }
-  ]
+    "query": "帮我继续规划国庆旅行。",
+    "conversation_id": "0928"
 }
 ```
-::
 
+### `filter`：精确过滤检索范围
 
-### 精确过滤检索的记忆范围
+MemOS 支持通过 `filter` 按标签、时间、业务字段等条件缩小检索范围，也支持分别对用户记忆、知识库记忆和公共记忆设置过滤条件。
 
-MemOS 提供了强大的记忆过滤器功能，不仅支持全局过滤所有记忆，还支持对用户、知识库、公共记忆召回单独设置过滤条件，提升复杂 Agent 场景下的检索准确性。
-
-<br>**设置全局过滤条件**
-
-假设用户希望对今年所有有关“阅读”的“对话”做出年终总结，那么可以通过过滤出所有标签中包含"阅读"、创建时间为2025年、且场景为“对话”的记忆：
+示例一：检索 2025 年内所有和“阅读”相关的对话记忆
 
 ```python
 data = {
@@ -269,9 +204,8 @@ data = {
 }
 ```
 
-**单独设置过滤条件**
+示例二：对知识库、用户记忆、公共记忆分别过滤
 
-如果希望对用户的记忆、知识库内容、公共记忆分别设置过滤条件进行精确的召回，可以参考以下示例：
 
 ```python
 data = {
@@ -303,35 +237,58 @@ data = {
 
 ```
 
+  </div>
+</details>
+
 ::note
-有关过滤器中更多筛选选项，请参考[记忆过滤器](/memos_cloud/features/basic/filters)。
+更多过滤条件和嵌套写法，详见[记忆过滤](/memos_cloud/features/filters)。
 ::
 
-### Token更少的记忆召回策略
+### `relativity` / `memory_limit_number`：控制召回质量和数量
 
-为了帮助模型获取更高质量、更节省Token的记忆内容，从而减少注入模型的Token消耗数，MemOS支持开发者传入自定义的**相关性阈值（relativity）**与**召回的记忆条数上限（memory_limit_number等）**。
-
-如下所示，开发者传入`relativity = 0.8` `memory_limit_number = 9`，最终返回小于9条且相关性均高于0.8的记忆。
+传入 `relativity` 可以提高召回相关性门槛；传入 `memory_limit_number` 可以限制返回条数，减少后续注入模型的 Token 消耗。
 
 ```python
 data = {
     "user_id": "memos_user_123",
     "query": "为我规划5天的成都游。",
-    "relativity": 0.8, # 相关性阈值，不传则默认为0，表示限制返回的记忆相关性。
-    "memory_limit_number": 9, # 召回的记忆上限条数，不传则默认为9，表示默认召回9条最相关的记忆。
+    "relativity": 0.8,
+    "memory_limit_number": 9
 }
 ```
-请注意，当前`relativity`仅对事实、偏好记忆生效。
+
+
 
 ## 7. 更多功能
 
-::note
-&nbsp;有关 API 字段、格式等信息的完整列表，详见[Search Memory接口文档](/api_docs/core/search_memory)。
-::
+::card-group
+  :::card
+  ---
+  icon: ri:tools-line
+  title: 召回工具记忆
 
-| **功能**       | **相关字段**                                            | **说明**                                                     |
-| -------------- | --------------------------------------------------- | ------------------------------------------------------------ |
-| 召回偏好记忆   | `include_preference`<br><span style="line-height:0.6;">&nbsp;</span><br>`preference_limit_number`   | 偏好记忆是 MemOS 基于用户历史消息分析生成的用户偏好信息。开启后，可在检索结果中召回用户偏好记忆。 |
-| 召回工具记忆   | `include_tool_memory`<br><span style="line-height:0.6;">&nbsp;</span><br>`tool_memory_limit_number` | 工具记忆是 MemOS 对已添加的工具调用信息进行分析后生成的记忆。开启后，可在检索结果中召回工具记忆，详见[工具调用](/memos_cloud/features/advanced/tool_calling)。 |
-| 召回技能   | `include_skill`<br><span style="line-height:0.6;">&nbsp;</span><br>`skill_limit_number` | 技能是 Agent 可复用的执行能力，既可以由 MemOS 基于用户对话自动生成，也可以由开发者上传自定义技能文件。开启后，可在检索结果中召回匹配技能，详见[技能](/memos_cloud/features/advanced/skill)。 |
-| 检索指定知识库 | `knowledgebase_ids`                                 | 用于指定本次检索可访问的项目关联知识库范围。开发者可借此实现精细的权限控制，灵活定义不同终端用户可访问的知识库集合，详见[知识库](/memos_cloud/features/advanced/knowledge_base)。     |
+  to: /cn/memos_cloud/features/tool_calling
+  ---
+  添加工具调用信息， 召回工具记忆
+  :::
+
+  :::card
+  ---
+  icon: ri:book-read-line
+  title: 召回技能
+
+  to: /cn/memos_cloud/features/skill
+  ---
+  自动生成技能，召回可复用的 Skill 记忆
+  :::
+
+  :::card
+  ---
+  icon: ri:database-2-line
+  title: 检索知识库
+
+  to: /cn/memos_cloud/features/knowledge_base
+  ---
+  开启知识库，指定检索可访问的知识库范围。
+  :::
+::

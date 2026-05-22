@@ -20,7 +20,7 @@ When a user uploads a document or image, MemOS extracts text, visual information
 :::note
 **Multimodal Messages and Tool Memory**
 
-In addition to processing document and image content, MemOS also supports processing tool calling information. When you add tool calling information to a message, the system processes it into tool memory, including Tool Schema and Tool Trajectory Memory. See [Tool Calling](/memos_cloud/features/advanced/tool_calling) for details.
+In addition to processing document and image content, MemOS also supports processing tool calling information. When you add tool calling information to a message, the system processes it into tool memory, including Tool Schema and Tool Trajectory Memory. See [Tool Calling](/memos_cloud/features/tool_calling) for details.
 :::
 
 ### Add Message

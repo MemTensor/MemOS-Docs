@@ -10,7 +10,7 @@ desc: MemOS 为何自研记忆与抽取模型，以及能为开发者带来的�
 ## 带给开发者什么
 
 - **更贴合记忆场景的能力**：面向事实与偏好等记忆类型做抽取与组织，减少你在 Prompt 与后处理上的反复试错。
-- **与云服务同一套体验**：接口、鉴权与 Base URL 与 [MemOS Cloud 快速开始](/cn/memos_cloud/quick_start) 一致，接入路径简单、可预期。
+- **与云服务同一套体验**：接口、鉴权与 Base URL 与 [MemOS Cloud 快速开始](/cn/memos_cloud/getting_started/quick_start) 一致，接入路径简单、可预期。
 - **按需组合**：可与现有 MemOS Cloud 记忆能力配合使用，按业务需要选择是否使用抽取等自研能力，逐步演进。
 
 定价与模型规格请前往 [MemOS 官网定价页](https://memos.openmem.net/cn/pricing) 查看。若已接入云服务，可直接在文档中查看 [使用示例](/cn/self_developed_model/extraction_usage_example) 与 [Extract Memory](/cn/api_docs/core/extract_memory) 接口说明。

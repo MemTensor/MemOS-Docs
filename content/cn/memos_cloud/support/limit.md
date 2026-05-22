@@ -34,7 +34,7 @@ MemOS 云服务目前为所有开发者提供了从免费版到企业版的多�
 
 ::note
 **注意**
-现在，知识库还支持上传 Skill 文件，详细限制见 [知识库](/cn/memos_cloud/features/advanced/knowledge_base)。
+现在，知识库还支持上传 Skill 文件，详细限制见 [知识库](/cn/memos_cloud/features/knowledge_base)。
 ::
 
 如有更高阶或特殊需求，请联系项目组沟通。

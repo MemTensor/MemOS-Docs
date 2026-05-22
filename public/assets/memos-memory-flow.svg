@@ -1,0 +1,248 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-labelledby="title desc">
+  <title id="title">MemOS 如何工作</title>
+  <desc id="desc">MemOS 从添加原始信息、生成并更新记忆，到检索记忆并支持模型回答、Agent 决策和业务流程的完整链路。</desc>
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="46%" r="65%">
+      <stop offset="0%" stop-color="#0b2a62"/>
+      <stop offset="48%" stop-color="#07152f"/>
+      <stop offset="100%" stop-color="#030711"/>
+    </radialGradient>
+    <linearGradient id="bluePanel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#082f70"/>
+      <stop offset="48%" stop-color="#071b44"/>
+      <stop offset="100%" stop-color="#050b1f"/>
+    </linearGradient>
+    <linearGradient id="engine" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0069ff"/>
+      <stop offset="58%" stop-color="#1239d8"/>
+      <stop offset="100%" stop-color="#5b21b6"/>
+    </linearGradient>
+    <linearGradient id="memoryCard" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#113d8d"/>
+      <stop offset="100%" stop-color="#101a3f"/>
+    </linearGradient>
+    <linearGradient id="purpleCard" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#4c1d95"/>
+      <stop offset="100%" stop-color="#251047"/>
+    </linearGradient>
+    <filter id="blueGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.08 0 0 0 0 0.45 0 0 0 0 1 0 0 0 .9 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="purpleGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 .55 0 0 0 0 .24 0 0 0 0 1 0 0 0 .75 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#020617" flood-opacity=".55"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto" markerUnits="strokeWidth">
+      <path d="M2 2 L12 8 L2 14 Z" fill="#60a5fa"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto" markerUnits="strokeWidth">
+      <path d="M2 2 L12 8 L2 14 Z" fill="#a78bfa"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+      .title { fill: #f8fafc; font-weight: 800; letter-spacing: .5px; }
+      .heading { fill: #f8fafc; font-weight: 760; }
+      .body { fill: #dbeafe; }
+      .muted { fill: #93a4bd; }
+      .accent { fill: #93c5fd; font-weight: 720; }
+      .purple { fill: #c4b5fd; font-weight: 720; }
+      .panel { fill: url(#bluePanel); stroke: #2563eb; stroke-width: 2; }
+      .smallPanel { fill: #07142e; stroke: #1d4ed8; stroke-width: 1.5; }
+      .lineBlue { stroke: #60a5fa; stroke-width: 3; fill: none; marker-end: url(#arrowBlue); }
+      .linePurple { stroke: #a78bfa; stroke-width: 3; fill: none; marker-end: url(#arrowPurple); }
+      .dash { stroke: #3b82f6; stroke-width: 3; stroke-dasharray: 8 12; fill: none; opacity: .75; }
+      .thin { stroke: #60a5fa; stroke-width: 1.6; fill: none; opacity: .65; }
+    </style>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bgGlow)"/>
+  <rect width="1920" height="10" fill="#2563eb"/>
+  <circle cx="290" cy="515" r="360" fill="#1d4ed8" opacity=".08"/>
+  <circle cx="955" cy="545" r="460" fill="#2563eb" opacity=".08"/>
+  <circle cx="1540" cy="610" r="360" fill="#7c3aed" opacity=".08"/>
+
+  <!-- Title -->
+  <line x1="470" y1="80" x2="650" y2="80" stroke="#2563eb" stroke-width="2"/>
+  <circle cx="654" cy="80" r="7" fill="#60a5fa"/>
+  <text x="960" y="96" text-anchor="middle" class="title" font-size="64">MemOS 如何工作？</text>
+  <line x1="1270" y1="80" x2="1450" y2="80" stroke="#2563eb" stroke-width="2"/>
+  <circle cx="1266" cy="80" r="7" fill="#60a5fa"/>
+
+  <!-- Step labels -->
+  <g filter="url(#blueGlow)">
+    <circle cx="166" cy="172" r="28" fill="#0b3a8f" stroke="#60a5fa" stroke-width="2"/>
+    <text x="166" y="184" text-anchor="middle" class="title" font-size="32">1</text>
+  </g>
+  <text x="220" y="184" class="heading" font-size="34">添加原始信息</text>
+
+  <g filter="url(#blueGlow)">
+    <circle cx="812" cy="172" r="28" fill="#0b3a8f" stroke="#60a5fa" stroke-width="2"/>
+    <text x="812" y="184" text-anchor="middle" class="title" font-size="32">2</text>
+  </g>
+  <text x="862" y="184" class="heading" font-size="34">生成并更新记忆</text>
+
+  <g filter="url(#blueGlow)">
+    <circle cx="1485" cy="172" r="28" fill="#0b3a8f" stroke="#60a5fa" stroke-width="2"/>
+    <text x="1485" y="184" text-anchor="middle" class="title" font-size="32">3</text>
+  </g>
+  <text x="1536" y="184" class="heading" font-size="34">检索记忆</text>
+
+  <!-- Left: input panel -->
+  <g filter="url(#shadow)">
+    <rect x="76" y="214" width="414" height="515" rx="24" class="panel"/>
+    <g transform="translate(112 248)">
+      <rect width="344" height="64" rx="16" class="smallPanel"/>
+      <text x="112" y="42" class="body" font-size="26">用户聊天</text>
+      <path d="M24 24 Q24 14 36 14 H60 Q72 14 72 26 V38 Q72 50 60 50 H45 L34 60 V50 H36 Q24 50 24 38Z" fill="none" stroke="#93c5fd" stroke-width="4"/>
+    </g>
+    <g transform="translate(112 316)">
+      <rect width="344" height="64" rx="16" class="smallPanel"/>
+      <text x="112" y="42" class="body" font-size="26">行为事件</text>
+      <path d="M24 38 H38 L45 20 L56 50 L64 33 H80" fill="none" stroke="#93c5fd" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(112 384)">
+      <rect width="344" height="64" rx="16" class="smallPanel"/>
+      <text x="112" y="42" class="body" font-size="26">知识文件</text>
+      <path d="M34 14 H62 L76 28 V54 H34Z" fill="none" stroke="#93c5fd" stroke-width="4"/>
+      <path d="M62 14 V29 H76 M43 38 H67 M43 48 H67" stroke="#93c5fd" stroke-width="3"/>
+    </g>
+    <g transform="translate(112 452)">
+      <rect width="344" height="64" rx="16" class="smallPanel"/>
+      <text x="112" y="42" class="body" font-size="26">图片</text>
+      <rect x="28" y="18" width="48" height="34" rx="5" fill="none" stroke="#93c5fd" stroke-width="4"/>
+      <path d="M34 47 L47 33 L58 43 L65 36 L74 47" fill="none" stroke="#93c5fd" stroke-width="3"/>
+    </g>
+    <g transform="translate(112 520)">
+      <rect width="344" height="64" rx="16" class="smallPanel"/>
+      <text x="112" y="42" class="body" font-size="26">技能 / 工具</text>
+      <path d="M34 22 L48 36 M48 22 L34 36 M60 18 L76 34 L60 50" fill="none" stroke="#93c5fd" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <text x="130" y="642" class="body" font-size="25">接入聊天、事件、文件、</text>
+    <text x="130" y="680" class="body" font-size="25">图片与技能等原始信息</text>
+  </g>
+
+  <!-- Source icons -->
+  <text x="276" y="780" text-anchor="middle" class="accent" font-size="24">多源输入</text>
+  <path class="dash" d="M88 808 H466"/>
+  <g transform="translate(54 835)">
+    <g fill="#07142e" stroke="#1d4ed8" stroke-width="2">
+      <rect width="66" height="54" rx="14"/><rect x="84" width="66" height="54" rx="14"/><rect x="168" width="66" height="54" rx="14"/>
+      <rect x="252" width="66" height="54" rx="14"/><rect x="336" width="66" height="54" rx="14"/><rect x="420" width="66" height="54" rx="14"/>
+    </g>
+    <text x="33" y="36" text-anchor="middle" class="body" font-size="24">聊</text>
+    <text x="117" y="36" text-anchor="middle" class="body" font-size="24">端</text>
+    <text x="201" y="36" text-anchor="middle" class="body" font-size="24">网</text>
+    <text x="285" y="36" text-anchor="middle" class="body" font-size="24">件</text>
+    <text x="369" y="36" text-anchor="middle" class="body" font-size="24">库</text>
+    <text x="453" y="36" text-anchor="middle" class="body" font-size="24">云</text>
+  </g>
+
+  <!-- Center engine -->
+  <path class="lineBlue" d="M515 444 H642"/>
+  <text x="574" y="418" text-anchor="middle" class="accent" font-size="24">传入</text>
+  <g filter="url(#blueGlow)">
+    <rect x="670" y="214" width="580" height="410" rx="34" fill="url(#engine)" stroke="#93c5fd" stroke-width="2"/>
+    <text x="960" y="295" text-anchor="middle" class="title" font-size="40">MemOS 记忆引擎</text>
+    <g transform="translate(770 350)">
+      <circle cx="0" cy="0" r="20" fill="none" stroke="#bfdbfe" stroke-width="5"/>
+      <line x1="15" y1="15" x2="38" y2="38" stroke="#bfdbfe" stroke-width="5" stroke-linecap="round"/>
+      <text x="78" y="10" class="text body" font-size="27">加工为可检索记忆</text>
+    </g>
+    <g transform="translate(770 414)">
+      <circle cx="0" cy="0" r="22" fill="none" stroke="#bfdbfe" stroke-width="4"/>
+      <path d="M0 -14 V0 L12 8" stroke="#bfdbfe" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M-28 -4 A30 30 0 0 1 20 -26" stroke="#bfdbfe" stroke-width="4" fill="none" marker-end="url(#arrowBlue)"/>
+      <text x="78" y="10" class="body" font-size="27">持续自动更新</text>
+    </g>
+    <g transform="translate(770 478)">
+      <rect x="-22" y="-18" width="44" height="36" rx="6" fill="none" stroke="#bfdbfe" stroke-width="4"/>
+      <path d="M-12 -6 H12 M-12 6 H4" stroke="#bfdbfe" stroke-width="3"/>
+      <text x="78" y="10" class="body" font-size="27">自然语言反馈修正</text>
+    </g>
+    <g transform="translate(770 542)">
+      <path d="M0 -26 L27 -15 V5 C27 25 9 34 0 38 C-9 34 -27 25 -27 5 V-15Z" fill="none" stroke="#bfdbfe" stroke-width="4"/>
+      <path d="M-10 3 L-1 13 L14 -8" fill="none" stroke="#bfdbfe" stroke-width="4" stroke-linecap="round"/>
+      <text x="78" y="10" class="body" font-size="27">管理记忆生命周期</text>
+    </g>
+  </g>
+
+  <!-- Memory graph -->
+  <g transform="translate(620 675)">
+    <ellipse cx="340" cy="130" rx="310" ry="92" fill="none" stroke="#2563eb" stroke-width="2" opacity=".8"/>
+    <ellipse cx="340" cy="130" rx="246" ry="64" fill="none" stroke="#1d4ed8" stroke-width="1.5" opacity=".55"/>
+    <g stroke="#60a5fa" stroke-width="2" opacity=".75">
+      <line x1="210" y1="86" x2="340" y2="54"/><line x1="340" y1="54" x2="475" y2="88"/>
+      <line x1="210" y1="86" x2="315" y2="128"/><line x1="315" y1="128" x2="475" y2="88"/>
+      <line x1="315" y1="128" x2="205" y2="164"/><line x1="315" y1="128" x2="465" y2="166"/>
+      <line x1="465" y1="166" x2="545" y2="118"/>
+    </g>
+    <g fill="#10244f" stroke="#60a5fa" stroke-width="2" filter="url(#blueGlow)">
+      <rect x="176" y="64" width="72" height="48" rx="10"/>
+      <rect x="306" y="30" width="72" height="48" rx="10"/>
+      <rect x="438" y="65" width="82" height="50" rx="10"/>
+      <rect x="275" y="108" width="86" height="54" rx="10"/>
+      <rect x="166" y="146" width="82" height="50" rx="10"/>
+      <rect x="430" y="146" width="86" height="54" rx="10"/>
+      <rect x="538" y="93" width="70" height="48" rx="10" fill="#4c1d95" stroke="#a78bfa"/>
+    </g>
+    <text x="340" y="280" text-anchor="middle" class="body" font-size="28">将原始信息转化为</text>
+    <text x="340" y="320" text-anchor="middle" class="body" font-size="28">可检索、可更新的记忆</text>
+  </g>
+
+  <!-- Right: retrieval panel -->
+  <path class="linePurple" d="M1276 444 H1360"/>
+  <text x="1322" y="418" text-anchor="middle" class="purple" font-size="24">召回</text>
+  <g filter="url(#shadow)">
+    <rect x="1385" y="214" width="458" height="690" rx="24" class="panel"/>
+    <g filter="url(#blueGlow)">
+      <rect x="1420" y="255" width="386" height="122" rx="18" fill="url(#memoryCard)" stroke="#60a5fa"/>
+      <text x="1510" y="304" class="body" font-size="25" font-weight="700">用户偏好：</text>
+      <text x="1510" y="342" class="body" font-size="25">喜欢简洁、可执行的回答</text>
+      <path d="M1454 286 H1480 V342 H1454Z" fill="none" stroke="#93c5fd" stroke-width="4"/>
+      <path d="M1462 304 H1473 M1462 318 H1473" stroke="#93c5fd" stroke-width="3"/>
+    </g>
+    <g filter="url(#purpleGlow)">
+      <rect x="1420" y="402" width="386" height="122" rx="18" fill="url(#purpleCard)" stroke="#a78bfa"/>
+      <text x="1510" y="451" class="body" font-size="25" font-weight="700">任务状态：</text>
+      <text x="1510" y="489" class="body" font-size="25">正在评估云服务接入方案</text>
+      <rect x="1450" y="432" width="38" height="38" rx="6" fill="none" stroke="#c4b5fd" stroke-width="4"/>
+      <path d="M1458 448 H1480 M1458 462 H1472" stroke="#c4b5fd" stroke-width="3"/>
+    </g>
+    <path d="M1450 610 H1778" stroke="#1d4ed8" stroke-width="2" opacity=".7"/>
+    <path d="M1578 600 L1612 632 L1646 600" fill="none" stroke="#8b5cf6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(1418 660)">
+      <rect width="96" height="88" rx="18" class="smallPanel"/>
+      <rect x="144" width="96" height="88" rx="18" class="smallPanel"/>
+      <rect x="288" width="96" height="88" rx="18" class="smallPanel"/>
+      <path d="M24 30 Q24 20 36 20 H62 Q74 20 74 34 V48 Q74 62 60 62 H46 L34 72 V62 H36 Q24 62 24 50Z" fill="none" stroke="#93c5fd" stroke-width="4"/>
+      <rect x="174" y="22" width="36" height="28" rx="7" fill="none" stroke="#93c5fd" stroke-width="4"/>
+      <circle cx="192" cy="64" r="6" fill="#93c5fd"/>
+      <path d="M334 22 H374 V52 H334Z M354 52 V70 M326 70 H382" fill="none" stroke="#93c5fd" stroke-width="4" stroke-linecap="round"/>
+      <text x="48" y="122" text-anchor="middle" class="body" font-size="22">模型回答</text>
+      <text x="192" y="122" text-anchor="middle" class="body" font-size="22">Agent 决策</text>
+      <text x="336" y="122" text-anchor="middle" class="body" font-size="22">业务流程</text>
+    </g>
+    <text x="1614" y="827" text-anchor="middle" class="body" font-size="28">召回最相关记忆，支持</text>
+    <text x="1614" y="865" text-anchor="middle" class="body" font-size="28">回答、决策与流程执行</text>
+  </g>
+
+  <!-- Feedback loop -->
+  <path class="dash" d="M248 920 V972 Q248 1008 284 1008 H742"/>
+  <path class="dash" d="M1180 1008 H1600 Q1636 1008 1636 972 V925"/>
+  <g filter="url(#blueGlow)">
+    <rect x="730" y="962" width="460" height="66" rx="32" fill="#08204e" stroke="#60a5fa" stroke-width="2"/>
+    <text x="960" y="1005" text-anchor="middle" class="body" font-size="28">∞ 持续学习 · 不断进化</text>
+  </g>
+</svg>

@@ -21,11 +21,11 @@ title: Error Codes
 | 40130 | API Key authentication required | Add a valid API Key to the request header |
 | 40132 | Invalid or expired API Key | Check API Key status or generate a new one |
 | **Quota & Rate Limit Errors** | | |
-| 40300 | Rate limit exceeded | <a href="/memos_cloud/limit#_4-obtaining-more-quota" target="_blank">Get more quota</a> |
+| 40300 | Rate limit exceeded | <a href="/memos_cloud/support/limit#_4-obtaining-more-quota" target="_blank">Get more quota</a> |
 | 40301 | Chat request token quota exceeded | Reduce input content or get more quota |
 | 40302 | Chat response token quota exceeded | Shorten expected output or get more quota |
 | 40303 | Chat length exceeds model limit | Reduce single input/output length |
-| 40304 | Total API call quota exceeded | <a href="/memos_cloud/limit#_4-obtaining-more-quota" target="_blank">Get more quota</a> |
+| 40304 | Total API call quota exceeded | <a href="/memos_cloud/support/limit#_4-obtaining-more-quota" target="_blank">Get more quota</a> |
 | 40305 | Input content exceeds token limit | Reduce input content |
 | 40306 | delete_memory authentication failed | Confirm if you have permission to delete this memory |
 | 40307 | Memory for deletion does not exist | Check if the memory_id is valid |

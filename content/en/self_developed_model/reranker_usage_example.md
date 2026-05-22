@@ -7,7 +7,7 @@ MemOS provides a memory reranking API based on the **memos-reranker** model seri
 
 ::callout{.rerank-usage-api-hint color="warning"}
 Request/response fields and OpenAPI: [Rerank Memory](/en/api_docs/core/rerank).<br />
-Auth, base URL, and calling conventions match [MemOS Cloud Quick Start](/en/memos_cloud/quick_start).
+Auth, base URL, and calling conventions match [MemOS Cloud Quick Start](/en/memos_cloud/getting_started/quick_start).
 ::
 
 ## When to use memory reranking

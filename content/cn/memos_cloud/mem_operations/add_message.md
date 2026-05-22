@@ -3,72 +3,103 @@ title: Add Message
 desc: MemOS 会将您添加的多模态内容如文本、文件、图片等，自动处理为可检索的个人记忆。
 ---
 
-::warning
-**[直接看 API文档 点这里哦](/api_docs/core/add_message)**
-<br>
-<br>
-
-**本文聚焦于功能说明，详细接口字段及限制请点击上方文字链接查看**
-::
-
-## 1. 如何添加消息？
-
-记忆的基础来源于原始消息内容。MemOS 会将您添加的消息统一加工为记忆，用于后续的检索与使用。在搭建 AI 应用时，无论您是否已开始使用 MemOS 进行用户记忆管理，都可以根据实际场景选择合适的添加时机，包括：
-
-*   **一次性导入**：将已有的用户历史对话一键导入 MemOS，快速建立初始记忆；
-    
-*   **实时添加**：在用户每次发送消息时，实时将消息添加至 MemOS；
-    
-*   **按轮次添加**：根据业务需要，设置每隔若干轮对话再将用户消息添加至 MemOS。
-    
 ::note
 **&nbsp;为什么记忆很重要？**
-<div style="padding-left: 2em;">
 
-* 能够实现跨会话的长期记忆，避免对话结束后信息丢失；
 
-* 随着交互不断积累，让 AI 越来越“**懂用户**”；
+* 长期不丢失：能够实现跨会话的长期记忆，避免对话结束后信息丢失；
+* 把握用户偏好：随着交互不断积累，让 AI 越来越“**懂用户**”；
+* 随时间演进：会话过程中，持续动态更新用户记忆；
+* 跨产品体验：在您的多个应用或产品之间，共享同一用户的记忆，实现一致的用户体验。
 
-* 在会话过程中持续写入新信息，动态更新用户记忆；
-
-* 在您的多个应用或产品之间，共享同一用户的记忆，实现一致的用户体验。
-</div>
 ::
 
 
-## 2. 关键参数
 
-*   **用户标识（user\_id）**：用于标识消息所属的唯一用户，当前所有添加的对话信息均需关联到具体且唯一的用户标识符。
+
+## 1. 关键参数
+
+*   **用户标识（user\_id）**：用于标识消息所属的用户，你添加的消息必须关联到唯一的用户标识符。
     
-*   **会话标识（conversation\_id）**：用于标识消息所属的唯一会话，当前所有添加的对话信息均需关联到具体且唯一的会话标识符。
+*   **会话标识（conversation\_id）**：用于标识消息所属的会话，你添加的消息必须关联到唯一的会话标识符。
     
 *   **消息（messages）**：用于添加到 MemOS 的用户与 AI 对话内容的有序消息列表。
-    
 
-## 3. 工作原理
+
+
+## 2. 工作原理
 
 *   **信息提取**：MemOS 在系统内部使用 LLM 提取消息中的事实、偏好等，并处理为记忆，包括：事实记忆、偏好记忆、工具记忆等。
     
 *   **冲突解决**：现有记忆会被检查是否有重复或矛盾，完成更新。
     
 *   **记忆储存**：最终产生的记忆会使用向量数据库与图数据库储存，便于在后续检索时快速召回。
-    
+
+
 
 以上所有流程，仅需调用`add/message`接口即可触发，无需您对用户的记忆手动操作。
 
 
-## 4. 快速上手
 
-```python
-import os
+## 3. 快速上手
+
+::code-group
+
+```python [Python (HTTP)]
 import requests
-import json
 
-# 替换成你的 MemOS API Key
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
 
 data = {
+  "user_id": "memos_user_123",
+  "conversation_id": "0610",
+  "messages": [
+    {"role": "user", "content": "我暑假定好去广州旅游，住宿的话有哪些连锁酒店可选？"},
+    {"role": "assistant", "content": "您可以考虑【七天、全季、希尔顿】等等"},
+    {"role": "user", "content": "我选七天"},
+    {"role": "assistant", "content": "好的，有其他问题再问我。"}
+  ]
+}
+
+res = requests.post(
+  f"{BASE_URL}/add/message",
+  headers={"Authorization": f"Token {API_KEY}"},
+  json=data
+)
+
+print(res.json())
+```
+
+```python [Python (SDK)]
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+messages = [
+  {"role": "user", "content": "我暑假定好去广州旅游，住宿的话有哪些连锁酒店可选？"},
+  {"role": "assistant", "content": "您可以考虑【七天、全季、希尔顿】等等"},
+  {"role": "user", "content": "我选七天"},
+  {"role": "assistant", "content": "好的，有其他问题再问我。"}
+]
+
+res = client.add_message(
+  messages=messages,
+  user_id="memos_user_123",
+  conversation_id="0610"
+)
+
+print(res)
+```
+
+```bash [Curl]
+export MEMOS_API_KEY="YOUR_API_KEY"
+export MEMOS_BASE_URL="https://memos.memtensor.cn/api/openmem/v1"
+
+curl "$MEMOS_BASE_URL/add/message" \
+  -H "Authorization: Token $MEMOS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
     "user_id": "memos_user_123",
     "conversation_id": "0610",
     "messages": [
@@ -77,214 +108,192 @@ data = {
       {"role": "user", "content": "我选七天"},
       {"role": "assistant", "content": "好的，有其他问题再问我。"}
     ]
-  }
-headers = {
-  "Content-Type": "application/json",
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
-}
-url = f"{os.environ['MEMOS_BASE_URL']}/add/message"
-
-res = requests.post(url=url, headers=headers, data=json.dumps(data))
-
-print(f"result: {res.json()}")
+  }'
 ```
+
+::
+
+
+
 :::note
-想知道生成了哪些记忆？一键复制上述代码并运行，前往[**检索记忆**](/memos_cloud/mem_operations/search_memory)。
+想知道生成了哪些记忆？一键复制上述代码并运行，添加好记忆后，前往[**检索记忆**](/memos_cloud/mem_operations/search_memory)。
 :::
+
+需要查看完整字段、请求格式和响应格式？详见 [Add Message 接口文档](/api_docs/core/add_message)。
+
+
+
+## 4. 何时添加消息？
+
+记忆的基础来源于原始消息内容。MemOS 会将您添加的消息统一加工为记忆，用于后续的检索与使用。您可以根据实际场景选择合适的添加时机：
+
+*   **一次性导入**：将已有的用户历史对话一键导入 MemOS，快速建立初始记忆；
+
+*   **实时添加**：在用户每次发送消息时，实时将消息添加至 MemOS；
+
+*   **按轮次添加**：根据业务需要，设置每隔若干轮对话再将用户消息添加至 MemOS。
+
+
+
+
 
 ## 5. 更多使用方法
 
-### 实时导入对话
+下面这些字段用于在添加消息时补充时间、分类、隔离和业务上下文。你可以按场景单独使用，也可以组合使用。
 
-你可以在用户每次收到模型回复时，实时调用接口添加消息，随时与 MemOS 同步用户与助手的对话。MemOS将在后端不断根据新的对话，更新用户记忆。
+### `chat_time`：指定对话发生时间
+
+MemOS 默认以消息传入时的北京时间作为记忆时间。如果你在批量导入历史对话，可以为每条消息传入 `chat_time`，让生成的记忆保留更准确的时间线。
 
 ```python
-import os
-import json
-import requests
-
-
-os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
-os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
-
-# headers 和 base URL
-headers = {
-  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
-  "Content-Type": "application/json"
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0930",
+    "messages": [
+        {"role": "user", "content": "我喜欢吃辣。", "chat_time": "2025-09-12 08:00:00"},
+        {"role": "assistant", "content": "已记住你喜欢辣味。", "chat_time": "2025-09-12 08:01:00"},
+        {"role": "user", "content": "我不喜欢重油。", "chat_time": "2025-09-25 12:00:00"},
+        {"role": "assistant", "content": "记住了，你偏好清爽的辣味。", "chat_time": "2025-09-25 12:01:00"}
+    ]
 }
-BASE_URL = os.environ['MEMOS_BASE_URL']
-
-def add_message(user_id, conversation_id, messages):
-    data = {
-        "user_id": user_id,
-        "conversation_id": conversation_id,
-        "messages": messages
-    }
-    
-    res = requests.post(f"{BASE_URL}/add/message", headers=headers, data=json.dumps(data))
-    result = res.json()
-  
-    if result.get('code') == 0: 
-      print(f"✅ 添加成功")
-    else:
-      print(f"❌ 添加失败, {result.get('message')}")
-
-# 添加用户与助手的对话消息
-add_message("memos_user_123", "memos_conversation_123",
-            [{"role": "user", "content": "我今天早上跑了5公里，膝盖有点酸"}, 
-             {"role": "assistant", "content": "你今天跑了5公里，膝盖有点酸，说明关节和肌肉还在适应强度。明天建议把距离控制在3公里左右，重点放在充分热身和放松。这样既能维持训练节奏，又能给膝盖恢复的时间。"}])
-
 ```
 
-<br>
+### `content`：写入用户偏好或行为数据
 
-### 导入历史对话
-
-如果你已经构建了 AI 对话应用，MemOS 也支持批量导入已有聊天记录，帮助对话助手记住用户，更个性化地回复。
+除了对话内容，用户的个人偏好、行为、问卷信息等，也可以作为 `content` 写入 MemOS。
 
 ```python
-# 示例历史对话数据
-"messages": [
-  # 用户第一天和AI的对话
-    {"role": "user", "content": "我喜欢吃辣的食物", "chat_time": "2025-09-12 08:00:00"},
-    {"role": "assistant", "content": "明白啦，我记住了，你喜欢辣味的食物。", "chat_time": "2025-09-12 08:01:00"},
-  # 用户几天后和AI的对话
-    {"role": "user", "content": "但我又不太喜欢重油的，比如麻辣火锅、毛血旺之类的", "chat_time": "2025-09-25 12:00:00"},
-    {"role": "assistant", "content": "你更偏好清爽又带辣味的菜。我可以帮你推荐一些适合你的辣味美食哦~", "chat_time": "2025-09-25 12:01:00"}
-]
-```
-
-<br>
-
-### 记录用户偏好或行为
-
-除了导入对话内容，用户的个人偏好、行为等数据，例如首次启动应用时填写的兴趣问卷信息，同样可以导入 MemOS，作为记忆的一部分。
-
-```python
-# 示例用户兴趣信息
-"messages": [
-    {
-      "role": "user",
-      "content": """
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0901",
+    "messages": [
+        {
+            "role": "user",
+            "content": """
 喜欢的电影类型: 科幻, 动作, 喜剧
 喜欢的电视剧类型: 悬疑, 历史剧
 喜欢的书籍类型: 科普, 技术, 自我成长
-喜欢的学习方式: 文章, 视频, Podcast
-运动习惯: 跑步, 健身
-饮食偏好: 偏爱辣, 健康饮食
-旅游偏好: 自然景观, 城市文化, 冒险
 喜欢的聊天风格: 幽默, 温暖, 轻松闲聊
 想让AI提供的帮助类型: 建议, 信息查询, 灵感
 我最感兴趣的话题: 人工智能, 未来科技, 电影评论
 我希望AI帮助的事情: 规划日常学习计划, 推荐电影和书籍, 提供心情陪伴
-      """
-    }
-]
+            """
+        }
+    ]
+}
 ```
 
-<br>
+### `agent_id`：按 Agent 隔离记忆
 
-### 配合记忆过滤器添加消息
-MemOS 支持开发者针对自己的需求从选定的记忆范围中召回记忆。在添加消息时，使用以下字段对生成的记忆进行标记，就能在检索记忆时使用[记忆过滤器（filter）](/memos_cloud/features/basic/filters)完成精确过滤。
-
-
-1. **同一个用户与多 Agent （在多个应用内）聊天**
-
-添加消息时带上 `agent_id` `app_id` 等信息，标识当前与用户对话所关联的 Agent、应用，用来区分“同一用户在不同 Agent / App 下的记忆”。
+添加消息时传入 `agent_id`，可以标识当前对话关联的 Agent，用来区分同一用户在不同 Agent 下产生的记忆。
 
 ```python
 data = {
-  "user_id": "memos_user_123",
-  "agent_id":"health_assistant", #开发者传入的当前对话的 agent。
-  "conversation_id": 0610,
-  "messages":[
-    {"role": "user", "content": "我今天早上跑了5公里，膝盖有点酸"}, 
-    {"role": "assistant", "content": "你今天跑了5公里，膝盖有点酸，说明关节和肌肉还在适应强度。明天建议把距离控制在3公里左右，重点放在充分热身和放松。"
-    }
-  ]
+    "user_id": "memos_user_123",
+    "conversation_id": "0610",
+    "agent_id": "health_assistant",
+    "messages": [
+        {"role": "user", "content": "我今天跑了5公里，膝盖有点酸。"},
+        {"role": "assistant", "content": "明天建议降低强度。"}
+    ]
 }
-
-# 在后续检索中，您可以传入"agent_id":"health_assistant"来检索用户与该助手聊天的记忆。
-```
-
-<br>
-
-2. **用已有的标签体系，对记忆进行语义分类**
-
-MemOS 会为每条记忆自动生成标签，但这些标签可能与您业务中所使用的标签不完全一致。您可以在添加消息时带上自定义的`tags`，MemOS 将基于您提供的标签含义，对记忆内容自动应用相关标签。
-
-```python
-data = {
-  "user_id": "memos_user_123",
-  "conversation_id": 0610,
-  "tags":["运动建议","健身规划","运动记录"], #开发者传入的对“健身助手话题分类”的自定义标签。
-  "messages":[
-    {"role": "user", "content": "我今天早上跑了5公里，膝盖有点酸"}, 
-    {"role": "assistant", "content": "你今天跑了5公里，膝盖有点酸，说明关节和肌肉还在适应强度。明天建议把距离控制在3公里左右，重点放在充分热身和放松。"
-    }
-  ]
-}
-
-# 在后续检索中，您可以传入"tags":"运动建议"来检索围绕“运动建议”的用户记忆。
 ```
 
 ::note
-如果你想了解更多，详见[自定义标签](/memos_cloud/features/basic/custom_tags)
+后续检索时，可以通过 `filter` 参数传入 `"agent_id":"health_assistant"`，检索用户与该助手聊天的记忆。详细见[记忆过滤器（filter）](/memos_cloud/features/filters)。
 ::
 
-<br>
+### `tags`：对记忆进行语义分类
 
-3. **使用自带的业务信息，精确过滤**
-
-添加消息时带上`info`，传入更多结构化的业务字段或自定义补充信息，例如`scene = 订单`等，用来按照业务维度精确区分当前的场景、业务线、来源、状态等等。
-
+MemOS 会为每条记忆自动生成标签。如果你的业务已有标签体系，也可以在添加消息时传入自定义 `tags`，让记忆更贴合业务分类。更多说明见[自定义标签](/memos_cloud/features/custom_tags)。
 
 ```python
 data = {
-  "user_id": "memos_user_123",
-  "conversation_id": 0610,
-  "messages":[
-    {"role": "user", "content": "帮我查找时间合适的机票"}, 
-    {"role": "assistant", "content": "我帮你查到了几班时间合适的航班：\n1. 北京 → 上海，2月15日08:30出发，12:30到达\n2. 北京 → 上海，2月15日14:00出发，18:00到达\n3. 北京 → 上海，2月16日09:00出发，13:00到达\n你希望我帮你预订哪一班，或者需要我筛选其他条件吗？"
-    }
-  ],
-  "info":{
-    "scene":"机票"
-  }
+    "user_id": "memos_user_123",
+    "conversation_id": "0610",
+    "tags": ["运动建议", "健身规划"],
+    "messages": [
+        {"role": "user", "content": "我今天跑了5公里，膝盖有点酸。"},
+        {"role": "assistant", "content": "明天建议降低强度。"}
+    ]
 }
-
-# 在后续检索中，您可以传入"info":{"scene":"机票"}来检索围绕“机票购买”业务场景的用户记忆。
 ```
 
-<br>
-
-**使用提示**
-
-`info`支持传入任意自定义键值对，所有字段均可正常存储和检索。
-
-当前系统对以下字段提供了更优的查询性能支持（因为这些字段已经添加索引）：
-- business_type（业务类型）
-- biz_id（业务唯一标识）
-- scene（业务或对话场景）
-- custom_status（自定义状态）
-
-是否使用上述字段并非强制要求，使用其他自定义字段在功能上完全一致，仅在检索性能上可能有所差异。
-
 ::note
-`info`为扁平化的键值对结构，字段名和字段值均需为字符串类型，用于在检索时进行条件过滤；非字符串值需先转换为字符串再传入。
+后续检索时，可以通过 `filter` 参数传入 `"tags":"运动建议"`，检索围绕该标签的用户记忆。详细见[记忆过滤器（filter）](/memos_cloud/features/filters)。
 ::
 
-<br>
+### `info`：传入自定义信息
+
+添加消息时带上 `info`，可以把业务场景、来源、状态等结构化信息一并写入，后续检索时用于精确过滤。
+
+常用字段如下：
+
+| 字段 | 用途 |
+| --- | --- |
+| `business_type` | 业务类型 |
+| `biz_id` | 业务唯一标识 |
+| `scene` | 业务或对话场景 |
+| `custom_status` | 自定义状态 |
+
+你也可以传入其他自定义键值对，所有字段都可以正常存储和检索。
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0610",
+    "messages": [
+        {"role": "user", "content": "帮我查找时间合适的机票。"},
+        {"role": "assistant", "content": "已找到几班北京到上海的航班。"}
+    ],
+    "info": {
+        "scene": "机票"
+    }
+}
+```
+
+::note
+后续检索时，可以通过 `filter` 参数传入 `"scene":"机票"`，检索围绕该场景的用户记忆。详细见[记忆过滤器（filter）](/memos_cloud/features/filters)。
+::
 
 ## 6. 更多功能
 
-:::note
-有关 API 字段、格式等信息的完整列表，详见[Add Message接口文档](/api_docs/core/add_message)。
-:::
+如果你需要更复杂的写入方式，可以继续了解这些扩展能力。
 
-| **功能** | **字段** | **说明** |
-| --- | --- | --- |
-| 多模态消息 | `messages` | 用于添加的对话消息列表。<br>支持的角色类型包括：user / assistant / system / tool；<br>支持的消息类型包括：<br>• 文本<br>• 文档、图片，详见[多模态消息](/memos_cloud/features/basic/multimodal)。<br>• 工具调用信息，详见[工具调用](/memos_cloud/features/advanced/tool_calling)。 |
-| 异步模式 | `async_mode` | 控制添加消息后的处理方式，支持异步与同步两种模式，详见[异步模式](/memos_cloud/features/basic/async_mode)。 |
-| 写入公共记忆 | `allow_public` | 控制当前用户对话消息生成的记忆是否要写入项目级公共记忆，供项目下所有用户共享，默认关闭。 |
-| 写入知识库记忆 | `allow_knowledgebase_ids` | 控制当前用户对话消息生成的记忆是否写入指定的项目关联的知识库中，供所有可访问该知识库的用户共享。默认为空，使用时您可以将需要写入的知识库列表传入。详见[知识库](/memos_cloud/features/advanced/knowledge_base)。 |
+::card-group
+  :::card
+  ---
+  icon: ri:image-line
+  title: 多模态消息
+  to: /cn/memos_cloud/features/multimodal
+  ---
+  支持文本、图片、文档等多种输入内容。
+  :::
+
+  :::card
+  ---
+  icon: ri:tools-line
+  title: 工具记忆
+  to: /cn/memos_cloud/features/tool_calling
+  ---
+  将工具调用过程和结果写入用户记忆。
+  :::
+
+  :::card
+  ---
+  icon: ri:timer-flash-line
+  title: 异步模式
+  to: /cn/memos_cloud/features/async_mode
+  ---
+  控制消息写入后的处理方式，适合不同实时性要求。
+  :::
+
+  :::card
+  ---
+  icon: ri:database-2-line
+  title: 知识库记忆
+  to: /cn/memos_cloud/features/knowledge_base
+  ---
+  将消息生成的记忆写入指定知识库。
+  :::
+::

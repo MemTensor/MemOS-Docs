@@ -136,12 +136,43 @@ useHead({
             >
               <template #link-title="{ link }">
                 <span class="block w-full min-w-0 max-w-full">
-                  <span class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2">
-                    <UIcon
+                  <span
+                    v-if="link.children?.length && link.path && link.page !== false"
+                    class="inline-flex w-full min-w-0 max-w-full cursor-pointer items-center justify-start gap-2"
+                    role="link"
+                    tabindex="0"
+                    @click.stop="navigateTo(link.path)"
+                    @keydown.enter.stop.prevent="navigateTo(link.path)"
+                  >
+                    <span
                       v-if="link.icon && typeof link.icon === 'string'"
-                      :name="link.icon as string"
-                      class="w-4 h-4 flex-shrink-0"
+                      class="inline-flex size-4 flex-shrink-0 items-center justify-center"
+                    >
+                      <UIcon
+                        :name="link.icon as string"
+                        class="size-4"
+                      />
+                    </span>
+                    <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
+                    <UIcon
+                      v-if="link.target === '_blank'"
+                      name="i-ri-external-link-line"
+                      class="w-3 h-3 flex-shrink-0 text-gray-400"
                     />
+                  </span>
+                  <span
+                    v-else
+                    class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2"
+                  >
+                    <span
+                      v-if="link.icon && typeof link.icon === 'string'"
+                      class="inline-flex size-4 flex-shrink-0 items-center justify-center"
+                    >
+                      <UIcon
+                        :name="link.icon as string"
+                        class="size-4"
+                      />
+                    </span>
                     <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
                     <UIcon
                       v-if="link.target === '_blank'"
@@ -222,12 +253,43 @@ useHead({
             >
               <template #link-title="{ link }">
                 <span class="block w-full min-w-0 max-w-full">
-                  <span class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2">
-                    <UIcon
+                  <span
+                    v-if="link.children?.length && link.path && link.page !== false"
+                    class="inline-flex w-full min-w-0 max-w-full cursor-pointer items-center justify-start gap-2"
+                    role="link"
+                    tabindex="0"
+                    @click.stop="navigateTo(link.path)"
+                    @keydown.enter.stop.prevent="navigateTo(link.path)"
+                  >
+                    <span
                       v-if="link.icon && typeof link.icon === 'string'"
-                      :name="link.icon as string"
-                      class="w-4 h-4 flex-shrink-0"
+                      class="inline-flex size-4 flex-shrink-0 items-center justify-center"
+                    >
+                      <UIcon
+                        :name="link.icon as string"
+                        class="size-4"
+                      />
+                    </span>
+                    <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
+                    <UIcon
+                      v-if="link.target === '_blank'"
+                      name="i-ri-external-link-line"
+                      class="w-3 h-3 flex-shrink-0 text-gray-400"
                     />
+                  </span>
+                  <span
+                    v-else
+                    class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2"
+                  >
+                    <span
+                      v-if="link.icon && typeof link.icon === 'string'"
+                      class="inline-flex size-4 flex-shrink-0 items-center justify-center"
+                    >
+                      <UIcon
+                        :name="link.icon as string"
+                        class="size-4"
+                      />
+                    </span>
                     <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
                     <UIcon
                       v-if="link.target === '_blank'"

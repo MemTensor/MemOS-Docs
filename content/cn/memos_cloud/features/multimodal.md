@@ -20,7 +20,7 @@ MemOS 不仅支持文本，还支持多模态数据，包括文档和图片。�
 :::note
 **多模态消息与工具记忆**
 
-除了处理文档和图片内容外，MemOS 还支持处理工具调用信息。当您在消息中添加工具调用信息时，系统会将其处理为工具记忆，包括工具信息（Tool Schema）和轨迹记忆（Tool Trajectory Memory）。详见[工具调用](/memos_cloud/features/advanced/tool_calling)。
+除了处理文档和图片内容外，MemOS 还支持处理工具调用信息。当您在消息中添加工具调用信息时，系统会将其处理为工具记忆，包括工具信息（Tool Schema）和轨迹记忆（Tool Trajectory Memory）。详见[工具调用](/cn/memos_cloud/features/tool_calling)。
 :::
 
 ### 添加消息
