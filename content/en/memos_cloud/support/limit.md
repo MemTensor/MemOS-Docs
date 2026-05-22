@@ -34,7 +34,7 @@ In addition, the document upload feature for the knowledge base currently has th
 
 ::note
 **Note**
-Knowledge bases now also support uploading Skill files. For detailed limits, see [Knowledge Base](/memos_cloud/features/advanced/knowledge_base).
+Knowledge bases now also support uploading Skill files. For detailed limits, see [Knowledge Base](/memos_cloud/features/knowledge_base).
 ::
 
 If you have higher-level or special requirements, please contact the project team for further discussion.

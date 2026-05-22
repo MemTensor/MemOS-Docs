@@ -131,4 +131,4 @@ From Next-Token Prediction to Next-Scene Prediction
 
 ## 5. Next Steps
 
-*   Learn about [Cloud Platform & Open Source](/memos_cloud/cloud_and_opensource) and experience the power of MemOS!
+*   Learn about [Cloud Platform & Open Source](/memos_cloud/getting_started/cloud_and_opensource) and experience the power of MemOS!

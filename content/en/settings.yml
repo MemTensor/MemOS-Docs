@@ -4,37 +4,45 @@ nav:
   # You can find available icons at https://icones.js.org/
   - "(ri:cloud-line) MemOS Cloud":
     - "(ri:book-line) Getting Started":
-      - "(ri:eye-line) Overview": memos_cloud/overview.md
-      - "(ri:rocket-line) Quick Start": memos_cloud/quick_start.md
-      - "(ri:home-line) Core Concepts":
-        - "(ri:add-line) Memory Production": memos_cloud/introduction/mem_production.md
-        - "(ri:calendar-line) Memory Schedule": memos_cloud/introduction/mem_schedule.md
-        - "(ri:search-line) Memory Recall": memos_cloud/introduction/mem_recall.md
-        - "(ri:refresh-line) Memory Lifecycle": memos_cloud/introduction/mem_lifecycle.md
-        - "(ri:cpu-line) Algorithm Overview": memos_cloud/introduction/algorithm.md
-      - "(ri:dashboard-line) Cloud Platform & Open Source": memos_cloud/cloud_and_opensource.md
-      - "(ri:shield-line) Limitations and Quotas": memos_cloud/limit.md
+      - "(ri:eye-line) Overview": memos_cloud/getting_started/overview.md
+      - "(ri:dashboard-line) Cloud Service & Open Source": memos_cloud/getting_started/cloud_and_opensource.md
+      - "(ri:robot-line) Use in Agents": memos_cloud/getting_started/agent_usage.md
+      - "(ri:rocket-line) Quick Start": memos_cloud/getting_started/quick_start.md
 
-    - "(ri:question-line) Support and Troubleshooting":
-      - "(ri:question-line) FAQs": memos_cloud/faq.md
+    - "(ri:home-line) Concepts":
+      - "(ri:brain-line) How MemOS Works":
+          - "(ri:add-line) Memory Production": memos_cloud/introduction/mem_production.md
+          - "(ri:calendar-line) Memory Scheduling": memos_cloud/introduction/mem_schedule.md
+          - "(ri:search-line) Memory Recall": memos_cloud/introduction/mem_recall.md
+          - "(ri:refresh-line) Memory Lifecycle Management": memos_cloud/introduction/mem_lifecycle.md
+          - "(ri:cpu-line) Algorithm Overview": memos_cloud/introduction/algorithm.md
+      - "(ri:inbox-archive-line) Raw Input Content": memos_cloud/introduction/raw_inputs.md
+      - "(ri:stack-line) Memory Categories": memos_cloud/introduction/memory_types.md
+      - "(ri:filter-3-line) Multi-user / Multi-Agent Isolation": memos_cloud/introduction/isolation_filters.md
+      - "(ri:time-line) Time Awareness": memos_cloud/introduction/time_awareness.md
 
-    - "(ri:edit-box-line) Memory Operations":
+    - "(ri:edit-box-line) Core Operations":
       - "(ri:message-3-line) Add Message": memos_cloud/mem_operations/add_message.md
       - "(ri:search-2-line) Search Memory": memos_cloud/mem_operations/search_memory.md
       - "(ri:delete-bin-line) Delete Memory": memos_cloud/mem_operations/delete_memory.md
-      - "(ri:feedback-line)Add Feedback": memos_cloud/mem_operations/add_feedback.md
+      - "(ri:feedback-line) Add Feedback": memos_cloud/mem_operations/add_feedback.md
+      - "(ri:chat-history-line) Chat": memos_cloud/mem_operations/chat.md
 
-    - "(ri:function-line) Features":
-      - "(ri:flag-line) Basic Features":
-        - "(ri:filter-3-line) Memory Filters": memos_cloud/features/basic/filters.md
-        - "(ri:timer-flash-line) Async Mode": memos_cloud/features/basic/async_mode.md
-        - "(ri:image-add-line) Multimodal Messages": memos_cloud/features/basic/multimodal.md
-        - "(ri:price-tag-3-line) Custom Tags": memos_cloud/features/basic/custom_tags.md
-      - "(ri:vip-diamond-line) Advanced Features":
-        - "(ri:function-line) Skill": memos_cloud/features/advanced/skill.md
-        - "(ri:book-read-line) Knowledge Base": memos_cloud/features/advanced/knowledge_base.md
-        - "(ri:tools-line) Tool Calling": memos_cloud/features/advanced/tool_calling.md
-        - "(ri:chat-history-line) Continuous Dialogue": memos_cloud/features/advanced/continuous_dialogue.md
+    - "(ri:function-line) More Features":
+      - "(ri:filter-3-line) Memory Filters": memos_cloud/features/filters.md
+      - "(ri:timer-flash-line) Async Mode": memos_cloud/features/async_mode.md
+      - "(ri:image-add-line) Multimodal Support": memos_cloud/features/multimodal.md
+      - "(ri:price-tag-3-line) Custom Tags": memos_cloud/features/custom_tags.md
+      - "(ri:function-line) Skill Management": memos_cloud/features/skill.md
+      - "(ri:book-read-line) Knowledge Base": memos_cloud/features/knowledge_base.md
+      - "(ri:tools-line) Tool Memory": memos_cloud/features/tool_calling.md
+
+    - "(ri:bar-chart-box-line) Evaluation":
+      - "(ri:bar-chart-box-line) Evaluation Results": memos_cloud/evaluation/results.md
+
+    - "(ri:question-line) Support and Troubleshooting":
+      - "(ri:question-line) FAQs": memos_cloud/support/faq.md
+      - "(ri:shield-line) Quotas and Limits": memos_cloud/support/limit.md
 
   - "(ri:github-line) Open Source":
     - "(ri:rocket-line) Getting Started":

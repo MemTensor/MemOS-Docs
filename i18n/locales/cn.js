@@ -69,6 +69,10 @@ export default {
     openclawButton: 'OpenClaw 配置指南',
     items: [
       {
+        title: '理解记忆机制',
+        description: '先看 MemOS 解决什么问题，以及记忆生产、召回和生命周期的基本链路。'
+      },
+      {
         title: 'MemOS 云服务',
         description: '生产级记忆服务托管平台，开箱即用，五分钟完成首次集成与调试。'
       },
@@ -87,10 +91,6 @@ export default {
       {
         title: 'API接口文档',
         description: '完整的 REST API 与 SDK 参考，涵盖鉴权、记忆读写、检索等核心接口。'
-      },
-      {
-        title: '自研模型',
-        description: '专为记忆场景训练的自研模型，提升抽取与召回质量，即插即用。'
       }
     ]
   },

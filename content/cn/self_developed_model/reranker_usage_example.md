@@ -7,7 +7,7 @@ MemOS 提供记忆重排接口，基于 **memos-reranker** 系列模型（包括
 
 ::callout{.rerank-usage-api-hint color="warning"}
 接口字段与 OpenAPI 说明：[Rerank Memory](/cn/api_docs/core/rerank)。<br />
-鉴权、Base URL 与调用方式与 [MemOS Cloud 快速开始](/cn/memos_cloud/quick_start) 一致。
+鉴权、Base URL 与调用方式与 [MemOS Cloud 快速开始](/cn/memos_cloud/getting_started/quick_start) 一致。
 ::
 
 ## 何时使用记忆重排模型

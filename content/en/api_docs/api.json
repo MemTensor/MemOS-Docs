@@ -823,7 +823,7 @@
           "messages": {
             "type": "array",
             "title": "Messages",
-            "description": "Array of message objects representing the memory content. The total token limit for the message array is 20k. Each object contains:",
+            "description": "Array of message objects representing the memory content. The total token limit for the message array is 40k. Each object contains:",
             "items": {
               "$ref": "#/components/schemas/MessageInput"
             }
@@ -1180,8 +1180,96 @@
           "filter": {
             "type": "object",
             "title": "Filter",
-            "description": "Memory filter conditions used to precisely limit candidate memories before retrieval. Supports two formats: pass a global filter condition composed of and/or directly, or pass source-specific filters under knowledgebase, user, and public. Available fields include agent_id, app_id, tags, create_time, update_time, and custom fields written through info when adding messages, such as business_type, biz_id, and scene. Fields in info are used directly by field name in filter, for example {\"scene\":\"chat\"}; do not wrap them in another info object. Supports comparison operators gte, lte, gt, lt, and tags.contains.",
-            "example": "{\"knowledgebase\":{\"and\":[{\"tags\":{\"contains\":\"reading\"}},{\"create_time\":{\"gte\":\"2025-01-01\"}},{\"create_time\":{\"lte\":\"2025-12-31\"}}]},\"user\":{\"and\":[{\"scene\":\"chat\"}]}}"
+            "description": "Memory filter conditions used to narrow candidate memories before semantic recall. You can use <code>and</code> / <code>or</code> at the root for global filtering, or filter by source under <code>user</code>, <code>public</code>, and <code>knowledgebase</code>. For complete fields and examples, see <a href=\"/memos_cloud/features/filters\">Memory Filters</a>.",
+            "properties": {
+              "and": {
+                "type": "array",
+                "title": "And",
+                "description": "Global AND condition array. Candidate memories enter semantic recall only when all conditions are satisfied. Common fields include <code>agent_id</code>, <code>app_id</code>, <code>tags.contains</code>, <code>create_time</code>, <code>update_time</code>, and custom fields from <code>info</code>.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "or": {
+                "type": "array",
+                "title": "Or",
+                "description": "Global OR condition array. Candidate memories enter semantic recall when any condition is satisfied.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "user": {
+                "type": "object",
+                "title": "User",
+                "description": "Filter conditions for user personal memories.",
+                "properties": {
+                  "and": {
+                    "type": "array",
+                    "description": "AND condition array for user memories.",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "or": {
+                    "type": "array",
+                    "description": "OR condition array for user memories.",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              },
+              "public": {
+                "type": "object",
+                "title": "Public",
+                "description": "Filter conditions for project-level public memories.",
+                "properties": {
+                  "and": {
+                    "type": "array",
+                    "description": "AND condition array for public memories.",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "or": {
+                    "type": "array",
+                    "description": "OR condition array for public memories.",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              },
+              "knowledgebase": {
+                "type": "object",
+                "title": "Knowledgebase",
+                "description": "Filter conditions for knowledge base memories. Only applies within the knowledge base scope allowed by <code>knowledgebase_ids</code>.",
+                "properties": {
+                  "and": {
+                    "type": "array",
+                    "description": "AND condition array for knowledge base memories.",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "or": {
+                    "type": "array",
+                    "description": "OR condition array for knowledge base memories.",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
           },
           "knowledgebase_ids": {
             "type": "array",

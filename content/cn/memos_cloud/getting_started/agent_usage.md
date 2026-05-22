@@ -1,0 +1,191 @@
+---
+title: 在 Agent 中使用
+desc: 通过插件、MCP 等形式，把 MemOS 接入 Agent 工作流。
+---
+
+除了自行接入云服务接口，如果你正在使用：
+
+- OpenClaw、Hermes 等 Agent 框架
+- Cursor、VS Code、Claude Desktop 等 AI 客户端
+
+可以通过 MemOS 插件、MCP 等形式，将 MemOS 接入到你的 AI 工作流中，节省 Token，同时提升长期记忆能力。
+
+
+
+## 1. 调用前准备
+
+- 注册并登录 MemOS 云平台 [（点击注册）](https://memos-dashboard.openmem.net/quickstart)；
+- 获取 API Key [（点击获取）](https://memos-dashboard.openmem.net/apikeys)；
+
+
+
+## 2. 使用插件
+
+MemOS 目前提供深度适配 **OpenClaw** 的云服务插件，如果你正在使用 OpenClaw，优先考虑插件接入。
+
+::steps{level="3"}
+
+### 配置 API Key
+
+插件会读取 OpenClaw 相关的环境变量或 `.env` 文件。最小配置如下：
+
+```env
+MEMOS_API_KEY=YOUR_API_KEY
+```
+
+也可以直接写入 OpenClaw 的环境文件：
+
+```bash
+mkdir -p ~/.openclaw
+echo 'MEMOS_API_KEY=YOUR_API_KEY' >> ~/.openclaw/.env
+```
+
+
+
+### 安装并启用插件
+
+```bash
+openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
+openclaw gateway restart
+```
+
+确认 `~/.openclaw/openclaw.json` 中插件已启用：
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": { "enabled": true }
+    }
+  }
+}
+```
+
+
+
+### 开始对话
+
+现在，可以与你的 OpenClaw 进行多轮对话：
+
+- 第一次会话：「我偏好使用 Python 语言」
+- 第二次会话（新启动）：「你还记得我喜欢用什么编程语言吗？」
+
+::
+
+::tip
+OpenClaw 插件还有多 Agent 隔离、Config UI、过滤和更细的配置项。完整配置请查看 [OpenClaw 云插件](/cn/openclaw/guide)。
+::
+
+
+
+## 3. 使用 MCP
+
+支持 MCP 的主流客户端，例如  **Cursor、Claude Desktop、Cline、VS Code / Trae 和 Chatbox** 等。以 Cursor 为例，配置完成后，Cursor 可以直接调用 MemOS 提供的记忆操作工具，实现跨客户端的记忆。
+
+::steps{level="3"}
+
+### 添加 MCP Server
+
+在 Cursor 中进入：
+
+```text
+Cursor Settings → Tools & MCP → Add Custom MCP
+```
+
+然后在 `mcp.json` 中添加：
+
+```json
+{
+  "mcpServers": {
+    "memos-api-mcp": {
+      "timeout": 60,
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@memtensor/memos-api-mcp@latest"
+      ],
+      "env": {
+        "MEMOS_API_KEY": "YOUR_API_KEY",
+        "MEMOS_USER_ID": "your-user-id",
+        "MEMOS_CHANNEL": "MODELSCOPE"
+      }
+    }
+  }
+}
+```
+
+配置后，确认 Cursor 的 MCP 工具列表中能看到 `add_message`、`search_memory` 等工具。
+
+
+
+### Cursor Rules
+
+为了让 Cursor 更稳定地使用记忆，建议在 User Rules 中加入：
+
+```text
+回答用户问题前，先调用 MemOS 的 search_memory 搜索与当前任务相关的长期记忆。
+回答完成后，如果本轮对话出现新的用户事实、偏好、项目背景或长期有用的信息，调用 add_message 写入 MemOS。
+只使用和当前任务相关的记忆；如果记忆不相关、过期或主体不一致，应忽略。
+不要向用户暴露“记忆库”“检索结果”等内部实现细节。
+```
+
+
+
+### 开始对话
+
+- 现在，可以在聊天框中进行多轮对话：
+  - 第一次会话：告诉它你是谁、你的爱好、职业，并让它记住
+  - 第二次会话（新启动）：询问它你是谁
+
+::
+
+::tip
+Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位置不同，更多示例请查看 [MCP 使用指南](/cn/mcp_agent/mcp/guide)。
+::
+
+
+
+## 选择哪种接入方式？
+
+| 接入方式 | 适合谁 | 优先级 |
+| --- | --- | --- |
+| 插件 | OpenClaw 等 MemOS 已深度适配的 Agent 环境 | 优先使用，自动化程度最高 |
+| MCP | Cursor、Claude Desktop、Cline、Chatbox 等 AI 客户端 | 客户端支持 MCP 协议 |
+| API / SDK | 自研 Agent、Chatbot 或业务应用 | 控制力最强，适合生产集成 |
+
+
+
+## 下一步
+
+::card-group
+  :::card
+  ---
+  icon: ri:puzzle-line
+  title: OpenClaw 云插件
+
+  to: /cn/openclaw/guide
+  ---
+  查看 OpenClaw 插件的完整安装、启用和高级配置
+  :::
+
+  :::card
+  ---
+  icon: ri:terminal-box-line
+  title: MCP 使用指南
+
+  to: /cn/mcp_agent/mcp/guide
+  ---
+  查看 Cursor、Claude Desktop、Cline 等客户端如何配置 MCP
+  :::
+
+  :::card
+  ---
+  icon: ri:file-code-line
+  title: API / SDK
+
+  to: /cn/memos_cloud/getting_started/quick_start
+  ---
+  如果你在开发自己的 Agent 或应用，从这里开始
+  :::
+::

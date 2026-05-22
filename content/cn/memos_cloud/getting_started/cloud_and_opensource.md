@@ -3,17 +3,6 @@ title: 云平台与开源方案
 desc: 选择最适合您需求的 MemOS “记忆”方案。
 ---
 
-::note
-**提示**<br> 在写第一行代码之前，你可以先通过 **MemOS Playground** 快速体验“记忆能力”带来的效果。<br>
-
-* **无需安装**：直接在浏览器中打开即可使用<br>
-
-* **真实交互**：像和普通 Chatbot 一样对话，但系统会自动记住你说过的话<br>
-
-* **可视化记忆**：你能看到哪些内容被加工成了记忆、是如何被调度、召回的<br>
-
-👉 [立即体验 Playground](https://memos-playground.openmem.net/)
-::
 
 
 ## 1. 最适合你的 MemOS 方案
@@ -29,6 +18,8 @@ MemOS 为 AI 应用提供了两种“记忆”解决方案。您可以选择�
 > _你可以先用云服务快速体验，再根据业务需要切换到本地化部署。_
 
 
+
+
 ## 2. 选择指南
 
 ### 选择 MemOS 云平台
@@ -41,6 +32,8 @@ MemOS 为 AI 应用提供了两种“记忆”解决方案。您可以选择�
 
 *   **高级功能**：知识库与持续对话能力全量开放于 API，实现更灵活的自定义与深度集成。
 
+
+
 ### 选择 MemOS 开源方案
 
 *   **自定义配置**：可自由选择 LLM 提供商、推理后端、部署策略等，实现更高的灵活性与可控性。
@@ -51,7 +44,7 @@ MemOS 为 AI 应用提供了两种“记忆”解决方案。您可以选择�
 
 ## 3. 还未确定？
 
-*   [试用免费平台](/memos_cloud/quick_start)：注册并登录 [MemOS 云平台](https://memos-dashboard.openmem.net/quickstart)，免费试用所有功能。
+*   [试用免费平台](/memos_cloud/getting_started/quick_start)：注册并登录 [MemOS 云平台](https://memos-dashboard.openmem.net/quickstart)，免费试用所有功能。
 
 *   [探索开源方案](/open_source/getting_started/quick_start)：克隆项目仓库，直接在本地运行试用。顺便点个 Star 支持我们吧！
 

@@ -45,7 +45,7 @@ desc: MemOS 支持以项目为维度管理资源、权限和调用日志。一�
     
 
 ::note
-了解知识库原理与使用方法，前往[**知识库介绍页面**](/memos_cloud/features/advanced/knowledge_base)，按照讲解一步步创建可以与用户记忆一起被召回的知识库文档记忆。
+了解知识库原理与使用方法，前往[**知识库介绍页面**](/memos_cloud/features/knowledge_base)，按照讲解一步步创建可以与用户记忆一起被召回的知识库文档记忆。
 ::
 
 ![image.png](https://cdn.memtensor.com.cn/img/1766024259664_hq383f_compressed.png)

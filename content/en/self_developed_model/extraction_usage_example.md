@@ -7,7 +7,7 @@ MemOS exposes a memory extraction API powered by the in-house **memos-extractor-
 
 ::callout{.extraction-usage-api-hint color="warning"}
 Request/response fields and OpenAPI: [Extract Memory](/api_docs/core/extract_memory).<br />
-Auth, base URL, and calling conventions match [MemOS Cloud Quick Start](/memos_cloud/quick_start).
+Auth, base URL, and calling conventions match [MemOS Cloud Quick Start](/memos_cloud/getting_started/quick_start).
 ::
 
 ## When to use memory extraction

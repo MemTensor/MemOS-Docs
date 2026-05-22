@@ -17,7 +17,12 @@ const parseIconAndTitle = (raw: string): ParsedTitle => {
 }
 
 // Convert yml nav structure into content navigation structure
-type RawNav = string | Record<string, RawNav[] | string>
+interface RawNavGroup {
+  path?: string
+  children?: RawNav[]
+}
+
+type RawNav = string | Record<string, RawNav[] | string | RawNavGroup>
 
 // Recursively convert yml nav structure to @nuxt/content navigation structure
 const toContentNav = (node: RawNav, locale: string): ContentNavigationItem | null => {
@@ -43,7 +48,7 @@ const toContentNav = (node: RawNav, locale: string): ContentNavigationItem | nul
   // Object form: "title": [...children] | "title": "path.md"
   const [rawTitle, childrenOrPath] = Object.entries(node)[0] as [
     string,
-    RawNav[] | string
+    RawNav[] | string | RawNavGroup
   ]
 
   const { icon, title } = parseIconAndTitle(rawTitle as string)
@@ -52,13 +57,30 @@ const toContentNav = (node: RawNav, locale: string): ContentNavigationItem | nul
     const stem = title.toLowerCase().replace(/\s+/g, '_')
     return {
       title,
-      path: locale === 'cn' ? `/cn/${stem}` : `/${stem}`,
       stem,
       ...(icon ? { icon } : {}),
       children: childrenOrPath.map((item) => { return toContentNav(item, locale) }).filter(Boolean) as ContentNavigationItem[],
       page: false,
       class: []
-    }
+    } as ContentNavigationItem
+  }
+
+  if (typeof childrenOrPath === 'object' && childrenOrPath !== null) {
+    const stem = childrenOrPath.path
+      ? childrenOrPath.path.replace(/\.md$/, '')
+      : title.toLowerCase().replace(/\s+/g, '_')
+
+    return {
+      title,
+      stem,
+      ...(childrenOrPath.path ? { path: locale === 'cn' ? `/cn/${stem}` : `/${stem}` } : {}),
+      ...(icon ? { icon } : {}),
+      children: (childrenOrPath.children || [])
+        .map(item => toContentNav(item, locale))
+        .filter(Boolean) as ContentNavigationItem[],
+      page: childrenOrPath.path ? undefined : false,
+      class: []
+    } as ContentNavigationItem
   }
 
   const stem = (childrenOrPath as string).replace(/\.md$/, '')
@@ -127,12 +149,19 @@ export const getSurround = (
   path: string,
   navItems: ContentNavigationItem[] = []
 ): ContentNavigationItem[] => {
-  const flat = flattenNavigation(navItems).filter(item => item.page !== false)
+  const flat = flattenNavigation(navItems).filter(item => item.path && item.page !== false)
   const idx = flat.findIndex(i => i.path === path)
-  const res: ContentNavigationItem[] = []
-  if (idx > 0) res.push(flat[idx - 1]!)
-  if (idx !== -1 && idx < flat.length - 1) res.push(flat[idx + 1]!)
-  return res
+  if (idx === -1) return []
+
+  const prev = idx > 0 ? flat[idx - 1]! : undefined
+  const next = idx < flat.length - 1 ? flat[idx + 1]! : undefined
+
+  if (!prev && !next) return []
+
+  return [
+    prev as ContentNavigationItem,
+    next as ContentNavigationItem
+  ]
 }
 
 export type SurroundItem = ContentNavigationItem & { description?: string }
@@ -142,7 +171,7 @@ export const useSurroundWithDesc = async (
   path: string,
   navItems: ContentNavigationItem[] = [],
   locale: string = 'en',
-  env: string = 'prod'
+  _env: string = 'prod'
 ): Promise<SurroundItem[]> => {
   const base = getSurround(path, navItems)
 
@@ -150,20 +179,26 @@ export const useSurroundWithDesc = async (
 
   const docs = await Promise.all(
     base.map((item) => {
+      if (!item) return null
+
       const docsPath = locale === 'cn' ? item.path : `/en${item.path}`
 
       return queryCollection('docs').path(`${docsPath}`).first()
     })
   )
 
-  return base.map((item, i) => ({
-    ...item,
-    description: docs[i]?.desc
-      // Remove code blocks
-      ?.replace(/(?:<code>|`)(.*?)(?:<\/code>|`)/g, '$1')
-      // Remove bold text markers
-      ?.replace(/(?:<strong>|\*\*)(.*?)(?:<\/strong>|\*\*)/g, '$1')
-      // Remove link markers [text](url)
-      ?.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
-  }))
+  return base.map((item, i) => {
+    if (!item) return item
+
+    return {
+      ...item,
+      description: docs[i]?.desc
+        // Remove code blocks
+        ?.replace(/(?:<code>|`)(.*?)(?:<\/code>|`)/g, '$1')
+        // Remove bold text markers
+        ?.replace(/(?:<strong>|\*\*)(.*?)(?:<\/strong>|\*\*)/g, '$1')
+        // Remove link markers [text](url)
+        ?.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+    }
+  })
 }

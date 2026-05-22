@@ -883,7 +883,7 @@
                       "properties": {
                         "file_data": {
                           "type": "string",
-                          "description": "可访问的文件URL或者base64, 只支持七种类型txt / pdf / doc / docx / json / md / xml， 单文件不超过100MB、500页，总数不超过20个。type为file时必填。注意：该接口的总输入上限为20,000 Tokens。"
+                          "description": "可访问的文件URL或者base64, 只支持七种类型txt / pdf / doc / docx / json / md / xml， 单文件不超过100MB、500页，总数不超过20个。type为file时必填。注意：该接口的总输入上限为40,000 Tokens。"
                         }
                       }
                     }
@@ -957,7 +957,7 @@
           "messages": {
             "type": "array",
             "title": "Messages",
-            "description": "添加的消息对象数组，数组中所有消息的总token数上限为20k。",
+            "description": "添加的消息对象数组，数组中所有消息的总token数上限为40k。",
             "items": {
               "$ref": "#/components/schemas/MessageInput"
             }
@@ -1189,13 +1189,101 @@
           "query": {
             "type": "string",
             "title": "Query",
-            "description": "要在记忆中查询的文本内容，单次查询文本的token上限为20k。"
+            "description": "要在记忆中查询的文本内容，单次查询文本的token上限为40k。"
           },
           "filter": {
             "type": "object",
             "title": "Filter",
-            "description": "记忆过滤条件，用于在检索前精确限定候选记忆范围。支持两种写法：直接传入由 and/or 组成的全局过滤条件；或按记忆来源分别传入 knowledgebase、user、public 过滤条件。可用字段包括 agent_id、app_id、tags、create_time、update_time，以及添加消息时通过 info 写入的 business_type、biz_id、scene 等自定义字段。info 中的字段在 filter 中直接按字段名使用，例如 {\"scene\":\"chat\"}，不需要包一层 info。支持比较运算符 gte、lte、gt、lt，以及 tags.contains。",
-            "example": "{\"knowledgebase\":{\"and\":[{\"tags\":{\"contains\":\"阅读\"}},{\"create_time\":{\"gte\":\"2025-01-01\"}},{\"create_time\":{\"lte\":\"2025-12-31\"}}]},\"user\":{\"and\":[{\"scene\":\"chat\"}]}}"
+            "description": "记忆过滤条件，用于在语义召回前缩小候选范围。可以直接用 <code>and</code> / <code>or</code> 做全局过滤，也可以按 <code>user</code>、<code>public</code>、<code>knowledgebase</code> 分来源过滤。完整字段和示例见 <a href=\"/cn/memos_cloud/features/filters\">记忆过滤</a>。",
+            "properties": {
+              "and": {
+                "type": "array",
+                "title": "And",
+                "description": "全局 AND 条件数组。数组内所有条件都满足时，候选记忆才会进入语义召回。常用字段包括 <code>agent_id</code>、<code>app_id</code>、<code>tags.contains</code>、<code>create_time</code>、<code>update_time</code> 和 <code>info</code> 中的自定义字段。",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "or": {
+                "type": "array",
+                "title": "Or",
+                "description": "全局 OR 条件数组。数组内任一条件满足时，候选记忆即可进入语义召回。",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "user": {
+                "type": "object",
+                "title": "User",
+                "description": "用户个人记忆的过滤条件。",
+                "properties": {
+                  "and": {
+                    "type": "array",
+                    "description": "用户记忆的 AND 条件数组。",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "or": {
+                    "type": "array",
+                    "description": "用户记忆的 OR 条件数组。",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              },
+              "public": {
+                "type": "object",
+                "title": "Public",
+                "description": "项目级公共记忆的过滤条件。",
+                "properties": {
+                  "and": {
+                    "type": "array",
+                    "description": "公共记忆的 AND 条件数组。",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "or": {
+                    "type": "array",
+                    "description": "公共记忆的 OR 条件数组。",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              },
+              "knowledgebase": {
+                "type": "object",
+                "title": "Knowledgebase",
+                "description": "知识库记忆的过滤条件，仅作用于本次 <code>knowledgebase_ids</code> 允许访问的知识库范围。",
+                "properties": {
+                  "and": {
+                    "type": "array",
+                    "description": "知识库记忆的 AND 条件数组。",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "or": {
+                    "type": "array",
+                    "description": "知识库记忆的 OR 条件数组。",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
           },
           "knowledgebase_ids": {
             "type": "array",
@@ -2312,7 +2400,7 @@
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "文件内容，支持 URL 或 Base64 编码。普通文档和 Skill 文件的支持格式、大小与数量限制，请查看<a href=\"/memos_cloud/features/advanced/knowledge_base\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">知识库要求</a>。"
+                  "description": "文件内容，支持 URL 或 Base64 编码。普通文档和 Skill 文件的支持格式、大小与数量限制，请查看<a href=\"/memos_cloud/features/knowledge_base\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">知识库要求</a>。"
                 }
               }
             }

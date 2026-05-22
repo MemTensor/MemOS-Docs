@@ -4,37 +4,45 @@ nav:
   # You can find available icons at https://icones.js.org/
   - "(ri:cloud-line) MemOS 云服务":
     - "(ri:book-line) 开始使用":
-      - "(ri:eye-line) 概览": memos_cloud/overview.md
-      - "(ri:rocket-line) 快速开始": memos_cloud/quick_start.md
-      - "(ri:home-line) 核心概念":
-        - "(ri:add-line) 记忆生产": memos_cloud/introduction/mem_production.md
-        - "(ri:calendar-line) 记忆调度": memos_cloud/introduction/mem_schedule.md
-        - "(ri:search-line) 记忆召回": memos_cloud/introduction/mem_recall.md
-        - "(ri:refresh-line) 记忆生命周期管理": memos_cloud/introduction/mem_lifecycle.md
-        - "(ri:cpu-line) 算法原理概述": memos_cloud/introduction/algorithm.md
-      - "(ri:dashboard-line) 云平台与开源方案": memos_cloud/cloud_and_opensource.md
-      - "(ri:shield-line) 配额和限制": memos_cloud/limit.md
+      - "(ri:eye-line) 概览": memos_cloud/getting_started/overview.md
+      - "(ri:dashboard-line) 云服务与开源方案": memos_cloud/getting_started/cloud_and_opensource.md
+      - "(ri:robot-line) 在 Agent 中使用": memos_cloud/getting_started/agent_usage.md
+      - "(ri:rocket-line) 快速开始": memos_cloud/getting_started/quick_start.md
 
-    - "(ri:question-line) 支持与问题排查":
-      - "(ri:question-line) FAQs 常见问题解答": memos_cloud/faq.md
+    - "(ri:home-line) 概念介绍":
+      - "(ri:brain-line) MemOS 工作原理":
+          - "(ri:add-line) 记忆生产": memos_cloud/introduction/mem_production.md
+          - "(ri:calendar-line) 记忆调度": memos_cloud/introduction/mem_schedule.md
+          - "(ri:search-line) 记忆召回": memos_cloud/introduction/mem_recall.md
+          - "(ri:refresh-line) 记忆生命周期管理": memos_cloud/introduction/mem_lifecycle.md
+          - "(ri:cpu-line) 算法原理概述": memos_cloud/introduction/algorithm.md
+      - "(ri:inbox-archive-line) 原始输入内容": memos_cloud/introduction/raw_inputs.md
+      - "(ri:stack-line) 记忆种类": memos_cloud/introduction/memory_types.md
+      - "(ri:filter-3-line) 多用户 / 多 Agent 隔离": memos_cloud/introduction/isolation_filters.md
+      - "(ri:time-line) 时间感知": memos_cloud/introduction/time_awareness.md
 
-    - "(ri:edit-box-line) 记忆操作":
+    - "(ri:edit-box-line) 核心操作":
       - "(ri:message-3-line) Add Message": memos_cloud/mem_operations/add_message.md
       - "(ri:search-2-line) Search Memory": memos_cloud/mem_operations/search_memory.md
       - "(ri:delete-bin-line) Delete Memory": memos_cloud/mem_operations/delete_memory.md
-      - "(ri:feedback-line)Add Feedback": memos_cloud/mem_operations/add_feedback.md
+      - "(ri:feedback-line) Add Feedback": memos_cloud/mem_operations/add_feedback.md
+      - "(ri:chat-history-line) Chat": memos_cloud/mem_operations/chat.md
 
-    - "(ri:function-line) 功能介绍":
-      - "(ri:flag-line) 基础功能":
-        - "(ri:filter-3-line) 记忆过滤Filter": memos_cloud/features/basic/filters.md
-        - "(ri:timer-flash-line) 异步模式AsyncMode": memos_cloud/features/basic/async_mode.md
-        - "(ri:image-add-line) 多模态消息": memos_cloud/features/basic/multimodal.md
-        - "(ri:price-tag-3-line) 自定义标签Tags": memos_cloud/features/basic/custom_tags.md
-      - "(ri:vip-diamond-line) 高级功能":
-        - "(ri:function-line) 技能Skills": memos_cloud/features/advanced/skill.md
-        - "(ri:book-read-line) 知识库Knowledgebase": memos_cloud/features/advanced/knowledge_base.md
-        - "(ri:tools-line) 工具调用Tool Call": memos_cloud/features/advanced/tool_calling.md
-        - "(ri:chat-history-line) 持续对话Chat": memos_cloud/features/advanced/continuous_dialogue.md
+    - "(ri:function-line) 更多功能":
+      - "(ri:filter-3-line) 记忆过滤": memos_cloud/features/filters.md
+      - "(ri:timer-flash-line) 异步模式": memos_cloud/features/async_mode.md
+      - "(ri:image-add-line) 多模态支持": memos_cloud/features/multimodal.md
+      - "(ri:price-tag-3-line) 自定义标签": memos_cloud/features/custom_tags.md
+      - "(ri:function-line) Skill 管理": memos_cloud/features/skill.md
+      - "(ri:book-read-line) 知识库": memos_cloud/features/knowledge_base.md
+      - "(ri:tools-line) 工具记忆": memos_cloud/features/tool_calling.md
+
+    - "(ri:bar-chart-box-line) 效果评测":
+      - "(ri:bar-chart-box-line) 评测结果": memos_cloud/evaluation/results.md
+
+    - "(ri:question-line) 支持与问题排查":
+      - "(ri:question-line) FAQs 常见问题解答": memos_cloud/support/faq.md
+      - "(ri:shield-line) 配额与限制": memos_cloud/support/limit.md
 
   - "(ri:github-line) 开源项目":
     - "(ri:rocket-line) 快速入门":

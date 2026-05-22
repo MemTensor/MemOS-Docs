@@ -15,7 +15,7 @@ const navigation = inject<ContentNavigationItem[]>('navigation', [])
 const localizedMenus = computed(() => {
   const menus = [
     { label: t('header.menus.welcome'), to: '/' },
-    { label: t('header.menus.cloud'), to: '/memos_cloud/overview' },
+    { label: t('header.menus.cloud'), to: '/memos_cloud/getting_started/overview' },
     { label: t('header.menus.openSource'), to: '/open_source/getting_started/installation' },
     { label: t('header.menus.selfDevelopedModel'), to: '/self_developed_model/extraction_usage_example' },
     { label: t('header.menus.openclaw'), to: '/openclaw/guide' },
@@ -158,7 +158,26 @@ const dashboardUrl = computed(() => useDashboardLoginUrl('/quickstart/', locale.
             <UContentNavigation
               highlight
               :navigation="navigation"
-            />
+            >
+              <template #link-title="{ link }">
+                <span
+                  v-if="link.children?.length && link.path && link.page !== false"
+                  class="inline-flex w-full min-w-0 cursor-pointer items-center gap-2"
+                  role="link"
+                  tabindex="0"
+                  @click.stop="navigateTo(link.path)"
+                  @keydown.enter.stop.prevent="navigateTo(link.path)"
+                >
+                  <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
+                </span>
+                <span
+                  v-else
+                  class="min-w-0 flex-1 truncate"
+                >
+                  {{ link.title }}
+                </span>
+              </template>
+            </UContentNavigation>
           </div>
         </div>
       </template>
@@ -182,7 +201,26 @@ const dashboardUrl = computed(() => useDashboardLoginUrl('/quickstart/', locale.
         <UContentNavigation
           highlight
           :navigation="navigation"
-        />
+        >
+          <template #link-title="{ link }">
+            <span
+              v-if="link.children?.length && link.path && link.page !== false"
+              class="inline-flex w-full min-w-0 cursor-pointer items-center gap-2"
+              role="link"
+              tabindex="0"
+              @click.stop="navigateTo(link.path)"
+              @keydown.enter.stop.prevent="navigateTo(link.path)"
+            >
+              <span class="min-w-0 flex-1 truncate">{{ link.title }}</span>
+            </span>
+            <span
+              v-else
+              class="min-w-0 flex-1 truncate"
+            >
+              {{ link.title }}
+            </span>
+          </template>
+        </UContentNavigation>
       </template>
     </UHeader>
     <AppMenus

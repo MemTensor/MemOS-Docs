@@ -65,9 +65,13 @@ export default {
     titlePrefix: 'Don\'t let your AI forget again, Empower it with',
     titleSuffix: '!',
     description: 'Guides from onboarding through production deployment—integrate MemOS in the shortest time.',
-    buttonText: 'Get Started Now',
+    buttonText: 'Write your first memory',
     openclawButton: 'Agent Configuration',
     items: [
+      {
+        title: 'Understand memory',
+        description: 'Start with what MemOS solves and how memory production, recall, and lifecycle management fit together.'
+      },
       {
         title: 'MemOS Cloud',
         description: 'Production-grade memory hosting, ready out of the box—complete your first integration in five minutes.'
@@ -87,10 +91,6 @@ export default {
       {
         title: 'API Documentation',
         description: 'Complete REST API and SDK reference covering auth, memory read/write, retrieval, and more.'
-      },
-      {
-        title: 'Self-developed Models',
-        description: 'Purpose-built models for memory extraction and recall—plug in and go.'
       }
     ]
   },
