@@ -39,7 +39,7 @@ When retrieving memories, MemOS filters and recalls the most relevant memories f
 ::card-group
   :::card
   ---
-  icon: ri:rocket-line
+  icon: i-ri-rocket-line
   title: Quick Start
 
   to: /memos_cloud/getting_started/quick_start
@@ -49,7 +49,7 @@ When retrieving memories, MemOS filters and recalls the most relevant memories f
 
   :::card
   ---
-  icon: ri:brain-line
+  icon: i-ri-brain-line
   title: How MemOS Works
 
   to: /memos_cloud/introduction/mem_production
@@ -59,7 +59,7 @@ When retrieving memories, MemOS filters and recalls the most relevant memories f
 
   :::card
   ---
-  icon: ri:dashboard-line
+  icon: i-ri-dashboard-line
   title: Cloud Service & Open Source
 
   to: /memos_cloud/getting_started/cloud_and_opensource
@@ -69,7 +69,7 @@ When retrieving memories, MemOS filters and recalls the most relevant memories f
 
   :::card
   ---
-  icon: ri:robot-line
+  icon: i-ri-robot-line
   title: Use in Agents
 
   to: /memos_cloud/getting_started/agent_usage

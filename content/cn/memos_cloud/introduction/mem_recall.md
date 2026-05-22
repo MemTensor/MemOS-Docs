@@ -52,7 +52,7 @@ desc: 记忆召回负责在用户发起请求时，从已有记忆中找出与�
 ::card-group
   :::card
   ---
-  icon: ri:filter-3-line
+  icon: i-ri-filter-3-line
   title: 记忆过滤
 
   to: /cn/memos_cloud/features/filters
@@ -62,7 +62,7 @@ desc: 记忆召回负责在用户发起请求时，从已有记忆中找出与�
 
   :::card
   ---
-  icon: ri:search-2-line
+  icon: i-ri-search-2-line
   title: Search Memory
   to: /cn/memos_cloud/mem_operations/search_memory
   ---

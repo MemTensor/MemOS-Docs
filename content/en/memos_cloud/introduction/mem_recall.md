@@ -48,7 +48,7 @@ Together, these stages determine whether recalled memories are actually useful. 
 ::card-group
   :::card
   ---
-  icon: ri:filter-3-line
+  icon: i-ri-filter-3-line
   title: Memory Filters
   to: /memos_cloud/features/filters
   ---
@@ -57,7 +57,7 @@ Together, these stages determine whether recalled memories are actually useful. 
 
   :::card
   ---
-  icon: ri:search-2-line
+  icon: i-ri-search-2-line
   title: Search Memory
   to: /memos_cloud/mem_operations/search_memory
   ---

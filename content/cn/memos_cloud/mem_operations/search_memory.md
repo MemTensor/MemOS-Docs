@@ -264,7 +264,7 @@ data = {
 ::card-group
   :::card
   ---
-  icon: ri:tools-line
+  icon: i-ri-tools-line
   title: 召回工具记忆
 
   to: /cn/memos_cloud/features/tool_calling
@@ -274,7 +274,7 @@ data = {
 
   :::card
   ---
-  icon: ri:book-read-line
+  icon: i-ri-book-read-line
   title: 召回技能
 
   to: /cn/memos_cloud/features/skill
@@ -284,7 +284,7 @@ data = {
 
   :::card
   ---
-  icon: ri:database-2-line
+  icon: i-ri-database-2-line
   title: 检索知识库
 
   to: /cn/memos_cloud/features/knowledge_base

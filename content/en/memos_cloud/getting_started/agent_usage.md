@@ -142,7 +142,7 @@ Claude Desktop, Cline, Chatbox, and other clients are configured similarly, thou
 ::card-group
   :::card
   ---
-  icon: ri:puzzle-line
+  icon: i-ri-puzzle-line
   title: OpenClaw Cloud Plugin
   to: /openclaw/guide
   ---
@@ -151,7 +151,7 @@ Claude Desktop, Cline, Chatbox, and other clients are configured similarly, thou
 
   :::card
   ---
-  icon: ri:terminal-box-line
+  icon: i-ri-terminal-box-line
   title: MCP Guide
   to: /mcp_agent/mcp/guide
   ---
@@ -160,7 +160,7 @@ Claude Desktop, Cline, Chatbox, and other clients are configured similarly, thou
 
   :::card
   ---
-  icon: ri:file-code-line
+  icon: i-ri-file-code-line
   title: API / SDK
   to: /memos_cloud/getting_started/quick_start
   ---

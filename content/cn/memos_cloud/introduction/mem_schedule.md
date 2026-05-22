@@ -39,7 +39,7 @@ desc: 记忆调度负责在对话和任务进行时，判断哪些记忆应该�
 
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: 用户输入
   ---
   “帮我查一下滨江那边的二手房均价。”<br>
@@ -49,7 +49,7 @@ desc: 记忆调度负责在对话和任务进行时，判断哪些记忆应该�
 
   :::card
   ---
-  icon: ri:timer-flash-line
+  icon: i-ri-timer-flash-line
   title: 调度结果
   ---
   生成小区、看房安排、房贷利率的记忆。<br>
@@ -67,7 +67,7 @@ desc: 记忆调度负责在对话和任务进行时，判断哪些记忆应该�
 
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: 用户输入
   ---
   “周末要去看瓷砖。”<br>
@@ -77,7 +77,7 @@ desc: 记忆调度负责在对话和任务进行时，判断哪些记忆应该�
 
   :::card
   ---
-  icon: ri:timer-flash-line
+  icon: i-ri-timer-flash-line
   title: 调度结果
   ---
   继续生成装修相关记忆。<br>
@@ -100,7 +100,7 @@ desc: 记忆调度负责在对话和任务进行时，判断哪些记忆应该�
   ---
   class: border-amber-200 bg-amber-50/70 dark:border-amber-800/50 dark:bg-amber-950/20
   color: warning
-  icon: ri:error-warning-line
+  icon: i-ri-error-warning-line
   title: 没有调度：全量临时检索
   ---
   需要从全量记忆里临时检索。<br>
@@ -112,7 +112,7 @@ desc: 记忆调度负责在对话和任务进行时，判断哪些记忆应该�
   ---
   class: border-emerald-200 bg-emerald-50/70 dark:border-emerald-800/50 dark:bg-emerald-950/20
   color: success
-  icon: ri:checkbox-circle-line
+  icon: i-ri-checkbox-circle-line
   title: 有调度：优先准备当前主题
   ---
   优先准备看瓷砖、确认水电改造、家具送货等装修记忆。<br>

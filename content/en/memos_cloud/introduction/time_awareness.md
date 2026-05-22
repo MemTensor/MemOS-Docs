@@ -104,7 +104,7 @@ Try writing a set of events with time information:
 ::card-group
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: Add Message
   to: /memos_cloud/mem_operations/add_message
   ---
@@ -113,7 +113,7 @@ Try writing a set of events with time information:
 
   :::card
   ---
-  icon: ri:search-2-line
+  icon: i-ri-search-2-line
   title: Search Memory
   to: /memos_cloud/mem_operations/search_memory
   ---

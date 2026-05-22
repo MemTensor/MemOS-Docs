@@ -162,7 +162,7 @@ Project-level knowledge documents or Agent skill packages. These are managed sep
 ::card-group
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: Add Message
   to: /memos_cloud/mem_operations/add_message
   ---
@@ -171,7 +171,7 @@ Project-level knowledge documents or Agent skill packages. These are managed sep
 
   :::card
   ---
-  icon: ri:chat-history-line
+  icon: i-ri-chat-history-line
   title: Chat
   to: /memos_cloud/mem_operations/chat
   ---
@@ -180,7 +180,7 @@ Project-level knowledge documents or Agent skill packages. These are managed sep
 
   :::card
   ---
-  icon: ri:book-read-line
+  icon: i-ri-book-read-line
   title: Knowledge Base
   to: /memos_cloud/features/knowledge_base
   ---
@@ -189,7 +189,7 @@ Project-level knowledge documents or Agent skill packages. These are managed sep
 
   :::card
   ---
-  icon: ri:feedback-line
+  icon: i-ri-feedback-line
   title: Add Feedback
   to: /memos_cloud/mem_operations/add_feedback
   ---

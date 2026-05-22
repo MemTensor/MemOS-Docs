@@ -233,7 +233,7 @@ I want to travel during the National Day holiday. Please recommend a city I have
 ::card-group
   :::card
   ---
-  icon: ri:checkbox-circle-line
+  icon: i-ri-checkbox-circle-line
   title: Core Operations
   to: /memos_cloud/mem_operations/add_message
   ---
@@ -242,7 +242,7 @@ I want to travel during the National Day holiday. Please recommend a city I have
 
   :::card
   ---
-  icon: ri:robot-line
+  icon: i-ri-robot-line
   title: Use in Agents
 
   to: /memos_cloud/getting_started/agent_usage
@@ -252,7 +252,7 @@ I want to travel during the National Day holiday. Please recommend a city I have
 
   :::card
   ---
-  icon: ri:file-code-line
+  icon: i-ri-file-code-line
   title: API Reference
 
   to: /api_docs/core/add_message

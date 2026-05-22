@@ -84,7 +84,7 @@ For the full field list, request format, and response format, see the [Search Me
 ::card-group
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: Add Message
   to: /memos_cloud/mem_operations/add_message
   ---
@@ -93,7 +93,7 @@ For the full field list, request format, and response format, see the [Search Me
 
   :::card
   ---
-  icon: ri:search-2-line
+  icon: i-ri-search-2-line
   title: Search Memory
   to: /memos_cloud/mem_operations/search_memory
   ---

@@ -102,7 +102,7 @@ Skills 记录“任务怎么做”。MemOS 从历史消息中自动提炼技能�
 ::card-group
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: Add Message
   to: /cn/memos_cloud/mem_operations/add_message
   ---
@@ -111,7 +111,7 @@ Skills 记录“任务怎么做”。MemOS 从历史消息中自动提炼技能�
 
   :::card
   ---
-  icon: ri:search-2-line
+  icon: i-ri-search-2-line
   title: Search Memory
   to: /cn/memos_cloud/mem_operations/search_memory
   ---

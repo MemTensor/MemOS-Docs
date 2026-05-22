@@ -239,7 +239,7 @@ MemOS 会自动召回【事实记忆：曾去过哪里】【偏好记忆：订�
 ::card-group
   :::card
   ---
-  icon: ri:checkbox-circle-line
+  icon: i-ri-checkbox-circle-line
   title: 核心操作
   to: /cn/memos_cloud/mem_operations/add_message
   ---
@@ -248,7 +248,7 @@ MemOS 会自动召回【事实记忆：曾去过哪里】【偏好记忆：订�
 
   :::card
   ---
-  icon: ri:robot-line
+  icon: i-ri-robot-line
   title: 在 Agent 中使用
 
   to: /cn/memos_cloud/getting_started/agent_usage
@@ -258,7 +258,7 @@ MemOS 会自动召回【事实记忆：曾去过哪里】【偏好记忆：订�
 
   :::card
   ---
-  icon: ri:file-code-line
+  icon: i-ri-file-code-line
   title: API 参考
 
   to: /cn/api_docs/core/add_message

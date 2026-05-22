@@ -45,7 +45,7 @@ Deleting a project will clear all memories, messages, and related data under tha
     
 
 ::note
-To understand the principles and usage of knowledge bases, go to the [**Knowledge Base Introduction Page**](/memos_cloud/features/advanced/knowledge_base), and follow the explanation to create knowledge base document memories that can be recalled together with user memories step by step.
+To understand the principles and usage of knowledge bases, go to the [**Knowledge Base Introduction Page**](/memos_cloud/features/knowledge_base), and follow the explanation to create knowledge base document memories that can be recalled together with user memories step by step.
 ::
 
 ![image.png](https://cdn.memtensor.com.cn/img/1766631184791_98zzxh_compressed.png)
