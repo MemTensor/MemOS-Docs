@@ -59,7 +59,7 @@ Possible generated memories:
 ::card-group
   :::card
   ---
-  icon: ri:inbox-archive-line
+  icon: i-ri-inbox-archive-line
   title: Raw Input Content
   to: /memos_cloud/introduction/raw_inputs
   ---
@@ -68,7 +68,7 @@ Possible generated memories:
 
   :::card
   ---
-  icon: ri:price-tag-3-line
+  icon: i-ri-price-tag-3-line
   title: Memory Categories
   to: /memos_cloud/introduction/memory_types
   ---
@@ -77,7 +77,7 @@ Possible generated memories:
 
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: Add Message
   to: /memos_cloud/mem_operations/add_message
   ---

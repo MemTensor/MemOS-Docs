@@ -238,7 +238,7 @@ If you need more complex write methods, continue with these extended capabilitie
 ::card-group
   :::card
   ---
-  icon: ri:image-line
+  icon: i-ri-image-line
   title: Multimodal Messages
   to: /memos_cloud/features/multimodal
   ---
@@ -247,7 +247,7 @@ If you need more complex write methods, continue with these extended capabilitie
 
   :::card
   ---
-  icon: ri:tools-line
+  icon: i-ri-tools-line
   title: Tool Memory
   to: /memos_cloud/features/tool_calling
   ---
@@ -256,7 +256,7 @@ If you need more complex write methods, continue with these extended capabilitie
 
   :::card
   ---
-  icon: ri:timer-flash-line
+  icon: i-ri-timer-flash-line
   title: Async Mode
   to: /memos_cloud/features/async_mode
   ---
@@ -265,7 +265,7 @@ If you need more complex write methods, continue with these extended capabilitie
 
   :::card
   ---
-  icon: ri:database-2-line
+  icon: i-ri-database-2-line
   title: Knowledge Base Memories
   to: /memos_cloud/features/knowledge_base
   ---

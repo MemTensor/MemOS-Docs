@@ -246,7 +246,7 @@ data = {
 ::card-group
   :::card
   ---
-  icon: ri:tools-line
+  icon: i-ri-tools-line
   title: Recall Tool Memories
 
   to: /memos_cloud/features/tool_calling
@@ -256,7 +256,7 @@ data = {
 
   :::card
   ---
-  icon: ri:book-read-line
+  icon: i-ri-book-read-line
   title: Recall Skills
 
   to: /memos_cloud/features/skill
@@ -266,7 +266,7 @@ data = {
 
   :::card
   ---
-  icon: ri:database-2-line
+  icon: i-ri-database-2-line
   title: Search Knowledge Bases
 
   to: /memos_cloud/features/knowledge_base

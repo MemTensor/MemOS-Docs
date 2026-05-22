@@ -161,7 +161,7 @@ Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位�
 ::card-group
   :::card
   ---
-  icon: ri:puzzle-line
+  icon: i-ri-puzzle-line
   title: OpenClaw 云插件
 
   to: /cn/openclaw/guide
@@ -171,7 +171,7 @@ Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位�
 
   :::card
   ---
-  icon: ri:terminal-box-line
+  icon: i-ri-terminal-box-line
   title: MCP 使用指南
 
   to: /cn/mcp_agent/mcp/guide
@@ -181,7 +181,7 @@ Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位�
 
   :::card
   ---
-  icon: ri:file-code-line
+  icon: i-ri-file-code-line
   title: API / SDK
 
   to: /cn/memos_cloud/getting_started/quick_start

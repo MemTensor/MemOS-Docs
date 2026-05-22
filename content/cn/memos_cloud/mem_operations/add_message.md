@@ -263,7 +263,7 @@ data = {
 ::card-group
   :::card
   ---
-  icon: ri:image-line
+  icon: i-ri-image-line
   title: 多模态消息
   to: /cn/memos_cloud/features/multimodal
   ---
@@ -272,7 +272,7 @@ data = {
 
   :::card
   ---
-  icon: ri:tools-line
+  icon: i-ri-tools-line
   title: 工具记忆
   to: /cn/memos_cloud/features/tool_calling
   ---
@@ -281,7 +281,7 @@ data = {
 
   :::card
   ---
-  icon: ri:timer-flash-line
+  icon: i-ri-timer-flash-line
   title: 异步模式
   to: /cn/memos_cloud/features/async_mode
   ---
@@ -290,7 +290,7 @@ data = {
 
   :::card
   ---
-  icon: ri:database-2-line
+  icon: i-ri-database-2-line
   title: 知识库记忆
   to: /cn/memos_cloud/features/knowledge_base
   ---

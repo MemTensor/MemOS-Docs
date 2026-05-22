@@ -122,7 +122,7 @@ MemOS 对记忆做不同的处理：
 ::card-group
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: Add Message
   to: /cn/memos_cloud/mem_operations/add_message
   ---
@@ -131,7 +131,7 @@ MemOS 对记忆做不同的处理：
 
   :::card
   ---
-  icon: ri:search-2-line
+  icon: i-ri-search-2-line
   title: Search Memory
   to: /cn/memos_cloud/mem_operations/search_memory
   ---

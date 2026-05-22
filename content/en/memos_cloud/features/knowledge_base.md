@@ -91,7 +91,7 @@ DAY 20 Employee asks: The intranet proxy won't open. Which version should I rein
 # ✅ Knowledge Base Assistant: You are using a MacBook Pro with an Intel chip. It is recommended to reinstall the Intel version of the intranet proxy client. Here are the download link and installation steps for the Intel version: ...
 ```
 
-::note{icon="ri:triangular-flag-fill"}
+::note{icon="i-ri-triangular-flag-fill"}
 **&nbsp;Advantage Summary**<br>
 RAG is good at retrieving information semantically similar to the query from the knowledge base, but it is **stateless**: every query is independent, lacking understanding of the specific user and context.<br>
 

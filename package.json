@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.47",
+    "@iconify-json/ri": "^1.2.10",
     "@iconify-json/simple-icons": "^1.2.38",
     "@iconify-json/vscode-icons": "^1.2.22",
     "@nuxt/content": "^3.5.1",

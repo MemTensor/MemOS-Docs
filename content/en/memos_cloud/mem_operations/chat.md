@@ -16,7 +16,7 @@ The Chat API is suitable for quickly building AI conversation applications with 
 ::card-group
   :::card
   ---
-  icon: ri:chat-4-line
+  icon: i-ri-chat-4-line
   title: Use Chat
   ---
   Best for general AI conversations, business PoCs, and quick validation
@@ -24,7 +24,7 @@ The Chat API is suitable for quickly building AI conversation applications with 
 
   :::card
   ---
-  icon: ri:database-2-line
+  icon: i-ri-database-2-line
   title: Use Memory Operation APIs
   ---
   Best for complex Agents and deeper business-system integration

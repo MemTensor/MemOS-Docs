@@ -71,7 +71,7 @@ Assistant: 好的，有其他问题再问我。
 ::card-group
   :::card
   ---
-  icon: ri:inbox-archive-line
+  icon: i-ri-inbox-archive-line
   title: 原始输入内容
   to: /cn/memos_cloud/introduction/raw_inputs
   ---
@@ -80,7 +80,7 @@ Assistant: 好的，有其他问题再问我。
 
   :::card
   ---
-  icon: ri:price-tag-3-line
+  icon: i-ri-price-tag-3-line
   title: 记忆类型
   to: /cn/memos_cloud/introduction/memory_types
   ---
@@ -89,7 +89,7 @@ Assistant: 好的，有其他问题再问我。
 
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: Add Message
   to: /cn/memos_cloud/mem_operations/add_message
   ---

@@ -43,7 +43,7 @@ MemOS 会在后台把原始信息加工成可检索的记忆内容，并持续�
 ::card-group
   :::card
   ---
-  icon: ri:rocket-line
+  icon: i-ri-rocket-line
   title: 快速开始
 
   to: /cn/memos_cloud/getting_started/quick_start
@@ -54,7 +54,7 @@ MemOS 会在后台把原始信息加工成可检索的记忆内容，并持续�
   :::card
   ---
 
-  icon: ri:brain-line
+  icon: i-ri-brain-line
   title: MemOS 工作原理
 
   to: /cn/memos_cloud/introduction/mem_production
@@ -66,7 +66,7 @@ MemOS 会在后台把原始信息加工成可检索的记忆内容，并持续�
 :::card
   ---
 
-  icon: ri:dashboard-line
+  icon: i-ri-dashboard-line
   title: 云服务与开源方案
 
   to: /cn/memos_cloud/getting_started/cloud_and_opensource
@@ -76,7 +76,7 @@ MemOS 会在后台把原始信息加工成可检索的记忆内容，并持续�
 
   :::card
   ---
-  icon: ri:robot-line
+  icon: i-ri-robot-line
   title: 在 Agent 中使用
 
   to: /cn/memos_cloud/getting_started/agent_usage

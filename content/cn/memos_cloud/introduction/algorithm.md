@@ -79,7 +79,7 @@ MemOS 的设计核心，是把「记忆」作为一个独立系统层，和计�
 
 ## 3. MemOS为什么高效？
 
-:::note{icon="ri:message-2-line"}
+:::note{icon="i-ri-message-2-line"}
 从Next-Token Prediction到Next-Scene Prediction
 :::
 

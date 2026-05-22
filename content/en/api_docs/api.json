@@ -2386,7 +2386,7 @@
                 "content": {
                   "type": "string",
                   "title": "Content",
-                  "description": "File content. Supports URL or Base64 encoding. For supported formats, size limits, and quantity limits for ordinary documents and Skill files, see <a href=\"/memos_cloud/features/advanced/knowledge_base\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Knowledge Base requirements</a>."
+                  "description": "File content. Supports URL or Base64 encoding. For supported formats, size limits, and quantity limits for ordinary documents and Skill files, see <a href=\"/memos_cloud/features/knowledge_base\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Knowledge Base requirements</a>."
                 }
               }
             }

@@ -80,7 +80,7 @@ Its overall architecture can be summarized as a **three-layer structure**: <span
 
 ## 3. Why is MemOS Efficient?
 
-:::note{icon="ri:message-2-line"}
+:::note{icon="i-ri-message-2-line"}
 From Next-Token Prediction to Next-Scene Prediction
 :::
 

@@ -162,7 +162,7 @@ Agent 的工具调用决策和返回结果。MemOS 会生成工具记忆，帮�
 ::card-group
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: Add Message
   to: /cn/memos_cloud/mem_operations/add_message
   ---
@@ -171,7 +171,7 @@ Agent 的工具调用决策和返回结果。MemOS 会生成工具记忆，帮�
 
   :::card
   ---
-  icon: ri:chat-history-line
+  icon: i-ri-chat-history-line
   title: Chat
   to: /cn/memos_cloud/mem_operations/chat
   ---
@@ -180,7 +180,7 @@ Agent 的工具调用决策和返回结果。MemOS 会生成工具记忆，帮�
 
   :::card
   ---
-  icon: ri:book-read-line
+  icon: i-ri-book-read-line
   title: 知识库
   to: /cn/memos_cloud/features/knowledge_base
   ---
@@ -189,7 +189,7 @@ Agent 的工具调用决策和返回结果。MemOS 会生成工具记忆，帮�
 
   :::card
   ---
-  icon: ri:feedback-line
+  icon: i-ri-feedback-line
   title: Add Feedback
   to: /cn/memos_cloud/mem_operations/add_feedback
   ---

@@ -39,7 +39,7 @@ Scheduling affects later recall and context injection. Relevant, active, and tru
 
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: User input
   ---
   "Help me check the average second-hand home price around Binjiang."<br>
@@ -49,7 +49,7 @@ Scheduling affects later recall and context injection. Relevant, active, and tru
 
   :::card
   ---
-  icon: ri:timer-flash-line
+  icon: i-ri-timer-flash-line
   title: Scheduling result
   ---
   Generate memories about communities, house-viewing schedules, and mortgage rates.<br>
@@ -67,7 +67,7 @@ Scheduling affects later recall and context injection. Relevant, active, and tru
 
   :::card
   ---
-  icon: ri:message-3-line
+  icon: i-ri-message-3-line
   title: User input
   ---
   "I'm going to look at tiles this weekend."<br>
@@ -77,7 +77,7 @@ Scheduling affects later recall and context injection. Relevant, active, and tru
 
   :::card
   ---
-  icon: ri:timer-flash-line
+  icon: i-ri-timer-flash-line
   title: Scheduling result
   ---
   Continue generating renovation-related memories.<br>
@@ -98,7 +98,7 @@ The user casually says: "I feel like a lot of things are piling up. Please sort 
   ---
   class: border-amber-200 bg-amber-50/70 dark:border-amber-800/50 dark:bg-amber-950/20
   color: warning
-  icon: ri:error-warning-line
+  icon: i-ri-error-warning-line
   title: Without scheduling: temporary full retrieval
   ---
   Needs to retrieve from all memories on the spot.<br>
@@ -110,7 +110,7 @@ The user casually says: "I feel like a lot of things are piling up. Please sort 
   ---
   class: border-emerald-200 bg-emerald-50/70 dark:border-emerald-800/50 dark:bg-emerald-950/20
   color: success
-  icon: ri:checkbox-circle-line
+  icon: i-ri-checkbox-circle-line
   title: With scheduling: prepare the current topic first
   ---
   Prioritize renovation memories such as looking at tiles, confirming plumbing and electrical work, and furniture delivery.<br>

@@ -18,7 +18,7 @@ Chat 接口适合用于快速搭建带长期记忆能力的 AI 对话应用。�
 ::card-group
   :::card
   ---
-  icon: ri:chat-4-line
+  icon: i-ri-chat-4-line
   title: 使用 Chat
   ---
   适合通用 AI 对话、业务 PoC 和快速验证
@@ -26,7 +26,7 @@ Chat 接口适合用于快速搭建带长期记忆能力的 AI 对话应用。�
 
   :::card
   ---
-  icon: ri:database-2-line
+  icon: i-ri-database-2-line
   title: 使用记忆操作接口
   ---
   适合复杂 Agent 和业务系统深度集成
