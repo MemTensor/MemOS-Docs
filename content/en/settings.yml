@@ -37,9 +37,6 @@ nav:
       - "(ri:book-read-line) Knowledge Base": memos_cloud/features/knowledge_base.md
       - "(ri:tools-line) Tool Memory": memos_cloud/features/tool_calling.md
 
-    - "(ri:bar-chart-box-line) Evaluation":
-      - "(ri:bar-chart-box-line) Evaluation Results": memos_cloud/evaluation/results.md
-
     - "(ri:question-line) Support and Troubleshooting":
       - "(ri:question-line) FAQs": memos_cloud/support/faq.md
       - "(ri:shield-line) Quotas and Limits": memos_cloud/support/limit.md
