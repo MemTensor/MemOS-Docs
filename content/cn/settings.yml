@@ -37,9 +37,6 @@ nav:
       - "(ri:book-read-line) 知识库": memos_cloud/features/knowledge_base.md
       - "(ri:tools-line) 工具记忆": memos_cloud/features/tool_calling.md
 
-    - "(ri:bar-chart-box-line) 效果评测":
-      - "(ri:bar-chart-box-line) 评测结果": memos_cloud/evaluation/results.md
-
     - "(ri:question-line) 支持与问题排查":
       - "(ri:question-line) FAQs 常见问题解答": memos_cloud/support/faq.md
       - "(ri:shield-line) 配额与限制": memos_cloud/support/limit.md
