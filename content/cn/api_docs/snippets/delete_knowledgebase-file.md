@@ -30,7 +30,7 @@ client = MemOSClient(api_key="YOUR_API_KEY")
 
 file_ids = ["3711d404c51592c4eebae46900236f50"] # 替换为知识库文档 ID
 
-res = client.delete_knowledgebase-file(file_ids=file_ids)
+res = client.delete_knowledgebase_file(file_ids=file_ids)
 
 print(f"result: {res}")
 ```
