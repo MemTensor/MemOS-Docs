@@ -62,13 +62,6 @@ const links = computed(() => {
     {
       label: 'GitHub',
       to: 'https://github.com/MemTensor/MemOS/releases'
-    },
-    {
-      label: t('changelog.releaseNotes'),
-      target: '_blank',
-      variant: 'outline' as const,
-      color: 'neutral' as const,
-      to: 'https://alidocs.dingtalk.com/i/nodes/MyQA2dXW7ebBrQAbF6ReovdrJzlwrZgb'
     }
   ]
 })
