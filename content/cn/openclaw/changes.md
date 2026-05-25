@@ -5,6 +5,35 @@ title: OpenClaw 插件更新日志
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-05-21'
+    plugins:
+      - title: '云插件'
+        version: 'v0.1.16'
+        sections:
+          - title: '新功能'
+            items:
+              - '**Recall Hook 兼容新版 OpenClaw**：当宿主版本 ≥ `2026.5.7` 时，召回逻辑自动迁移至新的阶段化 Hook `before_prompt_build`，旧版宿主则向下兼容至 `before_agent_start`。'
+              - |
+                **系统事件自动跳过**：召回（recall）与写入（agent_end）阶段将自动识别并跳过以下系统事件，保持记忆数据纯净：
+                - 心跳探测（`Read HEARTBEAT.md if it exists`、`[OpenClaw heartbeat poll]`）
+                - 系统命令（`/new`、`/reset`、`/stop`、`/status`、`/help`、`/dock_*`、`/undock`）
+              - |
+                **工具记忆（Tool Memory）全链路支持**：
+                - 召回阶段：新增 `<tool_memories>` 区块，将工具记忆数据规范化渲染至 prompt 注入块。
+                - 写入阶段：支持 `assistant.tool_calls` 与 `toolResult` 消息转换，序列化为 MemOS `/add/message` 标准结构（`role:"tool"` 配合 `tool_call_id`）。
+                - 数据结构统一：工具结果中的图片/文件仅保留可检索的 URL 文本；base64/data URI 简化为元数据描述，不再内联输出大体积二进制数据。
+              - '**System Note 前缀自动剥离**：自动剔除前置的 `Note: The previous agent run was aborted by the user.` 提示词，提升召回查询与入库数据的准确性。'
+          - title: '优化'
+            items:
+              - '**重构系统事件检测**：提取 `isHeartbeatPrompt` 与 `isSystemCommandPrompt` 验证逻辑，并将心跳正则锚定于字符串首部，避免误判包含相关特征词的正常用户消息。'
+              - '**精简记忆过滤逻辑**：整合 `buildMemorySections` 函数中重复的相关度阈值判断逻辑。'
+          - title: '测试'
+            items:
+              - '新增 `test/recall-hook-registration.test.mjs` 测试用例，验证新旧 OpenClaw 宿主版本中 Hook 注册的兼容性。'
+          - title: '文档'
+            items:
+              - '更新 `README.md` 与 `README_ZH.md` 中的「How it Works」章节，说明不同 OpenClaw 版本间的 Hook 适配策略。'
+
   - date: '2026-05-08'
     plugins:
       - title: '云插件'
