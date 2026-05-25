@@ -5,6 +5,35 @@ title: OpenClaw Plugin Changelog
 ::OpenclawReleaseTimeline
 ---
 releases:
+  - date: '2026-05-21'
+    plugins:
+      - title: 'Cloud Plugin'
+        version: 'v0.1.16'
+        sections:
+          - title: 'Features'
+            items:
+              - '**Recall Hook compatibility with modern OpenClaw hosts**: For host versions ≥ `2026.5.7`, the recall logic automatically migrates to the new `before_prompt_build` hook, while safely maintaining backward compatibility with `before_agent_start` for legacy hosts.'
+              - |
+                **Automatic system-event skipping**: Both the recall and write phases now automatically detect and ignore the following system events to keep memory records clean:
+                - Heartbeat polls (`Read HEARTBEAT.md if it exists`, `[OpenClaw heartbeat poll]`)
+                - System commands (`/new`, `/reset`, `/stop`, `/status`, `/help`, `/dock_*`, `/undock`)
+              - |
+                **End-to-End Tool Memory support**:
+                - Recall phase: Appends a new `<tool_memories>` section to the prompt injection block, rendering structurally from `tool_memory_detail_list`.
+                - Write phase: Implements schema conversion for `assistant.tool_calls` and `toolResult` messages into the standard MemOS `/add/message` format (`role: "tool"` with `tool_call_id`).
+                - File data normalization: Preserves URLs within tool results as searchable text; distills base64/data URIs into metadata descriptions instead of inlining large binary payloads.
+              - '**System Note prefix stripping**: Automatically removes the `Note: The previous agent run was aborted by the user.` prefix to improve the accuracy of recall queries and stored memories.'
+          - title: 'Improvements'
+            items:
+              - '**Refactored system-event detection**: Extracted detection logic into reusable helpers (`isHeartbeatPrompt` and `isSystemCommandPrompt`), anchoring the heartbeat regex pattern to the start of the string to prevent false positives on regular user messages.'
+              - '**Streamlined memory filtration**: Consolidated duplicate relevance-threshold evaluations within the `buildMemorySections` function.'
+          - title: 'Tests'
+            items:
+              - 'Added `test/recall-hook-registration.test.mjs` to validate hook registration compatibility across modern and legacy OpenClaw host versions.'
+          - title: 'Docs'
+            items:
+              - 'Updated the "How it Works" section in both `README.md` and `README_ZH.md` to outline the hook adaptation strategies across different OpenClaw versions.'
+
   - date: '2026-05-08'
     plugins:
       - title: 'Cloud Plugin'
