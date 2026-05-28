@@ -49,10 +49,81 @@ MEMOS_MULTI_AGENT_MODE=true
 }
 ```
 
+#### 4. 按 Agent 单独配置参数（可选）
+
+除了隔离记忆空间，还可以通过 `agentOverrides` 给不同 Agent 单独覆盖知识库、召回条数、相关性阈值、是否写入记忆等参数。未配置的字段会继承全局配置。
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": {
+        "enabled": true,
+        "config": {
+          "multiAgentMode": true,
+          "allowedAgents": ["research-agent", "coding-agent"],
+          "knowledgebaseIds": [],
+          "memoryLimitNumber": 6,
+          "relativity": 0.45,
+          "agentOverrides": {
+            "research-agent": {
+              "knowledgebaseIds": ["kb-research-papers", "kb-academic"],
+              "memoryLimitNumber": 12,
+              "relativity": 0.3,
+              "includeToolMemory": true,
+              "captureStrategy": "full_session",
+              "queryPrefix": "research context: "
+            },
+            "coding-agent": {
+              "knowledgebaseIds": ["kb-codebase", "kb-api-docs"],
+              "memoryLimitNumber": 9,
+              "relativity": 0.5,
+              "addEnabled": false
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+上面的配置表示：
+
+- `research-agent` 使用论文 / 学术知识库，召回更多记忆，并开启工具记忆。
+- `coding-agent` 只读取代码库和 API 文档知识库，并关闭记忆写入。
+- 其他 Agent 如果被允许使用记忆，则沿用全局的 `knowledgebaseIds`、`memoryLimitNumber` 和 `relativity`。
+
+`.env` 中也可以使用 `MEMOS_AGENT_OVERRIDES` 配置 JSON 字符串，但优先级低于 `openclaw.json` 中的 `agentOverrides`：
+
+```bash
+MEMOS_AGENT_OVERRIDES='{"research-agent":{"memoryLimitNumber":12,"relativity":0.3},"coding-agent":{"memoryLimitNumber":9,"addEnabled":false}}'
+```
+
+常用可覆盖字段：
+
+| 字段 | 说明 |
+| --- | --- |
+| `knowledgebaseIds` | 当前 Agent 检索的知识库 ID 列表。 |
+| `memoryLimitNumber` | 当前 Agent 最多召回的记忆条数。 |
+| `preferenceLimitNumber` | 当前 Agent 最多召回的偏好记忆条数。 |
+| `includePreference` | 是否召回偏好记忆。 |
+| `includeToolMemory` | 是否召回工具记忆。 |
+| `toolMemoryLimitNumber` | 工具记忆最多召回条数。 |
+| `relativity` | 相关性阈值，取值范围通常为 `0-1`。 |
+| `recallEnabled` | 是否为当前 Agent 开启记忆召回。 |
+| `addEnabled` | 是否为当前 Agent 开启记忆写入。 |
+| `captureStrategy` | 写入策略，例如 `last_turn` 或 `full_session`。 |
+| `queryPrefix` | 当前 Agent 的检索 query 前缀。 |
+| `recallFilterEnabled` | 是否开启召回二次过滤。 |
+| `allowKnowledgebaseIds` | 当前 Agent 允许写入的知识库 ID 列表。 |
+| `tags` | 写入记忆时附加的标签。 |
+
 ### 原理介绍
 
 - **/search/memory**：检索记忆——只返回当前 Agent 的记忆
 - **/add/message**：添加记录——自动标记为当前 Agent 的数据
+- **配置合并**：插件先读取全局配置，再用 `agentOverrides.<agentId>` 覆盖当前 Agent 的局部配置
 - **向下兼容**：默认 Agent `"main"` 会被忽略，保证老用户的单 Agent 数据不受影响
 
 ### 适用场景
