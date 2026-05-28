@@ -107,6 +107,7 @@ nav:
       - "(ri:cloud-line) OpenClaw 云插件": openclaw/guide.md
       - "(ri:computer-line) 本地插件": openclaw/local_plugin.md
     - "(ri:flask-line) 使用示例": 
+      - "(ri:database-2-line) 知识库使用": openclaw/examples/knowledge_base.md
       - "(ri:team-line) 多智能体记忆隔离": openclaw/examples/multi_agent.md
       - "(ri:filter-3-line) 记忆召回的二次过滤": openclaw/examples/recall_filter.md
       - "(ri:terminal-box-line) 本地插件使用": openclaw/examples/hermes_usage.md

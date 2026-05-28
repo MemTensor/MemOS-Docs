@@ -50,10 +50,81 @@ If you need to pin a specific Agent ID, set it in the config:
 }
 ```
 
+#### 4. Configure Parameters Per Agent (Optional)
+
+Beyond isolating memory spaces, you can use `agentOverrides` to override parameters for each Agent, such as knowledge bases, recall limits, relevance threshold, and whether memory writes are enabled. Fields that are not specified inherit from the global config.
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memos-cloud-openclaw-plugin": {
+        "enabled": true,
+        "config": {
+          "multiAgentMode": true,
+          "allowedAgents": ["research-agent", "coding-agent"],
+          "knowledgebaseIds": [],
+          "memoryLimitNumber": 6,
+          "relativity": 0.45,
+          "agentOverrides": {
+            "research-agent": {
+              "knowledgebaseIds": ["kb-research-papers", "kb-academic"],
+              "memoryLimitNumber": 12,
+              "relativity": 0.3,
+              "includeToolMemory": true,
+              "captureStrategy": "full_session",
+              "queryPrefix": "research context: "
+            },
+            "coding-agent": {
+              "knowledgebaseIds": ["kb-codebase", "kb-api-docs"],
+              "memoryLimitNumber": 9,
+              "relativity": 0.5,
+              "addEnabled": false
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+This configuration means:
+
+- `research-agent` uses research / academic knowledge bases, recalls more memories, and includes tool memory.
+- `coding-agent` only reads from codebase and API documentation knowledge bases, and disables memory writes.
+- Other Agents, if allowed to use memory, inherit global `knowledgebaseIds`, `memoryLimitNumber`, and `relativity`.
+
+You can also configure a JSON string in `.env` with `MEMOS_AGENT_OVERRIDES`, but it has lower priority than `agentOverrides` in `openclaw.json`:
+
+```bash
+MEMOS_AGENT_OVERRIDES='{"research-agent":{"memoryLimitNumber":12,"relativity":0.3},"coding-agent":{"memoryLimitNumber":9,"addEnabled":false}}'
+```
+
+Common overridable fields:
+
+| Field | Description |
+| --- | --- |
+| `knowledgebaseIds` | Knowledge base IDs retrieved by the current Agent. |
+| `memoryLimitNumber` | Maximum number of memory items recalled by the current Agent. |
+| `preferenceLimitNumber` | Maximum number of preference memories recalled by the current Agent. |
+| `includePreference` | Whether to recall preference memories. |
+| `includeToolMemory` | Whether to recall tool memories. |
+| `toolMemoryLimitNumber` | Maximum number of tool memories to recall. |
+| `relativity` | Relevance threshold, usually between `0` and `1`. |
+| `recallEnabled` | Whether memory recall is enabled for the current Agent. |
+| `addEnabled` | Whether memory writes are enabled for the current Agent. |
+| `captureStrategy` | Capture strategy, such as `last_turn` or `full_session`. |
+| `queryPrefix` | Search query prefix for the current Agent. |
+| `recallFilterEnabled` | Whether secondary recall filtering is enabled. |
+| `allowKnowledgebaseIds` | Knowledge base IDs that the current Agent is allowed to write to. |
+| `tags` | Tags attached when writing memories. |
+
 ### Principles
 
 - **/search/memory**: Memory retrieval — returns only the current Agent's memories
 - **/add/message**: Record insertion — automatically tags data for the current Agent
+- **Config merging**: the plugin reads global config first, then applies `agentOverrides.<agentId>` for the current Agent
 - **Backward compatibility**: Default Agent `"main"` is ignored to keep existing single-Agent data unaffected
 
 ### Use Cases

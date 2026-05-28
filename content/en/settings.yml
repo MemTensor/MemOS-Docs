@@ -100,6 +100,7 @@ nav:
       - "(ri:cloud-line) OpenClaw Cloud Plugin": openclaw/guide.md
       - "(ri:computer-line) Local Plugin": openclaw/local_plugin.md
     - "(ri:flask-line) Usage Examples": 
+      - "(ri:database-2-line) Knowledge Base Usage": openclaw/examples/knowledge_base.md
       - "(ri:team-line) Multi-Agent Memory Isolation": openclaw/examples/multi_agent.md
       - "(ri:filter-3-line) Secondary Filtering for Memory Recall": openclaw/examples/recall_filter.md
       - "(ri:terminal-box-line) Local Plugin Usage": openclaw/examples/hermes_usage.md
