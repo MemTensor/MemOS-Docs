@@ -68,6 +68,8 @@ memos init --agent hermes    # ~/.hermes/skills/memos/
 memos init --agent openclaw --memos-plugin
 ```
 
+以 OpenClaw 为例，在内部 Agent 记忆任务评测中，单独接入 MemOS CLI 后 Token 消耗降低约 65.5%；接入 MemOS Cloud + CLI 后正确率达到 0.7727。
+
 | 参数 | 说明 |
 | --- | --- |
 | `-k, --api-key` | MemOS API Key |

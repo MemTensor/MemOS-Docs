@@ -64,6 +64,8 @@ If you already have a MemOS plugin installed (e.g. the OpenClaw cloud plugin), a
 memos init --agent openclaw --memos-plugin
 ```
 
+Using OpenClaw as an example, in our internal Agent memory evaluation, using MemOS CLI alone reduced token usage by about 65.5%; integrating MemOS Cloud + CLI reached an accuracy of 0.7727.
+
 | Parameter | Description |
 | --- | --- |
 | `-k, --api-key` | MemOS API Key |
