@@ -1,12 +1,13 @@
 ---
 title: Use in Agents
-desc: Connect MemOS to Agent workflows through plugins, MCP, and APIs.
+desc: Connect MemOS to Agent workflows through plugins, MCP, CLI, and APIs.
 ---
 
-In addition to calling the cloud APIs directly, you can connect MemOS to your AI workflow through plugins, MCP, and other integration methods if you use:
+In addition to calling the cloud APIs directly, you can connect MemOS to your AI workflow through plugins, MCP, CLI, and other integration methods if you use:
 
 - Agent frameworks such as OpenClaw and Hermes.
 - AI clients such as Cursor, VS Code, Claude Desktop, Cline, and Chatbox.
+- Any Agent or development environment that can execute shell commands.
 
 These integration methods help you save tokens while adding long-term memory to your Agent workflows.
 
@@ -31,10 +32,15 @@ MEMOS_API_KEY=YOUR_API_KEY
 
 You can also write it directly into the OpenClaw environment file:
 
-```bash
+::code-group
+```bash [macOS / Linux]
 mkdir -p ~/.openclaw
 echo 'MEMOS_API_KEY=YOUR_API_KEY' >> ~/.openclaw/.env
 ```
+```powershell [Windows PowerShell]
+[System.Environment]::SetEnvironmentVariable("MEMOS_API_KEY", "YOUR_API_KEY", "User")
+```
+::
 
 ### Install and enable the plugin
 
@@ -42,6 +48,10 @@ echo 'MEMOS_API_KEY=YOUR_API_KEY' >> ~/.openclaw/.env
 openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
 openclaw gateway restart
 ```
+
+::tip
+Windows users: if you encounter `Error: spawn EINVAL`, see [OpenClaw Cloud Plugin - Manual Install](/openclaw/guide) for an alternative method.
+::
 
 Confirm that the plugin is enabled in `~/.openclaw/openclaw.json`:
 
@@ -129,11 +139,59 @@ Do not expose internal implementation details such as "memory store" or "retriev
 Claude Desktop, Cline, Chatbox, and other clients are configured similarly, though the entry points differ. For more examples, see the [MCP Guide](/mcp_agent/mcp/guide).
 ::
 
+## 4. Use CLI + Skill
+
+If your Agent framework can execute shell commands (e.g. Cursor, Codex, Claude Code, Hermes), you can use the MemOS CLI to install a memory Skill with one command, enabling your Agent to automatically search and write memories.
+
+::steps{level="3"}
+
+### Install the CLI
+
+```bash
+npm install -g @memtensor/memos-cloud-cli
+```
+
+### Initialize and install Skill
+
+```bash
+memos init --agent cursor
+memos init --api-key YOUR_API_KEY --agent cursor
+```
+
+`--agent` installs the MemOS memory Skill into the corresponding Agent's skills directory. `--agent` is currently required; if it is omitted, the command fails because the CLI needs to know where to install the Skill. Supported targets:
+
+```bash
+memos init --agent cursor    # ~/.cursor/skills/memos/
+memos init --agent codex     # ~/.codex/skills/memos/
+memos init --agent claude    # ~/.claude/skills/memos/
+memos init --agent openclaw  # ~/.openclaw/skills/memos/
+memos init --agent hermes    # ~/.hermes/skills/memos/
+```
+
+### Start chatting
+
+Once installed, the Agent will automatically load the Skill. During each conversation turn, the Agent will:
+
+1. **Before answering** — automatically run `memos search` to retrieve long-term memories related to the current task
+2. **After answering** — automatically run `memos add` to write new facts, preferences, etc. into MemOS
+
+You can verify the same way:
+
+- First session: "I prefer using Python."
+- Second session after restart: "Do you remember which programming language I like?"
+
+::
+
+::tip
+The CLI also supports manual memory operations in a terminal (`add`, `search`, `get`, `origin`, `delete`, etc.). If you only use the CLI in a terminal and do not install an Agent Skill, configure the API Key, default user ID, and default conversation ID with `memos config set`. See [MemOS CLI](/mcp_agent/cli/guide) for the full command reference.
+::
+
 ## Which Integration Should You Choose?
 
 | Integration | Best for | Priority |
 | --- | --- | --- |
 | Plugin | OpenClaw and other Agent environments deeply integrated with MemOS | Prefer first; highest automation |
+| CLI + Skill | Any Agent framework that can execute shell commands | Most portable; works across frameworks |
 | MCP | Cursor, Claude Desktop, Cline, Chatbox, and other AI clients | Use when the client supports MCP |
 | API / SDK | Self-built Agents, chatbots, or business applications | Most control; best for production integration |
 
@@ -147,6 +205,15 @@ Claude Desktop, Cline, Chatbox, and other clients are configured similarly, thou
   to: /openclaw/guide
   ---
   View full installation, enabling, and advanced configuration for the OpenClaw plugin
+  :::
+
+  :::card
+  ---
+  icon: i-ri-command-line
+  title: MemOS CLI
+  to: /mcp_agent/cli/guide
+  ---
+  View the full CLI command reference and Skill installation guide
   :::
 
   :::card

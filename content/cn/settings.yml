@@ -93,9 +93,12 @@ nav:
     - "(ri:sort-desc) 重排模型":
       - "(ri:book-open-line) 使用示例": self_developed_model/reranker_usage_example.md
 
-  - "(ri:puzzle-line) MCP与Agent框架支持":
+  - "(ri:puzzle-line) Agent框架支持":
     - "(ri:tools-line) MCP 服务":
       - "(ri:book-open-line) 使用指南": mcp_agent/mcp/guide.md
+
+    - "(ri:command-line) CLI":
+      - "(ri:book-open-line) 使用指南": mcp_agent/cli/guide.md
 
     - "(ri:robot-line) Agent开发":
       - "(ri:book-open-line) 使用指南": mcp_agent/agent/guide.md

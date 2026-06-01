@@ -347,3 +347,50 @@ openclaw gateway restart
 
 现在，你的 OpenClaw 会从 MemOS Cloud 中检索记忆并给出准确回答啦～
 
+---
+
+## 配合 CLI 工具使用
+
+如果你同时使用 OpenClaw 和其他可执行命令行的 Agent（如 Cursor、Codex、Claude Code），可以用 MemOS CLI 让它们共享同一套记忆。另外，同时使用插件与 CLI 工具时，OpenClaw 的记忆操作更灵活、效果更好。
+
+::steps{level="3"}
+
+### 安装 CLI 并生成插件感知 Skill
+
+```bash
+npm install -g @memtensor/memos-cloud-cli
+memos init --agent openclaw --memos-plugin
+```
+
+`--memos-plugin` 会让生成的 Skill 感知到已安装的 OpenClaw 云插件，避免重复写入记忆。
+
+### 为其他 Agent 安装 Skill
+
+```bash
+memos init --agent cursor
+memos init --agent codex
+```
+
+安装后，这些 Agent 也会通过 CLI 自动检索和写入 MemOS 记忆，和 OpenClaw 共享同一个记忆空间。
+
+### 开始新对话
+
+回到 OpenClaw，进行一轮会产生长期记忆的对话：
+
+```text
+我最近在做电商项目，主要使用 Python。请记住这件事。
+```
+
+然后开启新会话，继续询问：
+
+```text
+我最近在做什么项目？主要用什么语言？
+```
+
+如果 OpenClaw 能结合上一轮内容回答，说明插件已完成记忆写入与召回；同时，生成的 CLI Skill 会感知已安装插件，避免重复写入。
+
+::
+
+::tip
+CLI 的完整命令参考和更多用法请查看 [MemOS CLI 使用指南](/cn/mcp_agent/cli/guide)。
+::

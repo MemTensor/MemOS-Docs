@@ -1,14 +1,15 @@
 ---
 title: 在 Agent 中使用
-desc: 通过插件、MCP 等形式，把 MemOS 接入 Agent 工作流。
+desc: 通过插件、MCP、CLI 等形式，把 MemOS 接入 Agent 工作流。
 ---
 
 除了自行接入云服务接口，如果你正在使用：
 
 - OpenClaw、Hermes 等 Agent 框架
 - Cursor、VS Code、Claude Desktop 等 AI 客户端
+- 任何可以执行命令行的 Agent 或开发环境
 
-可以通过 MemOS 插件、MCP 等形式，将 MemOS 接入到你的 AI 工作流中，节省 Token，同时提升长期记忆能力。
+可以通过 MemOS 插件、MCP、CLI 等形式，将 MemOS 接入到你的 AI 工作流中，节省 Token，同时提升长期记忆能力。
 
 
 
@@ -35,10 +36,15 @@ MEMOS_API_KEY=YOUR_API_KEY
 
 也可以直接写入 OpenClaw 的环境文件：
 
-```bash
+::code-group
+```bash [macOS / Linux]
 mkdir -p ~/.openclaw
 echo 'MEMOS_API_KEY=YOUR_API_KEY' >> ~/.openclaw/.env
 ```
+```powershell [Windows PowerShell]
+[System.Environment]::SetEnvironmentVariable("MEMOS_API_KEY", "YOUR_API_KEY", "User")
+```
+::
 
 
 
@@ -48,6 +54,10 @@ echo 'MEMOS_API_KEY=YOUR_API_KEY' >> ~/.openclaw/.env
 openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
 openclaw gateway restart
 ```
+
+::tip
+Windows 用户如果遇到 `Error: spawn EINVAL`，可以查看 [OpenClaw 云插件 - 手动安装](/cn/openclaw/guide) 使用替代安装方式。
+::
 
 确认 `~/.openclaw/openclaw.json` 中插件已启用：
 
@@ -144,6 +154,53 @@ Cursor Settings → Tools & MCP → Add Custom MCP
 Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位置不同，更多示例请查看 [MCP 使用指南](/cn/mcp_agent/mcp/guide)。
 ::
 
+## 4. 使用 CLI
+
+如果你的 Agent 框架可以执行 shell 命令（例如 Cursor、Codex、Hermes 等），可以通过 MemOS CLI 一键安装记忆 Skill，让 Agent 根据 Skill 自动检索和写入记忆。
+
+::steps{level="3"}
+
+### 安装 CLI
+
+```bash
+npm install -g @memtensor/memos-cloud-cli
+```
+
+### 初始化并安装 Skill
+
+```bash
+memos init --agent cursor
+memos init --api-key YOUR_API_KEY --agent cursor
+```
+
+`--agent` 会将 MemOS 记忆 Skill 安装到对应 Agent 的 skills 目录。当前 `--agent` 为必填参数，不传会直接报错，因为 CLI 需要知道 Skill 应该安装到哪个 Agent 目录。支持的目标：
+
+```bash
+memos init --agent cursor    # ~/.cursor/skills/memos/
+memos init --agent codex     # ~/.codex/skills/memos/
+memos init --agent claude    # ~/.claude/skills/memos/
+memos init --agent openclaw  # ~/.openclaw/skills/memos/
+memos init --agent hermes    # ~/.hermes/skills/memos/
+```
+
+### 开始对话
+
+安装后，Agent 启动时会自动加载该 Skill。在每轮对话中，Agent 会：
+
+1. **回答前**自动执行 `memos search`，检索与当前任务相关的长期记忆
+2. **回答后**自动执行 `memos add`，将本轮出现的新事实、偏好等写入 MemOS
+
+你可以用同样的方式验证效果：
+
+- 第一次会话：「我偏好使用 Python 语言」
+- 第二次会话（新启动）：「你还记得我喜欢用什么编程语言吗？」
+
+::
+
+::tip
+CLI 还支持在终端中手动操作记忆（`add`、`search`、`get`、`origin`、`delete` 等）。如果只在终端中使用 CLI，不安装 Agent Skill，请通过 `memos config set` 配置 API Key、默认用户 ID 和默认会话 ID。完整命令参考请查看 [MemOS CLI](/cn/mcp_agent/cli/guide)。
+::
+
 
 
 ## 选择哪种接入方式？
@@ -151,6 +208,7 @@ Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位�
 | 接入方式 | 适合谁 | 优先级 |
 | --- | --- | --- |
 | 插件 | OpenClaw 等 MemOS 已深度适配的 Agent 环境 | 优先使用，自动化程度最高 |
+| CLI + Skill | 任何可执行命令行的 Agent 框架 | 通用性最强，跨框架适用 |
 | MCP | Cursor、Claude Desktop、Cline、Chatbox 等 AI 客户端 | 客户端支持 MCP 协议 |
 | API / SDK | 自研 Agent、Chatbot 或业务应用 | 控制力最强，适合生产集成 |
 
@@ -167,6 +225,15 @@ Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位�
   to: /cn/openclaw/guide
   ---
   查看 OpenClaw 插件的完整安装、启用和高级配置
+  :::
+
+  :::card
+  ---
+  icon: i-ri-command-line
+  title: MemOS CLI
+  to: /cn/mcp_agent/cli/guide
+  ---
+  查看 CLI 完整命令参考和 Skill 安装说明
   :::
 
   :::card

@@ -118,7 +118,7 @@ Long outputs from tool calls (such as traversal results, config/schema, etc.) ar
 
 ### MemOS plugins can enhance your OpenClaw
 
-| 功能 | 说明 |
+| Feature | Description |
 |-----|------|
 | **Automatically remember all conversations** | without relying on models to actively log, ensuring no critical information is missed |
 | **Precise recall** | retrieve relevant memories based on current task intent, avoiding irrelevant historical data |
@@ -346,3 +346,55 @@ Now, you can engage in multi-turn conversations with your Agent, for example:
 - "How is the project I mentioned previously progressing?"
 
 Now, your OpenClaw will retrieve memories from MemOS Cloud and provide accurate responses ✅
+
+---
+
+## Use with the CLI Tool
+
+If you use OpenClaw alongside other Agents that can execute shell commands (e.g. Cursor, Codex, Claude Code), the MemOS CLI lets them all share the same memory space.
+
+### Install CLI and generate plugin-aware Skill
+
+```bash
+npm install -g @memtensor/memos-cloud-cli
+memos init --agent openclaw --memos-plugin
+```
+
+`--memos-plugin` makes the generated Skill aware of the installed OpenClaw cloud plugin, avoiding duplicate memory writes.
+
+### Install Skill for other Agents
+
+```bash
+memos init --agent cursor
+memos init --agent codex
+```
+
+Once installed, these Agents will also automatically search and write MemOS memories through the CLI, sharing the same memory space as OpenClaw.
+
+### Test whether the plugin and CLI work together
+
+Return to OpenClaw and start a conversation that should produce long-term memory:
+
+```text
+I am recently working on an e-commerce project, mainly using Python. Please remember this.
+```
+
+Then start a new conversation and ask:
+
+```text
+What project am I working on recently? Which language am I mainly using?
+```
+
+If OpenClaw answers using the previous turn, the plugin has written and recalled memory successfully. The generated CLI Skill is also aware of the installed plugin, so it avoids duplicate memory writes.
+
+::tip
+See the [MemOS CLI Guide](/mcp_agent/cli/guide) for the full command reference and more usage details.
+::
+
+---
+
+## More Integration Methods
+
+::tip
+In addition to the OpenClaw plugin, MemOS also supports [MCP](/mcp_agent/mcp/guide) (for Cursor, Claude Desktop, and other clients) and [CLI](/mcp_agent/cli/guide) (for any Agent framework that can execute shell commands). See [Use in Agents](/memos_cloud/getting_started/agent_usage) for a full comparison.
+::
