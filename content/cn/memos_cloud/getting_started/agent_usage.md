@@ -158,6 +158,8 @@ Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位�
 
 如果你的 Agent 框架可以执行 shell 命令（例如 Cursor、Codex、Hermes 等），可以通过 MemOS CLI 一键安装记忆 Skill，让 Agent 根据 Skill 自动检索和写入记忆。
 
+以 OpenClaw 为例，在 LOCOMO 长对话记忆评测中，单独接入 MemOS CLI 后 Token 消耗降低约 65.5%；接入 MemOS Cloud + CLI 后，正确率从 66.60% 提升到 77.27%。
+
 ::steps{level="3"}
 
 ### 安装 CLI

@@ -143,6 +143,8 @@ Claude Desktop, Cline, Chatbox, and other clients are configured similarly, thou
 
 If your Agent framework can execute shell commands (e.g. Cursor, Codex, Claude Code, Hermes), you can use the MemOS CLI to install a memory Skill with one command, enabling your Agent to automatically search and write memories.
 
+Using OpenClaw as an example, in the LOCOMO evaluation, using MemOS CLI alone reduced token usage by about 65.5%; integrating MemOS Cloud + CLI improved accuracy from 66.60% to 77.27%.
+
 ::steps{level="3"}
 
 ### Install the CLI

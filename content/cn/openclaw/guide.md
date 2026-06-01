@@ -364,6 +364,8 @@ memos init --agent openclaw --memos-plugin
 
 `--memos-plugin` 会让生成的 Skill 感知到已安装的 OpenClaw 云插件，避免重复写入记忆。
 
+以 OpenClaw 为例，在 LOCOMO 长对话记忆评测中，单独接入 MemOS CLI 后 Token 消耗降低约 65.5%；接入 MemOS Cloud + CLI 后，正确率从 66.60% 提升到 77.27%。
+
 ### 为其他 Agent 安装 Skill
 
 ```bash
