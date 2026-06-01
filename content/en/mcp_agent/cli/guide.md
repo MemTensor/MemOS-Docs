@@ -64,7 +64,9 @@ If you already have a MemOS plugin installed (e.g. the OpenClaw cloud plugin), a
 memos init --agent openclaw --memos-plugin
 ```
 
-Using OpenClaw as an example, in the LOCOMO long-conversation memory evaluation, using MemOS CLI alone reduced token usage by about 65.5%; integrating MemOS Cloud + CLI improved accuracy from 66.60% to 77.27%.
+::tip
+Using OpenClaw as an example, in the LOCOMO evaluation, using MemOS CLI alone reduced token usage by about 65.5%; integrating MemOS Cloud + CLI improved accuracy from 66.60% to 77.27%.
+::
 
 | Parameter | Description |
 | --- | --- |
