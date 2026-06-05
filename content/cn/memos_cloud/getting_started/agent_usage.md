@@ -11,22 +11,82 @@ desc: 通过插件、MCP、CLI 等形式，把 MemOS 接入 Agent 工作流。
 
 可以通过 MemOS 插件、MCP、CLI 等形式，将 MemOS 接入到你的 AI 工作流中，节省 Token，同时提升长期记忆能力。
 
+## 快速接入（推荐）
 
+### 接入插件
 
-## 1. 调用前准备
+MemOS 目前提供深度适配 **OpenClaw** 的云服务插件，如果你正在使用 OpenClaw，优先考虑插件接入。将以下提示词复制并粘贴到你的 OpenClaw 聊天中：
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    展开查看 OpenClaw 插件配置提示词
+  </summary>
+  <div class="mt-4">
+
+```text
+帮我配置 MemOS OpenClaw 插件，按以下步骤执行：
+
+1. 获取 API Key
+   引导用户打开 https://memos-dashboard.openmem.net/cn/quickstart/ 获取 API Key
+
+2. 配置 API Key 环境变量
+   首先检测当前操作系统，然后按对应方式写入：
+
+   macOS / Linux：
+     mkdir -p ~/.openclaw
+     echo 'MEMOS_API_KEY=用户提供的Key' >> ~/.openclaw/.env
+
+   Windows PowerShell：
+     [System.Environment]::SetEnvironmentVariable("MEMOS_API_KEY", "用户提供的Key", "User")
+
+3. 安装并启用插件
+   openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
+   openclaw gateway restart
+
+4. 验证安装
+   读取 ~/.openclaw/openclaw.json（Windows 为 %USERPROFILE%\.openclaw\openclaw.json），
+   确认 plugins.entries 下 memos-cloud-openclaw-plugin 的 enabled 为 true
+```
+
+  </div>
+</details>
+
+OpenClaw 会安装插件，并提示你获取 API Key，完成所有配置。
+
+### 接入 MemOS CLI
+
+MemOS CLI 提供更通用的 Agent 交互方式，适合任何可执行命令行的 Agent 框架，将以下提示词复制并发送给你的 Agent：
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    展开查看 CLI 配置提示词
+  </summary>
+  <div class="mt-4">
+
+```text
+帮我配置 MemOS CLI 开发环境，按以下步骤执行：
+1. 安装 MemOS CLI 到全局
+npm i -g @memtensor/memos-cloud-cli
+2. 初始化 CLI 配置
+memos init --agent <your agent>
+执行第 2 步时，根据当前用户使用的Agent传入对应的参数，执行完成后需要用户输入API Key，请引导用户打开对应链接：https://memos-dashboard.openmem.net/cn/，获取API Key
+```
+
+  </div>
+</details>
+
+## 手动配置
+
+### 1. 调用前准备
 
 - 注册并登录 MemOS 云平台 [（点击注册）](https://memos-dashboard.openmem.net/quickstart)；
 - 获取 API Key [（点击获取）](https://memos-dashboard.openmem.net/apikeys)；
 
+### 2. 使用插件
 
+::steps{level="4"}
 
-## 2. 使用插件
-
-MemOS 目前提供深度适配 **OpenClaw** 的云服务插件，如果你正在使用 OpenClaw，优先考虑插件接入。
-
-::steps{level="3"}
-
-### 配置 API Key
+#### 配置 API Key
 
 插件会读取 OpenClaw 相关的环境变量或 `.env` 文件。最小配置如下：
 
@@ -37,18 +97,19 @@ MEMOS_API_KEY=YOUR_API_KEY
 也可以直接写入 OpenClaw 的环境文件：
 
 ::code-group
+
 ```bash [macOS / Linux]
 mkdir -p ~/.openclaw
 echo 'MEMOS_API_KEY=YOUR_API_KEY' >> ~/.openclaw/.env
 ```
+
 ```powershell [Windows PowerShell]
 [System.Environment]::SetEnvironmentVariable("MEMOS_API_KEY", "YOUR_API_KEY", "User")
 ```
+
 ::
 
-
-
-### 安装并启用插件
+#### 安装并启用插件
 
 ```bash
 openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
@@ -71,9 +132,7 @@ Windows 用户如果遇到 `Error: spawn EINVAL`，可以查看 [OpenClaw 云插
 }
 ```
 
-
-
-### 开始对话
+#### 开始对话
 
 现在，可以与你的 OpenClaw 进行多轮对话：
 
@@ -86,15 +145,13 @@ Windows 用户如果遇到 `Error: spawn EINVAL`，可以查看 [OpenClaw 云插
 OpenClaw 插件还有多 Agent 隔离、Config UI、过滤和更细的配置项。完整配置请查看 [OpenClaw 云插件](/cn/openclaw/guide)。
 ::
 
-
-
-## 3. 使用 MCP
+### 3. 使用 MCP
 
 支持 MCP 的主流客户端，例如  **Cursor、Claude Desktop、Cline、VS Code / Trae 和 Chatbox** 等。以 Cursor 为例，配置完成后，Cursor 可以直接调用 MemOS 提供的记忆操作工具，实现跨客户端的记忆。
 
-::steps{level="3"}
+::steps{level="4"}
 
-### 添加 MCP Server
+#### 添加 MCP Server
 
 在 Cursor 中进入：
 
@@ -127,9 +184,7 @@ Cursor Settings → Tools & MCP → Add Custom MCP
 
 配置后，确认 Cursor 的 MCP 工具列表中能看到 `add_message`、`search_memory` 等工具。
 
-
-
-### Cursor Rules
+#### Cursor Rules
 
 为了让 Cursor 更稳定地使用记忆，建议在 User Rules 中加入：
 
@@ -140,9 +195,7 @@ Cursor Settings → Tools & MCP → Add Custom MCP
 不要向用户暴露“记忆库”“检索结果”等内部实现细节。
 ```
 
-
-
-### 开始对话
+#### 开始对话
 
 - 现在，可以在聊天框中进行多轮对话：
   - 第一次会话：告诉它你是谁、你的爱好、职业，并让它记住
@@ -154,7 +207,7 @@ Cursor Settings → Tools & MCP → Add Custom MCP
 Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位置不同，更多示例请查看 [MCP 使用指南](/cn/mcp_agent/mcp/guide)。
 ::
 
-## 4. 使用 CLI
+### 4. 使用 CLI
 
 如果你的 Agent 框架可以执行 shell 命令（例如 Cursor、Codex、Hermes 等），可以通过 MemOS CLI 一键安装记忆 Skill，让 Agent 根据 Skill 自动检索和写入记忆。
 
@@ -162,15 +215,15 @@ Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位�
 以 OpenClaw 为例，在 LOCOMO 评测中，单独接入 MemOS CLI 后 Token 消耗降低约 65.5%；接入 MemOS Cloud + CLI 后，正确率从 66.60% 提升到 77.27%。
 ::
 
-::steps{level="3"}
+::steps{level="4"}
 
-### 安装 CLI
+#### 安装 CLI
 
 ```bash
 npm install -g @memtensor/memos-cloud-cli
 ```
 
-### 初始化并安装 Skill
+#### 初始化并安装 Skill
 
 ```bash
 memos init --agent cursor
@@ -187,7 +240,7 @@ memos init --agent openclaw  # ~/.openclaw/skills/memos/
 memos init --agent hermes    # ~/.hermes/skills/memos/
 ```
 
-### 开始对话
+#### 开始对话
 
 安装后，Agent 启动时会自动加载该 Skill。在每轮对话中，Agent 会：
 
@@ -205,27 +258,24 @@ memos init --agent hermes    # ~/.hermes/skills/memos/
 CLI 还支持在终端中手动操作记忆（`add`、`search`、`get`、`origin`、`delete` 等）。如果只在终端中使用 CLI，不安装 Agent Skill，请通过 `memos config set` 配置 API Key、默认用户 ID 和默认会话 ID。完整命令参考请查看 [MemOS CLI](/cn/mcp_agent/cli/guide)。
 ::
 
+### 选择哪种接入方式？
 
 
-## 选择哪种接入方式？
-
-| 接入方式 | 适合谁 | 优先级 |
-| --- | --- | --- |
-| 插件 | OpenClaw 等 MemOS 已深度适配的 Agent 环境 | 优先使用，自动化程度最高 |
-| CLI + Skill | 任何可执行命令行的 Agent 框架 | 通用性最强，跨框架适用 |
-| MCP | Cursor、Claude Desktop、Cline、Chatbox 等 AI 客户端 | 客户端支持 MCP 协议 |
-| API / SDK | 自研 Agent、Chatbot 或业务应用 | 控制力最强，适合生产集成 |
+| 接入方式        | 适合谁                                          | 优先级          |
+| ----------- | -------------------------------------------- | ------------ |
+| 插件          | OpenClaw 等 MemOS 已深度适配的 Agent 环境             | 优先使用，自动化程度最高 |
+| CLI + Skill | 任何可执行命令行的 Agent 框架                           | 通用性最强，跨框架适用  |
+| MCP         | Cursor、Claude Desktop、Cline、Chatbox 等 AI 客户端 | 客户端支持 MCP 协议 |
+| API / SDK   | 自研 Agent、Chatbot 或业务应用                       | 控制力最强，适合生产集成 |
 
 
-
-## 下一步
+### 下一步
 
 ::card-group
   :::card
   ---
   icon: i-ri-puzzle-line
   title: OpenClaw 云插件
-
   to: /cn/openclaw/guide
   ---
   查看 OpenClaw 插件的完整安装、启用和高级配置
@@ -244,7 +294,6 @@ CLI 还支持在终端中手动操作记忆（`add`、`search`、`get`、`origin
   ---
   icon: i-ri-terminal-box-line
   title: MCP 使用指南
-
   to: /cn/mcp_agent/mcp/guide
   ---
   查看 Cursor、Claude Desktop、Cline 等客户端如何配置 MCP
@@ -254,7 +303,6 @@ CLI 还支持在终端中手动操作记忆（`add`、`search`、`get`、`origin
   ---
   icon: i-ri-file-code-line
   title: API / SDK
-
   to: /cn/memos_cloud/getting_started/quick_start
   ---
   如果你在开发自己的 Agent 或应用，从这里开始
