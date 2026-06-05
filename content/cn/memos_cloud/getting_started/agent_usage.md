@@ -13,6 +13,8 @@ desc: 通过插件、MCP、CLI 等形式，把 MemOS 接入 Agent 工作流。
 
 ## 快速接入（推荐）
 
+你可以通过与Agent自然对话的方式自动接入 MemOS，接入完成后即可进行对话，无需其他操作。
+
 ### 接入插件
 
 MemOS 目前提供深度适配 **OpenClaw** 的云服务插件，如果你正在使用 OpenClaw，优先考虑插件接入。将以下提示词复制并粘贴到你的 OpenClaw 聊天中：
@@ -74,6 +76,8 @@ memos init --agent <your agent>
 
   </div>
 </details>
+
+Agent会自动完成 MemOS CLI 的安装，并配置相应的Skill。
 
 ## 手动配置
 
