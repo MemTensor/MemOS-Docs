@@ -118,5 +118,18 @@ export default {
     inputPlaceholder: 'Type your messages here...',
     welcome: 'Hi, I\'m Xiao Yi, your MemOS Knowledge Base Assistant. Feel free to ask me anything you\'d like to know!',
     systemError: 'System is busy, please try again later'
+  },
+  apiKeyPicker: {
+    title: 'Select an API Key',
+    description: 'The selected key will replace the placeholder in the copied code.',
+    projectLabel: 'Project',
+    keyLabel: 'API Key',
+    empty: 'No available API Key under this project. Create one in Dashboard first.',
+    emptyProject: 'No project yet. Create one in Dashboard first.',
+    goDashboard: 'Go to Dashboard',
+    cancel: 'Cancel',
+    confirm: 'Use this key',
+    loadFailed: 'Failed to load API Keys, please try again later.',
+    copy: 'Copy code to clipboard'
   }
 }

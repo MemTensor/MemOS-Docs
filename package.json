@@ -6,6 +6,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:pre": "NUXT_ENV_CONFIG=dev nuxt dev",
     "sync-api": "node scripts/fetch-api.mjs",
     "sync-releases": "node scripts/fetch-releases.mjs",
     "generate": "npm run sync-releases && node scripts/generate.mjs",
