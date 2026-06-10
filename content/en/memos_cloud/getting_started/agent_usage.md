@@ -11,18 +11,93 @@ In addition to calling the cloud APIs directly, you can connect MemOS to your AI
 
 These integration methods help you save tokens while adding long-term memory to your Agent workflows.
 
-## 1. Before You Start
+## Quick Integration (Recommended)
+
+You can connect MemOS automatically by chatting with your Agent in natural language. Once it is done, you can start chatting right away with no extra setup.
+
+### Use the Plugin
+
+MemOS currently provides a cloud plugin deeply integrated with **OpenClaw**. If you use OpenClaw, prefer the plugin integration. Copy the following prompt and paste it into your OpenClaw chat:
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    View the OpenClaw plugin setup prompt
+  </summary>
+  <div class="mt-4">
+
+```text api-key
+Help me set up the MemOS OpenClaw plugin. Follow these steps:
+
+1. Verify the API Key
+   Check the value of MEMOS_API_KEY in the commands of step 2:
+   - If it is already a real API Key starting with mpg-, go straight to step 2
+   - If it is still a placeholder, guide the user to open
+     https://memos-dashboard.openmem.net/quickstart/ to get an API Key,
+     then replace the placeholder in the commands with the real Key
+
+2. Configure the API Key environment variable
+   Detect the current operating system first, then write it accordingly:
+
+   macOS / Linux:
+     mkdir -p ~/.openclaw
+     echo 'MEMOS_API_KEY=YOUR_API_KEY' >> ~/.openclaw/.env
+
+   Windows PowerShell:
+     [System.Environment]::SetEnvironmentVariable("MEMOS_API_KEY", "YOUR_API_KEY", "User")
+
+3. Install and enable the plugin
+   openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
+   openclaw gateway restart
+
+4. Verify the installation
+   Read ~/.openclaw/openclaw.json (%USERPROFILE%\.openclaw\openclaw.json on Windows),
+   and confirm that under plugins.entries, memos-cloud-openclaw-plugin has enabled set to true
+```
+
+  </div>
+</details>
+
+OpenClaw will install the plugin, prompt you to get an API Key, and complete all the configuration.
+
+### Use the MemOS CLI
+
+The MemOS CLI provides a more universal way to integrate with Agents and works with any Agent framework that can execute shell commands. Copy the following prompt and send it to your Agent:
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    View the CLI setup prompt
+  </summary>
+  <div class="mt-4">
+
+```text api-key
+Help me set up the MemOS CLI development environment. Follow these steps:
+1. Install the MemOS CLI globally
+npm i -g @memtensor/memos-cloud-cli
+2. Initialize the CLI configuration
+memos init --api-key YOUR_API_KEY --agent <your agent>
+For step 2, pass the --agent parameter matching the Agent the user is using.
+If the value of --api-key is already a real Key starting with mpg-, run it directly;
+if it is still a placeholder, first guide the user to open
+https://memos-dashboard.openmem.net/ to get an API Key and replace it.
+```
+
+  </div>
+</details>
+
+Your Agent will install the MemOS CLI and configure the corresponding Skill automatically.
+
+## Manual Configuration
+
+### 1. Before You Start
 
 - Register and sign in to the [MemOS Cloud platform](https://memos-dashboard.openmem.net/quickstart).
 - Get an API Key from the [API Key page](https://memos-dashboard.openmem.net/apikeys).
 
-## 2. Use the Plugin
+### 2. Use the Plugin
 
-MemOS currently provides a cloud plugin deeply integrated with **OpenClaw**. If you use OpenClaw, prefer the plugin integration.
+::steps{level="4"}
 
-::steps{level="3"}
-
-### Configure the API Key
+#### Configure the API Key
 
 The plugin reads OpenClaw-related environment variables or `.env` files. The minimal configuration is:
 
@@ -42,7 +117,7 @@ echo 'MEMOS_API_KEY=YOUR_API_KEY' >> ~/.openclaw/.env
 ```
 ::
 
-### Install and enable the plugin
+#### Install and enable the plugin
 
 ```bash
 openclaw plugins install @memtensor/memos-cloud-openclaw-plugin@latest
@@ -65,7 +140,7 @@ Confirm that the plugin is enabled in `~/.openclaw/openclaw.json`:
 }
 ```
 
-### Start chatting
+#### Start chatting
 
 You can now have multi-turn conversations with OpenClaw:
 
@@ -78,13 +153,13 @@ You can now have multi-turn conversations with OpenClaw:
 The OpenClaw plugin also supports multi-Agent isolation, Config UI, filters, and more detailed configuration. See the [OpenClaw Cloud Plugin](/openclaw/guide) for full configuration.
 ::
 
-## 3. Use MCP
+### 3. Use MCP
 
 Mainstream clients that support MCP include **Cursor, Claude Desktop, Cline, VS Code / Trae, and Chatbox**. Taking Cursor as an example, after configuration, Cursor can directly call MemOS memory tools and use memory across clients.
 
-::steps{level="3"}
+::steps{level="4"}
 
-### Add an MCP Server
+#### Add an MCP Server
 
 In Cursor, go to:
 
@@ -117,7 +192,7 @@ Then add this to `mcp.json`:
 
 After configuration, confirm that Cursor's MCP tool list shows tools such as `add_message` and `search_memory`.
 
-### Cursor Rules
+#### Cursor Rules
 
 To make Cursor use memories more reliably, add rules like these to User Rules:
 
@@ -128,7 +203,7 @@ Only use memories relevant to the current task. Ignore memories that are irrelev
 Do not expose internal implementation details such as "memory store" or "retrieval results" to the user.
 ```
 
-### Start chatting
+#### Start chatting
 
 - First session: tell it who you are, your hobbies, and your profession, and ask it to remember.
 - Second session after restart: ask it who you are.
@@ -139,7 +214,7 @@ Do not expose internal implementation details such as "memory store" or "retriev
 Claude Desktop, Cline, Chatbox, and other clients are configured similarly, though the entry points differ. For more examples, see the [MCP Guide](/mcp_agent/mcp/guide).
 ::
 
-## 4. Use CLI + Skill
+### 4. Use CLI + Skill
 
 If your Agent framework can execute shell commands (e.g. Cursor, Codex, Claude Code, Hermes), you can use the MemOS CLI to install a memory Skill with one command, enabling your Agent to automatically search and write memories.
 
@@ -147,15 +222,15 @@ If your Agent framework can execute shell commands (e.g. Cursor, Codex, Claude C
 Using OpenClaw as an example, in the LOCOMO evaluation, using MemOS CLI alone reduced token usage by about 65.5%; integrating MemOS Cloud + CLI improved accuracy from 66.60% to 77.27%.
 ::
 
-::steps{level="3"}
+::steps{level="4"}
 
-### Install the CLI
+#### Install the CLI
 
 ```bash
 npm install -g @memtensor/memos-cloud-cli
 ```
 
-### Initialize and install Skill
+#### Initialize and install Skill
 
 ```bash
 memos init --agent cursor
@@ -172,7 +247,7 @@ memos init --agent openclaw  # ~/.openclaw/skills/memos/
 memos init --agent hermes    # ~/.hermes/skills/memos/
 ```
 
-### Start chatting
+#### Start chatting
 
 Once installed, the Agent will automatically load the Skill. During each conversation turn, the Agent will:
 
@@ -190,7 +265,7 @@ You can verify the same way:
 The CLI also supports manual memory operations in a terminal (`add`, `search`, `get`, `origin`, `delete`, etc.). If you only use the CLI in a terminal and do not install an Agent Skill, configure the API Key, default user ID, and default conversation ID with `memos config set`. See [MemOS CLI](/mcp_agent/cli/guide) for the full command reference.
 ::
 
-## Which Integration Should You Choose?
+### Which Integration Should You Choose?
 
 | Integration | Best for | Priority |
 | --- | --- | --- |
@@ -199,7 +274,7 @@ The CLI also supports manual memory operations in a terminal (`add`, `search`, `
 | MCP | Cursor, Claude Desktop, Cline, Chatbox, and other AI clients | Use when the client supports MCP |
 | API / SDK | Self-built Agents, chatbots, or business applications | Most control; best for production integration |
 
-## Next Steps
+### Next Steps
 
 ::card-group
   :::card

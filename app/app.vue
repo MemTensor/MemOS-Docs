@@ -154,6 +154,7 @@ provide('navigation', filteredNavigation)
         :files="processedFiles"
         :navigation="contentNavigation"
       />
+      <ApiKeyPickerHost />
     </ClientOnly>
   </UApp>
 </template>

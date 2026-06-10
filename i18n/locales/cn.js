@@ -118,5 +118,24 @@ export default {
     inputPlaceholder: '请输入你想了解的问题...',
     welcome: 'Hi，我是MemOS知识库助手小忆，您有什么问题可以直接向我提问！',
     systemError: '系统繁忙，请稍后再试'
+  },
+  apiKeyPicker: {
+    title: '选择 API Key',
+    description: '所选密钥将自动替换复制内容中的占位符。',
+    projectLabel: '项目',
+    keyLabel: 'API Key',
+    empty: '该项目下暂无可用的 API Key，可在此直接创建。',
+    emptyProject: '尚未创建项目，请先到 Dashboard 创建。',
+    goDashboard: '前往 Dashboard',
+    manageInDashboard: '也可前往 {dashboard} 创建和管理密钥',
+    keyNameLabel: 'Key 名称',
+    keyNamePlaceholder: '请输入 Key 名称',
+    defaultKeyName: '默认密钥',
+    create: '创建并使用',
+    createFailed: '创建失败，请稍后重试，或前往 Dashboard 创建。',
+    cancel: '取消',
+    confirm: '使用该密钥',
+    loadFailed: 'API Key 加载失败，请稍后重试。',
+    copy: '复制代码到剪贴板'
   }
 }

@@ -25,11 +25,14 @@ MemOS 目前提供深度适配 **OpenClaw** 的云服务插件，如果你正在
   </summary>
   <div class="mt-4">
 
-```text
+```text api-key=用户提供的Key
 帮我配置 MemOS OpenClaw 插件，按以下步骤执行：
 
-1. 获取 API Key
-   引导用户打开 https://memos-dashboard.openmem.net/cn/quickstart/ 获取 API Key
+1. 确认 API Key
+   检查第 2 步命令中 MEMOS_API_KEY 的值：
+   - 如果已是以 mpg- 开头的真实 API Key，直接进入第 2 步
+   - 如果是中文占位符，引导用户打开 https://memos-dashboard.openmem.net/cn/quickstart/
+     获取 API Key，并用真实 Key 替换命令中的占位符
 
 2. 配置 API Key 环境变量
    首先检测当前操作系统，然后按对应方式写入：
@@ -65,13 +68,15 @@ MemOS CLI 提供更通用的 Agent 交互方式，适合任何可执行命令行
   </summary>
   <div class="mt-4">
 
-```text
+```text api-key=用户提供的Key
 帮我配置 MemOS CLI 开发环境，按以下步骤执行：
 1. 安装 MemOS CLI 到全局
 npm i -g @memtensor/memos-cloud-cli
 2. 初始化 CLI 配置
-memos init --agent <your agent>
-执行第 2 步时，根据当前用户使用的Agent传入对应的参数，执行完成后需要用户输入API Key，请引导用户打开对应链接：https://memos-dashboard.openmem.net/cn/，获取API Key
+memos init --api-key 用户提供的Key --agent <your agent>
+执行第 2 步时，根据当前用户使用的 Agent 传入对应的 --agent 参数。
+若 --api-key 的值已是以 mpg- 开头的真实 Key，直接执行；若是中文占位符，
+先引导用户打开 https://memos-dashboard.openmem.net/cn/ 获取 API Key 并替换。
 ```
 
   </div>
