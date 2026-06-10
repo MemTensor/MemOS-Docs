@@ -7,7 +7,7 @@ nav:
       - "(ri:eye-line) Overview": memos_cloud/getting_started/overview.md
       - "(ri:dashboard-line) Cloud Service & Open Source": memos_cloud/getting_started/cloud_and_opensource.md
       - "(ri:robot-line) Use in Agents": memos_cloud/getting_started/agent_usage.md
-      - "(ri:rocket-line) Quick Start": memos_cloud/getting_started/quick_start.md
+      - "(ri:rocket-line) Integrate into Your App": memos_cloud/getting_started/quick_start.md
 
     - "(ri:home-line) Concepts":
       - "(ri:brain-line) How MemOS Works":

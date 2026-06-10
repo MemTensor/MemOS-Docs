@@ -7,7 +7,7 @@ nav:
       - "(ri:eye-line) 概览": memos_cloud/getting_started/overview.md
       - "(ri:dashboard-line) 云服务与开源方案": memos_cloud/getting_started/cloud_and_opensource.md
       - "(ri:robot-line) 在 Agent 中使用": memos_cloud/getting_started/agent_usage.md
-      - "(ri:rocket-line) 快速开始": memos_cloud/getting_started/quick_start.md
+      - "(ri:rocket-line) 在应用中集成": memos_cloud/getting_started/quick_start.md
 
     - "(ri:home-line) 概念介绍":
       - "(ri:brain-line) MemOS 工作原理":

@@ -1,7 +1,39 @@
 ---
-title: Quick Start
+title: Integrate into Your App
 desc: Configure a MemOS Cloud account and create your first memory in five minutes.
 ---
+
+
+## Use a Skill to Quickly Integrate MemOS into Your AI App (Recommended)
+
+If you are building your AI application with Agent tools such as Claude Code or Cursor, copy the prompt below and send it to your tool:
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    Expand to view the Skill setup prompt
+  </summary>
+  <div class="mt-4">
+
+```text
+Help me integrate MemOS Cloud into this project to add long-term memory to my Agent product.
+
+Please follow these steps:
+
+1. Install the memos-cloud-developer Skill (skip if already installed):
+   npx skills add https://github.com/MemTensor/MemOS-Cloud-Skill --skill memos-cloud-developer -g -y
+   Auto-fill the --agent argument based on the current Agent environment.
+
+2. Read SKILL.md under the Skill's install path, and strictly follow its instructions in order.
+
+3. Generate complete MemOS Cloud integration code based on this project's actual tech stack and architecture.
+```
+
+  </div>
+</details>
+
+Your Agent tool will automatically install and use the memos-cloud-developer Skill and integrate MemOS Cloud into your AI application.
+
+## Manual Integration
 
 When you integrate MemOS into an AI application, the full flow looks like this. MemOS provides two core APIs: [see API docs](/api_docs/core/add_message).
 
@@ -10,17 +42,17 @@ When you integrate MemOS into an AI application, the full flow looks like this. 
 
 ![image.svg](https://cdn.memtensor.com.cn/img/1762434889291_h9co0h_compressed.png)
 
-## 1. Before Calling the API
+### 1. Before Calling the API
 
 - Register and sign in to [MemOS Cloud](https://memos-dashboard.openmem.net/quickstart).
 - Get an API Key from the [API Key page](https://memos-dashboard.openmem.net/apikeys).
 - Prepare an environment that can send HTTP requests, such as Python or cURL.
 
-## 2. Create a Memory
+### 2. Create a Memory
 
-::steps{level="3"}
+::steps{level="4"}
 
-### Install the SDK
+#### Install the SDK
 
 If you choose the Python SDK, make sure Python 3.10+ is installed, then run:
 
@@ -28,7 +60,7 @@ If you choose the Python SDK, make sure Python 3.10+ is installed, then run:
 pip install MemoryOS -U
 ```
 
-### Set the API Key
+#### Set the API Key
 
 ::code-group
 ```python [Python (HTTP)]
@@ -50,7 +82,7 @@ export MEMOS_BASE_URL="https://memos.memtensor.cn/api/openmem/v1"
 ```
 ::
 
-### Add Raw Information
+#### Add Raw Information
 
 Session A happened on 2025-06-10. The user chose 7 Days Inn as the hotel for a summer trip to Guangzhou. You only need to pass the raw conversation records to MemOS.
 
@@ -110,7 +142,7 @@ curl "$MEMOS_BASE_URL/add/message" \
 ```
 ::
 
-### Search Relevant Memories
+#### Search Relevant Memories
 
 Session B happened on 2025-09-28. The user asks the AI to recommend a National Day travel destination and hotel. Use the user's message as the query to search MemOS memories.
 
@@ -153,7 +185,7 @@ curl "$MEMOS_BASE_URL/search/memory" \
 ```
 ::
 
-#### Output
+##### Output
 
 MemOS automatically recalls factual memories such as where the user has been and preference memories such as hotel booking preferences, helping the AI recommend a more personalized travel plan. The following result is simplified for easier understanding.
 
@@ -176,7 +208,7 @@ MemOS automatically recalls factual memories such as where the user has been and
 }
 ```
 
-### Add Memories to Your Prompt
+#### Add Memories to Your Prompt
 
 Add the recalled memories to your own model prompt, so the model can refer to these long-term memories when answering.
 
@@ -228,7 +260,7 @@ I want to travel during the National Day holiday. Please recommend a city I have
 
 ::
 
-## 3. Next Steps
+### 3. Next Steps
 
 ::card-group
   :::card

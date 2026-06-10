@@ -1,10 +1,10 @@
 ---
-title: 快速开始
+title: 在应用中集成
 desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆。
 ---
 
 
-## 使用 Skill 为 AI 应用快速接入 MemOS （推荐）
+## 使用 Skill 为 AI 应用快速集成 MemOS （推荐）
 
 若你正在使用 Claude Code、Cursor 等 Agent 工具开发自己的 AI 应用，可直接将以下提示词复制并发送给你的工具：
 
@@ -31,7 +31,7 @@ desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆�
   </div>
 </details>
 
-你的 Agent 工具会自动安装并使用 memos-cloud-developer Skill，并为你的 AI 应用接入 MemOS Cloud。
+你的 Agent 工具会自动安装并使用 memos-cloud-developer Skill，并为你的 AI 应用集成 MemOS Cloud。
 
 ## 手动接入
 
