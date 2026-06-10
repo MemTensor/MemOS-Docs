@@ -11,6 +11,10 @@ desc: 通过插件、MCP、CLI 等形式，把 MemOS 接入 Agent 工作流。
 
 可以通过 MemOS 插件、MCP、CLI 等形式，将 MemOS 接入到你的 AI 工作流中，节省 Token，同时提升长期记忆能力。
 
+## 前期准备
+
+- 注册并登录 MemOS 云平台 [（点击注册）](https://memos-dashboard.openmem.net/quickstart)
+
 ## 快速接入（推荐）
 
 你可以通过与Agent自然对话的方式自动接入 MemOS，接入完成后即可进行对话，无需其他操作。
@@ -88,8 +92,7 @@ Agent会自动完成 MemOS CLI 的安装，并配置相应的Skill。
 
 ### 1. 调用前准备
 
-- 注册并登录 MemOS 云平台 [（点击注册）](https://memos-dashboard.openmem.net/quickstart)；
-- 获取 API Key [（点击获取）](https://memos-dashboard.openmem.net/apikeys)；
+- 获取 API Key [（点击获取）](https://memos-dashboard.openmem.net/apikeys)
 
 ### 2. 使用插件
 

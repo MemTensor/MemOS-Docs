@@ -4,6 +4,36 @@ desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆�
 ---
 
 
+## 使用 Skill 为 AI 应用快速接入 MemOS （推荐）
+
+若你正在使用 Claude Code、Cursor 等 Agent 工具开发自己的 AI 应用，可直接将以下提示词复制并发送给你的工具：
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    展开查看 Skill 配置提示词
+  </summary>
+  <div class="mt-4">
+
+```text
+帮我为本项目接入 MemOS Cloud，为我的 Agent 产品添加长期记忆能力。
+
+请按以下步骤操作：
+
+1. 安装 memos-cloud-developer Skill（如已安装则跳过）：
+   npx skills add https://github.com/MemTensor/MemOS-Cloud-Skill --skill memos-cloud-developer -g -y
+   根据当前 Agent 环境自动填充 --agent 参数。
+
+2. 读取该 Skill 安装路径下的 SKILL.md，严格按照其中的指令顺序执行。
+
+3. 结合本项目的实际技术栈和架构，生成完整的 MemOS Cloud 集成代码。
+```
+
+  </div>
+</details>
+
+你的 Agent 工具会自动安装并使用 memos-cloud-developer Skill，并为你的 AI 应用接入 MemOS Cloud。
+
+## 手动接入
 
 你开发 AI 应用时接入 MemOS 的完整流程，如下图所示，MemOS 提供了两个核心接口[（查看 API 文档）](/api_docs/core/add_message)
 
@@ -14,7 +44,7 @@ desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆�
 
 
 
-## 1. 调用前准备
+### 1. 调用前准备
 
 - 注册并登录 MemOS 云平台 [（点击注册）](https://memos-dashboard.openmem.net/quickstart)；
 - 获取 API Key [（点击获取）](https://memos-dashboard.openmem.net/apikeys)；
@@ -22,11 +52,11 @@ desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆�
 
 
 
-## 2. 创建记忆
+### 2. 创建记忆
 
-::steps{level="3"}
+::steps{level="4"}
 
-### 安装 SDK
+#### 安装 SDK
 
 如果你选择 Python SDK，请确保已安装 Python 3.10+，然后执行：
 
@@ -34,7 +64,7 @@ desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆�
 pip install MemoryOS -U
 ```
 
-### 设置接口密钥
+#### 设置接口密钥
 
 ::code-group
 ```python [Python (HTTP)]
@@ -56,7 +86,7 @@ export MEMOS_BASE_URL="https://memos.memtensor.cn/api/openmem/v1"
 ```
 ::
 
-### 添加原始信息
+#### 添加原始信息
 
 会话 A 发生在 2025-06-10，用户选择“七天”酒店（便捷酒店）作为暑期旅游住宿地点。如下所示，你只需要把原始的对话记录传给MemOS。
 
@@ -116,7 +146,7 @@ curl "$MEMOS_BASE_URL/add/message" \
 ```
 ::
 
-### 查询相关记忆
+#### 查询相关记忆
 
 会话 B 发生在 2025-09-28，用户提出让 AI 推荐国庆节旅游目的地与住宿。如下所示，将用户发言作为查询内容，检索 MemOS 记忆。
 
@@ -159,7 +189,7 @@ curl "$MEMOS_BASE_URL/search/memory" \
 ```
 ::
 
-#### 输出
+##### 输出
 
 MemOS 会自动召回【事实记忆：曾去过哪里】【偏好记忆：订酒店的偏好】供 AI 参考，从而让 AI 推荐更加个性化的旅游计划。如下所示，为了方便理解此处做了简化。
 
@@ -182,7 +212,7 @@ MemOS 会自动召回【事实记忆：曾去过哪里】【偏好记忆：订�
 }
 ```
 
-### 拼装到 Prompt
+#### 拼装到 Prompt
 
 把召回的记忆拼装进你自己的模型 Prompt 中，让模型在回答时参考这些长期记忆。
 
@@ -234,7 +264,7 @@ MemOS 会自动召回【事实记忆：曾去过哪里】【偏好记忆：订�
 
 ::
 
-## 3. 下一步
+### 3. 下一步
 
 ::card-group
   :::card
