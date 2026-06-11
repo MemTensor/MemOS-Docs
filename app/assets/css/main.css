@@ -565,6 +565,11 @@ html.dark .doc-page-body h4 {
   text-align: left;
 }
 
+/* 表头里的行内代码（如 `--agent`）保留原始大小写，不随表头统一转大写 */
+.doc-page-body thead th code {
+  text-transform: none;
+}
+
 html.dark .doc-page-body thead th {
   color: rgb(148 163 184);
   background: rgb(15 23 42);

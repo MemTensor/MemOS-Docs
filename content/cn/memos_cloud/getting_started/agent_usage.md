@@ -86,7 +86,7 @@ memos init --api-key 用户提供的Key --agent <your agent>
   </div>
 </details>
 
-Agent会自动完成 MemOS CLI 的安装，并配置相应的Skill。
+Agent会自动完成 MemOS CLI 的安装，并配置相应的Skill。（[查看支持的Agent](/cn/mcp_agent/cli/guide#_31-在-agent-中使用)）
 
 ## 手动配置
 

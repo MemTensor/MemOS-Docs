@@ -43,14 +43,27 @@ You can also write the API Key during initialization:
 memos init --api-key YOUR_API_KEY --agent codex
 ```
 
-Supported Agents:
+The currently supported Agents are listed below. Pass the matching value via `--agent`:
+
+| Agent | `--agent` value |
+| --- | --- |
+| Codex CLI | `codex` |
+| Cursor | `cursor` |
+| Claude Code | `claude` |
+| OpenClaw | `openclaw` |
+| Hermes | `hermes` |
+| Trae | `trae` |
+| Trae (China) | `trae-cn` |
+| OpenCode | `opencode` |
+| Antigravity | `antigravity` |
+| CodeBuddy | `workbuddy` |
+| Cline | `cline` |
+| GitHub Copilot | `copilot` |
+
+For example, to install the memory Skill for Cursor:
 
 ```bash
-memos init --agent codex     # ~/.codex/skills/memos/
-memos init --agent cursor    # ~/.cursor/skills/memos/
-memos init --agent claude    # ~/.claude/skills/memos/
-memos init --agent openclaw  # ~/.openclaw/skills/memos/
-memos init --agent hermes    # ~/.hermes/skills/memos/
+memos init --agent cursor
 ```
 
 Once installed, the Agent will automatically load the Skill. During each conversation turn, the Agent will:
@@ -291,6 +304,127 @@ memos feedback "Prefer concise, direct technical answers." --user-id user_123 --
 | `[FEEDBACK_TEXT]` | Feedback content; use either this or `--feedback-content` |
 | `--feedback-content` | Feedback content; alternative to the positional argument |
 | `--user-id` | User identifier; defaults to `defaults.user_id` in config |
+| `--format` | Output format; defaults to `agent` |
+
+### `memos message`
+
+Retrieve original conversation messages.
+
+```bash
+memos message --user-id user_123 --conversation-id conv_001
+memos message --user-id user_123 --limit 10 --format table
+```
+
+| Parameter | Description |
+| --- | --- |
+| `--user-id` | User identifier; required |
+| `--conversation-id` | Conversation ID; defaults to `defaults.conversation_id` in config |
+| `--limit` | Max messages to return; defaults to `6`, max `50` |
+| `--format` | Output format; defaults to `agent` |
+
+### `memos status`
+
+Query the processing status of an async task. The task ID comes from the `task_id` returned by `add` or `feedback` in async mode.
+
+```bash
+memos status abc123-task-id --format json
+```
+
+| Parameter | Description |
+| --- | --- |
+| `[TASK_ID]` | Async task ID; required |
+| `--format` | Output format; defaults to `agent` |
+
+Returned status values include `running`, `completed`, and `failed`.
+
+### `memos kb`
+
+Knowledge base management subcommand group: create knowledge bases, upload documents, and query or delete files.
+
+#### `memos kb create`
+
+Create a knowledge base.
+
+```bash
+memos kb create --name "Product FAQ" --description "Common product questions" --format json
+```
+
+| Parameter | Description |
+| --- | --- |
+| `--name` | Knowledge base name; required |
+| `--description` | Knowledge base description; optional |
+| `--format` | Output format; defaults to `agent` |
+
+#### `memos kb remove`
+
+Remove (delete) a knowledge base.
+
+```bash
+memos kb remove base_xxxxx --format json
+```
+
+| Parameter | Description |
+| --- | --- |
+| `[KB_ID]` | Knowledge base ID; required |
+| `--format` | Output format; defaults to `agent` |
+
+#### `memos kb add-file`
+
+Upload documents to a knowledge base. Supports PDF, DOCX, DOC, TXT, JSON, MD, XML.
+
+```bash
+memos kb add-file --kb-id base_xxxxx --files '["https://example.com/doc.pdf"]' --format json
+memos kb add-file --kb-id base_xxxxx --files '[{"content":"https://cdn.example.com/file.docx"}]' --format json
+```
+
+| Parameter | Description |
+| --- | --- |
+| `--kb-id` | Target knowledge base ID; required |
+| `--files` | JSON array of file entries: URL strings or `{"content": "..."}` objects; required |
+| `--format` | Output format; defaults to `agent` |
+
+#### `memos kb get-file`
+
+Get knowledge base file details and processing status.
+
+```bash
+memos kb get-file --file-ids '["file_id_1", "file_id_2"]' --format json
+```
+
+| Parameter | Description |
+| --- | --- |
+| `--file-ids` | JSON array of file IDs; required |
+| `--format` | Output format; defaults to `agent` |
+
+#### `memos kb list-file`
+
+List files in a knowledge base with pagination, optionally filtered by type.
+
+```bash
+memos kb list-file --kb-id base_xxxxx
+memos kb list-file --kb-id base_xxxxx --type skill --page 2 --page-size 10 --format json
+```
+
+| Parameter | Description |
+| --- | --- |
+| `--kb-id` | Knowledge base ID; required |
+| `--type` | Filter by type: `document` or `skill`; optional |
+| `--page` | Page number; defaults to `1` |
+| `--page-size` | Items per page; defaults to `20` |
+| `--format` | Output format; defaults to `agent` |
+
+#### `memos kb delete-file`
+
+Delete files from a knowledge base.
+
+```bash
+memos kb delete-file --kb-id base_xxxxx --file-ids '["file_id_1"]' --format json
+```
+
+| Parameter | Description |
+| --- | --- |
+| `--kb-id` | Knowledge base ID; required |
+| `--file-ids` | JSON array of file IDs to delete; required |
 | `--format` | Output format; defaults to `agent` |
 
 ## 6. Output Formats

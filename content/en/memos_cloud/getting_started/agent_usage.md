@@ -84,7 +84,7 @@ https://memos-dashboard.openmem.net/ to get an API Key and replace it.
   </div>
 </details>
 
-Your Agent will install the MemOS CLI and configure the corresponding Skill automatically.
+Your Agent will install the MemOS CLI and configure the corresponding Skill automatically ([View supported Agents](/mcp_agent/cli/guide#_31-use-with-agents)).
 
 ## Manual Configuration
 

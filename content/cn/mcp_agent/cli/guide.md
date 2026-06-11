@@ -47,14 +47,27 @@ memos init --agent codex
 memos init --api-key YOUR_API_KEY --agent codex
 ```
 
-目前支持的 Agent：
+目前支持的 Agent 如下，使用时通过 `--agent` 传入对应参数：
+
+| Agent | `--agent` 参数 |
+| --- | --- |
+| Codex CLI | `codex` |
+| Cursor | `cursor` |
+| Claude Code | `claude` |
+| OpenClaw | `openclaw` |
+| Hermes | `hermes` |
+| Trae | `trae` |
+| Trae（国内版） | `trae-cn` |
+| OpenCode | `opencode` |
+| Antigravity | `antigravity` |
+| CodeBuddy | `workbuddy` |
+| Cline | `cline` |
+| GitHub Copilot | `copilot` |
+
+例如，为 Cursor 安装记忆 Skill：
 
 ```bash
-memos init --agent codex     # ~/.codex/skills/memos/
-memos init --agent cursor    # ~/.cursor/skills/memos/
-memos init --agent claude    # ~/.claude/skills/memos/
-memos init --agent openclaw  # ~/.openclaw/skills/memos/
-memos init --agent hermes    # ~/.hermes/skills/memos/
+memos init --agent cursor
 ```
 
 安装后，Agent 启动时会自动加载该 Skill。在每轮对话中，Agent 会：
@@ -303,6 +316,127 @@ memos feedback "偏好简洁、直接的技术回答。" --user-id user_123 --fo
 | `[FEEDBACK_TEXT]` | 反馈内容；与 `--feedback-content` 二选一 |
 | `--feedback-content` | 反馈内容；与位置参数二选一 |
 | `--user-id` | 用户标识，默认取配置中的 `defaults.user_id` |
+| `--format` | 输出格式，默认 `agent` |
+
+### `memos message`
+
+获取原始对话消息记录。
+
+```bash
+memos message --user-id user_123 --conversation-id conv_001
+memos message --user-id user_123 --limit 10 --format table
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `--user-id` | 用户标识；必填 |
+| `--conversation-id` | 会话标识，默认取配置中的 `defaults.conversation_id` |
+| `--limit` | 返回的最大消息数；默认 `6`，最大 `50` |
+| `--format` | 输出格式，默认 `agent` |
+
+### `memos status`
+
+查询异步任务的处理状态。任务 ID 来自 `add`、`feedback` 在异步模式下返回的 `task_id`。
+
+```bash
+memos status abc123-task-id --format json
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `[TASK_ID]` | 异步任务 ID；必填 |
+| `--format` | 输出格式，默认 `agent` |
+
+返回的状态值包括 `running`、`completed`、`failed`。
+
+### `memos kb`
+
+知识库管理子命令组，用于创建知识库、上传文档、查询与删除文件等。
+
+#### `memos kb create`
+
+创建一个知识库。
+
+```bash
+memos kb create --name "产品 FAQ" --description "常见产品问题" --format json
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `--name` | 知识库名称；必填 |
+| `--description` | 知识库描述；可选 |
+| `--format` | 输出格式，默认 `agent` |
+
+#### `memos kb remove`
+
+删除（移除）一个知识库。
+
+```bash
+memos kb remove base_xxxxx --format json
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `[KB_ID]` | 知识库 ID；必填 |
+| `--format` | 输出格式，默认 `agent` |
+
+#### `memos kb add-file`
+
+向知识库上传文档，支持 PDF、DOCX、DOC、TXT、JSON、MD、XML。
+
+```bash
+memos kb add-file --kb-id base_xxxxx --files '["https://example.com/doc.pdf"]' --format json
+memos kb add-file --kb-id base_xxxxx --files '[{"content":"https://cdn.example.com/file.docx"}]' --format json
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `--kb-id` | 目标知识库 ID；必填 |
+| `--files` | 文件条目的 JSON 数组：URL 字符串或 `{"content": "..."}` 对象；必填 |
+| `--format` | 输出格式，默认 `agent` |
+
+#### `memos kb get-file`
+
+查询知识库文件的详情与处理状态。
+
+```bash
+memos kb get-file --file-ids '["file_id_1", "file_id_2"]' --format json
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `--file-ids` | 文件 ID 的 JSON 数组；必填 |
+| `--format` | 输出格式，默认 `agent` |
+
+#### `memos kb list-file`
+
+分页列出知识库中的文件，可按类型过滤。
+
+```bash
+memos kb list-file --kb-id base_xxxxx
+memos kb list-file --kb-id base_xxxxx --type skill --page 2 --page-size 10 --format json
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `--kb-id` | 知识库 ID；必填 |
+| `--type` | 按类型过滤：`document` 或 `skill`；可选 |
+| `--page` | 页码；默认 `1` |
+| `--page-size` | 每页条数；默认 `20` |
+| `--format` | 输出格式，默认 `agent` |
+
+#### `memos kb delete-file`
+
+从知识库中删除文件。
+
+```bash
+memos kb delete-file --kb-id base_xxxxx --file-ids '["file_id_1"]' --format json
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `--kb-id` | 知识库 ID；必填 |
+| `--file-ids` | 待删除文件 ID 的 JSON 数组；必填 |
 | `--format` | 输出格式，默认 `agent` |
 
 
