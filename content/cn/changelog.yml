@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.19
+    date: 2026-06-11
+    changedInfo:
+      Improvements:
+        - type: 本地插件
+          changedInfo:
+            - 本地插件算法优化，识别不同领域任务，注入优化过的通用prompt
+            
   - name: v2.0.14
     date: 2026-04-23
     changedInfo:

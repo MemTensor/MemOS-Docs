@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.19
+    date: 2026-06-11
+    changedInfo:
+      Improvements:
+        - type: Local Plugin
+          changedInfo:
+            - Optimized the local plugin's algorithm to identify tasks in different domains and inject optimized general prompts.
+            
   - name: v2.0.14
     date: 2026-04-23
     changedInfo:
