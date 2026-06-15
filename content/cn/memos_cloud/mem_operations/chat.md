@@ -183,7 +183,7 @@ curl --request POST \
 
 ::
 
-需要查看完整字段、请求格式和响应格式？详见 [Chat 接口文档](/api_docs/chat/chat)。
+需要查看完整字段、请求格式和响应格式？详见 [Chat 接口文档](/cn/api_docs/chat/chat)。
 
 ::
 
@@ -310,3 +310,20 @@ data = {
 - `info`：写入自定义业务信息，例如场景、订单 ID、状态
 - `allow_public`：是否允许写入项目级公共记忆
 - `allow_knowledgebase_ids`：允许写入哪些知识库
+
+## 7. 常见错误与排查
+
+| 错误码 | 常见原因 | 处理方式 |
+| --- | --- | --- |
+| `40000` | 请求 JSON 结构不符合要求，或字段类型错误 | 检查 `query` 是否为字符串，`filter` 是否为对象，`knowledgebase_ids` / `allow_knowledgebase_ids` 是否为字符串数组 |
+| `40002` | 必填字段为空 | 检查 `user_id`、`conversation_id`、`query` 是否都已传入且非空 |
+| `40010` | `user_id` 过长 | 使用稳定且较短的终端用户 ID，长度不要超过 100 字符 |
+| `40011` | `conversation_id` 过长 | 使用短会话 ID，不要把完整对话、用户输入或 JSON 放进 `conversation_id` |
+| `40301` / `40305` | 输入内容或请求 Token 超过上限 | 缩短 `query`、`system_prompt` 和过滤条件，不要把长文档直接放进 Chat 请求 |
+| `40302` / `40303` | 生成内容或对话长度超过模型限制 | 降低 `max_tokens`，缩短预期输出或拆分为多轮提问 |
+| `50123` | 知识库未关联当前项目 | 回到 [项目配置](/cn/api_docs/start/configuration)，确认知识库已关联到当前 API Key 所属项目 |
+| `50144` | Chat 回答后的消息写入失败 | 如果开启 `add_message_on_answer`，检查请求内容后稍后重试；如果持续出现，请联系支持 |
+
+更多错误码说明，请查看 [错误码](/cn/api_docs/help/error_codes)。
+
+需要查看完整字段、请求格式和响应格式？详见 [Chat 接口文档](/cn/api_docs/chat/chat)。

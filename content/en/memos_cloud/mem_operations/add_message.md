@@ -231,7 +231,19 @@ data = {
 During later retrieval, you can pass `"scene":"flight"` in the `filter` parameter to retrieve user memories around that scenario. See [Memory Filters](/memos_cloud/features/filters).
 ::
 
-## 6. More Features
+## 6. Common Errors and Troubleshooting
+
+| Error Code | Common Cause | How to Fix |
+| --- | --- | --- |
+| `40000` | The request JSON structure is invalid, or a field type is incorrect | Check whether `messages` is an array, and whether `role` / `content` are inside each message object |
+| `40002` | A required field is empty | Check that `user_id`, `conversation_id`, and `messages` are all provided and non-empty |
+| `40011` | `conversation_id` is too long | Use a short ID. Do not put full conversations, user input, or JSON into `conversation_id` |
+| `40013` | Total `messages` length exceeds the limit | Split historical conversations and write them in multiple requests |
+| `40305` | A single request exceeds the token limit | Shorten the content in one write request and keep the key user facts and preferences first |
+| `40309` | Token usage exceeds the per-time-window limit | Lower concurrency and bulk import speed, then retry in batches |
+| `50143` / `50144` | Memory or message writing failed | Check the request content and retry later. If it persists, contact support |
+
+## 7. More Features
 
 If you need more complex write methods, continue with these extended capabilities.
 

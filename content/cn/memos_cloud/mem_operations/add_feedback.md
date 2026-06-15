@@ -190,7 +190,7 @@ curl --request POST \
   </div>
 </details>
 
-[控制台-知识库](https://memos-dashboard.openmem.net/knowledgeBase/)中也会展示通过自然语言交互更正或补全的知识库记忆。
+[控制台-知识库](https://memos-dashboard.openmem.net/cn/knowledgeBase/)中也会展示通过自然语言交互更正或补全的知识库记忆。
 
 ![image.png](https://cdn.memtensor.com.cn/img/1765970178683_5tuxe4_compressed.png)
 
@@ -212,6 +212,17 @@ data = {
 ```
 
 
+## 5. 常见错误与排查
 
-需要查看完整字段、请求格式和响应格式？详见 [Add Feedback 接口文档](/api_docs/message/add_feedback)。
+| 错误码 | 常见原因 | 处理方式 |
+| --- | --- | --- |
+| `40000` | 请求 JSON 结构不符合要求，或字段类型错误 | 检查 `feedback_content` 是否为字符串，`allow_knowledgebase_ids` 是否为字符串数组 |
+| `40002` | 必填字段为空 | 检查 `user_id`、`conversation_id`、`feedback_content` 是否都已传入且非空 |
+| `40011` | `conversation_id` 过长 | 使用短 ID，不要把完整对话、用户输入或 JSON 放进 `conversation_id` |
+| `40305` | 单次输入超过 token 上限 | 缩短反馈内容，保留需要修正的关键信息 |
+| `40309` | 单位时间输入 token 超限 | 降低反馈写入并发，分批重试 |
+| `50123` | 知识库未关联当前项目 | 回到 [项目配置](/cn/api_docs/start/configuration)，确认知识库已关联到当前 API Key 所属项目 |
+| `50145` | 保存反馈并写入记忆失败 | 检查请求内容后稍后重试；如果持续出现，请联系支持 |
 
+
+需要查看完整字段、请求格式和响应格式？详见 [Add Feedback 接口文档](/cn/api_docs/message/add_feedback)。

@@ -567,3 +567,14 @@ res = requests.post(url=url, headers=headers, data=json.dumps(data))
 print(f"result: {res.json()}")
 ```
 :::
+
+## 6. Common Errors and Troubleshooting
+
+| Error Code | Common Cause | How to Fix |
+| --- | --- | --- |
+| `40002` / `40003` | Missing `knowledgebase_id`, `file`, or the file list is empty | Check whether the request body is complete. `file` must be a non-empty array |
+| `40007` / `50107` | Unsupported file type | Use PDF, DOCX, DOC, TXT, JSON, MD, or XML. For Skill files, use `.md` or `.zip` |
+| `40008` / `40009` | Invalid or malformed Base64 content | Make sure the Base64 content is not truncated and does not include invalid characters or an incorrect prefix |
+| `40305` | A single request exceeds the token limit | Split large files and reduce the content uploaded in one request |
+| `40309` | Token usage exceeds the per-time-window limit | Lower upload concurrency and retry in batches |
+| `50123` | The knowledge base is not associated with the current project | Go to [Project Configuration](/api_docs/start/configuration) and confirm the knowledge base is associated with the project that owns the API Key |

@@ -40,11 +40,8 @@ MemOS 为 AI 应用提供了两种“记忆”解决方案。您可以选择�
 
 *   **代码扩展**：可直接修改代码库，按需扩展自定义功能，并将改进贡献回社区。
 
-  
-
 ## 3. 还未确定？
 
-*   [试用免费平台](/memos_cloud/getting_started/quick_start)：注册并登录 [MemOS 云平台](https://memos-dashboard.openmem.net/quickstart)，免费试用所有功能。
+*   [试用免费平台](/cn/memos_cloud/getting_started/quick_start)：注册并登录 [MemOS 云平台](https://memos-dashboard.openmem.net/cn/quickstart)，免费试用所有功能。
 
-*   [探索开源方案](/open_source/getting_started/quick_start)：克隆项目仓库，直接在本地运行试用。顺便点个 Star 支持我们吧！
-
+*   [探索开源方案](/cn/open_source/getting_started/installation)：克隆项目仓库，直接在本地运行试用。顺便点个 Star 支持我们吧！

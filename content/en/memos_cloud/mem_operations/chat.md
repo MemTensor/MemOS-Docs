@@ -249,3 +249,20 @@ For ordinary conversations, you can ignore these fields. When you want new memor
 - `info`: write custom business metadata such as scene, order ID, or status.
 - `allow_public`: whether to allow writing to project-level public memory.
 - `allow_knowledgebase_ids`: which knowledge bases can be written.
+
+## 7. Common Errors and Troubleshooting
+
+| Error Code | Common Cause | How to Fix |
+| --- | --- | --- |
+| `40000` | The request JSON structure is invalid, or a field type is incorrect | Check whether `query` is a string, `filter` is an object, and `knowledgebase_ids` / `allow_knowledgebase_ids` are string arrays |
+| `40002` | A required field is empty | Check that `user_id`, `conversation_id`, and `query` are all provided and non-empty |
+| `40010` | `user_id` is too long | Use a stable and shorter end-user ID. The length cannot exceed 100 characters |
+| `40011` | `conversation_id` is too long | Use a short conversation ID. Do not put full conversations, user input, or JSON into `conversation_id` |
+| `40301` / `40305` | Input content or request tokens exceed the limit | Shorten `query`, `system_prompt`, and filter conditions. Do not put long documents directly into the Chat request |
+| `40302` / `40303` | Generated content or chat length exceeds the model limit | Lower `max_tokens`, shorten the expected output, or split the request into multiple turns |
+| `50123` | The knowledge base is not associated with the current project | Go to [Project Configuration](/api_docs/start/configuration) and confirm the knowledge base is associated with the project that owns the API Key |
+| `50144` | Message writing after the Chat response failed | If `add_message_on_answer` is enabled, check the request content and retry later. If it persists, contact support |
+
+For more error code details, see [Error Codes](/api_docs/help/error_codes).
+
+For the full field list, request format, and response format, see the [Chat API documentation](/api_docs/chat/chat).

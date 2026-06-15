@@ -1,102 +1,90 @@
 ---
-title: FAQs
-desc: We have compiled the most common questions about using MemOS. No need to search around; you can quickly find the answers here.
+title: Cloud FAQs
+desc: Troubleshoot common MemOS Cloud issues related to accounts, projects, API Keys, quotas, knowledge bases, and API calls.
 ---
 
-### Q: What is the difference between MemOS and a standard RAG framework?
+This page answers common questions about using MemOS Cloud. If you want to understand MemOS concepts such as RAG, open source deployment, private deployment, or memory scheduling, see [FAQ](/memos_cloud/introduction/faq).
 
-| **Comparison Dimension** | **RAG** | **MemOS** | **Advantages of MemOS** |
-| --- | --- | --- | --- |
-| Accuracy | The more corpus, the more noise | Extracted and modeled during the production stage, structured through schematization/relational modeling, combined with scheduling and lifecycle management, resulting in more organized memories<br><br>Capable of self-evolution driven by user feedback | **More Accurate**: Less noise, fewer hallucinations |
-| Result Organization | Directly returns raw text paragraphs, redundant content | Processes raw information into memories, distilled into units like facts/preferences, shorter and purer | **More Efficient**: Fewer tokens for the same information |
-| Search Scope | Always searches the entire corpus, slower with larger data | Memories dynamically update, managed in layers, recalled progressively | **Faster**: Avoids global scan, hits within smaller ranges |
-| Understanding | Cannot accumulate preferences from user history (no personalization), relies only on similarity matching with static knowledge base | Automatically extracts preferences into memories, transforms them into executable instructions during recall, enabling the model to truly understand | **More Understanding**: Responses closer to real needs |
+## Which document should a new user read first?
 
+If you have not logged in to the console yet, choose the entry point based on how you plan to use MemOS Cloud:
 
-### Q: Can MemOS be combined with existing RAG or knowledge graphs?
-Yes.  
-RAG focuses on **factual retrieval and knowledge augmentation** — helping the model “know what exists in the world.”  
-MemOS focuses on **state management and continuous memory** — helping the model “know who you are and what you want.”
+- If you want Agent tools such as Claude Code or Cursor to help with integration, start with [Use in Agents](/memos_cloud/getting_started/agent_usage).
+- If you want to call Cloud APIs from your own application, start with [Integrate into Your App](/memos_cloud/getting_started/quick_start).
 
-Together, they form a complementary intelligence architecture:
+[Configuration](/api_docs/start/configuration) is more useful when you need to manage multiple projects, edit or delete projects, or understand how knowledge bases are bound to projects.
 
-> 🧠 **RAG provides external knowledge, while MemOS provides internal memory.**  
-> The former makes the model smarter; the latter makes the model understand you better.
+## What is the relationship between API Keys and projects?
 
-In practice, **MemOS memory units** can directly connect to **RAG’s vector retrieval layer**, and can also work with external knowledge graphs.  
-The key difference: RAG manages **static facts**, whereas MemOS manages **dynamic memory that evolves over time**.
+Each project has its own API Key. When you call an API with a specific API Key, you can only access memories, messages, knowledge bases, and configuration under that project.
 
-In other words:  
-- **RAG** makes the model more like an encyclopedia  
-- **MemOS** makes the model more like a long-term personal assistant  
+If data is visible in the console but not returned by the API, check:
 
-When combined, the AI can both “know the world” and “understand you.”
+- Whether the console project matches the project that owns the API Key.
+- Whether the request uses the same `user_id`.
+- Whether the search request uses an overly narrow `filter`, `knowledgebase_ids`, or a high `relativity`.
 
+## How do I troubleshoot authentication or permission errors?
 
-### Q: How does MemOS work?
+Start by checking the request header:
 
-Our cloud service platform provides two core interfaces:
+```text
+Authorization: Token YOUR_API_KEY
+```
 
-`addMessage` — Submit raw information (user-AI conversations, user action logs/traces within the app, etc.) to us, and we automatically process and store it as memories.
+Common issues include:
 
-`searchMemory` — Recall relevant memories in subsequent conversations and optionally complete instruction assembly, making AI responses closer to user needs.
+- Missing `Authorization`.
+- Missing the `Token` prefix.
+- Incomplete API Key copied from the console.
+- API Key belongs to another project.
+- API Key is invalid, expired, or has no permission for the current resource.
 
+If the response returns `40100`, `40130`, or `40132`, go back to [Configuration](/api_docs/start/configuration) and check the API Key and project.
 
-### Q: What are the core functions of MemOS?
+## Why did Search Memory or Chat not recall knowledge base content?
 
-*   **User/Agent Memory Management**: Supports long-term preservation of user-AI interactions, with the ability to share or isolate memories across multi-agent collaboration, ensuring task continuity.
-    
-*   **Dynamic Layered Scheduling**: Unlike static RAG, MemOS dynamically switches between activating memory and plaintext memory based on task priorities, avoiding global scanning and enabling faster, more accurate calls.
-    
-*   **Personalized Preference Modeling**: Automatically extracts user preferences from historical interactions and supplements instructions in real time, making outputs closer to user habits.
-    
-*   **Memory Lifecycle Governance**: Prevents memory inflation through merging, compression, and archiving mechanisms, maintaining an efficient and stable knowledge base in the long run.
-    
-*   **Developer-Friendly API**: Provides a unified interface that can call open-source frameworks or directly connect to cloud services with low integration costs.
-    
-*   **Cross-Platform Consistency**: Ensures consistent memory scheduling behavior and data formats, whether deployed locally or hosted in the cloud.
-    
-*   **Hosted Service Support**: Provides cloud hosting with built-in monitoring and elastic scaling, reducing operational costs.
-    
-*   **Cost Savings**: By processing memories and scheduling by priority, only necessary information is injected, saving tokens compared to directly appending raw text.
-    
+First confirm that the knowledge base is bound to the current project and that the files have finished processing. Also check the API request:
 
-### Q: How to evaluate the ROI of using MemOS?
+- If `knowledgebase_ids` is not provided, knowledge bases are not searched by default.
+- If `knowledgebase_ids` is provided, make sure the IDs belong to knowledge bases accessible from the current project.
+- If `filter` is too narrow or `relativity` is too high, relevant content may be filtered out.
 
-Typical metrics include: token consumption reduction (more efficient), improved output relevance (more accurate), increased user retention (more understanding), and knowledge solidification rate (how much is consolidated long-term).
+For upload, binding, and processing status, see [Knowledge Base](/memos_cloud/features/knowledge_base).
 
+## What should I do when I hit quota or rate limits?
 
-### Q: How to further improve MemOS effectiveness in specific business scenarios?
+First identify which limit was reached:
 
-You can contact us for commercial customization (fastest and best). Alternatively, since MemOS is open source, your team can dive in and modify it (though with higher learning costs and possible detours).
+- Single input or output is too long: reduce the current input, history, or expected output.
+- API call quota is exhausted: wait for quota recovery or request more quota.
+- Too many requests in a short period: reduce request frequency and avoid repeated retries.
 
+For quota details, see [Quotas and Limits](/memos_cloud/support/limit).
 
-### Q: Does MemOS support on-premise deployment?
-Yes.
+## Why can I not search a memory immediately after writing it?
 
+After memory is written, it still needs to be extracted, processed, and indexed. If you search immediately after writing, processing may not be finished yet.
 
-### Q: What is the relationship between lifecycle and scheduling?
-The lifecycle manages “state transitions of memory units,” while scheduling is responsible for “selecting the right memory units at any moment and feeding them into the model.” They complement each other but are not equivalent.
+Check:
 
+- The write and search requests use the same `user_id`.
+- The request is not restricted by an overly narrow `conversation_id`, `filter`, or `knowledgebase_ids`.
+- If asynchronous writing is used, wait for the task to finish before searching.
 
-### Q: How does MemOS avoid memory inflation?
-Through merging, compression, and archiving: low-value memories are down-ranked, high-value memories are merged or solidified. This ensures storage and inference remain efficient.
+## What should I check when Delete Memory fails?
 
+When deleting individual memories, prefer `memory_ids`. Do not use `conversation_id`, `user_id`, or knowledge base IDs as `memory_id`.
 
-<br>
+Only pass `user_id` when you need to delete all memories for that user under the current project. This is a high-risk operation, so confirm the API Key, project, and user ID before running it.
 
-**Q: Are KV-Cache and activating memory the same thing?**  
-No. KV-Cache is the underlying computational implementation, while activating memory is a business-level concept. Currently, activating memory mainly relies on KV-Cache, but other implementations may emerge in the future.
+## Why are console and API data ranges different?
 
+Both the console and APIs isolate data by project. Inconsistent data ranges are usually caused by:
 
-### Q: Will MemOS slow down inference?
-No. The scheduler runs asynchronously and adopts cache stability strategies to balance memory updates with calls. In practice, latency increases are usually within an acceptable range.
+- The selected console project is different from the project that owns the API Key.
+- The API request uses a different `user_id`.
+- Extra filters are applied in the API request.
+- The knowledge base is not authorized for the current project.
 
-
-### Q: If the requested information is very recent, like “what I did yesterday,” is scheduling still needed?
-Yes. Scheduling is not only about “retrievability” but also about being “fast, accurate, and concise.” Even with recent events, the scheduler still evaluates whether to fuse them into a complete context.
-
-
-### Q: Which products and industries does MemOS serve?
-MemOS has been applied across multiple domains, including [companionship, gaming, tourism, telecom operators, financial securities, manufacturing, and education & scientific research]. We have partnered with leading state-owned enterprises and top industry teams, validating memory-driven capabilities in scenarios such as embodied intelligence, AI customer service, knowledge management, intelligent investment advisory, industrial operations & maintenance, and AI-powered learning.
-Some projects are still in joint development, and details cannot yet be disclosed — but we will continue to share more concrete case stories in the future!
+If an API response returns a specific `code`, see [Error Codes](/api_docs/help/error_codes).
