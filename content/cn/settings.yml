@@ -20,6 +20,7 @@ nav:
       - "(ri:stack-line) 记忆种类": memos_cloud/introduction/memory_types.md
       - "(ri:filter-3-line) 多用户 / 多 Agent 隔离": memos_cloud/introduction/isolation_filters.md
       - "(ri:time-line) 时间感知": memos_cloud/introduction/time_awareness.md
+      - "(ri:question-line) 常见问题": memos_cloud/introduction/faq.md
 
     - "(ri:edit-box-line) 核心操作":
       - "(ri:message-3-line) Add Message": memos_cloud/mem_operations/add_message.md
@@ -38,7 +39,7 @@ nav:
       - "(ri:tools-line) 工具记忆": memos_cloud/features/tool_calling.md
 
     - "(ri:question-line) 支持与问题排查":
-      - "(ri:question-line) FAQs 常见问题解答": memos_cloud/support/faq.md
+      - "(ri:question-line) 云服务 FAQs": memos_cloud/support/faq.md
       - "(ri:shield-line) 配额与限制": memos_cloud/support/limit.md
 
   - "(ri:github-line) 开源项目":
