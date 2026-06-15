@@ -241,7 +241,21 @@ data = {
 }
 ```
 
-## 7. More Features
+## 7. Common Errors and Troubleshooting
+
+| Error Code | Common Cause | How to Fix |
+| --- | --- | --- |
+| `40000` | The request body structure is invalid, or a field type is incorrect | Check whether `query` is a string and whether `knowledgebase_ids` is a string array |
+| `40002` | A required field is missing | Check that both `user_id` and `query` are provided and non-empty |
+| `40011` | `conversation_id` is too long | Use a short ID. Do not put the full question or chat history into `conversation_id` |
+| `40012` | `relativity` is invalid | Pass a number between 0 and 1 |
+| `40305` | A single request exceeds the token limit | Shorten `query`; do not put long documents directly into the search query |
+| `50123` | The knowledge base is not associated with the current project | Go to [Project Configuration](/api_docs/start/configuration) and confirm the knowledge base is associated with the project that owns the API Key |
+| `50005` | Search service is temporarily unavailable | Retry later. If it persists, contact support |
+
+
+
+## 8. More Features
 
 ::card-group
   :::card

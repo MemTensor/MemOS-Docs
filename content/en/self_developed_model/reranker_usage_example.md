@@ -6,8 +6,8 @@ desc: Rerank memory relevance based on the self-developed memos-reranker small m
 MemOS provides a memory reranking API based on the **memos-reranker** model series (including 0.6B lightweight and 4B enhanced versions, base model uses qwen-reranker post-training). Developers can directly pass a user query and a list of candidate memories to complete memory relevance reranking in one call.
 
 ::callout{.rerank-usage-api-hint color="warning"}
-Request/response fields and OpenAPI: [Rerank Memory](/en/api_docs/core/rerank).<br />
-Auth, base URL, and calling conventions match [MemOS Cloud Quick Start](/en/memos_cloud/getting_started/quick_start).
+Request/response fields and OpenAPI: [Rerank Memory](/api_docs/core/rerank).<br />
+Auth, base URL, and calling conventions match [MemOS Cloud Quick Start](/memos_cloud/getting_started/quick_start).
 ::
 
 ## When to use memory reranking
@@ -17,6 +17,12 @@ The reranking API fits when you need:
 - **Memory recall optimization**: After retrieving a large number of candidate memories, accurately filter out the memories most relevant to the current query through reranking to improve the quality of context injection.
 - **Low latency at high QPS**: Based on a 0.6B small model, suitable for latency-sensitive and frequently invoked business scenarios.
 - **Flexible sorting control**: Supports custom candidate document lists, can be used with any retrieval system, and does not rely on the MemOS memory store.
+
+Do not call the reranking API directly in these cases:
+
+- You do not have candidate documents yet and only want to search memory content. Call [Search Memory](/memos_cloud/mem_operations/search_memory) first.
+- You want to write content into memory. The reranking API does not write to the MemOS memory store; use [Add Message](/memos_cloud/mem_operations/add_message) instead.
+- You want to rank a full long document. Retrieve, split, or truncate candidate content first, then pass shorter candidate snippets to `documents`.
 
 ## How it works
 
@@ -79,6 +85,7 @@ data = {
     # Available models: memos-reranker-0.6b (lightweight) or memos-reranker-4b (enhanced)
     "model": "memos-reranker-0.6b",
     "query": "What are the user's hobbies?",
+    "top_n": 3,
     "documents": [
         "User likes playing badminton.",
         "User is a backend developer in Hangzhou.",
@@ -101,9 +108,20 @@ print(f"result: {res.json()}")
 
 ## Limits
 
-- Maximum length of a single document: **32k tokens**.
-- Maximum length of `query`: **2k tokens**.
-- **Synchronous only** today: the API returns all results at once after the reranking is completed.
+- `query` is required. Use a clear and concise current question.
+- `documents` is required and must be a non-empty string array. The total token limit across all candidate documents is **8k**.
+- `top_n` is optional and returns the top N most relevant results. If omitted, all results are returned.
+- `model` is optional and supports `memos-reranker-0.6b` and `memos-reranker-4b`.
+- The API currently supports **synchronous mode only**. Results are returned once reranking is complete.
+
+## Common Errors and Troubleshooting
+
+| Error Code | Common Cause | How to Fix |
+| --- | --- | --- |
+| `40000` | The request body structure is invalid, or a field type is incorrect | Check whether `query` is a string and whether `documents` is a string array |
+| `40002` / `40003` | A required field is empty, or `documents` is empty | Provide `query` and a non-empty `documents` array |
+| `40309` | Token usage exceeds the per-time-window limit | Reduce the number and length of candidate documents, lower concurrency, and retry in batches |
+| `50000` | Internal server error | Retry later. If it persists, contact support |
 
 ## Compared to Embedding Retrieval
 

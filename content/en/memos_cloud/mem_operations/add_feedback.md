@@ -199,4 +199,16 @@ data = {
 }
 ```
 
+## 5. Common Errors and Troubleshooting
+
+| Error Code | Common Cause | How to Fix |
+| --- | --- | --- |
+| `40000` | The request JSON structure is invalid, or a field type is incorrect | Check whether `feedback_content` is a string and whether `allow_knowledgebase_ids` is a string array |
+| `40002` | A required field is empty | Check that `user_id`, `conversation_id`, and `feedback_content` are all provided and non-empty |
+| `40011` | `conversation_id` is too long | Use a short ID. Do not put full conversations, user input, or JSON into `conversation_id` |
+| `40305` | A single request exceeds the token limit | Shorten the feedback content and keep the key correction information |
+| `40309` | Token usage exceeds the per-time-window limit | Lower feedback write concurrency and retry in batches |
+| `50123` | The knowledge base is not associated with the current project | Go to [Project Configuration](/api_docs/start/configuration) and confirm the knowledge base is associated with the project that owns the API Key |
+| `50145` | Failed to save feedback and write memory | Check the request content and retry later. If it persists, contact support |
+
 Need the complete field list, request format, and response format? See the [Add Feedback API documentation](/api_docs/message/add_feedback).
