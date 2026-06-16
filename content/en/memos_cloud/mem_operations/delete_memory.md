@@ -190,8 +190,6 @@ If you only need to delete one or a few memories temporarily, you can delete the
 4. Click "Delete" and confirm in the second confirmation dialog. To delete multiple memories, select multiple records first, then click "Batch Delete".
 5. Refresh the list after deletion, or search again with the same conditions to confirm that the memory no longer appears.
 
-Console deletion also deletes by `memoryId` and only applies to the current project. If you need to delete memories automatically in your application, or copy `memory_id` values from logs or search results for batch processing, call the `delete/memory` API instead.
-
 ![Delete memories in the console](https://cdn.memtensor.com.cn/img/1781505894179_et8gm6_compressed.png)
 
 
