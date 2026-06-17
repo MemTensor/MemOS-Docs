@@ -6,6 +6,50 @@ versions:
         - type: 本地插件
           changedInfo:
             - 本地插件算法优化，识别不同领域任务，注入优化过的通用prompt
+
+  - name: v2.0.17
+    date: 2026-05-21
+    changedInfo:
+      New Features:
+        - type: Dream核心功能发布
+          changedInfo:
+            - fine模式下add后写入dream相关线索到记忆节点
+            - dream阶段做Context上下文绑定与摘要，形成context节点
+            - search侧支持召回context节点，开关配置
+            - dream diary修复 & 加入context相关内容
+            - 插件中注册dream & 修复之前dream链路的部分问题
+      Bug Fixes:
+        - type: Skill生成bug修复
+          changedInfo:
+            - 修复频繁生成无意义的Skill的问题
+
+  - name: v2.0.16
+    date: 2026-05-14
+    changedInfo:
+      Improvements:
+        - type: 关键词检索优化
+          changedInfo:
+            - 动态调整关键词检索时选取的分词数量，只选取特定类型的分词
+        - type: polardb数据存储优化
+          changedInfo:
+            - 针对原单图存储所有用户数据导致的亿级数据量下检索性能劣化、并发锁竞争问题，通过对用户记忆数据进行水平拆分，并采用双写+读切换模式平滑迁移，有效解决亿级数据性能瓶颈，预期写入、检索等操作耗时大幅降低。
+        - type: 文档更新
+          changedInfo:
+            - 新增 docs 下的开源文档及 examples/README.md
+            - OpenClaw Plugin 文档完善：新增本地插件指南、Hermes 插件说明、多 Agent 示例、recall filter 示例、插件对比与变更说明。
+            - 贡献者文档完善：新增根目录 CONTRIBUTING.md，补充开发环境、工作流、提交规范、测试规范、文档贡献规范等。
+        - type: 测试脚本补全
+          changedInfo:
+            - 新增 tests/mem_feedback 和 tests/reranker
+          
+  - name: v2.0.15
+    date: 2026-05-08
+    changedInfo:
+      New Features:
+        - type: 支持skill上传
+          changedInfo:
+            - 支持将用户提供的可下载skill链接构建出skill记忆，同时支持skill记忆的检索
+
             
   - name: v2.0.14
     date: 2026-04-23
@@ -28,6 +72,7 @@ versions:
         - type: 记忆版本管理
           changedInfo:
             - 修复记忆版本对同一段memory原文分出的chunks之间也会生效的bug
+
   - name: v2.0.13
     date: 2026-04-09
     changedInfo:

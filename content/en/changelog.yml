@@ -6,7 +6,50 @@ versions:
         - type: Local Plugin
           changedInfo:
             - Optimized the local plugin's algorithm to identify tasks in different domains and inject optimized general prompts.
-            
+
+  - name: v2.0.17
+    date: 2026-05-21
+    changedInfo:
+      New Features:
+        - type: Dream Core Feature Release
+          changedInfo:
+            - In fine mode, writes Dream-related clues to memory nodes after add operations.
+            - During the Dream phase, binds and summarizes Context to form context nodes.
+            - Search supports recalling context nodes with a configurable toggle.
+            - Fixed Dream diary and added context-related content.
+            - Registered Dream in the plugin and fixed some issues in the previous Dream pipeline.
+      Bug Fixes:
+        - type: Skill Generation Bug Fix
+          changedInfo:
+            - Fixed the issue of frequently generating meaningless Skills.
+
+  - name: v2.0.16
+    date: 2026-05-14
+    changedInfo:
+      Improvements:
+        - type: Keyword Search Optimization
+          changedInfo:
+            - Dynamically adjusts the number of tokens selected during keyword search, selecting only specific types of tokens.
+        - type: PolarDB Data Storage Optimization
+          changedInfo:
+            - Addresses retrieval performance degradation and concurrent lock contention at hundred-million scale caused by storing all user data in a single graph. Horizontally partitions user memory data and migrates smoothly via dual-write plus read-switchover, effectively resolving performance bottlenecks at scale with expected significant reductions in write and search latency.
+        - type: Documentation Updates
+          changedInfo:
+            - Added open-source documentation under docs and examples/README.md.
+            - OpenClaw Plugin documentation improvements: added local plugin guide, Hermes plugin guide, multi-agent examples, recall filter examples, and plugin comparison and changelog.
+            - Contributor documentation improvements: added CONTRIBUTING.md at the repo root with development environment, workflow, commit conventions, testing conventions, and documentation contribution guidelines.
+        - type: Test Script Updates
+          changedInfo:
+            - Added tests/mem_feedback and tests/reranker.
+
+  - name: v2.0.15
+    date: 2026-05-08
+    changedInfo:
+      New Features:
+        - type: Skill Upload Support
+          changedInfo:
+            - Supports building skill memories from user-provided downloadable skill links, with retrieval support for skill memories.
+
   - name: v2.0.14
     date: 2026-04-23
     changedInfo:
