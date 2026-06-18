@@ -1,337 +1,494 @@
 versions:
+  - name: v2.0.20
+    date: '2026-06-17'
+    products:
+      cloud:
+        Improvements:
+          - type: search context_format support
+            changedInfo:
+              - Integrated via the enterprise search context plugin
+              - Supports memory, source text, and heuristic routing modes; defaults to memory without changing existing search behavior
+              - When sources or heuristic_routing is set, returns the matching search format plus time and speaker rendering (mainly for benchmark evaluation)
+          - type: Scheduler optimization
+            changedInfo:
+              - Adjusted scheduler concurrency limits to avoid CPU, thread, and PolarDB contention from background jobs
+              - Adjusted queue polling intervals to reduce idle polling and CPU usage
+              - Added log and queue switches to reduce log writes on high-frequency search APIs
   - name: v2.0.19
-    date: 2026-06-11
-    changedInfo:
-      Improvements:
-        - type: Local Plugin
-          changedInfo:
-            - Optimized the local plugin's algorithm to identify tasks in different domains and inject optimized general prompts.
-            
+    date: '2026-06-11'
+    products:
+      cloud:
+        New Features:
+          - type: MemOS Cloud CLI Enhancements
+            changedInfo:
+              - Added MemOS Cloud knowledge base APIs with support for up to 12 Agents
+        Improvements:
+          - type: Dashboard Experience
+            changedInfo:
+              - Improved quick start display logic
+              - Added one-click integration prompts
+      docs:
+        Improvements:
+          - type: Documentation
+            changedInfo:
+              - Added a conversational guide for integrating MemOS Cloud into Agents
+      plugin:
+        Improvements:
+          - type: Local Plugin
+            changedInfo:
+              - Optimized the local plugin algorithm for domain-aware task handling and prompt injection
+  - name: v2.0.17
+    date: '2026-05-21'
+    products:
+      cloud:
+        New Features:
+          - type: Dream Core Release
+            changedInfo:
+              - Dream context nodes after fine-mode add
+              - Context binding and summarization in Dream phase
+              - Search can recall context nodes with a toggle
+              - Dream diary fixes and context content
+              - Dream registered in plugins with pipeline fixes
+          - type: Time-sensitive Memory
+            changedInfo:
+              - Batched LLM write-back for time-related information to reduce LLM calls
+        Bug Fixes:
+          - type: Skill Generation
+            changedInfo:
+              - Skills now require at least 5 rounds of tool-call history before generation
+              - Fixed scheduler task loss and Redis serialization issues
+  - name: v2.0.16
+    date: '2026-05-14'
+    products:
+      cloud:
+        Improvements:
+          - type: Keyword Search Token Selection
+            changedInfo:
+              - Dynamically adjusts token count during keyword search
+          - type: Search-side Memory Version
+            changedInfo:
+              - Added search-side memory version switch
+              - Removed low-impact sidecar recall that hurt search performance
+          - type: PolarDB Storage Optimization
+            changedInfo:
+              - Horizontally partitioned user memory data with dual-write and read-switchover migration for hundred-million scale performance
+        Bug Fixes:
+          - type: Memory Version Fixes
+            changedInfo:
+              - Fixed duplicate version updates from a single add
+              - Fixed unit test issues
+      docs:
+        Improvements:
+          - type: Documentation Updates
+            changedInfo:
+              - Added open-source docs under docs/ and examples/README.md
+              - OpenClaw Plugin docs improvements
+              - Added CONTRIBUTING.md with contributor guidelines
+      opensource:
+        Improvements:
+          - type: Test Scripts
+            changedInfo:
+              - Added tests/mem_feedback and tests/reranker
+  - name: v2.0.15
+    date: '2026-05-08'
+    products:
+      cloud:
+        Improvements:
+          - type: Keyword Search
+            changedInfo:
+              - jieba extract_tags for Chinese queries (max 12 tokens)
+              - Tokenizer/regex tokenization for English (max 12)
+              - Mandatory user_name validation to prevent cross-user scans
+        New Features:
+          - type: Time-sensitive Memory Version
+            changedInfo:
+              - Extracts timespec and memory_form on write; time-aware version selection and rerank on search
+          - type: Skill Upload
+            changedInfo:
+              - Users can upload skills via the add API and retrieve them via search
+      opensource:
+        New Features:
+          - type: Skill Upload Support
+            changedInfo:
+              - Build skill memories from downloadable skill links with retrieval support
   - name: v2.0.14
-    date: 2026-04-23
-    changedInfo:
-      New Features:
-        - type: Code Architecture
-          changedInfo:
-            - Introduced lightweight plugin mechanism
-      Improvements:
-        - type: Scheduler Module
-          changedInfo:
-            - Optimized scheduling tasks
-      Bug Fixes:
-        - type: PolarDB Database
-          changedInfo:
-            - Fixed metadata nesting bug in PolarDB get_node and get_nodes
-        - type: MemReader Component
-          changedInfo:
-            - Fixed memreader chunking bug
-        - type: Memory Version Management
-          changedInfo:
-            - Fixed memory version bug where chunks from the same memory source text would affect each other
-
+    date: '2026-04-23'
+    products:
+      cloud:
+        Bug Fixes:
+          - type: Memory Version
+            changedInfo:
+              - Fixed memory version applying across chunks from the same source text
+      opensource:
+        New Features:
+          - type: Plugin Framework
+            changedInfo:
+              - Introduced a lightweight plugin framework with @hookable hooks and entry_points discovery
+        Improvements:
+          - type: Scheduler Optimization
+            changedInfo:
+              - Cache caps, lock splitting, refill race fixes, stream cleanup, and Redis calls moved outside locks
+        Bug Fixes:
+          - type: PolarDB & MemReader
+            changedInfo:
+              - Fixed PolarDB metadata nesting bug
+              - Fixed memreader chunking bug
+          - type: LLM JSON Parsing
+            changedInfo:
+              - Fixed LLM JSON output parsing issue (#1526)
   - name: v2.0.13
-    date: 2026-04-09
-    changedInfo:
-      Improvements:
-        - type: Scheduling log level optimization
-          changedInfo:
-            - Lowered the log level of frequently printed, repetitive, and line-by-line logs from info to debug, significantly reducing online log noise and storage pressure.
-        - type: Queue log structure
-          changedInfo:
-            - Unified local queue and Redis queue logs to structured fields (e.g., label/item_id/user_id/mem_cube_id/stream) to avoid large content logs and improve stable retrieval and aggregation.
-        - type: Scheduling chain key path observability
-          changedInfo:
-            - Added summary logs for the key nodes of the "submit -> dequeue -> dispatch" chain to quickly locate task congestion, dispatch exceptions, and other issues.
-  
+    date: '2026-04-09'
+    products:
+      cloud:
+        Improvements:
+          - type: Service Optimization
+            changedInfo:
+              - Scheduling log level tuning
+              - Structured queue logs
+              - Key-path observability for submit -> dequeue -> dispatch
   - name: v2.0.12
-    date: 2026-04-02
-    changedInfo:
-      Improvements:
-        - type: Service optimization
-          changedInfo:
-            - Added the minimum thread count as a configurable parameter, allowing runtime dynamic adjustment of thread pool size to effectively control active connection count and avoid system overload caused by sudden traffic spikes.
-  
+    date: '2026-04-02'
+    products:
+      cloud:
+        Improvements:
+          - type: Service Optimization
+            changedInfo:
+              - Configurable minimum thread pool size
+              - LLM-based memory version routing with improved skip recall
   - name: v2.0.11
-    date: 2026-03-26
-    changedInfo:
-      New Features:
-        - type: LLM and search
-          changedInfo:
-            - Added MiniMax as an LLM Provider, following the same integration pattern as Qwen and DeepSeek via an OpenAI-compatible API.
-            - Added Tavily as a pluggable internet search backend. Enable the Tavily API through configuration for real-time web searches to supplement the memory system with external knowledge.
-        - type: Deployment and operations
-          changedInfo:
-            - Added a health check API endpoint for service status monitoring, supporting health probes for container orchestration (such as Kubernetes liveness/readiness probes) and load balancers.
-            - Added a production-grade Dockerfile (multi-stage build) and a Kubernetes Helm Chart, including orchestration for the MemOS API service, Neo4j graph database, and Qdrant vector database, plus Ingress and example values files for one-click deployment to Kubernetes clusters.
-        - type: API extensions
-          changedInfo:
-            - The delete_memory interface previously only supported deletion by memory_id. This update expands filter conditions to support batch deletion by user_id and conversation_id, adds filter parameter validation at the API layer, and implements the delete_node_by_params method for the PostgreSQL backend.
-      Bug Fixes:
-        - type: MCP and message handling
-          changedInfo:
-            - Fixed an issue where the MCP add_memory tool sent plain strings instead of the expected list of chat message objects to the /product/add interface. When SimpleStruct MemReader was used, invalid formats were silently skipped so memories were not actually stored. Messages are now converted to the standard chat format before sending.
-            - Fixed a TypeError in _get_further_suggestion when callers passed a string instead of a MessageList. Added isinstance checks to convert string inputs to [{\"role\"：\"user\", \"content\"：...}] while preserving compatibility with MessageList inputs.
-        - type: Memory and feedback
-          changedInfo:
-            - Fixed a bug where memory nodes were incorrectly archived after user feedback, making them unretrievable. Corrected node ID handling in the feedback workflow to prevent accidental archiving.
-        - type: Neo4j
-          changedInfo:
-            - Fixed Neo4j vector search that applied filtering after vector retrieval, which limited recall (or prevented recalling memories for a given cube) on large databases. Retrieval now uses pre-filtering.
-            - Fixed nested metadata write errors in Neo4j. Node properties only accept primitive types or arrays; nested dict/list metadata from some MemOS flows (e.g., SkillMemory and feedback) caused CypherTypeError (Map{} encountered). Added a sanitization layer that serializes dict values to JSON strings before write for Neo4j compatibility while keeping content readable.
-
+    date: '2026-03-26'
+    products:
+      opensource:
+        New Features:
+          - type: LLM & Search
+            changedInfo:
+              - MiniMax LLM (#1291)
+              - Health check API (#1248)
+              - delete_memory filters (#1104)
+              - Tavily search (#1357)
+              - Dockerfile & Helm chart (#1293)
+        Improvements:
+          - type: Scheduler & API
+            changedInfo:
+              - Thread pool and PolarDB optimizations
+              - Better API validation errors
+              - Consolidated APIs into server_api (#1344)
+        Bug Fixes:
+          - type: Database & Memory
+            changedInfo:
+              - Neo4j pre-filter fix (#1359)
+              - Nested metadata write fix (#1178)
+              - Feedback archival fix (#1243)
+          - type: MCP & API
+            changedInfo:
+              - MCP add_memory format fix (#1275)
+              - get_further_suggestion string input fix (#1218)
   - name: v2.0.10
-    date: 2026-03-19
-    changedInfo:
-      Improvements:
-        - type: PolarDB Database
-          changedInfo:
-            - PolarDB optimization and upgrade. Optimized execution paths for queries with multiple filter conditions, leveraging new kernel capabilities to improve CPU and memory usage, achieving several-fold query acceleration and reducing system pressure.
-        - type: Memory Version Service
-          changedInfo:
-            - Memory version plugin-based architecture.
-            - Added high availability for NLI model.
-            - Added routing logic for memory version at memreader. Falls back to legacy prompt and model when no relevant memory is recalled or all recalled content is judged irrelevant by the NLI model; otherwise uses the memory version plugin (qwen-flash).
-        - type: Service Optimization
-          changedInfo:
-            - Optimized scheduling tasks to improve memory usage.
-
+    date: '2026-03-19'
+    products:
+      cloud:
+        Improvements:
+          - type: PolarDB & MemReader
+            changedInfo:
+              - PolarDB multi-filter query optimization
+              - MemReader updated to 0.6B model with lower latency
+          - type: Memory Version Service
+            changedInfo:
+              - Memory version pluginization
+              - NLI high availability
+              - MemReader routing for memory version plugin
+          - type: Scheduler
+            changedInfo:
+              - Scheduler improvements for better memory usage
   - name: v2.0.9
-    date: 2026-03-16
-    changedInfo:
-      Improvements:
-        - type: Memory version compatibility for feedback
-          changedInfo:
-            - When Feedback updates a node, it follows the memory version logic, updates the original node, and pushes the previous content into the history field.
-        - type: Memory version optimization
-          changedInfo:
-            - During conflict resolution and duplicate merging, the process of "restoring independent facts from past versions" has been comprehensively optimized. It can now restore independent facts more stably and accurately, preserve the completeness of memory information, and reduce memory inconsistencies caused by unstable model responses.
-      Bug Fixes:
-        - type: Memory version parameter and related bug fixes
-          changedInfo:
-            - Fixed several bugs including memory version parameter validation, empty key after update, and incorrect update time.
-        - type: Feedback issue fixes
-          changedInfo:
-            - Fixed the issue where sources were empty during the Feedback process.
+    date: '2026-03-13'
+    products:
+      cloud:
+        Improvements:
+          - type: Memory Version
+            changedInfo:
+              - Feedback-compatible memory version
+              - Improved independent-fact recovery during conflict resolution
+        Bug Fixes:
+          - type: Memory Version & Feedback
+            changedInfo:
+              - Parameter validation and timestamp fixes
+              - Fixed empty sources during feedback
   - name: v2.0.8
-    date: 2026-03-05
-    changedInfo:
-      New Features:
-        - type: New Features
-          changedInfo:
-            - When adding memories, conflicting/duplicate memories are automatically detected, merged, and archived. The latest memory content is retained, while the old memory content is placed in the history field.
-      Improvements:
-        - type: Preference memories migrated to graph database
-          changedInfo:
-            - Preference memories have been migrated to the graph database, unifying them with other memory types.
-        - type: memory versioning optimization
-          changedInfo:
-            - Memory retrieval reduces redundant calls to get_by_metadata, decreasing retrieval latency.
-        - type: database optimization
-          changedInfo:
-            - Implemented fine-grained concurrent rate limiting using semaphores, combined with automatic faulty connection removal and thread lifecycle management, to enhance system stability under high concurrency.
-            - Optimized log levels and content, retaining key execution traces while reducing the impact of log writing on database performance.
-            - Implemented trigger-based preheating to load hot data into the cache, avoiding high latency caused by cold starts.
-      Bug Fixes:
-        - type: bug in fast memory addition
-          changedInfo:
-            - Fixed an issue where, when adding memories with MultiModalStruct selected, embedding operations were not performed in some cases under fast mode, causing memories in fast mode to be unsearchable.
-        - type: bug in multimodal memory
-          changedInfo:
-            - Fixed a bug where the image content was not being separately interpreted for image-based memories.
-        - type: Memory Retrieval
-          changedInfo:
-            - Reduced redundant calls to get_by_metadata during memory retrieval, decreasing retrieval latency.
-        - type: Memory Versioning Concurrency Fix
-          changedInfo:
-            - Memory versioning now, under concurrent add scenarios (receiving multiple related add requests within a time frame shorter than the add interface latency), will sequentially merge and process them in chronological order instead of falling back to no processing.
+    date: '2026-03-05'
+    products:
+      cloud:
+        New Features:
+          - type: Memory Version
+            changedInfo:
+              - Automatic conflict/duplicate detection, merge, and archive on add (enabled in this release)
+        Improvements:
+          - type: Preference Memory Migration
+            changedInfo:
+              - Preference memories migrated to the graph database
+          - type: Memory Version Async
+            changedInfo:
+              - Memory version fully async without impacting addMessage latency
+          - type: Memory Search
+            changedInfo:
+              - Reduced redundant get_by_metadata calls during search
+        Bug Fixes:
+          - type: Add & Search Fixes
+            changedInfo:
+              - Fast-mode embedding fix for MultiModalStruct
+              - Image memory parsing fix
+              - Concurrent add merge ordering fix
+      opensource:
+        Improvements:
+          - type: Performance
+            changedInfo:
+              - Full-text warmup
+              - Semaphore-based concurrency limiting
+              - Database log trimming
   - name: v2.0.7
-    date: 2026-02-27
-    changedInfo:
-      Improvements:
-        - type: Parameter optimization
-          changedInfo:
-            - 'The search and chat APIs have the relativity parameter for filtering recalled memories by relevance score. This update sets the default relevance threshold to 0.45.'
-        - type: Log optimization
-          changedInfo:
-            - 'Intercept some log errors and adjust the log level for certain logs.'
+    date: '2026-02-27'
+    products:
+      cloud:
+        New Features:
+          - type: Memory Version
+            changedInfo:
+              - Automatic conflict/duplicate detection, merge, and archive on add
+        Improvements:
+          - type: Relativity Defaults
+            changedInfo:
+              - Default relativity threshold set to 0.45 for search and chat
+          - type: Logging
+            changedInfo:
+              - Adjusted log levels and suppressed noisy errors
+        Bug Fixes:
+          - type: Preference Embedding
+            changedInfo:
+              - Fixed preference embedding recomputation to only process missing entries
   - name: v2.0.6
-    date: 2026-02-12
-    changedInfo:
-      New Features:
-        - type: Retrieval Optimization
-          changedInfo:
-            - 'Added keyword-based search in the search phase, while relativity continues to use cosine similarity of embeddings.'
-            - 'Added a relativity output field to the Chat API, allowing users to control the retrieval threshold during conversations using relativity.'
-      Bug Fixes:
-        - type: Fixes
-          changedInfo:
-            - 'Fixed an issue where an incorrect field was used in preference memory threshold filtering.'
-            - 'Fixed an issue that caused failures or hanging when calling the get_memory API with the filter parameter containing both field conditions and logical operators such as AND/OR/NOT.'
-            - 'Fixed issues related to passing extra body parameters to LLMs, ensuring compatibility with the enable thinking parameter input'
+    date: '2026-02-11'
+    products:
+      cloud:
+        New Features:
+          - type: Keyword Search
+            changedInfo:
+              - Added keyword recall path while keeping embedding-based relativity
+          - type: Chat Relativity
+            changedInfo:
+              - Chat API accepts relativity to control retrieval threshold
+        Bug Fixes:
+          - type: API & Model Fixes
+            changedInfo:
+              - Preference threshold field fix
+              - get_memory filter logic fix
+              - LLM extra_body / enable_thinking compatibility
+      opensource:
+        New Features:
+          - type: Multi-perspective Memory
+            changedInfo:
+              - Each agent memory cube can maintain its own subjective perspective
+          - type: Multi-perspective Demo
+            changedInfo:
+              - Ao Tai Line hiking mini-game demo
   - name: v2.0.5
-    date: 2026-02-10
-    changedInfo:
-      New Features:
-        - type: Knowledge Base Retrieval Optimization
-          changedInfo:
-            - 'Dual-track retrieval: Supports coordinated storage and retrieval of "original text + memory", with customizable recall modes.'
-            - 'Context wake-up: Supports recalling surrounding context before/after chunks to improve semantic coherence in long texts.'
-            - 'Relevance filtering: The search API adds a relativity field (0~1) to filter low-quality recalls by threshold.'
-        - type: MindDock
-          changedInfo:
-            - 'Cloud Skill: Added cloud skill support and a quick entry.'
-            - 'Real-time prompt injection: Dynamically inject Skill modules during chat to enable skill interoperability across models.'
-        - type: MCP Memory Deletion
-          changedInfo:
-            - When deletion intent is detected, synchronously trigger deleteMemory and addFeedback.
-      Improvements:
-        - type: Scheduling & Retrieval Pipeline Refactor
-          changedInfo:
-            - 'Pipeline refactor: Rebuilt the retrieval chain into four stages—Search -> Enhance -> Rerank -> Filter—scheduled by a unified API.'
-            - 'Scheduling optimization: Modularized the task processor and fixed Redis Streams serialization and user_context passing issues.'
-        - type: Skills Improvements
-          changedInfo:
-            - 'Skill docs localization: Supports local storage of skill docs and generates dedicated URLs, downloadable directly via API.'
-            - "Skill generation optimization: Can now generate richer and more complete skills from users' historical information."
-      Bug Fixes:
-        - type: Playground Improvements
-          changedInfo:
-            - Fixed known UX issues and improved environment stability.
+    date: '2026-02-09'
+    products:
+      cloud:
+        New Features:
+          - type: Search Relativity
+            changedInfo:
+              - Added relativity field (0~1) to filter recalled memories by relevance score
+        Improvements:
+          - type: Skills
+            changedInfo:
+              - Local skill document storage with URLs
+              - Richer skill generation from user history
+      plugin:
+        New Features:
+          - type: MindDock Cloud Skills
+            changedInfo:
+              - Skill page entry in plugin UI
+              - Real-time Skill prompt injection across chatbots
+      mcp:
+        New Features:
+          - type: MCP Memory Deletion
+            changedInfo:
+              - Delete intent triggers both deleteMemory and addFeedback
+      playground:
+        Bug Fixes:
+          - type: Playground
+            changedInfo:
+              - Fixed known UX issues and improved environment stability
+      opensource:
+        New Features:
+          - type: Knowledge Base Search
+            changedInfo:
+              - Dual-track raw text + memory retrieval
+              - Context neighbor recall for long documents
+        Improvements:
+          - type: Search Pipeline Refactor
+            changedInfo:
+              - Search -> Enhance -> Rerank -> Filter pipeline
+              - Modular schedulers with Redis Streams fixes
   - name: v2.0.4
-    date: 2026-01-30
-    changedInfo:
-      New Features:
-        - type: Core Capabilities
-          changedInfo:
-            - Added Skill Memory.
-            - Added modules supporting memory versioning.
-            - Added chat/completions interface, compatible with OAI protocol.
-      Improvements:
-        - type: Retrieval Optimization
-          changedInfo:
-            - Reduced duplication between factual and preference memories during retrieval.
-      Bug Fixes:
-        - type: Bug Fixes
-          changedInfo:
-            - Fixed bug for new users in Playground.
-            - Fixed occasional latency when adding memories in cloud service.
-            - Resolved graph database efficiency issues.
+    date: '2026-01-29'
+    products:
+      cloud:
+        New Features:
+          - type: Skill Memory
+            changedInfo:
+              - Extract skill memories from conversation history with downloadable skill files
+          - type: chat/completions
+            changedInfo:
+              - OpenAI-compatible chat/completions endpoint for no-code platforms
+        Bug Fixes:
+          - type: Cloud Stability
+            changedInfo:
+              - Fixed occasional add-memory stalls
+              - Improved graph database efficiency
+      playground:
+        Bug Fixes:
+          - type: Playground
+            changedInfo:
+              - Fixed system-busy error in Playground chat
+      opensource:
+        New Features:
+          - type: Conflict / Duplicate Detection
+            changedInfo:
+              - Related-memory recall and NLI-based conflict detection on add
+        Improvements:
+          - type: Search Deduplication
+            changedInfo:
+              - Reduced duplicate fact and preference recalls
   - name: v2.0.3
-    date: 2026-01-22
-    changedInfo:
-      New Features:
-        - type: Documentation
-          changedInfo:
-            - 'Open-source project documentation: Fixed formatting issues, improved example descriptions, resolved Chinese-English inconsistencies, and added practical usage tips.'
-        - type: Dashboard
-          changedInfo:
-            - 'Knowledge base now supports more file types: JSON, MD, XML.'
-        - type: GitHub Repository
-          changedInfo:
-            - Adjusted the startup approach (introduced a new server router class) and removed the reference to src/memos/product_api.py.
-      Improvements:
-        - type: Open Source
-          changedInfo:
-            - Optimized text and image memory addition by processing both types of information together as a single message.
-            - Knowledge base search now supports the 'all' field.
-      Bug Fixes:
-        - type: Open Source
-          changedInfo:
-            - Fixed an exception that occurred when the search input text was too long.
-
+    date: '2026-01-22'
+    products:
+      docs:
+        New Features:
+          - type: Open Source Docs
+            changedInfo:
+              - Documentation fixes and tips
+              - Server router startup examples
+              - API docs published on Apifox
+      cloud:
+        Improvements:
+          - type: Multimodal Memory
+            changedInfo:
+              - Image parsing now uses conversational context for better memory extraction
+          - type: Knowledge Base
+            changedInfo:
+              - JSON / Markdown / XML file support
+              - 'knowledgebase_ids: all for cross-project retrieval'
+        Bug Fixes:
+          - type: search/memory
+            changedInfo:
+              - Fixed failures when search input text is too long
   - name: v2.0.2
-    date: 2026-01-15
-    changedInfo:
-      New Features:
-        - type: Released "Knowledge Base Q&A Assistant" Construction Tutorial
-          changedInfo:
-            - Official documentation updated with best practices for "Developing Q&A Assistants Based on Knowledge Bases", guiding you step-by-step to build a "MemOS Knowledge Base Assistant".
-      Improvements:
-        - type: Knowledge Base Document Retrieval
-          changedInfo:
-            - Further improved the retrieval memory interface's ability to recall detailed knowledge base document content, optimizing answer quality for document-based queries.
-        - type: Tool Memory Mechanism
-          changedInfo:
-            - Added procedural experience for call trajectories to enhance the auxiliary effect of tool memory;
-            - Compressed tool schema information to avoid duplicate addition of ToolSchemaMemory.
-        - type: Fact Memory Merging and Archiving Mechanism
-          changedInfo:
-            - Added merging and archiving mechanisms in fact memory processing to optimize issues of duplicate memory writing and recall, while ensuring extraction completeness.
-        - type: Get Memory Interface
-          changedInfo:
-            - Support returning tool memories;
-            - Support returning memories under specific filtering conditions for debugging and display scenarios.
-      Bug Fixes:
-        - type: Get Memory Interface
-          changedInfo:
-            - Fixed call error in get memory interface when parameter include_preference=False.
+    date: '2026-01-15'
+    products:
+      docs:
+        New Features:
+          - type: Knowledge QA Assistant Guide
+            changedInfo:
+              - Added best-practice tutorial for building a MemOS knowledge-base assistant
+      cloud:
+        Improvements:
+          - type: Knowledge Base Recall
+            changedInfo:
+              - Better fine-grained document detail recall
+          - type: Tool Memory
+            changedInfo:
+              - Procedural tool-call experience
+              - Tool schema compression (>50% token reduction)
+          - type: Fact Memory Merge
+            changedInfo:
+              - Merge and archive mechanism to reduce duplicate writes/recalls
+          - type: get/memory
+            changedInfo:
+              - Tool memory in responses
+              - Filter-based memory listing for debugging
+        Bug Fixes:
+          - type: get/memory
+            changedInfo:
+              - Fixed error when include_preference=False
   - name: v2.0.1
-    date: 2026-01-08
-    changedInfo:
-      New Features:
-        - type: Get Memory Interface Launch
-          changedInfo:
-            - Get memory interface launched, supporting full retrieval of user memories.
-        - type: Chat Function Launch on Cloud Service
-          changedInfo:
-            - Chat function launched on cloud service, enabling one-click start of "memory-persistent" conversations.
-        - type: Playground Update
-          changedInfo:
-            - Playground memory management page supports memory deletion, allowing users to manually manage and delete expired memories they no longer need.
-      Improvements:
-        - type: Delete Memory Interface
-          changedInfo:
-            - Optimized delete memory interface to support deletion of all types of memories, including user memories, knowledge base memories, etc.
-        - type: Preference Memory
-          changedInfo:
-            - feedback interface added feedback processing operation for preference memory
-        - type: Memory Retrieval Optimization
-          changedInfo:
-            - search interface supports optional deduplication parameter, supporting semantic similarity deduplication to improve retrieval result diversity.
-      Bug Fixes:
-        - type: kv cache Issue Fix
-          changedInfo:
-            - Solved compatibility error of kv cache code in new version of memos
-        - type: Scheduling Module Issue Fix
-          changedInfo:
-            - Fixed error when scheduling enables local mode due to missing redis configuration
+    date: '2026-01-08'
+    products:
+      cloud:
+        New Features:
+          - type: Get Memory API
+            changedInfo:
+              - List all user memories with pagination
+          - type: Chat on Cloud
+            changedInfo:
+              - Chat API with memory-aware replies
+        Improvements:
+          - type: Delete Memory API
+            changedInfo:
+              - Delete any memory type without specifying user
+          - type: Preference Feedback
+            changedInfo:
+              - Feedback API now updates preference memories
+      playground:
+        New Features:
+          - type: Memory Deletion
+            changedInfo:
+              - Manual memory deletion in Playground memory management
+      opensource:
+        Improvements:
+          - type: Search Dedup
+            changedInfo:
+              - Optional dedup parameter (no/sim) for semantic deduplication
+        Bug Fixes:
+          - type: Scheduler & KV Cache
+            changedInfo:
+              - Local scheduler without Redis config fix
+              - KV cache compatibility fix
   - name: v2.0.0
-    date: 2025-12-24
-    changedInfo:
-      New Features:
-        - type: Knowledge Base & Memory
-          changedInfo:
-            - Added knowledge base support for long-term memory from documents and URLs
-        - type: Feedback & Memory Management
-          changedInfo:
-            - Added natural language feedback and correction for memories
-            - Added memory deletion API by memory ID
-            - Added MCP support for memory deletion and feedback
-        - type: Conversation & Retrieval
-          changedInfo:
-            - Added chat API with memory-aware retrieval
-            - Added memory filtering with custom tags (Cloud & Open Source)
-        - type: Multimodal & Tool Memory
-          changedInfo:
-            - Added tool memory for tool usage history
-            - Added image memory support for conversations and documents
-      Improvements:
-        - type: Data & Infrastructure
-          changedInfo:
-            - Upgraded database for better stability and performance
-        - type: Scheduler
-          changedInfo:
-            - Rebuilt scheduler with Redis Streams and queue isolation
-            - Added task priority, auto-recovery, and quota-based scheduling
-        - type: Deployment & Engineering
-          changedInfo:
-            - Added lightweight deployment with quick and full modes
-      Bug Fixes:
-        - type: Memory Scheduling & Updates
-          changedInfo:
-            - Fixed legacy scheduling API to ensure correct memory isolation
-            - Fixed memory update logging to show new memories correctly
-
+    date: '2025-12-23'
+    products:
+      cloud:
+        New Features:
+          - type: Knowledge Base
+            changedInfo:
+              - Multi-dimensional knowledge bases from documents or URLs
+              - Share knowledge bases across projects
+          - type: Feedback & Deletion
+            changedInfo:
+              - add_feedback for natural-language memory edits
+              - Cloud delete memory API by memory id
+          - type: Multimodal & Tool Memory
+            changedInfo:
+              - Image message memory
+              - Tool call trajectory memory
+              - Document and URL parsing via MemReader
+        Improvements:
+          - type: Database Upgrade
+            changedInfo:
+              - Connection management and batch insert improvements
+              - Custom tag/info filters on Search
+          - type: Scheduler Upgrade
+            changedInfo:
+              - Redis Streams multi-queue fair scheduling
+              - Pending task auto-recovery
+      mcp:
+        New Features:
+          - type: MCP Delete & Feedback
+            changedInfo:
+              - MCP supports delete_memory and add_feedback
+      opensource:
+        New Features:
+          - type: Chat API
+            changedInfo:
+              - Streaming and non-streaming Chat APIs
+        Improvements:
+          - type: Lightweight Deployment
+            changedInfo:
+              - Fast and full deployment modes
+        Bug Fixes:
+          - type: Scheduler Tasks
+            changedInfo:
+              - Legacy scheduler compatibility fix
+              - Memory update task logging fix
   - name: v1.1.3
     date: 2025-11-05
     changedInfo:

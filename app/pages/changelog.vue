@@ -1,4 +1,13 @@
 <script setup lang="ts">
+import {
+  getOrderedCategories,
+  getOrderedProductLines,
+  normalizeChangelogVersions,
+  type ChangelogCategory,
+  type ChangelogProductLine,
+  type ChangelogVersion
+} from '~/composables/useChangelog'
+
 const { t, locale } = useI18n()
 
 useHead({ title: () => t('changelog.title', '更新日志') })
@@ -7,10 +16,6 @@ const { data: releasesData } = await useAsyncData('releases', () => import('../.
 const { data: enChangelogData } = await useAsyncData('changelog-en', () => import('../../content/en/changelog.yml').then(m => m.default))
 const { data: cnChangelogData } = await useAsyncData('changelog-cn', () => import('../../content/cn/changelog.yml').then(m => m.default))
 
-interface ChangelogItem {
-  type: string
-  changedInfo: string[]
-}
 
 interface OpenSourceChange {
   type: string
@@ -26,14 +31,6 @@ interface Version {
   description?: string
   changedInfo: OpenSourceChange[]
   releaseUrl: string
-}
-
-interface ChangelogVersion {
-  name: string
-  date: string
-  changedInfo: {
-    [key: string]: ChangelogItem[]
-  }
 }
 
 interface ChangelogData {
@@ -123,15 +120,16 @@ const getCategoryClass = (category: string) => {
 
 const highlightVersions = computed(() => {
   const data = changelogData.value as unknown as ChangelogData
-  if (!data?.versions) return []
-  return data.versions.map(version => ({
+  return normalizeChangelogVersions(data).map(version => ({
     ...version,
-    changedInfo: version.changedInfo,
     ui: {
       container: 'max-w-3xl'
     }
   }))
 })
+
+const getProductLineLabel = (line: ChangelogProductLine) => t(`changelog.productLines.${line}`)
+const getCategoryLabel = (category: ChangelogCategory) => t(`changelog.categories.${category}`)
 
 const opensourceVersions = computed<Version[]>(() => {
   const versions = (releasesData.value?.versions ?? []) as Version[]
@@ -200,26 +198,87 @@ function handleTabChange(val: string | number) {
           }"
         >
           <template #body="{ version }">
-            <div class="space-y-6 changelog-info rounded-lg">
+            <div class="space-y-8 changelog-info rounded-lg">
               <div class="flex flex-col items-start">
                 <span class="text-xl text-slate-900 dark:text-white font-bold">{{ version.name }}</span>
               </div>
-              <div v-for="(items, category) in version.changedInfo" :key="String(category)" class="space-y-4">
-                <div class="flex text-lg items-center gap-2 font-medium font-bold text-[#10B981]" :class="getCategoryClass(String(category))">
-                  <UIcon :name="getCategoryIcon(String(category))" class="w-5 h-5" />
-                  {{ category }}
-                </div>
-                <div v-for="item in items" :key="item.type" class="space-y-2">
-                  <div class="text-l text-slate-900 dark:text-white flex items-center gap-2 changelog-info-title">
-                    {{ item.type }}:
+
+              <template v-if="version.legacy">
+                <div
+                  v-for="category in getOrderedCategories(version.changedInfo ?? {})"
+                  :key="category"
+                  class="space-y-4"
+                >
+                  <div
+                    class="flex text-base items-center gap-2 font-bold"
+                    :class="getCategoryClass(category)"
+                  >
+                    <UIcon :name="getCategoryIcon(category)" class="w-5 h-5" />
+                    {{ getCategoryLabel(category) }}
                   </div>
-                  <ul class="text-sm list-disc list-inside space-y-1 ml-4">
-                    <li v-for="(change, idx) in item.changedInfo" :key="idx" class="text-gray-700 dark:text-gray-300">
-                      {{ change }}
-                    </li>
-                  </ul>
+                  <div
+                    v-for="item in version.changedInfo![category]"
+                    :key="item.type"
+                    class="space-y-2"
+                  >
+                    <div class="text-l text-slate-900 dark:text-white changelog-info-title">
+                      {{ item.type }}:
+                    </div>
+                    <ul class="text-sm list-disc list-inside space-y-1 ml-4">
+                      <li
+                        v-for="(change, idx) in item.changedInfo"
+                        :key="idx"
+                        class="text-gray-700 dark:text-gray-300"
+                      >
+                        {{ change }}
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
+              </template>
+
+              <template v-else>
+                <div
+                  v-for="productLine in getOrderedProductLines(version.products ?? {})"
+                  :key="productLine"
+                  class="space-y-5"
+                >
+                  <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200 border-b border-default pb-2">
+                    {{ getProductLineLabel(productLine) }}
+                  </h3>
+                  <div
+                    v-for="category in getOrderedCategories(version.products![productLine]!)"
+                    :key="category"
+                    class="space-y-4 ml-1"
+                  >
+                    <div
+                      class="flex text-base items-center gap-2 font-bold"
+                      :class="getCategoryClass(category)"
+                    >
+                      <UIcon :name="getCategoryIcon(category)" class="w-5 h-5" />
+                      {{ getCategoryLabel(category) }}
+                    </div>
+                    <div
+                      v-for="item in version.products![productLine]![category]"
+                      :key="item.type"
+                      class="space-y-2"
+                    >
+                      <div class="text-l text-slate-900 dark:text-white changelog-info-title">
+                        {{ item.type }}:
+                      </div>
+                      <ul class="text-sm list-disc list-inside space-y-1 ml-4">
+                        <li
+                          v-for="(change, idx) in item.changedInfo"
+                          :key="idx"
+                          class="text-gray-700 dark:text-gray-300"
+                        >
+                          {{ change }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </template>
             </div>
           </template>
         </UChangelogVersions>
