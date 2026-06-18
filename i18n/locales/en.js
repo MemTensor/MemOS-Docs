@@ -97,7 +97,21 @@ export default {
   changelog: {
     title: 'Changelog',
     description: 'All notable changes to MemOS will be documented here',
-    releaseNotes: 'Release Notes'
+    releaseNotes: 'Release Notes',
+    productLines: {
+      cloud: 'MemOS Cloud',
+      docs: 'Documentation',
+      playground: 'Playground',
+      plugin: 'Plugin',
+      mcp: 'MCP',
+      opensource: 'Open Source'
+    },
+    legacySection: 'Updates',
+    categories: {
+      'New Features': 'New Features',
+      Improvements: 'Improvements',
+      'Bug Fixes': 'Bug Fixes'
+    }
   },
   dashboard: {
     nav: {

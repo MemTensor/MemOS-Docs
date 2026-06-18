@@ -97,7 +97,21 @@ export default {
   changelog: {
     title: '更新日志',
     description: '所有值得注意的更新和改进都将记录在这里',
-    releaseNotes: '发版说明'
+    releaseNotes: '发版说明',
+    productLines: {
+      cloud: '云服务',
+      docs: '官方文档',
+      playground: 'Playground',
+      plugin: '插件',
+      mcp: 'MCP',
+      opensource: '开源项目'
+    },
+    legacySection: '其他更新',
+    categories: {
+      'New Features': '功能更新',
+      Improvements: '优化改进',
+      'Bug Fixes': '问题修复'
+    }
   },
   dashboard: {
     nav: {

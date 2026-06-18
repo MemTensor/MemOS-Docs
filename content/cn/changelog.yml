@@ -1,383 +1,506 @@
 versions:
+  - name: v2.0.20
+    date: '2026-06-17'
+    products:
+      cloud:
+        Improvements:
+          - type: search 支持 context_format 参数
+            changedInfo:
+              - 通过 search context plugin 企业仓库插件形式接入
+              - 支持返回 memory / 原文 / 智能路由 3 种模式，默认返回 memory，不影响现有 search 行为
+              - 传入 sources / heuristic_routing 时返回相应 search 结果格式及时间、对话人相关渲染（主要支持 benchmark 评测）
+          - type: 调度任务优化
+            changedInfo:
+              - 调整调度任务并发数限制，避免后台任务抢占 CPU、线程资源与 PolarDB 连接
+              - 调整队列消费轮询间隔，降低空轮询频率与 CPU 消耗
+              - 增加日志和队列开关，减少高频搜索接口的日志写入量
   - name: v2.0.19
-    date: 2026-06-11
-    changedInfo:
-      Improvements:
-        - type: 本地插件
-          changedInfo:
-            - 本地插件算法优化，识别不同领域任务，注入优化过的通用prompt
-
+    date: '2026-06-11'
+    products:
+      cloud:
+        New Features:
+          - type: MemOS Cloud CLI 能力增强
+            changedInfo:
+              - 支持 MemOS Cloud 知识库相关接口，适配 Agent 扩展至 12 个
+        Improvements:
+          - type: Dashboard 体验优化
+            changedInfo:
+              - 优化快速开始的展示逻辑
+              - 新增一键接入提示词
+      docs:
+        Improvements:
+          - type: 文档优化
+            changedInfo:
+              - 新增通过对话的形式为 Agent 自动接入或集成 MemOS Cloud 的指南
+      plugin:
+        Improvements:
+          - type: 本地插件算法优化
+            changedInfo:
+              - 本地插件算法优化，识别不同领域任务，注入优化过的通用 prompt
   - name: v2.0.17
-    date: 2026-05-21
-    changedInfo:
-      New Features:
-        - type: Dream核心功能发布
-          changedInfo:
-            - fine模式下add后写入dream相关线索到记忆节点
-            - dream阶段做Context上下文绑定与摘要，形成context节点
-            - search侧支持召回context节点，开关配置
-            - dream diary修复 & 加入context相关内容
-            - 插件中注册dream & 修复之前dream链路的部分问题
-      Bug Fixes:
-        - type: Skill生成bug修复
-          changedInfo:
-            - 修复频繁生成无意义的Skill的问题
-
+    date: '2026-05-21'
+    products:
+      cloud:
+        New Features:
+          - type: Dream 核心功能发布
+            changedInfo:
+              - fine 模式下 add 后写入 dream 相关线索到记忆节点
+              - dream 阶段做 Context 上下文绑定与摘要，形成 context 节点
+              - search 侧支持召回 context 节点，开关配置
+              - dream diary 修复并加入 context 相关内容
+              - 插件中注册 dream 并修复之前 dream 链路的部分问题
+          - type: 时间敏感记忆优化
+            changedInfo:
+              - 补充时间相关信息的 LLM 回写方法 batch 化，减少 LLM 调用
+        Bug Fixes:
+          - type: Skill 生成修复
+            changedInfo:
+              - 修复频繁生成无意义 Skill 的问题，现在至少 5 轮工具调用历史才会触发沉淀生成
+              - 调度任务丢失及 Redis 序列化修复
   - name: v2.0.16
-    date: 2026-05-14
-    changedInfo:
-      Improvements:
-        - type: 关键词检索优化
-          changedInfo:
-            - 动态调整关键词检索时选取的分词数量，只选取特定类型的分词
-        - type: polardb数据存储优化
-          changedInfo:
-            - 针对原单图存储所有用户数据导致的亿级数据量下检索性能劣化、并发锁竞争问题，通过对用户记忆数据进行水平拆分，并采用双写+读切换模式平滑迁移，有效解决亿级数据性能瓶颈，预期写入、检索等操作耗时大幅降低。
-        - type: 文档更新
-          changedInfo:
-            - 新增 docs 下的开源文档及 examples/README.md
-            - OpenClaw Plugin 文档完善：新增本地插件指南、Hermes 插件说明、多 Agent 示例、recall filter 示例、插件对比与变更说明。
-            - 贡献者文档完善：新增根目录 CONTRIBUTING.md，补充开发环境、工作流、提交规范、测试规范、文档贡献规范等。
-        - type: 测试脚本补全
-          changedInfo:
-            - 新增 tests/mem_feedback 和 tests/reranker
-          
+    date: '2026-05-14'
+    products:
+      cloud:
+        Improvements:
+          - type: 关键词检索分词选取优化
+            changedInfo:
+              - 动态调整关键词检索时选取的分词数量，只选取特定类型的分词
+          - type: 检索侧记忆版本优化
+            changedInfo:
+              - 检索侧记忆版本增加开关
+              - 去除对效果影响不大但可能影响检索性能的额外 sidecar recall
+          - type: PolarDB 数据存储优化
+            changedInfo:
+              - 针对单图存储所有用户数据导致的亿级数据量下检索性能劣化、并发锁竞争问题，通过对用户记忆数据进行水平拆分，并采用双写 + 读切换模式平滑迁移，有效解决亿级数据性能瓶颈
+        Bug Fixes:
+          - type: 记忆版本问题修复
+            changedInfo:
+              - 修复同一次添加 / 其他记忆添加造成多次版本更新的问题
+              - 修复单元测试问题
+      docs:
+        Improvements:
+          - type: 文档体系补全
+            changedInfo:
+              - 新增 docs 下的开源文档及 examples/README.md
+              - OpenClaw Plugin 文档完善：新增本地插件指南、Hermes 插件说明、多 Agent 示例、recall filter 示例、插件对比与变更说明
+              - 贡献者文档完善：新增根目录 CONTRIBUTING.md，补充开发环境、工作流、提交规范、测试规范、文档贡献规范等
+      opensource:
+        Improvements:
+          - type: 测试脚本补全
+            changedInfo:
+              - 新增 tests/mem_feedback 和 tests/reranker
   - name: v2.0.15
-    date: 2026-05-08
-    changedInfo:
-      New Features:
-        - type: 支持skill上传
-          changedInfo:
-            - 支持将用户提供的可下载skill链接构建出skill记忆，同时支持skill记忆的检索
-
-            
+    date: '2026-05-08'
+    products:
+      cloud:
+        Improvements:
+          - type: 关键词检索优化
+            changedInfo:
+              - 中文查询使用 jieba.analyse.extract_tags 提取高权重词，最多 12 个
+              - 英文查询走 tokenizer / 正则分词，同样限制最多 12 个关键词
+              - 强制校验 user_name，为空直接报错，避免跨用户大范围查询
+        New Features:
+          - type: 时间敏感的记忆版本
+            changedInfo:
+              - 写入侧抽取 timespec 和 memory_form（state/event）信息，state 类记忆走版本合并，event 类不走版本
+              - 检索侧判断 query 是否与时间相关，并在相关时补充 history 版本与时间敏感 rerank
+          - type: 支持用户上传 Skill
+            changedInfo:
+              - 用户可通过记忆添加接口上传自己的 skill，形成 skill 记忆并支持检索
+              - 通过记忆搜索接口可召回上传 skill 时生成的 skill 记忆
+      opensource:
+        New Features:
+          - type: Skill 上传支持
+            changedInfo:
+              - 支持将用户提供的可下载 skill 链接构建出 skill 记忆，同时支持 skill 记忆的检索
   - name: v2.0.14
-    date: 2026-04-23
-    changedInfo:
-      New Features:
-        - type: 代码架构
-          changedInfo:
-            - 引入轻量级插件机制
-      Improvements:
-        - type: 调度模块
-          changedInfo:
-            - 调度任务优化
-      Bug Fixes:
-        - type: PolarDB数据库
-          changedInfo:
-            - 修复polardb get_node和get_nodes的metadata嵌套bug
-        - type: MemReader组件
-          changedInfo:
-            - 修复memreader chunking bug
-        - type: 记忆版本管理
-          changedInfo:
-            - 修复记忆版本对同一段memory原文分出的chunks之间也会生效的bug
-
+    date: '2026-04-23'
+    products:
+      cloud:
+        Bug Fixes:
+          - type: 记忆版本
+            changedInfo:
+              - 修复记忆版本对同一段 memory 原文分出的 chunks 之间也会生效的 bug
+      opensource:
+        New Features:
+          - type: 引入插件机制
+            changedInfo:
+              - 引入轻量级插件框架，支持通过 @hookable 钩子机制和 entry_points 自动发现，将可选功能从核心代码中解耦为独立可插拔模块
+        Improvements:
+          - type: 调度任务优化
+            changedInfo:
+              - message_pack_cache 加容量上限，支持动态调整
+              - 拉数据拆分为短锁 + 无锁 + 短锁，Redis I/O 不再阻塞消费线程
+              - 增加 _refill_in_progress 标记与双重检查，避免重复拉取
+              - seen_streams 定期清理不活跃 key
+              - _empty_stream_seen_times 定期清理孤儿记录
+              - Redis 调用移出锁外，锁内只操作内存
+        Bug Fixes:
+          - type: PolarDB 与 MemReader
+            changedInfo:
+              - 修复 PolarDB get_node 和 get_nodes 的 metadata 嵌套 bug
+              - 修复 memreader chunking bug
+          - type: 大模型输出 JSON 解析
+            changedInfo:
+              - 修复大模型输出 JSON 解析问题（#1526）
   - name: v2.0.13
-    date: 2026-04-09
-    changedInfo:
-      Improvements:
-        - type: 调度日志分级优化
-          changedInfo:
-            - 将高频、重复、逐条打印的日志从 info 下调到 debug，明显降低线上日志噪音和存储压力。
-        - type: 队列日志结构化
-          changedInfo:
-            - 本地队列和 Redis 队列日志统一为结构化字段（如 label/item_id/user_id/mem_cube_id/stream），避免大段内容日志，检索和聚合更稳定
-        - type: 调度链路关键路径可观测
-          changedInfo:
-            - 补齐“提交 -> 出队 -> 分发”关键节点的摘要日志，定位堆积、分发异常、任务拥堵更快。
-
+    date: '2026-04-09'
+    products:
+      cloud:
+        Improvements:
+          - type: 服务优化
+            changedInfo:
+              - 调度日志分级优化：将高频、重复、逐条打印的日志从 info 下调到 debug
+              - 队列日志结构化：本地队列和 Redis 队列日志统一为结构化字段
+              - 调度链路关键路径可观测：补齐「提交 -> 出队 -> 分发」关键节点的摘要日志
   - name: v2.0.12
-    date: 2026-04-02
-    changedInfo:
-      Improvements:
-        - type: 服务优化
-          changedInfo:
-            - 新增最小线程数抽取为可配置参数，支持运行时动态调整线程池大小，有效控制活跃连接数，避免因瞬时流量激增导致系统负载飙升
-
+    date: '2026-04-02'
+    products:
+      cloud:
+        Improvements:
+          - type: 服务优化
+            changedInfo:
+              - 新增最小线程数为可配置参数，支持运行时动态调整线程池大小，有效控制活跃连接数
+              - 记忆版本分流机制优化，改为用 LLM 分流，提升分流准确率并大幅提升 skip 记忆版本的 case 召回
   - name: v2.0.11
-    date: 2026-03-26
-    changedInfo:
-      New Features:
-        - type: LLM 与搜索能力
-          changedInfo:
-            - 新增 MiniMax 作为 LLM Provider，遵循与 Qwen、DeepSeek 相同的接入模式，通过 OpenAI 兼容 API 对接。
-            - 新增 Tavily 作为可插拔的互联网搜索后端。通过配置即可启用 Tavily API 进行实时网络搜索，为记忆系统提供外部知识补充能力。
-        - type: 部署与运维 
-          changedInfo:
-            - 新增 health check API 端点，用于服务状态监控。支持容器编排（如 Kubernetes liveness/readiness probe）和负载均衡器的健康探测。
-            - 新增生产级 Dockerfile（多阶段构建）和 Kubernetes Helm Chart，包含 MemOS API 服务、Neo4j 图数据库、Qdrant 向量数据库的编排配置，以及 Ingress 和示例 values 文件，支持一键部署到 K8s 集群。
-        - type: 接口能力扩展
-          changedInfo:
-            - 此前 delete_memory 接口仅支持按 memory_id 删除。本次更新扩展了删除过滤条件，支持通过 user_id 和 conversation_id 批量删除记忆，并在 API 层增加了过滤参数校验，同时为 PostgreSQL 后端实现了 delete_node_by_params 方法。
-      Bug Fixes:
-        - type: MCP 与消息处理
-          changedInfo:
-            - 修复 MCP add_memory 工具消息格式问题；
-            - 修复 get_further_suggestion 无法处理 string 类型输入参数的问题。
-        - type: 记忆与反馈
-          changedInfo:
-            - 修复用户对记忆执行 feedback 操作后，相关记忆节点被错误归档（archived），导致后续检索时无法命中的问题；
-        - type: Neo4j 
-          changedInfo:
-            - 修复 Neo4j 检索后过滤逻辑的问题；
-            - 修复 Neo4j 嵌套 metadata 写入问题。
-
+    date: '2026-03-26'
+    products:
+      opensource:
+        New Features:
+          - type: LLM 与搜索能力
+            changedInfo:
+              - 新增 MiniMax 作为 LLM Provider（#1291）
+              - 新增 health check API 端点（#1248）
+              - delete_memory 接口支持 user_id 和 conversation_id 过滤条件（#1104）
+              - 新增 Tavily 作为可插拔的互联网搜索后端（#1357）
+              - 新增生产级 Dockerfile 和 Kubernetes Helm Chart（#1293）
+        Improvements:
+          - type: 调度与服务优化
+            changedInfo:
+              - '优化线程池调度策略，改善内存使用率（#1326, #1363）'
+              - 优化 PolarDB export_graph 执行路径（#1337）
+              - 改进 API 校验错误信息，返回内容包含请求上下文（#1350）
+          - type: API 重构
+            changedInfo:
+              - 整合分散的 API 接口至 server_api，移除已废弃的 Nebula 图数据库支持及旧版 product/core 文件（#1344）
+        Bug Fixes:
+          - type: 数据库与记忆
+            changedInfo:
+              - 修复 Neo4j 向量搜索 pre-filter 逻辑（#1359）
+              - 修复嵌套 metadata 写入问题（#1178）
+              - 修复 feedback 后记忆节点被误归档导致无法检索的问题（#1243）
+          - type: MCP 与 API
+            changedInfo:
+              - 修复 MCP add_memory 工具消息格式问题（#1275）
+              - 修复 get_further_suggestion 无法处理 string 类型输入参数的问题（#1218）
   - name: v2.0.10
-    date: 2026-03-19
-    changedInfo:
-      Improvements:
-        - type: PolarDB底层数据库
-          changedInfo:
-            - polardb优化升级，针对查询带有多种过滤条件的执行路径进行优化，通过使用新增内核能力改善cpu和内存使用率情况，使得查询能够数倍加速，缓解系统压力。
-        - type: 记忆版本服务优化
-          changedInfo:
-            - 记忆版本插件化。
-            - NLI模型添加高可用。
-            - memreader处记忆版本增加路由，若无相关记忆召回/召回内容经nli模型全判断为无关，则走旧prompt和模型，否则才走记忆版本插件(qwen-flash)。
-        - type: 服务优化
-          changedInfo:
-            - 调度任务优化改进，改善内存使用率情况。
-
+    date: '2026-03-19'
+    products:
+      cloud:
+        Improvements:
+          - type: PolarDB 底层数据库
+            changedInfo:
+              - PolarDB 优化升级，针对多种过滤条件的查询路径进行优化，查询数倍加速
+              - MemReader 模型更新为 0.6B 小模型，单次请求与高并发延迟显著降低
+          - type: 记忆版本服务优化
+            changedInfo:
+              - 记忆版本插件化
+              - NLI 模型添加高可用
+              - memreader 处记忆版本增加路由，无关召回走旧 prompt 和模型，否则走记忆版本插件（qwen-flash）
+          - type: 服务优化
+            changedInfo:
+              - 调度任务优化改进，改善内存使用率情况
   - name: v2.0.9
-    date: 2026-03-16
-    changedInfo:
-      Improvements:
-        - type: 记忆版本兼容 feedback
-          changedInfo:
-            - Feedback对节点更新时，走记忆版本逻辑，会更新到原节点，并把旧内容推到 history 字段中。
-        - type: 记忆版本优化
-          changedInfo:
-            - 记忆版本在冲突消解/重复合并的过程中，全面优化了“恢复过去版本当中的独立事实”这条链路，当前能够更稳定、准确地恢复出独立事实，保留记忆信息完整，并减少由于模型回答不稳定而造成的记忆错乱。
-      Bug Fixes:
-        - type: 记忆版本参数等 bug 修复
-          changedInfo:
-            - 记忆版本参数校验、更新后 key 为空、update时间错误的几个 bug 修复。
-        - type: feedback 问题修复
-          changedInfo:
-            - Feedback过程中sources为空的问题修复.
+    date: '2026-03-13'
+    products:
+      cloud:
+        Improvements:
+          - type: 记忆版本
+            changedInfo:
+              - 记忆版本兼容 feedback：feedback 对节点更新时走记忆版本逻辑，旧内容推到 history 字段
+              - 全面优化「恢复过去版本当中的独立事实」链路，更稳定准确地恢复独立事实
+        Bug Fixes:
+          - type: 记忆版本与 feedback
+            changedInfo:
+              - 记忆版本参数校验、更新后 key 为空、update 时间错误的 bug 修复
+              - feedback 过程中 sources 为空的问题修复
   - name: v2.0.8
-    date: 2026-03-05
-    changedInfo:
-      New Features:
-        - type: 新功能
-          changedInfo:
-            - 添加记忆时，会自动对冲突/重复记忆进行检测、合并和归档，保留最新记忆内容，并将旧记忆内容放在历史字段中；
-      Improvements:
-        - type: 偏好记忆迁移到图数据库
-          changedInfo:
-            - 偏好记忆迁移到图数据库，和其他记忆类型统一；
-        - type: 记忆版本优化
-          changedInfo:
-            - 记忆版本功能完全迁移到异步执行，不影响async_mode=true时的addMessage接口时延；
-        - type: 数据库优化
-          changedInfo:
-            - 采用信号量实现精细化的并发限流，结合故障连接自动剔除与线程生命周期管理，提升系统在高并发下的稳定性。
-            - 优化日志级别与内容，保留关键执行轨迹，降低日志写入对数据库性能的影响。
-            - 通过触发式预热，将热数据加载至缓存，避免冷启动带来的高延迟。
-      Bug Fixes:
-        - type: 记忆快添加的bug
-          changedInfo:
-            - 记忆添加时，如果选用了MultiModalStruct，在fast模式下部分情况没有进行embedding操作，导致快速模式记忆无法被搜索到；
-        - type: 多模态记忆bug
-          changedInfo:
-            - 对于图片类记忆，修复没有单独解读图片内容的bug。
-        - type: 记忆检索
-          changedInfo:
-            - 记忆检索减少重复调用get_by_metadata，降低了记忆检索耗时
-        - type: 记忆版本并发问题修复
-          changedInfo:
-            - 记忆版本功能现在在并发add（小于add接口时延的短时间内收到多个add请求，并且add的是相关的记忆）情况下，也会按照时间顺序依次合并处理，而不是fallback到不处理
+    date: '2026-03-05'
+    products:
+      cloud:
+        New Features:
+          - type: 记忆版本
+            changedInfo:
+              - 添加记忆时自动对冲突 / 重复记忆进行检测、合并和归档，保留最新记忆内容，并将旧记忆内容放在历史字段中（本次将开关打开）
+        Improvements:
+          - type: 偏好记忆迁移到图数据库
+            changedInfo:
+              - 偏好记忆迁移到图数据库，和其他记忆类型统一
+          - type: 记忆版本优化
+            changedInfo:
+              - 记忆版本功能完全迁移到异步执行，不影响 async_mode=true 时的 addMessage 接口时延
+          - type: 记忆检索
+            changedInfo:
+              - 记忆检索减少重复调用 get_by_metadata，降低了记忆检索耗时
+        Bug Fixes:
+          - type: 记忆添加与检索
+            changedInfo:
+              - 修复 MultiModalStruct 在 fast 模式下部分情况未进行 embedding 导致无法被搜索的问题
+              - 修复图片类记忆没有单独解读图片内容的 bug
+              - 修复记忆版本在并发 add 情况下按时间顺序依次合并处理的问题
+      opensource:
+        Improvements:
+          - type: 性能优化
+            changedInfo:
+              - 全文检索预热：通过触发式预热将热数据加载至缓存
+              - 线程池弹性控制：采用信号量实现精细化并发限流
+              - 数据库日志精简：优化日志级别与内容，降低日志写入对数据库性能的影响
   - name: v2.0.7
-    date: 2026-02-27
-    changedInfo:
-      Improvements:
-        - type: 参数优化
-          changedInfo:
-            - search接口和chat接口的参数relativity，用于通过相关性分数来筛选召回的记忆，本次优化将相关性阈值默认值都设置为 0.45
-        - type: 日志优化
-          changedInfo:
-            - 拦截部分日志报错，对部分日志级别进行调整
+    date: '2026-02-27'
+    products:
+      cloud:
+        New Features:
+          - type: 记忆版本
+            changedInfo:
+              - 添加记忆时自动对冲突 / 重复记忆进行检测、合并和归档，保留最新记忆内容，并将旧记忆内容放在历史字段中
+        Improvements:
+          - type: 记忆检索 relativity 参数
+            changedInfo:
+              - search 接口和 chat 接口的 relativity 参数默认值修改为 0.45
+          - type: 日志优化
+            changedInfo:
+              - 拦截部分日志报错，对部分日志级别进行调整
+        Bug Fixes:
+          - type: 偏好记忆 embedding
+            changedInfo:
+              - 修复检索时获取偏好记忆 embedding 错误，缺失 embedding 时只计算缺失部分而非全量重算
   - name: v2.0.6
-    date: 2026-02-12
-    changedInfo:
-      New Features:
-        - type: 检索优化
-          changedInfo:
-            - search 阶段新增关键词检索，并且 relativity 仍使用 embedding 的余弦相似度
-            - Chat 接口加入 relativity 输出字段，用户可以使用 relativity 来控制聊天中的检索阈值
-      Bug Fixes:
-        - type: 问题修复
-          changedInfo:
-            - 修复偏好记忆阈值筛选使用字段错误的问题
-            - 修复了一个导致调用 get_memory 接口时 filter 参数同时传入 field condition 和 AND/OR/NOT 等逻辑操作符时会发生调用失败或卡顿的问题
-            - 修复一些 LLM extra body 传入问题，兼容 LLM 的 enable thinking 参数输入
+    date: '2026-02-11'
+    products:
+      cloud:
+        New Features:
+          - type: search 检索优化
+            changedInfo:
+              - 事实记忆召回时新增一路关键词召回，relativity 仍使用 embedding 相似度
+          - type: chat 支持 relativity
+            changedInfo:
+              - chat 接口加入 relativity 字段，用户可使用 relativity 控制聊天中的检索阈值
+        Bug Fixes:
+          - type: 接口与模型适配
+            changedInfo:
+              - 修复偏好记忆阈值筛选使用字段错误的问题
+              - 修复 get_memory 接口 filter 参数同时传入 field condition 和 AND/OR/NOT 时调用失败或卡顿的问题
+              - 修复 LLM extra body 传入问题，兼容 enable thinking 参数输入
+      opensource:
+        New Features:
+          - type: 多视角记忆
+            changedInfo:
+              - 让每个 agent 记忆体拥有自己的主观视角记忆世界
+          - type: 多视角记忆 DEMO
+            changedInfo:
+              - 基于多视角的小游戏「冲顶鳌太线」，组队冲顶
   - name: v2.0.5
-    date: 2026-02-10
-    changedInfo:
-      New Features:
-        - type: 知识库检索优化
-          changedInfo:
-            - 双轨检索：支持“原文+记忆”协同存储与检索，可自定义召回模式。
-            - 上下文唤醒：支持召回分片前后的上下文，增强长文本语义连贯性。
-            - 相关性精筛：search 接口新增 relativity 字段（0~1），支持按阈值过滤低质召回。
-        - type: MindDock
-          changedInfo:
-            - 云服务 Skill：新增云服务技能支持及快捷入口。
-            - Prompt 实时注入：聊天中动态注入 Skill 模块，实现多模型间技能互通。
-        - type: MCP 记忆删除
-          changedInfo:
-            - 当识别删除意图时，同步触发 deleteMemory 与 addFeedback。
-      Improvements:
-        - type: 调度与检索 pipeline 重构
-          changedInfo:
-            - Pipeline 重构：检索链路重构为 Search -> Enhance -> Rerank -> Filter 四阶段，由统一 API 调度。
-            - 调度优化：任务处理器模块化，修复 Redis Streams 序列化及 user_context 传递问题。
-        - type: Skills 优化
-          changedInfo:
-            - Skills 文档本地化：支持技能文档本地存储并生成专属 URL，可通过接口直接下载。
-            - Skills 生成优化：目前能够从用户添加的历史信息中生成更丰富完整的 skills。
-      Bug Fixes:
-        - type: Playground 优化
-          changedInfo:
-            - 修复已知体验问题，提升环境稳定性。
+    date: '2026-02-09'
+    products:
+      cloud:
+        New Features:
+          - type: search 接口 relativity 字段
+            changedInfo:
+              - search 接口新增 relativity 字段（0~1），支持按相关性分数筛选召回的记忆
+        Improvements:
+          - type: Skills 优化
+            changedInfo:
+              - 技能文档支持本地保存并生成专属访问 URL
+              - 能够从用户添加的历史信息中生成更丰富完整的 skills
+      plugin:
+        New Features:
+          - type: MindDock 云服务 Skill
+            changedInfo:
+              - 插件页面添加跳转 Skill 的入口
+              - chatBot 实时聊天注入的 prompt 中新增 Skill 模块，让各模型历史沉淀的 Skill 在所有 chatBot 中互通
+      mcp:
+        New Features:
+          - type: MCP 记忆删除
+            changedInfo:
+              - 识别删除意图后同时走 deleteMemory 和 addFeedback 两条路径
+      playground:
+        Bug Fixes:
+          - type: Playground 优化
+            changedInfo:
+              - 修复已知体验问题，提升环境稳定性
+      opensource:
+        New Features:
+          - type: 知识库检索优化
+            changedInfo:
+              - 支持「原文 + 记忆」协同存储与检索，可自定义召回模式
+              - 支持召回分片前后的上下文，增强长文本语义连贯性
+        Improvements:
+          - type: 调度与检索 pipeline 重构
+            changedInfo:
+              - 检索链路重构为 Search -> Enhance -> Rerank -> Filter 四阶段
+              - 调度任务处理器模块化，修复 Redis Streams 序列化及 user_context 传递问题
   - name: v2.0.4
-    date: 2026-01-30
-    changedInfo:
-      New Features:
-        - type: 核心能力
-          changedInfo:
-            - 新增 Skill Memory。
-            - 新增对记忆版本功能做支持的相关模块。
-            - 新增 chat/completions 接口，兼容 OAI 协议。
-      Improvements:
-        - type: 检索优化
-          changedInfo:
-            - 减少了检索阶段事实记忆与偏好记忆的重复。
-      Bug Fixes:
-        - type: 问题修复
-          changedInfo:
-            - 解决 Playground 新用户 bug。
-            - 修复云服务添加记忆时偶发的卡顿问题。
-            - 解决图数据库效率问题。
+    date: '2026-01-29'
+    products:
+      cloud:
+        New Features:
+          - type: Skill Memory
+            changedInfo:
+              - 支持从用户历史消息中提炼 Skill 记忆，并生成可下载的 Skills 文件
+          - type: chat/completions 接口
+            changedInfo:
+              - 新增 chat/completions 接口，兼容 OpenAI 协议，可在 Chatbox / CherryStudio 等平台直接调用
+        Bug Fixes:
+          - type: 云服务稳定性
+            changedInfo:
+              - 修复云服务添加记忆时偶发的卡顿问题
+              - 解决图数据库效率问题
+      playground:
+        Bug Fixes:
+          - type: Playground
+            changedInfo:
+              - 修复 Playground 对话显示系统繁忙的问题
+      opensource:
+        New Features:
+          - type: 记忆冲突 / 重复检测
+            changedInfo:
+              - 新增记忆处理流程中的相关记忆召回模块
+              - 新增 NLI 模型模块，支持对冲突 / 重复情况做快速检测
+        Improvements:
+          - type: 检索优化
+            changedInfo:
+              - 优化检索阶段事实记忆与偏好记忆的重复，降低语义冗余
   - name: v2.0.3
-    date: 2026-01-22
-    changedInfo:
-      New Features:
-        - type: 文档
-          changedInfo:
-            - 开源项目文档，修复格式、示例描述、中英文不匹配问题，新增使用小 tips。
-        - type: Dashboard
-          changedInfo:
-            - 知识库新增支持文件类型, 支持 json、md、xml。
-        - type: GitHub 示例仓库
-          changedInfo:
-            - 调整启动方式（新建类server router），移除 src/memos/product_api.py 引用。
-      Improvements:
-        - type: 开源项目
-          changedInfo:
-            - 优化文字与图片记忆添加，将两类信息作为单条消息协同处理。
-            - 知识库检索支持 all 字段。
-      Bug Fixes:
-        - type: 开源项目
-          changedInfo:
-            - 修复当检索输入文本过长时的调用异常。
-
+    date: '2026-01-22'
+    products:
+      docs:
+        New Features:
+          - type: 开源项目文档
+            changedInfo:
+              - 修复官方文档格式错误、描述不当、中英文不一致等问题
+              - 新增项目使用 tips
+              - 官方示例调整为通过 server router 启动，移除对 product_api.py 的引用
+              - MemOS 接口文档上线 Apifox
+      cloud:
+        Improvements:
+          - type: 多模态记忆能力增强
+            changedInfo:
+              - 多模态图片解析引入上下文信息，使记忆结果更贴近用户表达与意图
+          - type: 知识库能力升级
+            changedInfo:
+              - 新增支持 JSON / Markdown / XML 文件类型
+              - 检索记忆时知识库范围新增 all 字段，一键检索项目下所有关联知识库
+        Bug Fixes:
+          - type: search/memory 接口
+            changedInfo:
+              - 修复在记忆检索场景中因输入文本过长导致的接口调用异常问题
   - name: v2.0.2
-    date: 2026-01-15
-    changedInfo:
-      New Features:
-        - type: 发布「知识库问答助手」搭建教程
-          changedInfo:
-            - 官方文档更新「基于及知识库开发问答助手」的最佳实践，手把手教你搭建“MemOS 知识库助手”。
-      Improvements:
-        - type: 知识库文档召回
-          changedInfo:
-            - 进一步提升检索记忆接口对知识库文档内容细节的召回能力，优化针对文档内容的回答效果。
-        - type: 工具记忆机制
-          changedInfo:
-            - 增加针对调用轨迹的程序性经验，提升工具记忆的辅助效果；
-            - 对工具 schema 信息压缩，避免重复添加 ToolSchemaMemory。
-        - type: 事实记忆合并和归档机制
-          changedInfo:
-            - 在事实记忆处理过程中增加了合并与归档机制，优化了记忆重复写入、重复召回的问题，同时保证不影响抽取完整性。
-        - type: 获取记忆接口
-          changedInfo:
-            - 支持返回工具记忆；
-            - 支持返回特定筛选条件下的记忆，用于调试、展示等场景。
-      Bug Fixes:
-        - type: 获取记忆接口
-          changedInfo:
-            - 修复了获取记忆接口在入参为 include_preference=False 时的调用错误。
-
+    date: '2026-01-15'
+    products:
+      docs:
+        New Features:
+          - type: 知识库问答助手教程
+            changedInfo:
+              - 官方文档更新「基于知识库开发问答助手」最佳实践，手把手搭建 MemOS 知识库助手
+      cloud:
+        Improvements:
+          - type: 知识库文档细节召回
+            changedInfo:
+              - 进一步提升检索记忆接口对知识库文档内容细节的召回能力
+          - type: 工具记忆机制
+            changedInfo:
+              - 增加针对调用轨迹的程序性经验，提升工具记忆的辅助效果
+              - 对工具 schema 信息压缩和去重，压缩率大于 50%
+          - type: 事实记忆合并与归档
+            changedInfo:
+              - 在事实记忆处理过程中增加合并与归档机制，优化记忆重复写入与重复召回问题
+          - type: get/memory 接口
+            changedInfo:
+              - 支持返回工具记忆
+              - 支持返回特定筛选条件下的记忆
+        Bug Fixes:
+          - type: get/memory 接口
+            changedInfo:
+              - 修复获取记忆接口在入参为 include_preference=False 时的调用错误
   - name: v2.0.1
-    date: 2026-01-08
-    changedInfo:
-      New Features:
-        - type: 获取记忆接口上线
-          changedInfo:
-            - 获取记忆接口上线，支持全量获取用户记忆。
-        - type: 对话功能上线云服务
-          changedInfo:
-            - 对话功能上线云服务，一键开始“记忆持久”的对话。
-        - type: Playground更新
-          changedInfo:
-            - Playground 记忆管理页支持记忆删除，支持用户手动管理删除不再需要的过期记忆。
-      Improvements:
-        - type: 删除记忆接口
-          changedInfo:
-            - 删除记忆接口优化，支持删除所有类型的记忆，包括用户记忆、知识库记忆等。
-        - type: 偏好记忆
-          changedInfo:
-            - feedback接口增加对偏好记忆的反馈处理操作
-        - type: 记忆检索优化
-          changedInfo:
-            - search接口支持可选的去重参数，支持语义相似去重以提升检索结果多样性。
-      Bug Fixes:
-        - type: kv cache问题修复
-          changedInfo:
-            - 解决kv cache代码在新版memos中因兼容性问题报错的问题
-        - type: 调度模块问题修复
-          changedInfo:
-            - 修复调度启用local模式时因为缺少redis配置而报错的问题
-
+    date: '2026-01-08'
+    products:
+      cloud:
+        New Features:
+          - type: 获取记忆功能上线
+            changedInfo:
+              - 获取记忆接口上线，支持全量 / 分页获取用户事实记忆与偏好记忆
+          - type: 对话功能上线
+            changedInfo:
+              - 对话功能上线云服务，支持搜索与 query 相关的记忆后进行回复
+        Improvements:
+          - type: 删除记忆接口优化
+            changedInfo:
+              - 无需指定用户，支持删除所有类型的记忆：用户记忆、知识库记忆等
+          - type: 偏好记忆反馈
+            changedInfo:
+              - feedback 接口增加对偏好记忆的反馈处理操作
+      playground:
+        New Features:
+          - type: 记忆管理页支持删除
+            changedInfo:
+              - Playground 记忆管理页支持记忆删除，用户可手动管理删除不再需要的过期记忆
+      opensource:
+        Improvements:
+          - type: search 去重
+            changedInfo:
+              - search 接口新增可选 dedup 参数（no/sim），支持语义相似去重以提升检索结果多样性
+        Bug Fixes:
+          - type: 调度与 KV Cache
+            changedInfo:
+              - 修复调度启用 local 模式时因缺少 redis 配置而报错的问题
+              - 修复 kv cache 代码在新版 memos 中因兼容性问题报错的问题
   - name: v2.0.0
-    date: 2025-12-24
-    changedInfo:
-      New Features:
-        - type: 知识库与记忆能力
-          changedInfo:
-            - 新增知识库功能，支持基于文档与 URL 构建可自我演进的长期记忆体系
-        - type: 反馈与记忆管理
-          changedInfo:
-            - 新增记忆反馈与修正能力，支持自然语言调整已有记忆
-            - 新增删除记忆接口，支持按 memory id 删除指定用户记忆
-            - MCP 新增记忆删除与反馈能力
-        - type: 对话与检索
-          changedInfo:
-            - 新增聊天接口，支持基于历史记忆的检索式回复
-            - 支持记忆过滤与自定义 tag / info 检索（云服务 & 开源项目）
-        - type: 多模态与工具记忆
-          changedInfo:
-            - 新增工具记忆支持，支持工具调用历史的经验抽取与检索
-            - 新增图片类消息记忆支持，支持对话与文档图片理解
-      Improvements:
-        - type: 数据与基础设施
-          changedInfo:
-            - 底层 DB 升级，提升稳定性、连接管理与数据操作性能
-        - type: 调度模块
-          changedInfo:
-            - 调度系统重构，引入 Redis Streams 与多级队列隔离机制
-            - 新增任务优先级、自动恢复与配额调度能力
-        - type: 部署与工程化
-          changedInfo:
-            - 新增轻量化部署模式，支持快速与完整两种部署方案
-      Bug Fixes:
-        - type: 记忆调度与更新任务
-          changedInfo:
-            - 修复旧版记忆调度接口兼容性问题，确保用户记忆隔离正确
-            - 修复记忆更新任务日志异常，确保新增记忆正常展示
-
+    date: '2025-12-23'
+    products:
+      cloud:
+        New Features:
+          - type: 知识库
+            changedInfo:
+              - 支持创建多维度知识库，通过上传文档或输入 URL 自动完成解析与切分
+              - 支持知识库与多个项目灵活关联，实现一次构建、多端复用
+          - type: 反馈与删除
+            changedInfo:
+              - 新增 add_feedback 接口，支持通过自然语言修正、补充或替换已有记忆
+              - 新增云服务删除记忆接口，支持按 memory id 删除指定用户记忆
+          - type: 多模态与工具记忆
+            changedInfo:
+              - 新增图片类消息的记忆支持，支持文档中的图表解析
+              - 新增工具记忆支持，记录 Agent 工具调用轨迹与经验
+              - 新增文档与 URL 解析，内置 MemReader 自动解析并转化为记忆
+        Improvements:
+          - type: 底层 DB 升级
+            changedInfo:
+              - 优化连接管理与批量插入，提升高并发场景下的稳定性与数据吞吐效率
+              - Search 接口新增自定义 tag 和 info 字段支持，并支持复杂逻辑运算过滤
+          - type: 调度系统升级
+            changedInfo:
+              - 引入 Redis Streams 多级队列架构，实现多租户公平调度
+              - 新增 Pending 任务自动恢复机制，确保高并发场景下任务稳定运行
+      mcp:
+        New Features:
+          - type: MCP 记忆删除与反馈
+            changedInfo:
+              - MCP 新增 delete_memory 与 add_feedback 能力，完整支持记忆的删除与反馈更新
+      opensource:
+        New Features:
+          - type: 聊天接口
+            changedInfo:
+              - 新增流式与非流式 Chat 接口，开箱即用
+        Improvements:
+          - type: 轻量化部署
+            changedInfo:
+              - 增加轻量化依赖包（快速模式、完整模式）部署方式
+        Bug Fixes:
+          - type: 记忆调度任务
+            changedInfo:
+              - 修复旧版记忆调度接口兼容性问题，确保用户记忆隔离正确
+              - 修复记忆更新任务日志异常，确保新增记忆正常展示
   - name: v1.1.3
     date: 2025-11-05
     changedInfo:
