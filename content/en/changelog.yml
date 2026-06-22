@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.21
+    date: '2026-06-23'
+    products:
+      cloud:
+        Improvements:
+          - type: search context_format update
+            changedInfo:
+              - Renamed the heuristic_routing mode in context_format to mixed, with behavior unchanged
   - name: v2.0.20
     date: '2026-06-17'
     products:

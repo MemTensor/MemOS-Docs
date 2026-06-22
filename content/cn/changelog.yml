@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.21
+    date: '2026-06-23'
+    products:
+      cloud:
+        Improvements:
+          - type: search context_format 参数更新
+            changedInfo:
+              - context_format 中的 heuristic_routing 模式名称改为 mixed，能力保持不变
   - name: v2.0.20
     date: '2026-06-17'
     products:
