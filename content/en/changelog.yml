@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.21
+    date: '2026-06-23'
+    products:
+      cloud:
+        Improvements:
+          - type: search context_format update
+            changedInfo:
+              - Renamed the heuristic_routing mode in context_format to mixed, with behavior unchanged
   - name: v2.0.20
     date: '2026-06-17'
     products:
@@ -6,9 +14,10 @@ versions:
         Improvements:
           - type: search context_format support
             changedInfo:
-              - Integrated via the enterprise search context plugin
-              - Supports memory, source text, and heuristic routing modes; defaults to memory without changing existing search behavior
-              - When sources or heuristic_routing is set, returns the matching search format plus time and speaker rendering (mainly for benchmark evaluation)
+              - Supports 3 modes: memory, sources, and heuristic_routing
+              - 'memory: returns the extracted memory text with a shorter context, and is used by default'
+              - 'sources: returns the original sources corresponding to the memory, better suited for questions that need original details, time, quantities, or order'
+              - 'heuristic_routing: automatically selects memory or sources based on the query, preserving the benefits of the original text where possible while keeping the context length under control'
           - type: Scheduler optimization
             changedInfo:
               - Adjusted scheduler concurrency limits to avoid CPU, thread, and PolarDB contention from background jobs

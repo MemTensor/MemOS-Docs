@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.21
+    date: '2026-06-23'
+    products:
+      cloud:
+        Improvements:
+          - type: search context_format 参数更新
+            changedInfo:
+              - context_format 中的 heuristic_routing 模式名称改为 mixed，能力保持不变
   - name: v2.0.20
     date: '2026-06-17'
     products:
@@ -6,9 +14,10 @@ versions:
         Improvements:
           - type: search 支持 context_format 参数
             changedInfo:
-              - 通过 search context plugin 企业仓库插件形式接入
-              - 支持返回 memory / 原文 / 智能路由 3 种模式，默认返回 memory，不影响现有 search 行为
-              - 传入 sources / heuristic_routing 时返回相应 search 结果格式及时间、对话人相关渲染（主要支持 benchmark 评测）
+              - 支持返回 memory / sources / heuristic_routing 3 种模式
+              - memory： 返回抽取后的 memory 文本，context 更短，默认使用
+              - sources：返回 memory 对应的原始 sources，更适合需要原文细节、时间、数量、顺序等问题
+              - heuristic_routing：根据 query 自动选择 memory 或 sources，在控制 context 长度的同时尽量保留原文收益
           - type: 调度任务优化
             changedInfo:
               - 调整调度任务并发数限制，避免后台任务抢占 CPU、线程资源与 PolarDB 连接
