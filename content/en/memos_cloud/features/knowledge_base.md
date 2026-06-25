@@ -212,7 +212,7 @@ res = requests.post(url=url, headers=headers, data=json.dumps(data))
 
 print(f"result: {res.json()}")
 ```
-```python [Output]
+```text [Output]
 "result": {
   "code": 0,
   "data": {
@@ -252,7 +252,7 @@ res = requests.post(url=url, headers=headers, data=json.dumps(data))
 
 print(f"result: {res.json()}")
 ```
-```python [Output]
+```text [Output]
 "result": {
   "code": 0,
   "data": [
@@ -352,7 +352,7 @@ json_res = res.json()
 print(json.dumps(json_res, indent=2, ensure_ascii=False))
 ```
 
-```python [Output]
+```text [Output]
 "memory_detail_list": [
   {
     "id": "2c760355-de4b-4a8f-b98d-b92851d23fa7",
