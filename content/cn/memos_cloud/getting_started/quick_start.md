@@ -4,7 +4,7 @@ desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆�
 ---
 
 
-## 使用 Skill 为 AI 应用快速集成 MemOS （推荐）
+## 使用 MemOS Skill 为 AI 应用快速集成 MemOS Cloud （推荐）
 
 若你正在使用 Claude Code、Cursor 等 Agent 工具开发自己的 AI 应用，可直接将以下提示词复制并发送给你的工具：
 
@@ -19,8 +19,8 @@ desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆�
 
 请按以下步骤操作：
 
-1. 安装 memos-cloud-developer Skill（如已安装则跳过）：
-   npx skills add https://github.com/MemTensor/MemOS-Cloud-Skill --skill memos-cloud-developer -g -y
+1. 安装 MemOS Skill（如已安装则跳过）：
+   npx skills add https://github.com/MemTensor/MemOS-Cloud-Skill --skill memos-cloud -g -y
    根据当前 Agent 环境自动填充 --agent 参数。
 
 2. 读取该 Skill 安装路径下的 SKILL.md，严格按照其中的指令顺序执行。
@@ -31,7 +31,7 @@ desc: 配置 MemOS 云服务账户，在 5 分钟内创建你的第一条记忆�
   </div>
 </details>
 
-你的 Agent 工具会自动安装并使用 memos-cloud-developer Skill，并为你的 AI 应用集成 MemOS Cloud。
+你的 Agent 工具会自动安装并使用 MemOS Skill，并为你的 AI 应用集成 MemOS Cloud。
 
 ## 手动接入
 

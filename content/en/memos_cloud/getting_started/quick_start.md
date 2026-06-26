@@ -4,7 +4,7 @@ desc: Configure a MemOS Cloud account and create your first memory in five minut
 ---
 
 
-## Use a Skill to Quickly Integrate MemOS into Your AI App (Recommended)
+## Use MemOS Skill to Quickly Integrate MemOS Cloud into Your AI App (Recommended)
 
 If you are building your AI application with Agent tools such as Claude Code or Cursor, copy the prompt below and send it to your tool:
 
@@ -19,8 +19,8 @@ Help me integrate MemOS Cloud into this project to add long-term memory to my Ag
 
 Please follow these steps:
 
-1. Install the memos-cloud-developer Skill (skip if already installed):
-   npx skills add https://github.com/MemTensor/MemOS-Cloud-Skill --skill memos-cloud-developer -g -y
+1. Install MemOS Skill (skip if already installed):
+   npx skills add https://github.com/MemTensor/MemOS-Cloud-Skill --skill memos-cloud -g -y
    Auto-fill the --agent argument based on the current Agent environment.
 
 2. Read SKILL.md under the Skill's install path, and strictly follow its instructions in order.
@@ -31,7 +31,7 @@ Please follow these steps:
   </div>
 </details>
 
-Your Agent tool will automatically install and use the memos-cloud-developer Skill and integrate MemOS Cloud into your AI application.
+Your Agent tool will automatically install and use MemOS Skill and integrate MemOS Cloud into your AI application.
 
 ## Manual Integration
 
