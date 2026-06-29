@@ -34,9 +34,9 @@ Common examples:
 
 Preference memories are useful for recommendation, generation, ranking, and personalized decisions. They do more than answer "what did the user say"; they help the Agent decide "what would better fit this user".
 
-## 3. Skills
+## 3. Self-Evolving Skills
 
-Skills record "how to do a task". MemOS can automatically extract skills from historical messages, or you can upload existing skill packages to a knowledge base. Tasks with stable steps, such as travel planning, reimbursement review, and customer issue triage, are good candidates for Skills. See [Self-Evolving](/memos_cloud/features/self-evolving).
+MemOS automatically extracts skills from historical messages to enable self-evolving memory. You can also upload existing skill packages to a knowledge base. Tasks with stable steps, such as travel planning, reimbursement review, and customer issue triage, are good candidates for skills. See [Self-Evolving](/memos_cloud/features/self-evolving).
 
 ## 4. Tool Memories
 
