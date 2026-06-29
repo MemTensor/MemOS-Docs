@@ -273,7 +273,7 @@ data = {
   icon: i-ri-book-read-line
   title: Recall Skills
 
-  to: /memos_cloud/features/skill
+  to: /memos_cloud/features/self-evolving
   ---
   Automatically generate skills and recall reusable Skill memories.
   :::

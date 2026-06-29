@@ -34,7 +34,7 @@ nav:
       - "(ri:timer-flash-line) Async Mode": memos_cloud/features/async_mode.md
       - "(ri:image-add-line) Multimodal Support": memos_cloud/features/multimodal.md
       - "(ri:price-tag-3-line) Custom Tags": memos_cloud/features/custom_tags.md
-      - "(ri:function-line) Skill Management": memos_cloud/features/skill.md
+      - "(ri:function-line) Self-Evolving": memos_cloud/features/self-evolving.md
       - "(ri:book-read-line) Knowledge Base": memos_cloud/features/knowledge_base.md
       - "(ri:tools-line) Tool Memory": memos_cloud/features/tool_calling.md
 

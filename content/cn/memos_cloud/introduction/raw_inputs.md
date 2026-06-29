@@ -128,7 +128,7 @@ Agent 的工具调用决策和返回结果。MemOS 会生成工具记忆，帮�
 }
 ```
 
-**最适合用于**：导入产品文档、政策制度、SOP、FAQ，或上传 Agent 技能包。详见 [知识库](/cn/memos_cloud/features/knowledge_base) 和 [技能 Skill](/cn/memos_cloud/features/skill)。
+**最适合用于**：导入产品文档、政策制度、SOP、FAQ，或上传 Agent 技能包。详见 [知识库](/cn/memos_cloud/features/knowledge_base) 和 [记忆自进化](/cn/memos_cloud/features/self-evolving)。
 
 ---
 

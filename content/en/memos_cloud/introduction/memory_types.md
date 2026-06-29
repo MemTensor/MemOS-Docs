@@ -36,7 +36,7 @@ Preference memories are useful for recommendation, generation, ranking, and pers
 
 ## 3. Skills
 
-Skills record "how to do a task". MemOS can automatically extract skills from historical messages, or you can upload existing skill packages to a knowledge base. Tasks with stable steps, such as travel planning, reimbursement review, and customer issue triage, are good candidates for Skills. See [Skill](/memos_cloud/features/skill).
+Skills record "how to do a task". MemOS can automatically extract skills from historical messages, or you can upload existing skill packages to a knowledge base. Tasks with stable steps, such as travel planning, reimbursement review, and customer issue triage, are good candidates for Skills. See [Self-Evolving](/memos_cloud/features/self-evolving).
 
 ## 4. Tool Memories
 

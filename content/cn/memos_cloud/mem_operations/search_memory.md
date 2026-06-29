@@ -289,7 +289,7 @@ data = {
   icon: i-ri-book-read-line
   title: 召回技能
 
-  to: /cn/memos_cloud/features/skill
+  to: /cn/memos_cloud/features/self-evolving
   ---
   自动生成技能，召回可复用的 Skill 记忆
   :::

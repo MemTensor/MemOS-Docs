@@ -533,7 +533,7 @@ If you want the knowledge base to return not only knowledge content but also reu
 After upload succeeds, pass `knowledgebase_ids` and enable `include_skill` during retrieval to return both knowledge base memories and matching skills.
 
 :::note
-For the detailed workflow and usage examples of Skill files, see the complete examples in [Skill](/memos_cloud/features/skill).
+For the detailed workflow and usage examples of Skill files, see the complete examples in [Self-Evolving](/memos_cloud/features/self-evolving).
 :::
 
 :::code-group

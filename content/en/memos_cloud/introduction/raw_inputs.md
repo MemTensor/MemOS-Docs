@@ -128,7 +128,7 @@ Project-level knowledge documents or Agent skill packages. These are managed sep
 }
 ```
 
-**Best for**: importing product documentation, policies, SOPs, FAQs, or Agent skill packages. See [Knowledge Base](/memos_cloud/features/knowledge_base) and [Skill](/memos_cloud/features/skill).
+**Best for**: importing product documentation, policies, SOPs, FAQs, or Agent skill packages. See [Knowledge Base](/memos_cloud/features/knowledge_base) and [Self-Evolving](/memos_cloud/features/self-evolving).
 
 ---
 

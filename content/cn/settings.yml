@@ -34,7 +34,7 @@ nav:
       - "(ri:timer-flash-line) 异步模式": memos_cloud/features/async_mode.md
       - "(ri:image-add-line) 多模态支持": memos_cloud/features/multimodal.md
       - "(ri:price-tag-3-line) 自定义标签": memos_cloud/features/custom_tags.md
-      - "(ri:function-line) Skill 管理": memos_cloud/features/skill.md
+      - "(ri:function-line) 记忆自进化": memos_cloud/features/self-evolving.md
       - "(ri:book-read-line) 知识库": memos_cloud/features/knowledge_base.md
       - "(ri:tools-line) 工具记忆": memos_cloud/features/tool_calling.md
 
