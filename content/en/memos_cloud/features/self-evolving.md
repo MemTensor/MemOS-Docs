@@ -1,9 +1,9 @@
 ---
-title: Skill
-desc: Retrieve reusable relevant skills for Agents, supporting both auto-generation from conversations and custom uploads.
+title: Self-Evolving
+desc: Memory is not just storage — MemOS automatically distills reusable structured methods from conversations, letting Agent capabilities evolve continuously with use.
 ---
 
-## What is a Skill?
+## What is Self-Evolving?
 
 In the context of AI Agents, a **Skill** is a reusable task-handling method. It tells an Agent "what to do when it encounters a certain type of task", for example:
 
@@ -17,9 +17,11 @@ Skills help compensate for the fact that execution experience is hard to accumul
 - On-demand: let the Agent retrieve relevant skills for the current task, instead of placing every workflow into the context.
 - Personalized: turn different users' preferences, habits, and constraints into reusable execution methods.
 
+By distilling reusable Skills from conversations, MemOS enables memory self-evolution, continuously enhancing Agent capabilities.
+
 ---
 
-## How MemOS Provides Skills for Agents
+## How MemOS Provides Self-Evolving Capabilities for Agents
 
 ### 1. Auto-generate Personalized Skills
 
@@ -426,7 +428,7 @@ During retrieval, MemOS searches both auto-generated personal skills and uploade
 
 ---
 
-**Start exploring MemOS Skills now!**
+**Start exploring MemOS Self-Evolving capabilities now!**
 
 - Go to the [Dashboard - Skills page](https://memos-dashboard.openmem.net/skill/) to view auto-generated skills.
 - Don't have any skills yet? [Add messages](/memos_cloud/mem_operations/add_message) to trigger generation.
