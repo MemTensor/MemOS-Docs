@@ -6,6 +6,8 @@ export const TEXT_MARKDOWN_UTF8 = 'text/markdown; charset=utf-8'
 
 const LLMS_TXT_PATTERN = /^llms(-cn|-en)?(-full)?\.txt$/
 
+export const APPLICATION_JSON_UTF8 = 'application/json; charset=utf-8'
+
 export function contentTypeFor(relativePath) {
   const normalized = relativePath.replace(/\\/g, '/')
   const basename = path.posix.basename(normalized)
@@ -16,6 +18,11 @@ export function contentTypeFor(relativePath) {
 
   if (normalized.endsWith('.md')) {
     return TEXT_MARKDOWN_UTF8
+  }
+
+  // .well-known discovery files served as JSON
+  if (normalized === '.well-known/mcp' || normalized === '.well-known/mcp.json') {
+    return APPLICATION_JSON_UTF8
   }
 
   return null
