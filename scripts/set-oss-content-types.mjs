@@ -2,11 +2,12 @@ import { execFileSync, spawnSync } from 'child_process'
 import { existsSync, readFileSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { llmsTxtFiles, writeContentTypeManifest, TEXT_PLAIN_UTF8 } from './oss-content-types.mjs'
+import { collectContentTypeManifest, llmsTxtFiles, writeContentTypeManifest, TEXT_PLAIN_UTF8 } from './oss-content-types.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.join(__dirname, '..')
 const publicDir = path.join(repoRoot, '.output', 'public')
+const sourcePublicDir = path.join(repoRoot, 'public')
 const manifestPath = path.join(repoRoot, '.output', 'oss-content-types.json')
 
 function resolveOssutil() {
@@ -63,6 +64,16 @@ function main() {
   const llmsOnly = ['1', 'true', 'yes'].includes(String(process.env.LLMS_ONLY || '0').toLowerCase())
 
   const objects = writeContentTypeManifest(publicDir, manifestPath)
+
+  // Include files from source public/ that Nuxt generate may skip (dot-directories like .well-known/)
+  if (existsSync(sourcePublicDir)) {
+    for (const obj of collectContentTypeManifest(sourcePublicDir)) {
+      if (!objects.find(o => o.path === obj.path)) {
+        objects.push(obj)
+      }
+    }
+  }
+
   const llmsObjects = llmsTxtFiles().map(name => ({ path: name, contentType: TEXT_PLAIN_UTF8 }))
   const targets = llmsOnly ? llmsObjects : objects
 
