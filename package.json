@@ -12,6 +12,8 @@
     "generate": "npm run sync-releases && node scripts/generate.mjs",
     "generate:pre": "node scripts/generate.mjs --env=pre",
     "publish": "node scripts/generate.mjs",
+    "oss:meta": "node scripts/set-oss-content-types.mjs",
+    "oss:meta:dry": "DRY_RUN=1 node scripts/set-oss-content-types.mjs",
     "preview": "nuxt preview",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck"

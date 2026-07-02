@@ -52,6 +52,19 @@ try {
     env: { ...process.env }
   })
 
+  execSync('node scripts/export-llms.mjs', {
+    stdio: 'inherit',
+    env: { ...process.env }
+  })
+
+  if (process.env.OSS_BUCKET) {
+    console.log('🔧 Applying OSS Content-Type metadata...')
+    execSync('node scripts/set-oss-content-types.mjs', {
+      stdio: 'inherit',
+      env: { ...process.env }
+    })
+  }
+
   console.log('✨ Build process completed!')
 } catch (error) {
   console.error('❌ Build failed:', error.message)

@@ -1,6 +1,7 @@
-import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { dirname, join, relative } from 'path'
 import { fileURLToPath } from 'url'
+import { renderOpenApiMdFromSource, stripNuxtComponents } from '../server/utils/llms-core.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -10,23 +11,28 @@ const publicDir = join(repoRoot, '.output', 'public')
 const locales = [
   {
     sourceDir: join(repoRoot, 'content', 'cn'),
-    outputDir: join(publicDir, 'cn')
+    outputDir: join(publicDir, 'cn'),
+    dashboardApiSpecPath: join(repoRoot, 'content', 'cn', 'api_docs', 'api.json')
   },
   {
     sourceDir: join(repoRoot, 'content', 'en'),
-    outputDir: publicDir
+    outputDir: publicDir,
+    dashboardApiSpecPath: join(repoRoot, 'content', 'en', 'api_docs', 'api.json')
   }
 ]
 
-function copyMarkdownFiles(sourceDir, outputDir, currentDir = sourceDir) {
+function copyMarkdownFiles(sourceDir, outputDir, dashboardApiSpec, currentDir = sourceDir) {
   let count = 0
+  let apiGenerated = 0
 
   for (const item of readdirSync(currentDir)) {
     const sourcePath = join(currentDir, item)
     const stats = statSync(sourcePath)
 
     if (stats.isDirectory()) {
-      count += copyMarkdownFiles(sourceDir, outputDir, sourcePath)
+      const nested = copyMarkdownFiles(sourceDir, outputDir, dashboardApiSpec, sourcePath)
+      count += nested.count
+      apiGenerated += nested.apiGenerated
       continue
     }
 
@@ -34,11 +40,19 @@ function copyMarkdownFiles(sourceDir, outputDir, currentDir = sourceDir) {
 
     const outputPath = join(outputDir, relative(sourceDir, sourcePath))
     mkdirSync(dirname(outputPath), { recursive: true })
-    copyFileSync(sourcePath, outputPath)
+
+    const raw = readFileSync(sourcePath, 'utf8')
+    const generated = renderOpenApiMdFromSource(raw, dashboardApiSpec)
+    if (generated) {
+      writeFileSync(outputPath, generated, 'utf8')
+      apiGenerated += 1
+    } else {
+      writeFileSync(outputPath, stripNuxtComponents(raw), 'utf8')
+    }
     count += 1
   }
 
-  return count
+  return { count, apiGenerated }
 }
 
 if (!existsSync(publicDir)) {
@@ -47,9 +61,15 @@ if (!existsSync(publicDir)) {
 }
 
 let total = 0
-for (const { sourceDir, outputDir } of locales) {
+let apiGenerated = 0
+for (const { sourceDir, outputDir, dashboardApiSpecPath } of locales) {
   if (!existsSync(sourceDir)) continue
-  total += copyMarkdownFiles(sourceDir, outputDir)
+  const dashboardApiSpec = existsSync(dashboardApiSpecPath)
+    ? JSON.parse(readFileSync(dashboardApiSpecPath, 'utf8'))
+    : null
+  const result = copyMarkdownFiles(sourceDir, outputDir, dashboardApiSpec)
+  total += result.count
+  apiGenerated += result.apiGenerated
 }
 
-console.log(`📄 Exported ${total} Markdown files to .output/public`)
+console.log(`📄 Exported ${total} Markdown files to .output/public (${apiGenerated} OpenAPI pages expanded)`)
