@@ -9,6 +9,13 @@ const switchLocalePath = useSwitchLocalePath()
 const normalizedPath = computed(() => switchLocalePath(defaultLocale))
 const contentNavigation = useContentNavigation(locale)
 
+const searchNavigation = computed(() => {
+  return (contentNavigation.value || []).map((item, index) => ({
+    ...item,
+    path: item.path || `search-group-${index}`
+  }))
+})
+
 const normalizePath = (p: string) => p.replace(/\/$/, '')
 
 const getSegment = (p: string) => {
@@ -152,7 +159,7 @@ provide('navigation', filteredNavigation)
     <ClientOnly>
       <LazyUContentSearch
         :files="processedFiles"
-        :navigation="contentNavigation"
+        :navigation="searchNavigation"
       />
       <ApiKeyPickerHost />
     </ClientOnly>
