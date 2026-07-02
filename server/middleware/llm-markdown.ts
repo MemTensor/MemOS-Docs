@@ -58,12 +58,12 @@ export default defineEventHandler((event) => {
   if (pathname.startsWith('/_') || (pathname.startsWith('/api/') && !pathname.startsWith('/api_docs'))) return
 
   // Serve llms.txt dynamically in dev (in production, static files from export-llms.mjs are used)
-  if (pathname === '/llms.txt') {
+  if (pathname === '/llms.txt' || pathname === '/cn/llms.txt') {
     return new Response(generateLlmsTxt(), {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     })
   }
-  if (pathname === '/llms-full.txt') {
+  if (pathname === '/llms-full.txt' || pathname === '/cn/llms-full.txt') {
     return new Response(generateLlmsFullTxt(), {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     })
@@ -91,7 +91,10 @@ export default defineEventHandler((event) => {
   const raw = fs.readFileSync(filePath, 'utf8')
   const dashboardApiSpec = resolveDashboardApiSpec(slug)
   const generated = renderOpenApiMdFromSource(raw, dashboardApiSpec)
-  const content = generated || stripNuxtComponents(raw)
+  const body = generated || stripNuxtComponents(raw)
+
+  const directive = '> For the complete documentation index, see [llms.txt](/llms.txt)\n\n'
+  const content = directive + body
 
   return new Response(content, {
     headers: {

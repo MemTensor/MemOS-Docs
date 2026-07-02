@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# AI agent entry points
+# llms.txt - documentation index for AI agents
+# llms-full.txt - full text of all documentation pages
+# skill.md - agent skill definition
+
+Sitemap: https://memos-docs.openmem.net/sitemap.xml

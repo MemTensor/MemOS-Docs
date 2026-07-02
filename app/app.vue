@@ -105,7 +105,8 @@ useHead({
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
   ],
   link: [
-    { rel: 'icon', href: '/icon.svg' }
+    { rel: 'icon', href: '/icon.svg' },
+    { rel: 'author', type: 'text/plain', href: '/llms.txt' }
   ],
   htmlAttrs: {
     lang: 'en'
@@ -133,6 +134,11 @@ provide('navigation', filteredNavigation)
 
 <template>
   <UApp>
+    <div aria-hidden="true" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">
+      For AI agents: complete documentation index at <a href="/llms.txt">/llms.txt</a>.
+      Full text at <a href="/llms-full.txt">/llms-full.txt</a>.
+      Markdown version of any page available by appending .md to its URL.
+    </div>
     <NuxtLoadingIndicator color="var(--ui-primary)" />
 
     <NuxtLayout>

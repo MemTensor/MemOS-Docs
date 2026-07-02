@@ -1,7 +1,9 @@
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { dirname, join, relative } from 'path'
 import { fileURLToPath } from 'url'
 import { renderOpenApiMdFromSource, stripNuxtComponents } from '../server/utils/llms-core.mjs'
+
+const MD_DIRECTIVE = '> For the complete documentation index, see [llms.txt](/llms.txt)\n\n'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -44,10 +46,10 @@ function copyMarkdownFiles(sourceDir, outputDir, dashboardApiSpec, currentDir = 
     const raw = readFileSync(sourcePath, 'utf8')
     const generated = renderOpenApiMdFromSource(raw, dashboardApiSpec)
     if (generated) {
-      writeFileSync(outputPath, generated, 'utf8')
+      writeFileSync(outputPath, MD_DIRECTIVE + generated, 'utf8')
       apiGenerated += 1
     } else {
-      writeFileSync(outputPath, stripNuxtComponents(raw), 'utf8')
+      writeFileSync(outputPath, MD_DIRECTIVE + stripNuxtComponents(raw), 'utf8')
     }
     count += 1
   }
