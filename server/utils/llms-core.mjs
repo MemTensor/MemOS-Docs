@@ -221,17 +221,19 @@ export function generateLlmsTxt() {
 }
 
 export function stripNuxtComponents(text) {
-  // Convert :::card blocks to markdown links (handles indentation)
+  // Convert :::card blocks to markdown (handles indentation)
   text = text.replace(/[ \t]*:::card\s*\n[ \t]*---\n([\s\S]*?)\n[ \t]*---\n([\s\S]*?):::/g, (_, frontmatter, body) => {
     const title = frontmatter.match(/title:\s*(.+)/)?.[1]?.trim() || ''
     const to = frontmatter.match(/to:\s*(.+)/)?.[1]?.trim() || ''
-    const desc = body.trim()
+    const desc = body.trim().replace(/<br\s*\/?>/g, '\n')
     if (title && to) return desc ? `- [${title}](${to}): ${desc}` : `- [${title}](${to})`
-    return ''
+    if (title && desc) return `**${title}**: ${desc}`
+    if (title) return `**${title}**`
+    return desc
   })
 
   // Convert :::note/:::warning/:::tip/:::caution — keep inner content with prefix (2 or 3 colons)
-  text = text.replace(/\s*:{2,3}(tip|warning|note|caution)[^\n]*\n([\s\S]*?):{2,3}\s*$/gm, (_, type, body) => {
+  text = text.replace(/\s*:{2,3}(tip|warning|note|caution|info|alert)[^\n]*\n([\s\S]*?):{2,3}\s*$/gm, (_, type, body) => {
     const prefix = type.charAt(0).toUpperCase() + type.slice(1)
     const content = body.trim()
     if (!content) return ''
@@ -247,11 +249,22 @@ export function stripNuxtComponents(text) {
   text = text.replace(/^:{2,3}[\w-]+[^\n]*/gm, '')
   text = text.replace(/^:{2,3}\s*$/gm, '')
 
+  // Strip single-colon inline component markers (:steps{}, :list{}, :span{}, etc.)
+  text = text.replace(/^:[a-z][\w-]*\{[^}]*\}\s*$/gm, '')
+
+  // Convert <details>/<summary> to markdown (keep content accessible)
+  text = text.replace(/<details[^>]*>\s*\n\s*<summary[^>]*>\s*([\s\S]*?)\s*<\/summary>/g,
+    (_, summary) => `**${summary.trim()}**`)
+  text = text.replace(/<\/details>/g, '')
+
   // Strip noisy HTML attributes (class, style) — keep tags readable for agents
   text = text.replace(/(<\w+)\s+class="[^"]*"/g, '$1')
   text = text.replace(/(<\w+)\s+style="[^"]*"/g, '$1')
   text = text.replace(/<div>\s*\n/g, '\n')
   text = text.replace(/<\/div>\s*\n/g, '\n')
+
+  // Strip <br> tags
+  text = text.replace(/<br\s*\/?>/g, '\n')
 
   // Clean up excessive blank lines
   text = text.replace(/^:::>\s*/gm, '> ')

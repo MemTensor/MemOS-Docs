@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { dirname, join, relative } from 'path'
 import { fileURLToPath } from 'url'
-import { renderOpenApiMdFromSource, stripNuxtComponents } from '../server/utils/llms-core.mjs'
+import { renderOpenApiMarkdown, renderOpenApiMdFromSource, stripNuxtComponents } from '../server/utils/llms-core.mjs'
 
 const MD_DIRECTIVE = '> For the complete documentation index, see [llms.txt](/llms.txt)\n\n'
 
@@ -62,6 +62,31 @@ if (!existsSync(publicDir)) {
   process.exit(1)
 }
 
+// Generate .md for /api-reference/* pages (Product API from content/api.json)
+function exportApiReferenceMarkdown() {
+  const specPath = join(repoRoot, 'content', 'api.json')
+  if (!existsSync(specPath)) return 0
+  const spec = JSON.parse(readFileSync(specPath, 'utf8'))
+  if (!spec?.paths) return 0
+
+  let count = 0
+  for (const [apiPath, methods] of Object.entries(spec.paths)) {
+    for (const [method, operation] of Object.entries(methods)) {
+      if (!['get', 'post', 'put', 'delete', 'patch'].includes(method)) continue
+      if (!operation.summary) continue
+      const slug = operation.summary.split(' ').map(p => p.toLowerCase()).join('-')
+      const outputPath = join(publicDir, 'api-reference', slug + '.md')
+      mkdirSync(dirname(outputPath), { recursive: true })
+      const md = renderOpenApiMarkdown(operation.summary, method, apiPath, operation, spec)
+      writeFileSync(outputPath, MD_DIRECTIVE + md, 'utf8')
+      count++
+    }
+  }
+  return count
+}
+
+const apiRefCount = exportApiReferenceMarkdown()
+
 let total = 0
 let apiGenerated = 0
 for (const { sourceDir, outputDir, dashboardApiSpecPath } of locales) {
@@ -74,4 +99,4 @@ for (const { sourceDir, outputDir, dashboardApiSpecPath } of locales) {
   apiGenerated += result.apiGenerated
 }
 
-console.log(`📄 Exported ${total} Markdown files to .output/public (${apiGenerated} OpenAPI pages expanded)`)
+console.log(`📄 Exported ${total} Markdown files to .output/public (${apiGenerated} OpenAPI pages expanded, ${apiRefCount} API Reference pages generated)`)
