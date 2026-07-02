@@ -46,6 +46,12 @@ try {
     stdio: 'inherit',
     env: { ...process.env }
   })
+
+  execSync('node scripts/export-markdown.mjs', {
+    stdio: 'inherit',
+    env: { ...process.env }
+  })
+
   console.log('✨ Build process completed!')
 } catch (error) {
   console.error('❌ Build failed:', error.message)
