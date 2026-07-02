@@ -263,6 +263,9 @@ export function stripNuxtComponents(text) {
   text = text.replace(/<div>\s*\n/g, '\n')
   text = text.replace(/<\/div>\s*\n/g, '\n')
 
+  // Convert <a> tags to markdown links
+  text = text.replace(/<a\s+href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g, '[$2]($1)')
+
   // Strip <br> tags
   text = text.replace(/<br\s*\/?>/g, '\n')
 

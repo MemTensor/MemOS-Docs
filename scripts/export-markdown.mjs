@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { dirname, join, relative } from 'path'
 import { fileURLToPath } from 'url'
 import { renderOpenApiMarkdown, renderOpenApiMdFromSource, stripNuxtComponents } from '../server/utils/llms-core.mjs'
@@ -99,4 +99,19 @@ for (const { sourceDir, outputDir, dashboardApiSpecPath } of locales) {
   apiGenerated += result.apiGenerated
 }
 
-console.log(`📄 Exported ${total} Markdown files to .output/public (${apiGenerated} OpenAPI pages expanded, ${apiRefCount} API Reference pages generated)`)
+// Copy api.json spec files so they're accessible at their documented URLs
+const specFiles = [
+  { src: join(repoRoot, 'content', 'cn', 'api_docs', 'api.json'), dest: join(publicDir, 'cn', 'api_docs', 'api.json') },
+  { src: join(repoRoot, 'content', 'en', 'api_docs', 'api.json'), dest: join(publicDir, 'api_docs', 'api.json') },
+  { src: join(repoRoot, 'content', 'api.json'), dest: join(publicDir, 'api.json') }
+]
+let specsCopied = 0
+for (const { src, dest } of specFiles) {
+  if (existsSync(src)) {
+    mkdirSync(dirname(dest), { recursive: true })
+    copyFileSync(src, dest)
+    specsCopied++
+  }
+}
+
+console.log(`📄 Exported ${total} Markdown files to .output/public (${apiGenerated} OpenAPI pages expanded, ${apiRefCount} API Reference pages generated, ${specsCopied} spec files copied)`)
