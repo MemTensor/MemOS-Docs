@@ -1,0 +1,64 @@
+{
+  "protocolVersion": "2025-11-25",
+  "serverInfo": {
+    "name": "memos-api-mcp",
+    "version": "1.2.1",
+    "homepage": "https://memos-docs.openmem.net/cn/mcp_agent/mcp/guide"
+  },
+  "transport": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "@memtensor/memos-api-mcp@latest"]
+  },
+  "capabilities": {
+    "tools": true
+  },
+  "authentication": {
+    "required": true,
+    "type": "api-key",
+    "envVars": ["MEMOS_API_KEY", "MEMOS_USER_ID"],
+    "instructions": "Get your API key from https://memos-dashboard.openmem.net/apikeys/ and set MEMOS_USER_ID to a stable identifier (email or name)."
+  },
+  "tools": [
+    {
+      "name": "add_message",
+      "description": "Store conversation messages into the user's long-term memory for future retrieval."
+    },
+    {
+      "name": "search_memory",
+      "description": "Search relevant historical memories from the user's memory store by query."
+    },
+    {
+      "name": "delete_memory",
+      "description": "Delete a specific memory entry from the memory store."
+    },
+    {
+      "name": "add_feedback",
+      "description": "Submit quality feedback on a memory entry to optimize memory management."
+    },
+    {
+      "name": "get_user_profile",
+      "description": "Retrieve the user's full-dimensional memory profile including facts, preferences, and tool trajectories."
+    },
+    {
+      "name": "create_knowledge_base",
+      "description": "Create an isolated knowledge base container for project or domain-specific document management."
+    },
+    {
+      "name": "remove_knowledge_base",
+      "description": "Remove a knowledge base and its associated content."
+    },
+    {
+      "name": "add_kb_document",
+      "description": "Upload a local file or online resource into a specified knowledge base."
+    },
+    {
+      "name": "get_kb_documents",
+      "description": "Batch-query uploaded document metadata by file IDs."
+    },
+    {
+      "name": "delete_kb_documents",
+      "description": "Delete specific documents from a knowledge base."
+    }
+  ]
+}
