@@ -131,8 +131,6 @@ const config: NuxtConfig = {
       routes: [
         '/',
         '/cn',
-        '/llms.txt',
-        '/llms-full.txt',
         ...cnRoutes,
         ...cnApiRoutes
       ],

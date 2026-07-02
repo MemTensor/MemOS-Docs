@@ -4,7 +4,11 @@ import yaml from 'js-yaml'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const repoRoot = path.resolve(__dirname, '../..')
+// repoRoot is used by build scripts (export-llms.mjs, export-markdown.mjs) and dev middleware.
+// In production, these functions are never called — static files are served instead.
+const repoRoot = fs.existsSync(path.resolve(__dirname, '../../content'))
+  ? path.resolve(__dirname, '../..')
+  : process.cwd()
 
 const TEXT_PLAIN_UTF8 = { 'Content-Type': 'text/plain; charset=utf-8' }
 

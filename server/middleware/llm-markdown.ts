@@ -1,11 +1,12 @@
 import { defineEventHandler, getRequestURL, getHeader } from 'h3'
 import fs from 'node:fs'
 import path from 'node:path'
-import { renderOpenApiMdFromSource, stripNuxtComponents } from '../utils/llms-core.mjs'
+import { renderOpenApiMdFromSource, stripNuxtComponents, generateLlmsTxt, generateLlmsFullTxt } from '../utils/llms-core.mjs'
+
+const contentDir = path.resolve(process.cwd(), 'content')
+const hasContent = fs.existsSync(path.join(contentDir, 'en', 'settings.yml'))
 
 function resolveMarkdownFile(slug: string): string | null {
-  const contentDir = path.resolve(process.cwd(), 'content')
-
   const candidates = [
     path.join(contentDir, `${slug}.md`),
     path.join(contentDir, slug, 'index.md'),
@@ -22,7 +23,6 @@ function resolveMarkdownFile(slug: string): string | null {
 }
 
 function resolveDashboardApiSpec(slug: string) {
-  const contentDir = path.resolve(process.cwd(), 'content')
   const specCandidates = [
     path.join(contentDir, 'cn', 'api_docs', 'api.json'),
     path.join(contentDir, 'en', 'api_docs', 'api.json')
@@ -50,11 +50,26 @@ function isMarkdownPreferred(accept: string): boolean {
 }
 
 export default defineEventHandler((event) => {
+  if (!hasContent) return
+
   const url = getRequestURL(event)
   const pathname = url.pathname
 
   if (pathname.startsWith('/_') || (pathname.startsWith('/api/') && !pathname.startsWith('/api_docs'))) return
 
+  // Serve llms.txt dynamically in dev (in production, static files from export-llms.mjs are used)
+  if (pathname === '/llms.txt') {
+    return new Response(generateLlmsTxt(), {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+    })
+  }
+  if (pathname === '/llms-full.txt') {
+    return new Response(generateLlmsFullTxt(), {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+    })
+  }
+
+  // Serve .md files
   let slug: string | null = null
 
   if (pathname.endsWith('.md') && !pathname.includes('llms')) {
