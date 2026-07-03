@@ -1,4 +1,26 @@
 versions:
+  - name: v2.0.22
+    date: '2026-07-03'
+    products:
+      cloud:
+        New Features:
+          - type: 偏好记忆抽取
+            changedInfo:
+              - 支持独立模型配置
+        Bug Fixes:
+          - type: 偏好记忆抽取
+            changedInfo:
+              - 收紧偏好记忆 prompt，修复偏好记忆过度抽取问题
+              - 加强偏好记忆后处理
+          - type: Chat API 格式兼容
+            changedInfo:
+              - 新增 Chat API 的 content 字段支持字符串输入
+      plugin:
+        Bug Fixes:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - 修复 OpenClaw 本地插件链路中的稳定性、召回准确性、桥接进程泄漏、配置兼容和本地记忆写入问题
+              - 补充偏好记忆与自动召回相关能力
   - name: v2.0.21
     date: '2026-06-23'
     products:

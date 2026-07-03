@@ -1,4 +1,26 @@
 versions:
+  - name: v2.0.22
+    date: '2026-07-03'
+    products:
+      cloud:
+        New Features:
+          - type: Preference memory extraction
+            changedInfo:
+              - Supports independent model configuration
+        Bug Fixes:
+          - type: Preference memory extraction
+            changedInfo:
+              - Tightened the preference memory prompt to fix over-extraction issues
+              - Improved preference memory post-processing
+          - type: Chat API compatibility
+            changedInfo:
+              - Added string input support for the Chat API content field
+      plugin:
+        Bug Fixes:
+          - type: OpenClaw local plugin
+            changedInfo:
+              - Fixed stability, recall accuracy, bridge process leaks, configuration compatibility, and local memory write issues in the OpenClaw local plugin flow
+              - Added preference memory and automatic recall capabilities
   - name: v2.0.21
     date: '2026-06-23'
     products:
