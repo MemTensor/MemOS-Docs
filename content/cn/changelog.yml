@@ -1,4 +1,32 @@
 versions:
+  - name: v2.0.23
+    date: '2026-07-09'
+    products:
+      cloud:
+        Improvements:
+          - type: 偏好记忆模型调用
+            changedInfo:
+              - 兼容qwen3系混合思考模型，默认把thinking关掉
+      plugin:
+        New Features:
+          - type: 新增本地记忆数据导出
+            changedInfo:
+              - 支持自动召回 Phase 1 检索参数配置
+              - 支持中文关键词分词配置
+              - 新增 L3 抽象专用模型配置。
+        Improvements:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - 优化插件启动/注册链路
+              - 优化 embedding 输入按用途路由
+              - 轻量记忆模式下减少不必要的后台演化调用
+              - 补充中文 README 和使用说明。
+        Bug Fixes:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - 修复大数据量场景下向量扫描导致 CPU 100% 的问题
+              - 修复 SQLite native binding 版本不匹配恢复问题
+              - 修复 Hermes provider 链接、OpenAI-compatible endpoint 探测、FTS 查询转义、插件入口发布等稳定性问题。
   - name: v2.0.22
     date: '2026-07-03'
     products:
@@ -691,7 +719,6 @@ versions:
           changedInfo:
             - 修复通用文本记忆处理逻辑
             - 修复memreader组件问题
-
   - name: v0.2.1
     date: 2025-07-21
     changedInfo:
@@ -719,7 +746,6 @@ versions:
           changedInfo:
             - 新增Cookbook内容
             - 新增Mud游戏示例
-
   - name: v0.2.0
     date: 2025-07-11
     changedInfo:
