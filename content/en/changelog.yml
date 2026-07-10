@@ -1,60 +1,33 @@
 versions:
-  - name: v2.0.24
-    date: '2026-07-09'
-    products:
-      cloud:
-        Improvements:
-          - type: 偏好记忆模型调用
-            changedInfo:
-              - 兼容qwen3系混合思考模型，默认把thinking关掉
-      plugin:
-        New Features:
-          - type: 新增本地记忆数据导出
-            changedInfo:
-              - Supports automatic recall Phase 1 检索参数配置
-              - Supports 中文关键词分词配置
-              - Added L3 抽象专用模型配置。
-        Improvements:
-          - type: OpenClaw local plugin
-            changedInfo:
-              - Improved 插件启动/注册链路
-              - Improved embedding 输入按用途路由
-              - 轻量记忆模式下减少不必要的后台演化调用
-              - Added 中文 README 和使用说明。
-        Bug Fixes:
-          - type: OpenClaw local plugin
-            changedInfo:
-              - Fixed 大数据量场景下向量扫描导致 CPU 100% 的问题
-              - Fixed SQLite native binding 版本不匹配恢复问题
-              - Fixed Hermes provider 链接、OpenAI-compatible endpoint 探测、FTS 查询转义、插件入口发布等稳定性问题。
   - name: v2.0.23
     date: '2026-07-09'
     products:
       cloud:
         Improvements:
-          - type: 偏好记忆模型调用
+          - type: Preference memory model invocation
             changedInfo:
-              - 兼容qwen3系混合思考模型，默认把thinking关掉
+              - Made preference-memory model calls compatible with Qwen3 hybrid-thinking models and disabled thinking by default
       plugin:
         New Features:
-          - type: 新增本地记忆数据导出
+          - type: OpenClaw local plugin
             changedInfo:
-              - Supports automatic recall Phase 1 检索参数配置
-              - Supports 中文关键词分词配置
-              - Added L3 抽象专用模型配置。
+              - Added local memory data export
+              - Added automatic recall Phase 1 retrieval parameter configuration
+              - Added Chinese keyword tokenization configuration
+              - Added a dedicated model configuration for L3 abstraction
         Improvements:
           - type: OpenClaw local plugin
             changedInfo:
-              - Improved 插件启动/注册链路
-              - Improved embedding 输入按用途路由
-              - 轻量记忆模式下减少不必要的后台演化调用
-              - Added 中文 README 和使用说明。
+              - Optimized the plugin startup and registration flow
+              - Routed embedding inputs by usage
+              - Reduced unnecessary background evolution calls in lightweight memory mode
+              - Added Chinese README and usage documentation
         Bug Fixes:
           - type: OpenClaw local plugin
             changedInfo:
-              - Fixed 大数据量场景下向量扫描导致 CPU 100% 的问题
-              - Fixed SQLite native binding 版本不匹配恢复问题
-              - Fixed Hermes provider 链接、OpenAI-compatible endpoint 探测、FTS 查询转义、插件入口发布等稳定性问题。
+              - Fixed CPU spikes caused by vector scans in large-data scenarios
+              - Fixed recovery when SQLite native binding versions mismatch
+              - Fixed stability issues around Hermes provider links, OpenAI-compatible endpoint probing, FTS query escaping, and plugin entry publishing
   - name: v2.0.22
     date: '2026-07-03'
     products:
