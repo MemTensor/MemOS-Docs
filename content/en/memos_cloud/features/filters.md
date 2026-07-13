@@ -49,34 +49,37 @@ If you do not need to distinguish memory sources, you can put logical conditions
 
 ### Source-Specific Filter
 
-If one retrieval request accesses multiple memory types, you can set separate filter conditions for `user`, `public`, and `knowledgebase` inside `filter`.
+If one retrieval request accesses multiple memory types, you can set separate filter conditions for each source inside `filter`.
 
 | Source | Description |
 | --- | --- |
 | `user` | User-specific memories accumulated from the user's conversation history |
+| `agent` | Agent memories, available after enabling [Create Independent Memory for an Agent](/memos_cloud/introduction/isolation_filters#create-independent-memory-for-an-agent) |
 | `public` | Project-level public memories shared across users in the project |
 | `knowledgebase` | Knowledge Base memories created from uploaded documents or Skills |
 
 Source-specific filters are useful for more precise retrieval strategies, such as filtering user memories by recency, filtering Knowledge Base memories by tags, and leaving public memories unfiltered. Sources not included in `filter` will not receive extra filter conditions.
 
+#### Example: Source-Specific Retrieval Across User, Knowledge Base, and Public Memories
+
+The example below retrieves the user's and Agent's memories since June 1, 2025, and also retrieves Knowledge Base and public memories tagged with "policy".
+
 ```json
 "filter": {
-    "knowledgebase": {
-        "and": [
-            {"tags": {"contains": "reading"}},
-            {"create_time": {"gte": "2025-01-01"}},
-            {"create_time": {"lte": "2025-12-31"}}
-        ]
-    },
     "user": {
         "and": [
-            {"scene": "chat"},
-            {"create_time": {"gte": "2025-01-01"}}
+            {"agent_id": "memos_agent"},
+            {"create_time": {"gte": "2025-06-01"}}
+        ]
+    },
+    "knowledgebase": {
+        "and": [
+            {"tags": {"contains": "policy"}}
         ]
     },
     "public": {
         "and": [
-            {"tags": {"contains": "announcement"}}
+            {"tags": {"contains": "policy"}}
         ]
     }
 }
@@ -88,16 +91,24 @@ Use either a global filter or a source-specific filter. If different memory sour
 
 ## 4. Available Fields and Operators
 
-The root of each filter group must be `and` or `or`, followed by a list of field conditions. Specifying `user_id` in `filter` is not supported.
+The root of each filter group must be `and` or `or`, followed by a list of field conditions.
 
 ### Instance Fields
 
-For more details about these fields, see the advanced usage section in [Add Message](/memos_cloud/mem_operations/add_message).
-
 | Field | Type | Operator | Example |
 | --- | --- | --- | --- |
-| `agent_id` | string | `=` | `{"agent_id":"agent_123"}` |
+| `agent_id` | string | `=` | `{"agent_id":"memos_agent"}` |
 | `app_id` | string | `=` | `{"app_id":"app_123"}` |
+| `related_id` | list | `=` | `{"related_id": ["memos_user_1", "memos_user_2"]}` |
+
+::note
+
+More about `related_id`:
+
+- Supports passing multiple `agent_id` and `user_id` values at once, to filter memories related to the specified Agents or users.
+- Multiple IDs in the array are OR'd together — matching any one of them is enough.
+- This field can be used in both global filters and source-specific filters.
+::
 
 ### Metadata Fields
 
@@ -133,10 +144,15 @@ When adding messages, you can write business metadata through `info`. During ret
 
 ## 5. Usage Examples
 
-### Filter Memories by Agent
+The filters below cover common filtering needs, so you don't have to build the filter logic from scratch.
+
+---
+
+- **Agents**
 
 ```json
-"filter": {
+// Filter memories related to any of the following Agents
+"filter" : {
     "or": [
         {"agent_id": "agent_123"},
         {"agent_id": "agent_456"}
@@ -144,53 +160,70 @@ When adding messages, you can write business metadata through `info`. During ret
 }
 ```
 
-### Filter Memories by Business Scenario
+- **Metadata**
 
 ```json
-"filter": {
+// Filter by custom metadata fields written via info (write the field name directly in filter, without wrapping it in info)
+"filter" : {
     "and": [
-        {"business_type": "travel"},
-        {"biz_id": "travel_001"},
-        {"scene": "payment"},
-        {"custom_status": "v1"}
+        {"business_type":"travel"},
+        {"biz_id":"travel_001"},
+        {"scene":"payment"},
+        {"custom_status":"v1"}
     ]
 }
 ```
 
-### Filter by Tag and Date Range
+- **Tags**
 
 ```json
-"filter": {
+// Filter memories that contain a specific tag
+"filter" : {
     "and": [
-        {"tags": {"contains": "weather"}},
-        {"create_time": {"gte": "2025-12-01"}},
-        {"create_time": {"lte": "2025-12-31"}}
+        {"tags": {"contains": "weather"}}
     ]
 }
 ```
 
-### Filter Different Memory Sources Separately
-
-The following example retrieves Knowledge Base memories tagged with "reading" and created in 2025, user memories where `scene=chat`, and public memories tagged with "announcement".
+- **Date range**
 
 ```json
-"filter": {
-    "knowledgebase": {
-        "and": [
-            {"tags": {"contains": "reading"}},
-            {"create_time": {"gte": "2025-01-01"}},
-            {"create_time": {"lte": "2025-12-31"}}
-        ]
-    },
-    "user": {
-        "and": [
-            {"scene": "chat"}
-        ]
-    },
-    "public": {
-        "and": [
-            {"tags": {"contains": "announcement"}}
-        ]
-    }
+// Filter memories from December 2025
+"filter" : {
+    "and": [
+        {"create_time": {"gt": "2025-12-01"}},
+        {"create_time": {"lt": "2026-01-01"}}
+    ]
+}
+
+// Filter memories updated recently
+"filter" : {
+    "and": [
+        {"update_time": {"gt": "2025-12-10"}}
+    ]
+}
+```
+
+- **Multiple dimensions**
+
+```json
+// Filter a user's Q4 billing-related memories with the customer service Agent
+"filter" : {
+    "and": [
+        {"agent_id": "customer_service"},
+        {"scene":"billing"},
+        {"create_time": {"gt": "2025-10-01"}},
+        {"create_time": {"lt": "2026-01-01"}}
+    ]
+}
+```
+
+- **Retrieve memories related to multiple Agents or users**
+
+```json
+"filter" : {
+    "and": [
+        {"related_id": ["memos_agent_1", "memos_agent_2"]}
+    ]
 }
 ```

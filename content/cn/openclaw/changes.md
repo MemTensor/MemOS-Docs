@@ -5,28 +5,6 @@ title: OpenClaw 插件更新日志
 ::OpenclawReleaseTimeline
 ---
 releases:
-  - date: '2026-07-07'
-    plugins:
-      - title: '云插件'
-        version: 'v0.1.19'
-        sections:
-          - title: '优化'
-            items:
-              - '增强系统事件过滤，自动跳过定时任务、计划提醒和后台命令结果，减少记忆污染。'
-              - '优化系统提示识别，兼容单行压缩内容并降低普通消息误判概率。'
-
-  - date: '2026-06-22'
-    plugins:
-      - title: '云插件'
-        version: 'v0.1.18'
-        summary: '配置页新增更新检查，可查看版本状态并复制对应宿主的更新重启命令。'
-
-  - date: '2026-06-16'
-    plugins:
-      - title: '云插件'
-        version: 'v0.1.17'
-        summary: '新增跨平台记忆来源识别，自动区分 Windows、macOS、Linux 的记忆数据。'
-
   - date: '2026-05-21'
     plugins:
       - title: '云插件'

@@ -15,6 +15,7 @@
     "oss:meta": "node scripts/set-oss-content-types.mjs",
     "oss:meta:dry": "DRY_RUN=1 node scripts/set-oss-content-types.mjs",
     "preview": "nuxt preview",
+    "check:endpoints": "node scripts/check-endpoints.mjs",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck"
   },
@@ -32,6 +33,7 @@
     "better-sqlite3": "^12.6.2",
     "defu": "^6.1.4",
     "devalue": "^5.3.2",
+    "mermaid": "^11.15.0",
     "node-fetch": "^3.3.2",
     "nuxt": "^3.17.5",
     "nuxt-llms": "0.1.3",

@@ -29,34 +29,13 @@ desc: 添加消息时使用异步模式，接口请求立即返回，而实际�
 
 在异步模式下，记忆写入将分为“粗加工”和“精加工”两个阶段：系统会先对本轮消息进行毫秒级的粗加工，使其在下一轮对话时即可被快速检索到；
 <br>
-随后在后台继续进行秒级及以上的精加工以提升记忆质量。处理进度可通过 [get/status](/api_docs/message/get_status) 接口查询：粗加工阶段任务状态为“进行中”，精加工完成后状态更新为“已完成”。
-
-```json
-"memory_detail_list": [
-  {
-    "id": "c436a738-eec9-4010-b65d-dc9c135d3a37",
-    "memory_key": "user: [09:44 AM on 10 December, 2025 UTC]: 我暑假定好去广州旅游，住宿的话有哪些连锁酒店可选",
-    "memory_value": "user: [09:44 AM on 10 December, 2025 UTC]: 我暑假定好去广州旅游，住宿的话有哪些连锁酒店可选？\nassistant: [09:44 AM on 10 December, 2025 UTC]: 您可以考虑【七天、全季、希尔顿】等等\nuser: [09:44 AM on 10 December, 2025 UTC]: 我选七天\nassistant: [09:44 AM on 10 December, 2025 UTC]: 好的，有其他问题再问我。\n",
-    "memory_type": "WorkingMemory",
-    "create_time": 1765359875901,
-    "update_time": 1765359875902,
-    "conversation_id": "0610",
-    "status": "activated",
-    "confidence": 0.99,
-    "relativity": 0.05407696,
-    "tags": ["mode:fast"]
-  }
-]
-```
-
-通过[get/status](/api_docs/message/get_status)接口，获取异步任务状态：
+随后在后台继续进行秒级及以上的精加工以提升记忆质量。处理进度可通过 [get/status](/api_docs/message/get_status) 接口查询：粗加工阶段任务状态为 `running`，精加工完成后状态更新为 `completed`。任务完成后，响应中的 `memory_views` 会汇总本轮任务的新增/更新/删除数量，以及各记忆种类下触达的记忆 ID。
 
 ```python
 import os
 import requests
 import json
 
-# 替换成你的 MemOS API Key
 os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
@@ -72,6 +51,28 @@ url = f"{os.environ['MEMOS_BASE_URL']}/get/status"
 res = requests.post(url=url, headers=headers, data=json.dumps(data))
 
 print(f"result: {res.json()}")
+```
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9",
+    "status": "completed",
+    "memory_views": {
+      "added": 1,
+      "updated": 1,
+      "deleted": 0,
+      "detail_factual": {
+        "memory_ids": ["memos_mem_001"]
+      },
+      "preference": {
+        "memory_ids": ["memos_mem_002"]
+      }
+    }
+  }
+}
 ```
 
 ### 何时使用异步模式

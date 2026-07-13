@@ -14,28 +14,24 @@ desc: 通过语义检索和过滤功能，MemOS 召回相关记忆。
 * 通过过滤条件等方式，确保召回的记忆始终与当前问题高度相关。
 ::
 
-
-
 ## 2. 关键参数
 
-*   **查询内容（query）**：用户的提问内容，用于检索的自然语言问题或陈述，系统将基于语义匹配相关记忆。
-*   **记忆过滤（filter）**：基于 JSON 的逻辑条件，用于过滤 agent、create_time、tags、info 等字段，缩小记忆检索的范围；也可以分别对用户记忆、公共记忆和知识库记忆设置过滤条件。
-*   **相关性阈值（relativity）**：相关性是指召回的记忆与用户提问内容的语义匹配程度，相关性越高，该记忆与当前用户提问越相关。相关性阈值用于约束召回记忆的匹配程度，当前系统默认值为 0.45，低于该值的记忆将被过滤。
-
-
-
+* **查询内容（query）**：用户的提问内容，用于检索的自然语言问题或陈述，系统将基于语义匹配相关记忆。
+* **检索记忆种类（include_memory_view）**：控制允许检索的[记忆种类](/cn/memos_cloud/introduction/memory_types)。
+* **召回上限（memory_limit_number）**：所有记忆按照相关性排序后，召回的条数上限。
+* **记忆过滤（filter）**：基于 JSON 的逻辑条件，用于过滤 agent、create_time、tags、info 等字段，缩小记忆检索的范围；也可以分别对用户/Agent 记忆、公共记忆和知识库记忆设置过滤条件。
+* **相关性阈值（relativity）**：召回的记忆与用户提问内容的语义匹配程度。相关性分数越高，该记忆与当前用户提问越相关。相关性阈值用于约束召回记忆的匹配程度，低于该值的记忆将被过滤。
 
 ## 3. 工作原理
 
-- **查询内容重写**：MemOS 会对输入的自然语言查询进行清理与语义增强，自动补全关键信息与检索意图，以提升后续检索的准确性。
-- **记忆召回**
-- **混合检索与排序**：系统基于重写后的查询生成嵌入向量，结合关键词检索与向量语义检索的混合策略召回候选记忆，对候选记忆进行相关性排序。
-  - **记忆过滤与筛选**：基于逻辑条件与比较运算符对记忆进行结构化过滤，缩小记忆检索的范围；按开发者设定的相关性阈值筛选排序后的记忆，控制召回结果质量。
-- **结果去重**：对召回的候选记忆进行跨源去重与语义聚合处理。
-- **输出记忆**：最终结果根据设定的记忆条数上限返回，600ms 内响应并返回，用于后续推理与回答生成。
+* **查询内容重写**：MemOS 会对输入的自然语言查询进行清理与语义增强，自动补全关键信息与检索意图，以提升后续检索的准确性。
+* **记忆召回**
+  * **混合检索与排序**：系统基于重写后的查询生成嵌入向量，结合关键词检索与向量语义检索的混合策略召回候选记忆，对候选记忆进行相关性排序。
+  * **记忆过滤与筛选**：基于逻辑条件与比较运算符对记忆进行结构化过滤，缩小记忆检索的范围；按开发者设定的相关性阈值筛选排序后的记忆，控制召回结果质量。
+  * **结果去重**：对召回的候选记忆进行跨源去重与语义聚合处理。
+* **输出记忆**：最终结果根据设定的记忆条数上限返回，600ms 内响应并返回，用于后续推理与回答生成。
 
 以上所有流程，仅需调用`search/memory`接口即可触发，无需您对用户的记忆手动操作。
-
 
 ## 4. 快速上手
 
@@ -91,15 +87,16 @@ curl --request POST \
 ::
 
 ::note
-请注意，`user_id` 为必填项，当前每次检索记忆必须指定单个用户。
+开启[为 Agent 创建独立记忆](/cn/memos_cloud/introduction/isolation_filters#为-agent-创建独立记忆-new)，可单独传入 `agent_id`，检索该 Agent 记忆。其他情况下，`user_id` 为必填项。
 ::
 
-需要查看完整字段、请求格式和响应格式？详见 [Search Memory 接口文档](/api_docs/core/search_memory)。
+需要查看完整字段、请求格式和响应格式？详见 [Search Memory 接口文档](/cn/api_docs/core/search_memory)。
 
 ## 5. 带记忆的 Prompt 模版
 
 召回的记忆可以直接添加到你开发 AI 应用的 Prompt 中。如下所示，MemOS 为你提供了实践参考。
 
+<!-- markdownlint-disable MD033 -->
 <details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
   <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
     展开查看完整 Prompt 模板
@@ -166,6 +163,7 @@ curl --request POST \
 
   </div>
 </details>
+<!-- markdownlint-enable MD033 -->
 
 ## 6. 更多使用方法
 
@@ -180,6 +178,23 @@ data = {
     "conversation_id": "0928"
 }
 ```
+
+### `include_memory_view`：指定检索的记忆种类
+
+支持通过 `include_memory_view` 控制本次检索允许返回的[记忆种类](/cn/memos_cloud/introduction/memory_types)，不传时默认检索所有记忆。
+
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "query": "上周发生了什么？",
+    "include_memory_view": ["event", "profile"] #表示只检索事件记忆和属性记忆
+}
+```
+
+::warning
+传入该字段时，`include_preference`、`include_skill`、`include_tool_memory`等旧参数不再生效；此时，`memory_limit_number` 表示所有记忆混排后的总返回条数上限。
+::
 
 ### `filter`：精确过滤检索范围
 
@@ -235,27 +250,23 @@ data = {
 
 ```
 
-  </div>
-</details>
-
 ::note
-更多过滤条件和嵌套写法，详见[记忆过滤](/memos_cloud/features/filters)。
+更多过滤条件和嵌套写法，详见[记忆过滤](/cn/memos_cloud/features/filters)。
 ::
 
 ### `relativity` / `memory_limit_number`：控制召回质量和数量
 
-传入 `relativity` 可以提高召回相关性门槛；传入 `memory_limit_number` 可以限制返回条数，减少后续注入模型的 Token 消耗。
+* 传入 `relativity` ，用于提高召回相关性门槛；
+* 传入 `memory_limit_number` ，限制所有记忆混排后的总返回条数。
 
 ```python
 data = {
     "user_id": "memos_user_123",
     "query": "为我规划5天的成都游。",
-    "relativity": 0.8,
-    "memory_limit_number": 9
+    "relativity": 0.8, # 默认 0.45，范围 0-1
+    "memory_limit_number": 9 #默认 9，最大 25
 }
 ```
-
-
 
 ## 7. 常见错误与排查
 
@@ -269,38 +280,33 @@ data = {
 | `50123` | 知识库未关联当前项目 | 回到 [项目配置](/cn/api_docs/start/configuration) 确认知识库已关联到当前 API Key 所属项目 |
 | `50005` | 搜索服务暂时不可用 | 稍后重试；如果持续出现，请联系支持 |
 
-
-
 ## 8. 更多功能
 
 ::card-group
   :::card
   ---
-  icon: i-ri-tools-line
-  title: 召回工具记忆
-
-  to: /cn/memos_cloud/features/tool_calling
+  icon: i-ri-delete-bin-line
+  title: 删除记忆
+  to: /memos_cloud/mem_operations/delete_memory
   ---
-  添加工具调用信息， 召回工具记忆
+  删除指定的记忆条目或用户记忆
   :::
 
   :::card
   ---
-  icon: i-ri-book-read-line
-  title: 召回技能
-
-  to: /cn/memos_cloud/features/self-evolving
+  icon: i-ri-filter-3-line
+  title: 记忆过滤
+  to: /memos_cloud/features/filters
   ---
-  自动生成技能，召回可复用的 Skill 记忆
+  按标签、时间等条件过滤召回的记忆结果
   :::
 
   :::card
   ---
   icon: i-ri-database-2-line
-  title: 检索知识库
-
-  to: /cn/memos_cloud/features/knowledge_base
+  title: 知识库
+  to: /memos_cloud/features/knowledge_base
   ---
-  开启知识库，指定检索可访问的知识库范围。
+  指定检索可访问的知识库范围
   :::
 ::

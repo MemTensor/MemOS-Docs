@@ -113,7 +113,7 @@
     "/search/memory": {
       "post": {
         "summary": "Search Memory",
-        "description": "该接口用于检索指定用户的记忆，返回与输入查询内容最相关的记忆片段，供 Agent 使用。召回的记忆片段包括“事实记忆”、“偏好记忆”、“工具记忆”和“技能 Skill”。Skill 既可以来自用户对话自动生成，也可以来自知识库中上传的自定义 Skill 文件。",
+        "description": "该接口用于检索指定用户或 Agent 的记忆，返回与查询内容最相关的记忆片段。",
         "operationId": "search_memory",
         "requestBody": {
           "required": true,
@@ -241,8 +241,8 @@
     },
     "/get/memory": {
       "post": {
-        "summary": "Get Memory",
-        "description": "该接口用于获取某个用户的记忆，包含事实记忆、偏好记忆与工具记忆。",
+        "summary": "Get Memories",
+        "description": "分页获取某个用户或 Agent 的记忆。",
         "operationId": "get_memory",
         "requestBody": {
           "required": true,
@@ -271,7 +271,7 @@
     "/delete/memory": {
       "post": {
         "summary": "Delete Memory",
-        "description": "该接口用于删除指定用户的记忆，支持批量删除。",
+        "description": "删除指定用户或 Agent 的记忆，支持按 memory_ids 精确删除，或按 user_id/agent_id 清空全部记忆。",
         "operationId": "delete_memory",
         "requestBody": {
           "required": true,
@@ -422,7 +422,7 @@
     "/get/status": {
       "post": {
         "summary": "Get Task Status",
-        "description": "获取异步处理任务的状态。",
+        "description": "查询 add/message、add/feedback 等异步任务的处理状态。任务完成后返回 memory_views，汇总本次任务新增/更新/删除数量，以及各<a href=\"/cn/memos_cloud/introduction/memory_types\">记忆种类</a>下触达的记忆 ID。",
         "operationId": "get_status",
         "requestBody": {
           "required": true,
@@ -430,6 +430,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/GetStatusRequest"
+              },
+              "example": {
+                "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9"
               }
             }
           }
@@ -441,6 +444,56 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetStatusResponse"
+                },
+                "examples": {
+                  "completed": {
+                    "summary": "completed",
+                    "value": {
+                      "code": 0,
+                      "message": "ok",
+                      "data": {
+                        "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9",
+                        "status": "completed",
+                        "memory_views": {
+                          "added": 1,
+                          "updated": 1,
+                          "deleted": 0,
+                          "detail_factual": {
+                            "memory_ids": [
+                              "memos_mem_001"
+                            ]
+                          },
+                          "preference": {
+                            "memory_ids": [
+                              "memos_mem_002"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "running": {
+                    "summary": "running",
+                    "value": {
+                      "code": 0,
+                      "message": "ok",
+                      "data": {
+                        "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9",
+                        "status": "running"
+                      }
+                    }
+                  },
+                  "failed": {
+                    "summary": "failed",
+                    "value": {
+                      "code": 0,
+                      "message": "ok",
+                      "data": {
+                        "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9",
+                        "status": "failed"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -592,6 +645,181 @@
           }
         }
       }
+    },
+    "/bind/profile_template": {
+      "post": {
+        "summary": "绑定属性记忆模板",
+        "description": "为用户或 Agent 绑定属性记忆模板，创建属性记忆实例。绑定后，后续添加消息时自动更新对应的属性字段值。",
+        "operationId": "bind_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindProfileTemplateRequest"
+              },
+              "example": {
+                "bind_list": [
+                  {
+                    "user_id": "memos_user_123",
+                    "profile_template_id": "tpl_user_001"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/edit/profile": {
+      "post": {
+        "summary": "编辑属性记忆实例",
+        "description": "编辑属性记忆实例，支持新增字段、更新字段值、删除字段、锁定字段不被算法自动更新。只影响当前实例，不修改模板也不影响其他实例。",
+        "operationId": "edit_profile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditProfileRequest"
+              },
+              "example": {
+                "user_id": "memos_user_123",
+                "profile_template_id": "tpl_user_001",
+                "metadata": {
+                  "基础信息": {
+                    "居住地": {
+                      "value": "上海",
+                      "algorithm_updatable": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete/profile": {
+      "post": {
+        "summary": "删除属性记忆实例",
+        "description": "删除某个用户或 Agent 的属性记忆实例，该实例的所有字段值和绑定关系一并清除。不影响模板本身，也不影响其他主体的实例。",
+        "operationId": "delete_profile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteProfileRequest"
+              },
+              "example": {
+                "user_id": "memos_user_123",
+                "profile_template_id": "tpl_user_001"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/update/memory": {
+      "post": {
+        "summary": "修改记忆",
+        "description": "手动修改一条已有记忆的内容、标题或状态。支持所有记忆种类，包括事实记忆、偏好记忆、事件记忆、属性记忆的属性值等。",
+        "operationId": "update_memory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMemoryRequest"
+              },
+              "example": {
+                "memory_id": "mem_event_001",
+                "title": "和陈默去西湖露营",
+                "content": "上周六和好友陈默去西湖边露营，天气很好，晚上一起看了星星。"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get/memory/{memory_id}": {
+      "get": {
+        "summary": "获取单条记忆详情",
+        "description": "查询单条记忆信息。",
+        "operationId": "get_memory_by_id",
+        "parameters": [
+          {
+            "name": "memory_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "记忆 ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMemoryByIdResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -700,14 +928,14 @@
             "title": "Temperature",
             "description": "控制生成随机性。取值范围：0 ≤ x ≤ 2",
             "default": 0.7
-          },          
+          },
           "top_p": {
             "type": "number",
             "title": "Top P",
             "description": "Nucleus 采样参数。取值范围：0 ≤ x ≤ 1",
             "default": 0.95
           },
-         "add_message_on_answer": {
+          "add_message_on_answer": {
             "type": "boolean",
             "title": "Add Message On Answer",
             "description": "是否自动将用户与助手的会话内容写入记忆。启用后，开发者无需再调用add/message接口添加消息为记忆。",
@@ -827,6 +1055,11 @@
           "content"
         ],
         "properties": {
+          "id": {
+            "type": "string",
+            "title": "Message ID",
+            "description": "消息唯一标识，推荐传入，用于 message_id 级联删除和记忆溯源。"
+          },
           "chat_time": {
             "type": "string",
             "title": "Chat Time",
@@ -842,6 +1075,16 @@
             ],
             "title": "Role",
             "description": "消息创建者的角色。"
+          },
+          "role_id": {
+            "type": "string",
+            "title": "Role ID",
+            "description": "具体发言人的 ID，群聊场景必传。对应顶层 user_id / agent_id 中的某个值。"
+          },
+          "role_name": {
+            "type": "string",
+            "title": "Role Name",
+            "description": "发言人名称。传入后，抽取的记忆会标识发言人的名称。需与 role_id 同时传入。"
           },
           "content": {
             "oneOf": [
@@ -898,8 +1141,8 @@
             "description": "消息内容文本。"
           },
           "tool_call_id": {
-              "type": "string",
-              "description": "role为tool时，工具调用消息的唯一标识。"
+            "type": "string",
+            "description": "role为tool时，工具调用消息的唯一标识。"
           },
           "tool_calls": {
             "type": "array",
@@ -913,7 +1156,9 @@
                 "type": {
                   "type": "string",
                   "description": "工具调用类型，当前仅支持 function。tool_calls中必填。",
-                  "enum": ["function"]
+                  "enum": [
+                    "function"
+                  ]
                 },
                 "function": {
                   "type": "object",
@@ -939,44 +1184,84 @@
       "AddMessageRequest": {
         "type": "object",
         "required": [
-          "user_id",
-          "conversation_id",
           "messages"
         ],
         "properties": {
           "user_id": {
-            "type": "string",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
             "title": "User ID",
-            "description": "添加的消息所关联的用户唯一标识符。"
+            "description": "添加消息所关联的用户唯一标识符。支持传入字符串（单用户）或字符串数组（群聊多用户，上限 20 个）。"
+          },
+          "agent_id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "添加的消息所关联的 Agent 唯一标识符。支持传入字符串（单 Agent）或字符串数组（群聊多 Agent）。开启「为 Agent 创建独立记忆」后，Agent 作为独立主体拥有记忆。"
           },
           "conversation_id": {
             "type": "string",
             "title": "Conversation ID",
-            "description": "添加的消息所关联的会话唯一标识符，相同conversation_id下的多轮消息会被识别为同一上下文。"
+            "description": "添加的消息所关联的会话唯一标识符，相同 conversation_id 下的多轮消息会被识别为同一上下文。"
           },
           "messages": {
             "type": "array",
             "title": "Messages",
-            "description": "添加的消息对象数组，数组中所有消息的总token数上限为40k。",
+            "description": "添加的消息对象数组，数组中所有消息的总 token 数上限为 40k。",
             "items": {
               "$ref": "#/components/schemas/MessageInput"
             }
           },
-          "agent_id": {
-            "type": "string",
-            "description": "添加的消息所关联的 Agent 唯一标识符，主要用于在检索记忆时查询某用户与该Agent的专属记忆。"
-          },
           "app_id": {
             "type": "string",
-            "description": "添加的消息所关联的应用唯一标识符，主要用于在检索记忆时查询某用户在该App下的专属记忆。"
+            "description": "添加的消息所关联的应用唯一标识符，主要用于在检索记忆时查询某用户在该 App 下的专属记忆。"
+          },
+          "allow_memory_view": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "detail_factual",
+                "preference",
+                "skill",
+                "profile",
+                "event",
+                "tool_memory"
+              ]
+            },
+            "description": "允许抽取的记忆种类，不传时默认抽取所有种类。全部种类及取值说明见 <a href=\"/cn/memos_cloud/introduction/memory_types\">记忆种类</a>。",
+            "default": [
+              "detail_factual",
+              "preference",
+              "skill",
+              "profile",
+              "event",
+              "tool_memory"
+            ]
           },
           "tags": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "自定义标签列表，用于标记添加消息的主题或分类。",
-            "default": []
+            "description": "自定义标签列表，用于标记添加消息的主题或分类。"
           },
           "info": {
             "type": "object",
@@ -1008,8 +1293,7 @@
             "items": {
               "type": "string"
             },
-            "description": "添加的消息，产生的记忆允许被写入的知识库范围。",
-            "default": []
+            "description": "添加的消息，产生的记忆允许被写入的知识库范围。"
           },
           "async_mode": {
             "type": "boolean",
@@ -1031,7 +1315,7 @@
           "task_id": {
             "type": "string",
             "title": "Task ID",
-            "description": "记忆处理任务的唯一标识。"
+            "description": "记忆处理任务的唯一标识。请调用 <a href=\"/cn/api_docs/message/get_status\">Get Task Status</a> 接口查询任务处理结果。"
           },
           "status": {
             "type": "string",
@@ -1172,14 +1456,18 @@
       "SearchMemoryRequest": {
         "type": "object",
         "required": [
-          "user_id",
           "query"
         ],
         "properties": {
           "user_id": {
             "type": "string",
             "title": "User ID",
-            "description": "与查询的记忆关联的用户的唯一标识符。"
+            "description": "查询的记忆所关联用户的唯一标识符。"
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "查询的记忆所关联 Agent 的唯一标识符。仅开启「为 Agent 创建独立记忆」时可用，与 user_id 二选一。"
           },
           "conversation_id": {
             "type": "string",
@@ -1292,49 +1580,28 @@
             },
             "description": "该字段用于限制当次搜索可访问的知识库范围，默认为空（即不检索任何知识库）。传入具体知识库 ID，则可检索指定的知识库；传入all，则可检索该项目下所有关联知识库。"
           },
+          "include_memory_view": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "detail_factual",
+                "preference",
+                "skill",
+                "profile",
+                "event",
+                "tool_memory"
+              ]
+            },
+            "title": "Include Memory View",
+            "description": "允许检索的记忆种类，不传时默认召回所有种类的记忆。"
+          },
           "memory_limit_number": {
             "type": "integer",
             "format": "int32",
             "title": "Memory Limit Number",
             "description": "召回的记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
             "default": 9
-          },
-          "include_preference": {
-            "type": "boolean",
-            "title": "Include Preference",
-            "description": "是否启用偏好记忆召回。开启后，将根据查询的内容智能召回用户的偏好记忆。不传时该功能默认开启。",
-            "default": true
-          },
-          "preference_limit_number": {
-            "type": "integer",
-            "format": "int32",
-            "title": "Preference Limit Number",
-            "description": "召回的偏好记忆条数上限，在满足相关性阈值（relativity）的前提下最多返回该数量的记忆，不保证返回固定条数。默认值 9，最大值 25。",
-            "default": 9
-          },
-          "include_tool_memory": {
-            "type": "boolean",
-            "title": "Include Tool Memory",
-            "description": "是否启用工具记忆召回。开启后，系统会根据查询内容智能召回工具相关的记忆。不传时该功能默认关闭。",
-            "default": false
-          },
-          "tool_memory_limit_number": {
-            "type": "integer",
-            "format": "int32",
-            "title": "Tool Memroy Limit Number",
-            "description": "限定返回的工具记忆条数，用于控制召回的工具记忆个数,仅在 include_tool_memory=true 时生效。不传时使用系统默认值6，最大值为25。",
-            "default": 6
-          },
-          "include_skill": {
-            "type": "boolean",
-            "title": "Include Skill",
-            "description": "是否启用技能（Skill）召回。开启后，系统会根据查询内容召回相关 Skill，包括用户对话自动生成的个性化 Skill，以及 knowledgebase_ids 范围内上传的自定义 Skill。不传时该功能默认关闭。"
-          },
-          "skill_limit_number": {
-            "type": "integer",
-            "format": "int32",
-            "title": "Skill Limit Number",
-            "description": "限定返回的技能（Skill）条数，用于控制召回的技能个数,仅在 include_skill=true 时生效。不传时使用系统默认值6，最大值为25。"
           },
           "relativity": {
             "type": "number",
@@ -1705,6 +1972,167 @@
         },
         "title": "SkillDetail"
       },
+      "SearchProfileDetail": {
+        "type": "object",
+        "title": "SearchProfileDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "属性记忆的唯一标识符。"
+          },
+          "memory": {
+            "type": "string",
+            "title": "Memory",
+            "description": "属性记忆内容。"
+          },
+          "memory_type": {
+            "type": "string",
+            "title": "Memory Type",
+            "description": "记忆类型，属性记忆为 ProfileMemory。",
+            "enum": [
+              "ProfileMemory"
+            ]
+          },
+          "template_id": {
+            "type": "string",
+            "title": "Template ID",
+            "description": "属性模板 ID。"
+          },
+          "profile_category": {
+            "type": "string",
+            "title": "Profile Category",
+            "description": "属性分类，例如「基础信息」。"
+          },
+          "profile_field": {
+            "type": "string",
+            "title": "Profile Field",
+            "description": "属性字段名，例如「职业」。"
+          },
+          "profile_path": {
+            "type": "string",
+            "title": "Profile Path",
+            "description": "属性路径，例如「基础信息.职业」。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "属性记忆状态，当前检索结果均为 activated。",
+            "enum": [
+              "activated"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At",
+            "description": "属性记忆创建时间，ISO 8601 格式。"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At",
+            "description": "属性记忆最后一次更新时间，ISO 8601 格式。"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Confidence",
+            "description": "属性记忆的置信度分数，范围 0~1。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "查询内容与该属性字段的相关性分数，范围 0~1。"
+          },
+          "algorithm_updatable": {
+            "type": "boolean",
+            "title": "Algorithm Updatable",
+            "description": "该属性字段是否允许算法自动更新。"
+          }
+        }
+      },
+      "SearchEventDetail": {
+        "type": "object",
+        "title": "SearchEventDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "事件记忆的唯一标识符。"
+          },
+          "event_key": {
+            "type": "string",
+            "title": "Event Key",
+            "description": "事件记忆的标题或关键词。"
+          },
+          "event_value": {
+            "type": "string",
+            "title": "Event Value",
+            "description": "事件记忆的具体内容。"
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type",
+            "description": "事件记忆类型，通常为 EventMemory。"
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "事件记忆创建时间，ISO 8601 格式。"
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "与该事件记忆关联的会话唯一标识符。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "事件记忆状态，当前检索结果均为 activated。",
+            "enum": [
+              "activated"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "事件记忆最后一次更新时间，ISO 8601 格式。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "查询内容与该事件记忆的相关性分数，范围 0~1。"
+          },
+          "event_time": {
+            "type": "array",
+            "title": "Event Time",
+            "description": "事件时间列表。",
+            "items": {
+              "type": "string"
+            }
+          },
+          "event_location": {
+            "type": "array",
+            "title": "Event Location",
+            "description": "事件地点列表。",
+            "items": {
+              "type": "string"
+            }
+          },
+          "event_roles": {
+            "type": "array",
+            "title": "Event Roles",
+            "description": "事件参与者列表。",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "SearchMemoryResponseData": {
         "type": "object",
         "title": "SearchMemoryResponseData",
@@ -1725,6 +2153,22 @@
               "$ref": "#/components/schemas/PreferenceDetail"
             }
           },
+          "profile_detail_list": {
+            "type": "array",
+            "title": "Profile Detail List",
+            "description": "返回的属性记忆片段详情列表。",
+            "items": {
+              "$ref": "#/components/schemas/SearchProfileDetail"
+            }
+          },
+          "event_detail_list": {
+            "type": "array",
+            "title": "Event Detail List",
+            "description": "返回的事件记忆片段详情列表。",
+            "items": {
+              "$ref": "#/components/schemas/SearchEventDetail"
+            }
+          },
           "tool_memory_detail_list": {
             "type": "array",
             "title": "Tool Memory Detail List",
@@ -1741,7 +2185,7 @@
           "skill_detail_list": {
             "type": "array",
             "title": "Skill Detail List",
-            "description": "返回的技能 Skill 详情列表。开启 include_skill 后返回，来源包括用户对话自动生成的 Skill 和知识库中上传的自定义 Skill。",
+            "description": "返回的技能 Skill 详情列表。",
             "items": {
               "$ref": "#/components/schemas/SkillDetail"
             }
@@ -1775,47 +2219,431 @@
       },
       "GetMemoryRequest": {
         "type": "object",
-        "required": [
-          "user_id"
-        ],
         "properties": {
           "user_id": {
             "type": "string",
             "title": "User ID",
-            "description": "获取的记忆所关联的用户唯一标识符。"
+            "description": "获取的记忆所关联用户的唯一标识符。"
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "获取的记忆所关联 Agent 的唯一标识符。仅开启「为 Agent 创建独立记忆」时可用，与 user_id 二选一。"
           },
           "page": {
             "type": "integer",
             "title": "Page",
             "description": "分页页码，用于在返回结果较多时进行分页控制。",
-            "default":1
+            "default": 1
           },
           "size": {
             "type": "integer",
             "title": "Size",
             "description": "指定每一类记忆在当前页返回的条目数量，最大值为50。",
-            "default":10
+            "default": 10
           },
           "filter": {
             "type": "object",
             "title": "Filter",
             "description": "记忆过滤的条件，用于在获取记忆前精确限定记忆范围。可用字段包括：\"agent_id\", \"app_id\", \"create_time\", \"update_time\"以及\"info\"中的字段。支持逻辑运算符（and，or）和比较运算符（gte、lte、gt、lt）。对于\"info\"字段，支持过滤传入的\"business_type\", \"biz_id\", \"scene\"和其他自定义字段。",
             "example": "{\"and\": [{\"create_time\":{\"gte\":\"...\"}}]}"
-          }, 
-          "include_preference": {
-            "type": "boolean",
-            "title": "IncludePreference",
-            "description": "是否要返回偏好记忆。",
-            "default":true
           },
-          "include_tool_memory": {
-            "type": "boolean",
-            "title": "Include Tool Memory",
-            "description": "是否要返回工具记忆。",
-            "default": true
+          "include_memory_view": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "detail_factual",
+                "preference",
+                "skill",
+                "profile",
+                "event",
+                "tool_memory"
+              ]
+            },
+            "title": "Include Memory View",
+            "description": "允许获取的记忆种类，不传时默认获取所有种类的记忆。全部种类及取值说明见 <a href=\"/cn/memos_cloud/introduction/memory_types\">记忆种类</a>。"
           }
         },
         "title": "GetMemoryRequest"
+      },
+      "GetProfileMemoryDetail": {
+        "type": "object",
+        "title": "GetProfileMemoryDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "属性记忆实例的唯一标识符。"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project ID",
+            "description": "项目 ID。"
+          },
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "属性模板 ID。"
+          },
+          "properties": {
+            "type": "object",
+            "title": "Properties",
+            "description": "属性记忆的结构化字段树。",
+            "additionalProperties": true
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "属性记忆状态，当前仅返回 activated。",
+            "enum": [
+              "activated"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At",
+            "description": "属性记忆创建时间，ISO 8601 格式。"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At",
+            "description": "属性记忆最后一次更新时间，ISO 8601 格式。"
+          }
+        }
+      },
+      "GetEventMemoryDetail": {
+        "type": "object",
+        "title": "GetEventMemoryDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "事件记忆的唯一标识符。"
+          },
+          "event_key": {
+            "type": "string",
+            "title": "Event Key",
+            "description": "事件记忆的标题或关键词。"
+          },
+          "event_value": {
+            "type": "string",
+            "title": "Event Value",
+            "description": "事件记忆的具体内容。"
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type",
+            "description": "事件记忆类型，通常为 EventMemory。"
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "事件记忆创建时间，ISO 8601 格式。"
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "与该事件记忆关联的会话唯一标识符。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "事件记忆状态，当前仅返回 activated。",
+            "enum": [
+              "activated"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "事件记忆最后一次更新时间，ISO 8601 格式。"
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "事件记忆的扩展信息。",
+            "additionalProperties": true
+          },
+          "sources": {
+            "type": "array",
+            "title": "Sources",
+            "description": "事件记忆的来源消息列表。",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "event_time": {
+            "type": "array",
+            "title": "Event Time",
+            "description": "事件时间列表。",
+            "items": {
+              "type": "string"
+            }
+          },
+          "event_location": {
+            "type": "array",
+            "title": "Event Location",
+            "description": "事件地点列表。",
+            "items": {
+              "type": "string"
+            }
+          },
+          "event_roles": {
+            "type": "array",
+            "title": "Event Roles",
+            "description": "事件参与者列表。",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GetMemoryDetail": {
+        "type": "object",
+        "title": "GetMemoryDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "事实记忆的唯一标识符。"
+          },
+          "memory_key": {
+            "type": "string",
+            "title": "Memory Key",
+            "description": "事实记忆的标题或关键词。"
+          },
+          "memory_value": {
+            "type": "string",
+            "title": "Memory Value",
+            "description": "事实记忆的具体内容。"
+          },
+          "memory_type": {
+            "type": "string",
+            "title": "Memory Type",
+            "description": "事实记忆类型。",
+            "enum": [
+              "WorkingMemory",
+              "LongTermMemory",
+              "UserMemory"
+            ]
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "事实记忆创建时间，ISO 8601 格式。"
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "与该事实记忆关联的会话唯一标识符。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "事实记忆状态，当前仅返回 activated。",
+            "enum": [
+              "activated"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Confidence",
+            "description": "事实记忆的置信度分数，范围 0~1。"
+          },
+          "tags": {
+            "type": "array",
+            "title": "Tags",
+            "description": "与事实记忆相关的标签列表。",
+            "items": {
+              "type": "string"
+            }
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "事实记忆最后一次更新时间，ISO 8601 格式。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "事实记忆的相关性分数，范围 0~1。"
+          },
+          "sources": {
+            "type": "array",
+            "title": "Sources",
+            "description": "事实记忆的来源消息列表。",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "添加消息时自定义的元信息字段。",
+            "additionalProperties": true
+          }
+        }
+      },
+      "GetPreferenceDetail": {
+        "type": "object",
+        "title": "GetPreferenceDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "偏好记忆的唯一标识符。"
+          },
+          "preference_type": {
+            "type": "string",
+            "title": "Preference Type",
+            "description": "偏好记忆类型。",
+            "enum": [
+              "explicit_preference",
+              "implicit_preference"
+            ]
+          },
+          "preference": {
+            "type": "string",
+            "title": "Preference",
+            "description": "偏好记忆的具体内容。"
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning",
+            "description": "偏好记忆提取的原因。"
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "偏好记忆创建时间，ISO 8601 格式。"
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "与该偏好记忆关联的会话唯一标识符。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "偏好记忆状态，当前仅返回 activated。",
+            "enum": [
+              "activated"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "偏好记忆最后一次更新时间，ISO 8601 格式。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "偏好记忆的相关性分数，范围 0~1。"
+          },
+          "sources": {
+            "type": "array",
+            "title": "Sources",
+            "description": "偏好记忆的来源消息列表。",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "添加消息时自定义的元信息字段。",
+            "additionalProperties": true
+          }
+        }
+      },
+      "GetToolMemoryDetail": {
+        "type": "object",
+        "title": "GetToolMemoryDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "工具记忆片段的唯一标识符。"
+          },
+          "tool_type": {
+            "type": "string",
+            "title": "Tool Type",
+            "description": "工具记忆类型。ToolTrajectoryMemory 表示工具轨迹记忆；ToolSchema 表示工具信息记忆。",
+            "enum": [
+              "ToolTrajectoryMemory",
+              "ToolSchema"
+            ]
+          },
+          "tool_value": {
+            "type": "string",
+            "title": "Tool Value",
+            "description": "工具记忆的具体内容。"
+          },
+          "tool_used_status": {
+            "type": "array",
+            "title": "Tool Used Status",
+            "description": "工具轨迹记忆列表，每条记录包含使用的工具及经验信息。",
+            "items": {
+              "$ref": "#/components/schemas/ToolUsedStatus"
+            }
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "工具记忆创建时间，ISO 8601 格式。"
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "与该工具记忆关联的会话唯一标识符。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "工具记忆状态，当前为 activated。",
+            "enum": [
+              "activated"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "工具记忆最后一次更新时间，ISO 8601 格式。"
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "工具记忆的相关性分数，范围 0~1。"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "工具记忆的来源信息。"
+          },
+          "experience": {
+            "type": "string",
+            "title": "Experience",
+            "description": "整个轨迹的程序性经验，作为指导任务完成的总体经验。"
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "添加消息时自定义的元信息字段。",
+            "additionalProperties": true
+          }
+        }
       },
       "GetMemoryResponseData": {
         "type": "object",
@@ -1824,134 +2652,33 @@
           "memory_detail_list": {
             "type": "array",
             "title": "Memory Detail List",
-            "description": "获取的事实记忆列表。",
+            "description": "返回的事实记忆片段详情列表。",
             "items": {
-              "type": "object",
-              "title": "Memory Detail",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "事实记忆的唯一标识符，系统内部用于区分不同的记忆条目。"
-                },
-                "memory_key": {
-                  "type": "string",
-                  "description": "事实记忆的标题或关键词，用于概括该事实记忆的主要内容。"
-                },
-                "memory_value": {
-                  "type": "string",
-                  "description": "事实记忆的具体内容。"
-                },
-                "memory_type": {
-                  "type": "string",
-                  "enum": [
-                    "WorkingMemory",
-                    "LongTermMemory",
-                    "UserMemory"
-                  ],
-                  "description": "事实记忆类型。"
-                },
-                "create_time": {
-                  "type": "string",
-                  "description": "事实记忆创建时间，ISO 8601 格式。"
-                },
-                "conversation_id": {
-                  "type": "string",
-                  "description": "与该事实记忆关联的会话唯一标识符。"
-                },
-                "status": {
-                  "type": "string",
-                  "description": "事实记忆状态，当前仅返回激活状态。",
-                  "enum":["activated"]
-                },
-                "confidence": {
-                  "type": "number",
-                  "description": "事实记忆的置信度分数，范围 0~1，数值越大表示越可靠；该值可能随时间或使用频率衰减。"
-                },
-                "tags": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "与事实记忆相关的标签列表，用于分类或检索，例如 [\"人物\",\"事件\"]。"
-                },
-                "update_time": {
-                  "type": "string",
-                  "description": "事实记忆最后一次更新的时间，ISO 8601 格式。"
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  },
-                  "description": "事实记忆的原始消息内容列表。"
-                },
-                "info": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "添加消息时自定义的元信息字段。"
-                }
-              }
+              "$ref": "#/components/schemas/GetMemoryDetail"
             }
           },
           "preference_detail_list": {
             "type": "array",
             "title": "Preference Detail List",
-            "description": "偏好记忆列表。",
+            "description": "返回的偏好记忆片段详情列表。",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "偏好记忆的唯一标识符。"
-                },
-                "preference_type": {
-                  "type": "string",
-                  "enum": [
-                    "explicit_preference",
-                    "implicit_preference"
-                  ],
-                  "description": "偏好记忆类型。"
-                },
-                "preference": {
-                  "type": "string",
-                  "description": "偏好记忆的具体内容描述。"
-                },
-                "reasoning": {
-                  "type": "string",
-                  "description": "该偏好记忆被提取或形成的原因说明。"
-                },
-                "create_time": {
-                  "type": "string",
-                  "description": "偏好记忆创建时间，ISO 8601 格式。"
-                },
-                "conversation_id": {
-                  "type": "string",
-                  "description": "与该偏好记忆关联的会话唯一标识符。"
-                },
-                "status": {
-                  "type": "string",
-                  "description": "偏好记忆状态，当前仅返回激活状态。",
-                  "enum":["activated"]
-                },
-                "update_time": {
-                  "type": "string",
-                  "description": "偏好记忆最后一次更新的时间，ISO 8601 格式。"
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  },
-                  "description": "偏好记忆的原始消息内容列表。"
-                },
-                "info": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "添加消息时自定义的元信息字段。"
-                }
-              }
+              "$ref": "#/components/schemas/GetPreferenceDetail"
+            }
+          },
+          "profile_detail_list": {
+            "type": "array",
+            "title": "Profile Detail List",
+            "description": "返回的属性记忆片段详情列表。",
+            "items": {
+              "$ref": "#/components/schemas/GetProfileMemoryDetail"
+            }
+          },
+          "event_detail_list": {
+            "type": "array",
+            "title": "Event Detail List",
+            "description": "返回的事件记忆片段详情列表。",
+            "items": {
+              "$ref": "#/components/schemas/GetEventMemoryDetail"
             }
           },
           "tool_memory_detail_list": {
@@ -1959,78 +2686,15 @@
             "title": "Tool Memory Detail List",
             "description": "返回的工具记忆片段详情列表。",
             "items": {
-              "type": "object",
-              "title": "Tool Memory Detail",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "title": "ID",
-                  "description": "工具记忆片段的唯一标识符。"
-                },
-                "tool_type": {
-                  "type": "string",
-                  "title": "Tool Type",
-                  "description": "工具记忆类型。ToolTrajectoryMemory 表示工具轨迹记忆；ToolSchema 表示工具信息记忆。",
-                  "enum": [
-                    "ToolTrajectoryMemory",
-                    "ToolSchema"
-                  ]
-                },
-                "tool_value": {
-                  "type": "string",
-                  "title": "Tool Value",
-                  "description": "工具记忆的具体内容。"
-                },
-                "tool_used_status": {
-                  "type": "array",
-                  "title": "Tool Used Status",
-                  "description": "工具轨迹记忆列表，每条记录包含使用的工具及经验信息。",
-                  "items": {
-                    "$ref": "#/components/schemas/ToolUsedStatus"
-                  }
-                },
-                "create_time": {
-                  "type": "string",
-                  "title": "Create Time",
-                  "description": "工具记忆创建时间（ISO 8601 格式）。"
-                },
-                "conversation_id": {
-                  "type": "string",
-                  "title": "Conversation ID",
-                  "description": "与该工具记忆关联的会话唯一标识符。"
-                },
-                "status": {
-                  "type": "string",
-                  "title": "Status",
-                  "description": "工具记忆状态，当前为 activated。",
-                  "enum": [
-                    "activated"
-                  ]
-                },
-                "update_time": {
-                  "type": "string",
-                  "title": "Update Time",
-                  "description": "工具记忆最后一次更新的时间（ISO 8601 格式）。"
-                },
-                "experience": {
-                  "type": "string",
-                  "title": "Experience",
-                  "description": "整个轨迹的程序性经验，作为指导任务完成的总体经验。"
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  },
-                  "description": "工具记忆的原始消息内容列表。"
-                },
-                "info": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "添加消息时自定义的元信息字段。"
-                }
-              }
+              "$ref": "#/components/schemas/GetToolMemoryDetail"
+            }
+          },
+          "skill_detail_list": {
+            "type": "array",
+            "title": "Skill Detail List",
+            "description": "返回的技能 Skill 详情列表。",
+            "items": {
+              "$ref": "#/components/schemas/SkillDetail"
             }
           },
           "total": {
@@ -2083,12 +2747,17 @@
               "type": "string"
             },
             "title": "Memory IDs",
-            "description": "需要删除的记忆 ID 列表。每个 ID 均来自 search/memory 或 get/memory 接口返回的 id 字段。"
+            "description": "需要删除的记忆 ID 列表。"
           },
           "user_id": {
             "type": "string",
             "title": "User ID",
-            "description": "删除用户的所有记忆，该用户关联的唯一ID标识符。"
+            "description": "删除该用户在当前项目下的全部记忆。与 memory_ids、agent_id 互斥。"
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "删除该 Agent 在当前项目下的全部记忆。仅开启「为 Agent 创建独立记忆」时可用。与 memory_ids、user_id 互斥。"
           }
         },
         "title": "DeleteMemoryRequest"
@@ -2218,6 +2887,85 @@
         },
         "title": "AddFeedbackResponse"
       },
+      "TaskStatusMemoryViewIds": {
+        "type": "object",
+        "title": "Task Status Memory View IDs",
+        "properties": {
+          "memory_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Memory IDs",
+            "description": "本次任务在该<a href=\"/cn/memos_cloud/introduction/memory_types\">记忆种类</a>下触达的记忆 ID 列表。"
+          }
+        }
+      },
+      "TaskStatusMemoryViews": {
+        "type": "object",
+        "title": "Task Status Memory Views",
+        "description": "任务完成后返回的本轮记忆变更汇总。",
+        "properties": {
+          "added": {
+            "type": "integer",
+            "title": "Added",
+            "description": "本次任务新增的记忆数量。"
+          },
+          "updated": {
+            "type": "integer",
+            "title": "Updated",
+            "description": "本次任务更新的记忆数量。"
+          },
+          "deleted": {
+            "type": "integer",
+            "title": "Deleted",
+            "description": "本次任务删除或归档的记忆数量。"
+          },
+          "detail_factual": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "preference": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "event": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "skill": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "tool_memory": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          }
+        }
+      },
+      "OpenMemGetStatusData": {
+        "type": "object",
+        "title": "OpenMem Get Status Data",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "title": "Task ID",
+            "description": "异步任务 ID，与请求中的 task_id 一致。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "enum": [
+              "running",
+              "completed",
+              "failed"
+            ],
+            "description": "任务当前状态：`running` 处理中，`completed` 已完成，`failed` 失败。"
+          },
+          "memory_views": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViews",
+            "description": "仅当 status 为 completed 且存在记忆变更明细时返回；running / failed 时不返回。"
+          }
+        }
+      },
       "GetStatusRequest": {
         "type": "object",
         "required": [
@@ -2227,7 +2975,7 @@
           "task_id": {
             "type": "string",
             "title": "Task ID",
-            "description": "异步任务ID"
+            "description": "异步任务 ID，来自 add/message、add/feedback 等接口响应中的 task_id。"
           }
         },
         "title": "GetStatusRequest"
@@ -2245,20 +2993,7 @@
             "description": "接口状态码，更多内容可查阅<a href=\"/api_docs/help/error_codes\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">错误码列表</a>了解详情。"
           },
           "data": {
-            "type": "object",
-            "title": "Data",
-            "properties": {
-              "status": {
-                "type": "string",
-                "title": "Status",
-                "enum": [
-                  "running",
-                  "completed",
-                  "failed"
-                ],
-                "description": "记忆处理任务当前的状态。"
-              }
-            }
+            "$ref": "#/components/schemas/OpenMemGetStatusData"
           },
           "message": {
             "type": "string",
@@ -2455,7 +3190,7 @@
                   "type": "string",
                   "title": "Status",
                   "description": "文件处理状态",
-                  "enum":[
+                  "enum": [
                     "running",
                     "completed",
                     "failed"
@@ -2582,7 +3317,7 @@
                       "type": "string",
                       "title": "Status",
                       "description": "文件处理状态",
-                      "enum":[
+                      "enum": [
                         "running",
                         "completed",
                         "failed"
@@ -2945,6 +3680,299 @@
             "example": "ok"
           }
         }
+      },
+      "BindProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "bind_list"
+        ],
+        "properties": {
+          "bind_list": {
+            "type": "array",
+            "title": "Bind List",
+            "description": "批量绑定列表，单次上限 20 条。",
+            "items": {
+              "type": "object",
+              "required": [
+                "profile_template_id"
+              ],
+              "properties": {
+                "user_id": {
+                  "type": "string",
+                  "description": "需要绑定到属性树模版的用户 ID。"
+                },
+                "agent_id": {
+                  "type": "string",
+                  "description": "需要绑定到属性树模版的 Agent ID，仅开启「为 Agent 创建独立记忆」时，可与 user_id 二选一传入。"
+                },
+                "profile_template_id": {
+                  "type": "string",
+                  "description": "需绑定的属性记忆模板 ID。"
+                }
+              }
+            }
+          }
+        },
+        "title": "BindProfileTemplateRequest"
+      },
+      "ProfileFieldValue": {
+        "type": "object",
+        "title": "字段值对象",
+        "description": "metadata 嵌套最内层的叶子节点。",
+        "properties": {
+          "value": {
+            "type": "string",
+            "title": "Value",
+            "description": "属性字段值。"
+          },
+          "algorithm_updatable": {
+            "type": "boolean",
+            "title": "Algorithm Updatable",
+            "description": "是否允许算法自动更新该字段，默认为 true。",
+            "default": true
+          }
+        }
+      },
+      "EditProfileRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "用户 ID，与 agent_id 二选一。单视角项目必传。"
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "Agent ID，仅开启「为 Agent 创建独立记忆」时可用，与 user_id 二选一。"
+          },
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "目标属性记忆模板 ID。"
+          },
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "要更新的字段。传入已有字段则更新值；传入新字段则添加到当前实例。",
+            "properties": {
+              "{分类名}": {
+                "type": "object",
+                "description": "属性分类（可选的中间层），键名为用户自定义的分类名称。如无需分类可跳过此层，直接在 metadata 下传字段值对象。",
+                "properties": {
+                  "{字段名}": {
+                    "$ref": "#/components/schemas/ProfileFieldValue"
+                  }
+                }
+              }
+            }
+          },
+          "remove_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Remove Fields",
+            "description": "要删除的字段路径列表，如 <code>[\"基础信息.职业\"]</code>。"
+          }
+        },
+        "title": "EditProfileRequest"
+      },
+      "DeleteProfileRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "用户 ID，与 agent_id 二选一。"
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "Agent ID，与 user_id 二选一。"
+          },
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "目标属性记忆模板 ID。"
+          }
+        },
+        "title": "DeleteProfileRequest"
+      },
+      "UpdateMemoryRequest": {
+        "type": "object",
+        "required": [
+          "memory_id"
+        ],
+        "properties": {
+          "memory_id": {
+            "type": "string",
+            "title": "Memory ID",
+            "description": "记忆 ID，来自 search/memory 或 get/memory 返回结果中的 id。"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "更新后的记忆内容。"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "更新后的记忆标题。"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "enum": [
+              "activated",
+              "resolving",
+              "archived",
+              "deleted"
+            ],
+            "description": "记忆状态。activated（生效）/ resolving（待确认）/ archived（归档）/ deleted（删除）。"
+          }
+        },
+        "title": "UpdateMemoryRequest"
+      },
+      "GetMemoryByIdResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "接口状态码。",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "记忆 ID"
+              },
+              "memory_view": {
+                "type": "string",
+                "enum": [
+                  "detail_factual",
+                  "preference",
+                  "event",
+                  "profile",
+                  "skill",
+                  "tool_memory"
+                ],
+                "description": "记忆种类"
+              },
+              "title": {
+                "type": "string",
+                "description": "记忆标题"
+              },
+              "content": {
+                "description": "记忆内容"
+              },
+              "conversation_id": {
+                "type": "string",
+                "description": "来源会话 ID"
+              },
+              "message_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "来源消息 ID 列表"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "activated",
+                  "resolving",
+                  "archived",
+                  "deleted"
+                ],
+                "description": "记忆状态"
+              },
+              "algorithm_updatable": {
+                "type": "boolean",
+                "description": "算法是否可更新"
+              },
+              "created_at": {
+                "type": "string",
+                "description": "创建时间"
+              },
+              "updated_at": {
+                "type": "string",
+                "description": "最后更新时间"
+              },
+              "user_id": {
+                "type": "string",
+                "description": "所属 user 主体"
+              },
+              "agent_id": {
+                "type": "string",
+                "description": "所属 agent 主体"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "自定义标签"
+              },
+              "info": {
+                "type": "object",
+                "description": "自定义元信息"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "接口提示信息。",
+            "example": "ok"
+          }
+        },
+        "title": "GetMemoryByIdResponse"
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "接口状态码。",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "description": "是否操作成功。",
+                "example": true
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "接口提示信息。",
+            "example": "ok"
+          }
+        },
+        "title": "SuccessResponse"
       }
     }
   }

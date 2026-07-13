@@ -17,17 +17,19 @@ Memory retrieval means that when a user asks a question, MemOS recalls the most 
 ## 2. Key Parameters
 
 - **Query (`query`)**: the user's question or statement used for retrieval. MemOS uses semantic matching to find related memories.
-- **Memory filter (`filter`)**: JSON-based logical conditions used to filter fields such as `agent_id`, `create_time`, `tags`, and `info`, narrowing the retrieval scope. You can also set separate filters for user memories, public memories, and knowledge base memories.
-- **Relevance threshold (`relativity`)**: controls how semantically relevant a recalled memory must be. The current default threshold is `0.45`; memories below this value are filtered out.
+- **Memory categories to retrieve (`include_memory_view`)**: controls which [memory categories](/memos_cloud/introduction/memory_types) are allowed to be retrieved.
+- **Recall limit (`memory_limit_number`)**: the maximum number of memories returned after all memories are ranked by relevance.
+- **Memory filter (`filter`)**: JSON-based logical conditions used to filter fields such as `agent_id`, `create_time`, `tags`, and `info`, narrowing the retrieval scope. You can also set separate filters for user/Agent memories, public memories, and knowledge base memories.
+- **Relevance threshold (`relativity`)**: how semantically relevant a recalled memory is to the user's question. The higher the relevance score, the more relevant the memory is to the current question. The relevance threshold constrains this match level; memories below the threshold are filtered out.
 
 ## 3. How It Works
 
 - **Query rewriting**: MemOS cleans and semantically enhances the natural-language query, supplementing key information and retrieval intent to improve retrieval accuracy.
-- **Memory recall**: the system retrieves candidate memories from available memory sources.
-- **Hybrid retrieval and ranking**: based on the rewritten query, the system generates embeddings and combines keyword retrieval with vector semantic retrieval, then ranks candidate memories by relevance.
-- **Memory filtering and screening**: structured filters and comparison operators narrow the retrieval scope; the configured relevance threshold controls result quality.
-- **Result deduplication**: candidate memories are deduplicated and semantically aggregated across sources.
-- **Memory output**: final results are returned according to the configured memory limit, usually within 600 ms, for later reasoning and answer generation.
+- **Memory recall**
+  - **Hybrid retrieval and ranking**: based on the rewritten query, the system generates embeddings and combines keyword retrieval with vector semantic retrieval to recall candidate memories, then ranks candidate memories by relevance.
+  - **Memory filtering and screening**: structured filters and comparison operators narrow the retrieval scope; the configured relevance threshold filters the ranked memories to control result quality.
+  - **Result deduplication**: candidate memories are deduplicated and semantically aggregated across sources.
+- **Memory output**: final results are returned according to the configured memory limit, within 600 ms, for later reasoning and answer generation.
 
 All of these steps are triggered by calling the `search/memory` API. You do not need to manually operate on user memories.
 
@@ -85,7 +87,7 @@ curl --request POST \
 ::
 
 ::note
-`user_id` is required. Each memory retrieval request currently targets a single user.
+If [Independent Memory for an Agent](/memos_cloud/introduction/isolation_filters#create-independent-memory-for-an-agent) is enabled, you can pass `agent_id` alone to search that Agent's memory. Otherwise, `user_id` is required.
 ::
 
 Need the complete field list, request format, and response format? See the [Search Memory API documentation](/api_docs/core/search_memory).
@@ -172,6 +174,22 @@ data = {
 }
 ```
 
+### `include_memory_view`: specify which memory categories to retrieve
+
+Use `include_memory_view` to control which [memory categories](/memos_cloud/introduction/memory_types) can be returned by this search. If omitted, all memory categories are searched by default.
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "query": "What happened last week?",
+    "include_memory_view": ["event", "profile"] # only search event memory and Profile
+}
+```
+
+::warning
+When this field is passed, older parameters such as `include_preference`, `include_skill`, and `include_tool_memory` no longer take effect. In this case, `memory_limit_number` refers to the total number of results returned after all memory categories are merged and ranked together.
+::
+
 ### `filter`: precisely narrow the retrieval scope
 
 MemOS supports `filter` to narrow retrieval by tags, time, business fields, and other conditions. You can also set separate filters for user memories, knowledge base memories, and public memories.
@@ -230,14 +248,15 @@ For more filter conditions and nested syntax, see [Memory Filters](/memos_cloud/
 
 ### `relativity` / `memory_limit_number`: control recall quality and quantity
 
-Pass `relativity` to raise the relevance threshold. Pass `memory_limit_number` to limit the number of returned memories and reduce the token cost of later prompt injection.
+- Pass `relativity` to raise the relevance threshold for recall.
+- Pass `memory_limit_number` to limit the total number of returned memories after all memories are merged and ranked.
 
 ```python
 data = {
     "user_id": "memos_user_123",
     "query": "Plan a 5-day trip to Chengdu for me.",
-    "relativity": 0.8,
-    "memory_limit_number": 9
+    "relativity": 0.8, # default 0.45, range 0-1
+    "memory_limit_number": 9 # default 9, max 25
 }
 ```
 
@@ -260,31 +279,28 @@ data = {
 ::card-group
   :::card
   ---
-  icon: i-ri-tools-line
-  title: Recall Tool Memories
-
-  to: /memos_cloud/features/tool_calling
+  icon: i-ri-delete-bin-line
+  title: Delete Memory
+  to: /memos_cloud/mem_operations/delete_memory
   ---
-  Add tool call information and recall tool memories.
+  Delete specific memory entries or all memories for a user.
   :::
 
   :::card
   ---
-  icon: i-ri-book-read-line
-  title: Recall Skills
-
-  to: /memos_cloud/features/self-evolving
+  icon: i-ri-filter-3-line
+  title: Memory Filters
+  to: /memos_cloud/features/filters
   ---
-  Automatically generate skills and recall reusable Skill memories.
+  Filter recalled memories by tags, time, and other conditions.
   :::
 
   :::card
   ---
   icon: i-ri-database-2-line
-  title: Search Knowledge Bases
-
+  title: Knowledge Base
   to: /memos_cloud/features/knowledge_base
   ---
-  Enable knowledge bases and specify which knowledge bases can be searched.
+  Specify which knowledge bases can be searched.
   :::
 ::

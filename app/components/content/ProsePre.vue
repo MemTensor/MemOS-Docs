@@ -135,7 +135,21 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div :class="uiStyle.root({ class: [props.ui?.root], filename: !!filename })">
+  <div
+    v-if="language === 'mermaid'"
+    v-bind="$attrs"
+  >
+    <ClientOnly>
+      <Mermaid :code="code || ''" />
+      <template #fallback>
+        <pre :class="uiStyle.base({ class: [props.ui?.base, props.class] })"><slot /></pre>
+      </template>
+    </ClientOnly>
+  </div>
+  <div
+    v-else
+    :class="uiStyle.root({ class: [props.ui?.root], filename: !!filename })"
+  >
     <div
       v-if="filename && !hideHeader"
       :class="uiStyle.header({ class: props.ui?.header })"

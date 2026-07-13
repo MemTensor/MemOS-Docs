@@ -148,11 +148,8 @@ data = {
     "user_id": "memos_user_123",
     "conversation_id": "0928",
     "query": "北京适合穿什么衣服",
-    "memory_limit_number": 10,
-    "include_preference": True,
-    "preference_limit_number": 10,
-    "include_tool_memory":True,
-    "tool_memory_limit_number":10,
+    "include_memory_view": ["tool_memory"],
+    "memory_limit_number": 10
 }
 
 headers = {

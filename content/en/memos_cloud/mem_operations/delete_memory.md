@@ -1,22 +1,25 @@
 ---
 title: Delete Memory
-desc: Delete user memories from MemOS Cloud by memory_id, or delete all memories for a user in the current project by user_id.
+desc: Delete memories for a specified user or Agent. Supports precise deletion of individual memories, or deleting all memories for a user or Agent at once.
 ---
 
 ## 1. Choose a Deletion Method
 
-MemOS Cloud supports two deletion methods. Pass `memory_ids[]` to delete specific memories, or pass `user_id` to delete all memories for a user. Choose one based on your scenario.
+MemOS Cloud currently supports the following three deletion methods. Choose one based on your scenario.
 
-| Deletion method | Field | Use case | Notes |
-| :--- | :--- | :--- | :--- |
-| Delete specific memories | `memory_ids[]` | Delete one or more memories | The `memory_id` comes from the `id` field returned by `search/memory` or `get/memory` |
-| Delete user memories | `user_id` | Clear all memories for a user in the current project | This deletes all fact, preference, skill, tool, and other memories for that user |
+| Deletion method | Field | Use case |
+| :--- | :--- | :--- |
+| Delete specific memories | `memory_ids[]` | Delete one or more memories. The `memory_id` comes from the `id` field returned by `search/memory` or `get/memory` |
+| Delete user memories | `user_id` | Clear all memories for a user in the current project |
+| Delete Agent memories | `agent_id` | Clear all memories for an Agent in the current project |
 
 ::warning
 
 Note
 
-- Deletion only applies within the project scope of the current API Key. Before deleting, make sure the API Key, project, and target memories belong to the same project. Otherwise, authentication may fail or the `memory_id` may not exist.
+- The three parameters are mutually exclusive. Only one deletion method can be used per call.
+
+- Deletion only applies within the project scope of the current API Key. Before deleting, make sure the API Key, project, and target memories belong to the same project.
 
 - Do not pass `conversation_id`, `knowledgebase_id`, or other IDs. Deletion by those dimensions is not supported.
 
@@ -131,8 +134,8 @@ When you need to clear all memories for a user in the current project, pass `use
 Before running this operation, make sure:
 
 - `user_id` is the end-user ID whose memories you want to clear.
-- The API Key belongs to the correct project.
-- You no longer need this user's fact, preference, skill, tool, or other memories in the current project.
+- The API Key belongs to the project this user belongs to.
+- You no longer need this user's fact, preference, Profile, Event Memory, skill, or tool memories in the current project.
 ::
 
 ::code-group
@@ -180,7 +183,65 @@ After deleting all memories for a user, search again with the same `user_id` for
 
 
 
-## 4. Delete Memories in the Console
+## 4. Delete All Memories for an Agent
+
+When you need to clear all memories for an Agent in the current project, pass `agent_id`.
+
+::warning
+Before running this operation, make sure:
+
+- This Agent has [Independent Memory](/memos_cloud/introduction/isolation_filters#create-independent-memory-for-an-agent) enabled.
+- `agent_id` is the Agent ID whose memories you want to clear.
+- The API Key belongs to the project this Agent belongs to.
+- You no longer need this Agent's fact, preference, Profile, Event Memory, skill, or tool memories in the current project.
+::
+
+::code-group
+```python [Python (HTTP)]
+import requests
+
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
+
+data = {
+  "agent_id": "memos_agent"
+}
+
+res = requests.post(
+  f"{BASE_URL}/delete/memory",
+  headers={"Authorization": f"Token {API_KEY}"},
+  json=data
+)
+
+print(res.json())
+```
+
+```python [Python (SDK)]
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.delete_memory(agent_id="memos_agent")
+
+print(res)
+```
+
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/delete/memory \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "agent_id": "memos_agent"
+  }'
+```
+::
+
+After deleting all memories for an Agent, search again with the same `agent_id` to confirm that old memories for that Agent are no longer returned.
+
+
+
+## 5. Delete Memories in the Console
 
 If you only need to delete one or a few memories temporarily, you can delete them directly in the console:
 
@@ -190,20 +251,26 @@ If you only need to delete one or a few memories temporarily, you can delete the
 4. Click "Delete" and confirm in the second confirmation dialog. To delete multiple memories, select multiple records first, then click "Batch Delete".
 5. Refresh the list after deletion, or search again with the same conditions to confirm that the memory no longer appears.
 
+:::note
+
+To delete memories automatically from your business system, or to batch-process `memory_id` values copied from logs or search results, call the `delete/memory` API instead.
+
+:::
+
 ![Delete memories in the console](https://cdn.memtensor.com.cn/img/1781505894179_et8gm6_compressed.png)
 
 
 
-## 5. Common Errors and Troubleshooting
+## 6. Common Errors and Troubleshooting
 
 | Error code | Common cause | How to fix |
 | :--- | :--- | :--- |
-| `40000` | The request body is invalid, or unsupported fields are passed together | Pass only one of `memory_ids` or `user_id`; `memory_ids` must be a non-empty string array |
-| `40002` | A required field is empty | Check whether `memory_ids` / `user_id` is missing, or whether you passed an empty string or empty array |
+| `40000` | The request body is invalid, or unsupported fields are passed together | Pass only one of `memory_ids`, `user_id`, or `agent_id` (the three are mutually exclusive); `memory_ids` must be a non-empty string array |
+| `40002` | A required field is empty | Check whether `memory_ids` / `user_id` / `agent_id` is missing, or whether you passed an empty string or empty array |
 | `40103` / `40132` | The API Key is invalid, expired, or cannot access the current project | Go back to [Project Configuration](/api_docs/start/configuration) and check whether the current project matches the API Key |
 | `40306` | Delete-memory authentication failed | Make sure the memory belongs to the project of the current API Key and that you have permission to delete it |
 | `40307` | The `memory_id` does not exist | Get the latest `id` from `search/memory` or `get/memory`; do not use `conversation_id`, `user_id`, or a knowledge base ID |
-| `40308` | The `user_id` does not exist | Confirm that this user has written memories in the current project |
+| `40308` | The `user_id` or `agent_id` does not exist | Confirm that this user/Agent has written memories in the current project. If passing `agent_id`, confirm that this Agent has independent memory enabled and has written memories |
 
 For more error code details, see [Error Codes](/api_docs/help/error_codes).
 

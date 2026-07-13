@@ -6,10 +6,7 @@
     "version": "1.0.0"
   },
   "servers": [
-    {
-      "url": "https://memos.memtensor.cn/api/openmem/v1",
-      "description": "Production server"
-    }
+    {"url": "https://memos.memtensor.cn/api/openmem/v1", "description": "Production server"}
   ],
   "security": [
     {
@@ -33,12 +30,12 @@
                 "user_id": "memos_user_123",
                 "conversation_id": "0610",
                 "messages": [
-                  { "role": "user", "content": "I want to travel during summer vacation, can you recommend something?" },
-                  { "role": "assistant", "content": "Sure! Are you traveling alone, with family or with friends?" },
-                  { "role": "user", "content": "I'm bringing my kid. My family always travels together." },
-                  { "role": "assistant", "content": "Got it, so you're traveling with your children as a family, right?" },
-                  { "role": "user", "content": "Yes, with both kids and elderly, we usually travel as a whole family." },
-                  { "role": "assistant", "content": "Understood, I'll recommend destinations suitable for family trips." }
+                  {"role": "user", "content": "I want to travel during summer vacation, can you recommend something?"},
+                  {"role": "assistant", "content": "Sure! Are you traveling alone, with family or with friends?"},
+                  {"role": "user", "content": "I'm bringing my kid. My family always travels together."},
+                  {"role": "assistant", "content": "Got it, so you're traveling with your children as a family, right?"},
+                  {"role": "user", "content": "Yes, with both kids and elderly, we usually travel as a whole family."},
+                  {"role": "assistant", "content": "Understood, I'll recommend destinations suitable for family trips."}
                 ]
               }
             }
@@ -95,7 +92,7 @@
     "/search/memory": {
       "post": {
         "summary": "Search Memory",
-        "description": "This API queries a user’s memory and returns the fragments most relevant to the input for the Agent to use. Returned memory can include Fact Memory, Preference Memory, Tool Memory, and Skill. Skills can be auto-generated from user conversations or uploaded as custom Skill files in a Knowledge Base.",
+        "description": "This API retrieves memories for a specified user or Agent and returns the fragments most relevant to the query.",
         "operationId": "search_memory",
         "requestBody": {
           "required": true,
@@ -133,9 +130,7 @@
                   },
                   "user": {
                     "and": [
-                      {
-                        "scene": "chat"
-                      }
+                      {"scene": "chat"}
                     ]
                   }
                 }
@@ -223,8 +218,8 @@
     },
     "/get/memory": {
       "post": {
-        "summary": "Get Memory",
-        "description": "Retrieve a user’s memories, including factual, preference, and tool memories.",
+        "summary": "Get Memories",
+        "description": "Retrieve paginated memories for a user or Agent.",
         "operationId": "get_memory",
         "requestBody": {
           "required": true,
@@ -253,7 +248,7 @@
     "/delete/memory": {
       "post": {
         "summary": "Delete Memory",
-        "description": "This API is used to delete specified user memories, supporting batch deletion.",
+        "description": "Delete memories for a user or Agent. Supports deletion by memory_ids or clearing all memories by user_id/agent_id.",
         "operationId": "delete_memory",
         "requestBody": {
           "required": true,
@@ -322,22 +317,10 @@
               },
               "example": {
                 "messages": [
-                  {
-                    "role": "user",
-                    "content": "I’ve planned a summer trip to Guangzhou. What chain hotels can you recommend for accommodation?"
-                  },
-                  {
-                    "role": "assistant",
-                    "content": "You can consider options like 7 Days Inn, All Seasons, Hilton, and others."
-                  },
-                  {
-                    "role": "user",
-                    "content": "I’ll go with 7 Days Inn."
-                  },
-                  {
-                    "role": "assistant",
-                    "content": "Alright—ask me anytime if you have more questions."
-                  }
+                  {"role": "user", "content": "I’ve planned a summer trip to Guangzhou. What chain hotels can you recommend for accommodation?"},
+                  {"role": "assistant", "content": "You can consider options like 7 Days Inn, All Seasons, Hilton, and others."},
+                  {"role": "user", "content": "I’ll go with 7 Days Inn."},
+                  {"role": "assistant", "content": "Alright—ask me anytime if you have more questions."}
                 ],
                 "extraction_types": [
                   "memory",
@@ -404,7 +387,7 @@
     "/get/status": {
       "post": {
         "summary": "Get Task Status",
-        "description": "Get the status of an asynchronous processing task.",
+        "description": "Query the processing status of async tasks such as add/message and add/feedback. When a task completes, the response includes memory_views with added/updated/deleted counts and memory IDs grouped by <a href=\"/memos_cloud/introduction/memory_types\">memory category</a>.",
         "operationId": "get_status",
         "requestBody": {
           "required": true,
@@ -412,6 +395,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/GetStatusRequest"
+              },
+              "example": {
+                "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9"
               }
             }
           }
@@ -423,6 +409,56 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetStatusResponse"
+                },
+                "examples": {
+                  "completed": {
+                    "summary": "completed",
+                    "value": {
+                      "code": 0,
+                      "message": "ok",
+                      "data": {
+                        "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9",
+                        "status": "completed",
+                        "memory_views": {
+                          "added": 1,
+                          "updated": 1,
+                          "deleted": 0,
+                          "detail_factual": {
+                            "memory_ids": [
+                              "memos_mem_001"
+                            ]
+                          },
+                          "preference": {
+                            "memory_ids": [
+                              "memos_mem_002"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "running": {
+                    "summary": "running",
+                    "value": {
+                      "code": 0,
+                      "message": "ok",
+                      "data": {
+                        "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9",
+                        "status": "running"
+                      }
+                    }
+                  },
+                  "failed": {
+                    "summary": "failed",
+                    "value": {
+                      "code": 0,
+                      "message": "ok",
+                      "data": {
+                        "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9",
+                        "status": "failed"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -574,6 +610,178 @@
           }
         }
       }
+    },
+    "/bind/profile_template": {
+      "post": {
+        "summary": "Bind Profile Template",
+        "description": "Bind a Profile template to a user or Agent, creating a Profile memory instance. After binding, the corresponding attribute fields are automatically updated whenever new messages are added.",
+        "operationId": "bind_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindProfileTemplateRequest"
+              },
+              "example": {
+                "bind_list": [
+                  {"user_id": "memos_user_123", "profile_template_id": "tpl_user_001"}
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/edit/profile": {
+      "post": {
+        "summary": "Edit Profile",
+        "description": "Edit a Profile memory instance: add fields, update field values, remove fields, or lock fields against automatic updates by the algorithm. Only the target instance is affected; the template and other instances are not changed.",
+        "operationId": "edit_profile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditProfileRequest"
+              },
+              "example": {
+                "user_id": "memos_user_123",
+                "profile_template_id": "tpl_user_001",
+                "metadata": {
+                  "Basic Info": {
+                    "Location": {
+                      "value": "Shanghai",
+                      "algorithm_updatable": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditProfileResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete/profile": {
+      "post": {
+        "summary": "Delete Profile",
+        "description": "Delete a user's or Agent's Profile memory instance. All field values and bindings for that instance are removed. This does not affect the template itself or other instances.",
+        "operationId": "delete_profile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteProfileRequest"
+              },
+              "example": {
+                "user_id": "memos_user_123",
+                "profile_template_id": "tpl_user_001"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteProfileResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/update/memory": {
+      "post": {
+        "summary": "Update Memory",
+        "description": "Manually update the content, title, or status of an existing memory. Supports all memory categories, including fact memories, preference memories, Event Memory, and Profile attribute values.",
+        "operationId": "update_memory",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMemoryRequest"
+              },
+              "example": {
+                "memory_id": "mem_event_001",
+                "title": "Camping at West Lake with Chen Mo",
+                "content": "Last Saturday I went camping by West Lake with my friend Chen Mo. The weather was great and we watched the stars together at night."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get/memory/{memory_id}": {
+      "get": {
+        "summary": "Get Memory",
+        "description": "Retrieve the details of a single memory by its ID.",
+        "operationId": "get_memory_by_id",
+        "parameters": [
+          {
+            "name": "memory_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Memory ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMemoryByIdResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -682,14 +890,14 @@
             "title": "Temperature",
             "description": "Controls generation randomness. Range: 0 ≤ x ≤ 2.",
             "default": 0.7
-          },          
+          },
           "top_p": {
             "type": "number",
             "title": "Top P",
             "description": "Nucleus sampling parameter. Range: 0 ≤ x ≤ 1.",
             "default": 0.95
           },
-         "add_message_on_answer": {
+          "add_message_on_answer": {
             "type": "boolean",
             "title": "Add Message On Answer",
             "description": "Whether to automatically write user and assistant conversation content into memory. When enabled, developers do not need to call the add/message API to add messages as memory.",
@@ -805,8 +1013,6 @@
       "AddMessageRequest": {
         "type": "object",
         "required": [
-          "user_id",
-          "conversation_id",
           "messages"
         ],
         "properties": {
@@ -818,7 +1024,7 @@
           "conversation_id": {
             "type": "string",
             "title": "Conversation ID",
-            "description": "Unique identifier of the conversation."
+            "description": "Unique identifier of the conversation associated with the added message. Messages under the same conversation_id are treated as the same context. If omitted, the system generates one automatically."
           },
           "messages": {
             "type": "array",
@@ -841,8 +1047,7 @@
             "items": {
               "type": "string"
             },
-            "description": "List of custom tags used to mark the topic or category of the added message.",
-            "default": []
+            "description": "List of custom tags used to mark the topic or category of the added message."
           },
           "info": {
             "type": "object",
@@ -874,8 +1079,7 @@
             "items": {
               "type": "string"
             },
-            "description": "Scope of knowledgebases where memories generated from the added message are allowed to be written.",
-            "default": []
+            "description": "Scope of knowledgebases where memories generated from the added message are allowed to be written."
           },
           "async_mode": {
             "type": "boolean",
@@ -964,8 +1168,8 @@
             ]
           },
           "tool_call_id": {
-              "type": "string",
-              "description": "Unique identifier for the tool call message when role is tool."
+            "type": "string",
+            "description": "Unique identifier for the tool call message when role is tool."
           },
           "tool_calls": {
             "type": "array",
@@ -979,7 +1183,9 @@
                 "type": {
                   "type": "string",
                   "description": "Tool call type, currently only supports function. Required in tool_calls.",
-                  "enum": ["function"]
+                  "enum": [
+                    "function"
+                  ]
                 },
                 "function": {
                   "type": "object",
@@ -1040,7 +1246,7 @@
           "task_id": {
             "type": "string",
             "title": "Task ID",
-            "description": "Unique identifier of the memory processing task."
+            "description": "Unique identifier of the memory processing task. Use the <a href=\"/api_docs/message/get_status\">Get Task Status</a> endpoint to query task results."
           },
           "status": {
             "type": "string",
@@ -1278,6 +1484,22 @@
             },
             "description": "Specifies the scope of knowledge bases accessible for the current search. Defaults to empty, meaning no knowledge bases are searched.Pass specific Knowledgebase IDs to search within that designated repository; pass \"all\" to search across all associated knowledgebases within the project."
           },
+          "include_memory_view": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "detail_factual",
+                "preference",
+                "skill",
+                "profile",
+                "event",
+                "tool_memory"
+              ]
+            },
+            "title": "Include Memory View",
+            "description": "Allowed memory types to retrieve. When omitted, all memory types are recalled by default."
+          },
           "memory_limit_number": {
             "type": "integer",
             "format": "int32",
@@ -1285,44 +1507,7 @@
             "description": "Maximum number of memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many memories may be returned. Default is 9, maximum is 25.",
             "default": 9
           },
-          "include_preference": {
-            "type": "boolean",
-            "title": "Include Preference",
-            "description": "Whether to enable preference memory recall. When enabled, the system will intelligently retrieve the user’s preference memories based on the query. Defaults to true if not provided.",
-            "default": true
-          },
-          "preference_limit_number": {
-            "type": "integer",
-            "format": "int32",
-            "title": "Preference Limit Number",
-            "description": "Maximum number of preference memories that can be recalled: as long as the relevance threshold (relativity) is met, up to this many preferred memories may be returned. Default is 9, maximum is 25.",
-            "default": 9
-          },
-          "include_tool_memory": {
-            "type": "boolean",
-            "title": "Include Tool Memory",
-            "description": "Whether to enable tool memory recall. When enabled, the system will intelligently retrieve tool-related memories based on the query. Default is false if not provided.",
-            "default": false
-          },
-          "tool_memory_limit_number": {
-            "type": "integer",
-            "format": "int32",
-            "title": "Tool Memroy Limit Number",
-            "description": "Limits the number of tool memory items returned, controlling the count of recalled tool memories. Effective only when include_tool_memory=true. Default is 6 if not provided, max is 25.",
-            "default": 6
-          },
-          "include_skill": {
-            "type": "boolean",
-            "title": "Include Skill",
-            "description": "Whether to enable Skill recall. When enabled, the system recalls relevant Skills based on the query, including personalized Skills auto-generated from user conversations and custom Skills uploaded within the knowledgebase_ids scope. Default is disabled if not provided."
-          },
-          "skill_limit_number": {
-            "type": "integer",
-            "format": "int32",
-            "title": "Skill Limit Number",
-            "description": "Limits the number of returned Skills, controlling the count of recalled skills. Effective only when `include_skill=true`. Default is 6 if not provided, max is 25."
-          },
-         "relativity": {
+          "relativity": {
             "type": "number",
             "minimum": 0,
             "maximum": 1,
@@ -1378,6 +1563,22 @@
               "$ref": "#/components/schemas/PreferenceDetail"
             }
           },
+          "profile_detail_list": {
+            "type": "array",
+            "title": "Profile Detail List",
+            "description": "List of profile memory fragment details returned.",
+            "items": {
+              "$ref": "#/components/schemas/SearchProfileDetail"
+            }
+          },
+          "event_detail_list": {
+            "type": "array",
+            "title": "Event Detail List",
+            "description": "List of event memory fragment details returned.",
+            "items": {
+              "$ref": "#/components/schemas/SearchEventDetail"
+            }
+          },
           "tool_memory_detail_list": {
             "type": "array",
             "title": "Tool Memory Detail List",
@@ -1394,7 +1595,7 @@
           "skill_detail_list": {
             "type": "array",
             "title": "Skill Detail List",
-            "description": "List of Skill details returned when include_skill is enabled. Sources include Skills auto-generated from user conversations and custom Skills uploaded to Knowledge Bases.",
+            "description": "List of Skill details returned.",
             "items": {
               "$ref": "#/components/schemas/SkillDetail"
             }
@@ -1761,16 +1962,179 @@
         },
         "title": "SkillDetail"
       },
+      "SearchProfileDetail": {
+        "type": "object",
+        "title": "SearchProfileDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "Unique identifier of the profile memory."
+          },
+          "memory": {
+            "type": "string",
+            "title": "Memory",
+            "description": "Profile memory content."
+          },
+          "memory_type": {
+            "type": "string",
+            "title": "Memory Type",
+            "description": "Memory type. Profile memories use ProfileMemory.",
+            "enum": [
+              "ProfileMemory"
+            ]
+          },
+          "template_id": {
+            "type": "string",
+            "title": "Template ID",
+            "description": "Profile template ID."
+          },
+          "profile_category": {
+            "type": "string",
+            "title": "Profile Category",
+            "description": "Profile category, for example \"Basic Info\"."
+          },
+          "profile_field": {
+            "type": "string",
+            "title": "Profile Field",
+            "description": "Profile field name, for example \"Occupation\"."
+          },
+          "profile_path": {
+            "type": "string",
+            "title": "Profile Path",
+            "description": "Profile field path, for example \"Basic Info.Occupation\"."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Profile memory status. Search results currently return activated only.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At",
+            "description": "Profile memory creation time in ISO 8601 format."
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At",
+            "description": "Last update time of the profile memory in ISO 8601 format."
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Confidence",
+            "description": "Confidence score of the profile memory, ranging from 0 to 1."
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance score between the query and this profile field, ranging from 0 to 1."
+          },
+          "algorithm_updatable": {
+            "type": "boolean",
+            "title": "Algorithm Updatable",
+            "description": "Whether this profile field can be updated automatically by the algorithm."
+          }
+        }
+      },
+      "SearchEventDetail": {
+        "type": "object",
+        "title": "SearchEventDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "Unique identifier of the event memory."
+          },
+          "event_key": {
+            "type": "string",
+            "title": "Event Key",
+            "description": "Title or keyword of the event memory."
+          },
+          "event_value": {
+            "type": "string",
+            "title": "Event Value",
+            "description": "Detailed content of the event memory."
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type",
+            "description": "Event memory type, usually EventMemory."
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "Event memory creation time in ISO 8601 format."
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "Unique identifier of the conversation associated with the event memory."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Event memory status. Search results currently return activated only.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "Last update time of the event memory in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance score between the query and the event memory, ranging from 0 to 1."
+          },
+          "event_time": {
+            "type": "array",
+            "title": "Event Time",
+            "description": "List of event times.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "event_location": {
+            "type": "array",
+            "title": "Event Location",
+            "description": "List of event locations.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "event_roles": {
+            "type": "array",
+            "title": "Event Roles",
+            "description": "List of event participants.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "GetMemoryRequest": {
         "type": "object",
-        "required": [
-          "user_id"
-        ],
         "properties": {
           "user_id": {
             "type": "string",
             "title": "User ID",
             "description": "Unique identifier of the user whose memories are being retrieved."
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "Unique identifier of the Agent whose memories are being retrieved. Available only when independent Agent memory is enabled. Use either user_id or agent_id."
           },
           "page": {
             "type": "integer",
@@ -1790,20 +2154,157 @@
             "description": "Filter conditions, used to precisely limit the memory scope before retrieval. Available fields include: \"agent_id\", \"app_id\", \"create_time\", \"update_time\", and specific fields in \"info\". Supports logical operators (and, or) and comparison operators (gte, lte, gt, lt). For the \"info\" field, supports filtering by \"business_type\", \"biz_id\", \"scene\", and other custom fields.",
             "example": "{\"and\": [{\"create_time\":{\"gte\":\"...\"}}]}"
           },
-          "include_preference": {
-            "type": "boolean",
-            "title": "Include Preference",
-            "description": "Whether preference memories should be included.",
-            "default": true
-          },
-          "include_tool_memory": {
-            "type": "boolean",
-            "title": "Include Tool Memory",
-            "description": "Whether tool memories should be included.",
-            "default": true
+          "include_memory_view": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "detail_factual",
+                "preference",
+                "skill",
+                "profile",
+                "event",
+                "tool_memory"
+              ]
+            },
+            "title": "Include Memory View",
+            "description": "Allowed memory types to retrieve. When omitted, all memory types are returned by default. See <a href=\"/memos_cloud/introduction/memory_types\">Memory Types</a> for values."
           }
         },
         "title": "GetMemoryRequest"
+      },
+      "GetProfileMemoryDetail": {
+        "type": "object",
+        "title": "GetProfileMemoryDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "Unique identifier of the profile memory instance."
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project ID",
+            "description": "Project ID."
+          },
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "Profile template ID."
+          },
+          "properties": {
+            "type": "object",
+            "title": "Properties",
+            "description": "Structured profile field tree.",
+            "additionalProperties": true
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Profile memory status. Currently only activated is returned.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At",
+            "description": "Profile memory creation time in ISO 8601 format."
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At",
+            "description": "Last update time of the profile memory in ISO 8601 format."
+          }
+        }
+      },
+      "GetEventMemoryDetail": {
+        "type": "object",
+        "title": "GetEventMemoryDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "Unique identifier of the event memory."
+          },
+          "event_key": {
+            "type": "string",
+            "title": "Event Key",
+            "description": "Title or keyword of the event memory."
+          },
+          "event_value": {
+            "type": "string",
+            "title": "Event Value",
+            "description": "Detailed content of the event memory."
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type",
+            "description": "Event memory type, usually EventMemory."
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "Event memory creation time in ISO 8601 format."
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "Unique identifier of the conversation associated with the event memory."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Event memory status. Currently only activated is returned.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "Last update time of the event memory in ISO 8601 format."
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "Extended information of the event memory.",
+            "additionalProperties": true
+          },
+          "sources": {
+            "type": "array",
+            "title": "Sources",
+            "description": "Source messages of the event memory.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "event_time": {
+            "type": "array",
+            "title": "Event Time",
+            "description": "List of event times.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "event_location": {
+            "type": "array",
+            "title": "Event Location",
+            "description": "List of event locations.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "event_roles": {
+            "type": "array",
+            "title": "Event Roles",
+            "description": "List of event participants.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       },
       "GetMemoryResponseData": {
         "type": "object",
@@ -1812,132 +2313,33 @@
           "memory_detail_list": {
             "type": "array",
             "title": "Memory Detail List",
-            "description": "Returned factual memories.",
+            "description": "List of factual memory fragment details returned.",
             "items": {
-              "type": "object",
-              "title": "Memory Detail",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Unique identifier of a factual memory entry."
-                },
-                "memory_key": {
-                  "type": "string",
-                  "description": "Title or keyword summarizing the factual memory."
-                },
-                "memory_value": {
-                  "type": "string",
-                  "description": "Content of the factual memory."
-                },
-                "memory_type": {
-                  "type": "string",
-                  "enum": [
-                    "WorkingMemory",
-                    "LongTermMemory",
-                    "UserMemory"
-                  ],
-                  "description": "Type of factual memory."
-                },
-                "create_time": {
-                  "type": "string",
-                  "description": "Creation time in ISO 8601 format."
-                },
-                "conversation_id": {
-                  "type": "string",
-                  "description": "Conversation identifier linked to this memory."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "Current status, only activated is returned."
-                },
-                "confidence": {
-                  "type": "number",
-                  "description": "Confidence score between 0 and 1; higher means more reliable."
-                },
-                "tags": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Tag list for classification or retrieval."
-                },
-                "update_time": {
-                  "type": "string",
-                  "description": "Last update time in ISO 8601 format."
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  },
-                  "description": "Source message objects associated with the memory."
-                },
-                "info": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "Custom metadata provided when adding the message."
-                }
-              }
+              "$ref": "#/components/schemas/GetMemoryDetail"
             }
           },
           "preference_detail_list": {
             "type": "array",
             "title": "Preference Detail List",
-            "description": "Returned preference memories.",
+            "description": "List of preference memory fragment details returned.",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Unique identifier of the preference memory."
-                },
-                "preference_type": {
-                  "type": "string",
-                  "enum": [
-                    "explicit_preference",
-                    "implicit_preference"
-                  ],
-                  "description": "Preference memory type."
-                },
-                "preference": {
-                  "type": "string",
-                  "description": "Description of the preference."
-                },
-                "reasoning": {
-                  "type": "string",
-                  "description": "Reasoning for extracting or deriving the preference."
-                },
-                "create_time": {
-                  "type": "string",
-                  "description": "Creation time in ISO 8601 format."
-                },
-                "conversation_id": {
-                  "type": "string",
-                  "description": "Conversation identifier linked to this preference."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "Current status, only activated is returned."
-                },
-                "update_time": {
-                  "type": "string",
-                  "description": "Last update time in ISO 8601 format."
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  },
-                  "description": "Source messages associated with the preference."
-                },
-                "info": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "Custom metadata provided when adding the message."
-                }
-              }
+              "$ref": "#/components/schemas/GetPreferenceDetail"
+            }
+          },
+          "profile_detail_list": {
+            "type": "array",
+            "title": "Profile Detail List",
+            "description": "List of profile memory fragment details returned.",
+            "items": {
+              "$ref": "#/components/schemas/GetProfileMemoryDetail"
+            }
+          },
+          "event_detail_list": {
+            "type": "array",
+            "title": "Event Detail List",
+            "description": "List of event memory fragment details returned.",
+            "items": {
+              "$ref": "#/components/schemas/GetEventMemoryDetail"
             }
           },
           "tool_memory_detail_list": {
@@ -1945,78 +2347,15 @@
             "title": "Tool Memory Detail List",
             "description": "List of tool memory fragment details returned.",
             "items": {
-              "type": "object",
-              "title": "Tool Memory Detail",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "title": "ID",
-                  "description": "Unique identifier of the tool memory fragment."
-                },
-                "tool_type": {
-                  "type": "string",
-                  "title": "Tool Type",
-                  "description": "Tool memory type. ToolTrajectoryMemory: tool trajectory memory; ToolSchema: tool info memory.",
-                  "enum": [
-                    "ToolTrajectoryMemory",
-                    "ToolSchema"
-                  ]
-                },
-                "tool_value": {
-                  "type": "string",
-                  "title": "Tool Value",
-                  "description": "Specific content of the tool memory."
-                },
-                "tool_used_status": {
-                  "type": "array",
-                  "title": "Tool Used Status",
-                  "description": "List of tool trajectory memories, each record contains tool used and experience info.",
-                  "items": {
-                    "$ref": "#/components/schemas/ToolUsedStatus"
-                  }
-                },
-                "create_time": {
-                  "type": "string",
-                  "title": "Create Time",
-                  "description": "Tool memory creation time (ISO 8601 format)."
-                },
-                "conversation_id": {
-                  "type": "string",
-                  "title": "Conversation ID",
-                  "description": "Unique identifier of the conversation associated with the tool memory."
-                },
-                "status": {
-                  "type": "string",
-                  "title": "Status",
-                  "description": "Tool memory status, currently activated.",
-                  "enum": [
-                    "activated"
-                  ]
-                },
-                "update_time": {
-                  "type": "string",
-                  "title": "Update Time",
-                  "description": "Last update time of the tool memory (ISO 8601 format)."
-                },
-                "experience": {
-                  "type": "string",
-                  "title": "Experience",
-                  "description": "Procedural experience of the entire trajectory, serving as overall guidance for task completion."
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  },
-                  "description": "List of original message content associated with the tool memory."
-                },
-                "info": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "description": "Custom metadata provided when adding the message."
-                }
-              }
+              "$ref": "#/components/schemas/GetToolMemoryDetail"
+            }
+          },
+          "skill_detail_list": {
+            "type": "array",
+            "title": "Skill Detail List",
+            "description": "List of Skill details returned.",
+            "items": {
+              "$ref": "#/components/schemas/SkillDetail"
             }
           },
           "total": {
@@ -2069,12 +2408,17 @@
               "type": "string"
             },
             "title": "Memory IDs",
-            "description": "IDs of the memories to be deleted, obtained from the `id` field returned by the `search/memory` or `get/memory` API."
+            "description": "List of memory IDs to delete."
           },
           "user_id": {
             "type": "string",
             "title": "User ID",
-            "description": "Unique identifier of the user whose memories are being deleted."
+            "description": "Delete all memories of this user in the current project. Mutually exclusive with memory_ids and agent_id."
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "Delete all memories of this Agent in the current project. Available only when independent Agent memory is enabled. Mutually exclusive with memory_ids and user_id."
           }
         },
         "title": "DeleteMemoryRequest"
@@ -2204,6 +2548,85 @@
         },
         "title": "AddFeedbackResponse"
       },
+      "TaskStatusMemoryViewIds": {
+        "type": "object",
+        "title": "Task Status Memory View IDs",
+        "properties": {
+          "memory_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Memory IDs",
+            "description": "Memory IDs touched by this task under the given <a href=\"/memos_cloud/introduction/memory_types\">memory category</a>."
+          }
+        }
+      },
+      "TaskStatusMemoryViews": {
+        "type": "object",
+        "title": "Task Status Memory Views",
+        "description": "Summary of memory changes produced by the completed task.",
+        "properties": {
+          "added": {
+            "type": "integer",
+            "title": "Added",
+            "description": "Number of memories added in this task."
+          },
+          "updated": {
+            "type": "integer",
+            "title": "Updated",
+            "description": "Number of memories updated in this task."
+          },
+          "deleted": {
+            "type": "integer",
+            "title": "Deleted",
+            "description": "Number of memories deleted or archived in this task."
+          },
+          "detail_factual": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "preference": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "event": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "skill": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          },
+          "tool_memory": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViewIds"
+          }
+        }
+      },
+      "OpenMemGetStatusData": {
+        "type": "object",
+        "title": "OpenMem Get Status Data",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "title": "Task ID",
+            "description": "Async task ID, matching the task_id in the request."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "enum": [
+              "running",
+              "completed",
+              "failed"
+            ],
+            "description": "Current task status: running, completed, or failed."
+          },
+          "memory_views": {
+            "$ref": "#/components/schemas/TaskStatusMemoryViews",
+            "description": "Returned only when status is completed and memory change details exist. Omitted for running or failed tasks."
+          }
+        }
+      },
       "GetStatusRequest": {
         "type": "object",
         "required": [
@@ -2213,7 +2636,7 @@
           "task_id": {
             "type": "string",
             "title": "Task ID",
-            "description": "Async Task ID"
+            "description": "Async task ID returned by add/message, add/feedback, and other async endpoints."
           }
         },
         "title": "GetStatusRequest"
@@ -2231,20 +2654,7 @@
             "description": "API status code. See <a href=\"/api_docs/help/error_codes\" class=\"text-primary border-b border-transparent hover:border-primary font-medium focus-visible:outline-primary [&amp;&gt;code]:border-dashed hover:[&amp;&gt;code]:border-primary hover:[&amp;&gt;code]:text-primary transition-colors [&amp;&gt;code]:transition-colors\">Error Code</a> for details."
           },
           "data": {
-            "type": "object",
-            "title": "Data",
-            "properties": {
-              "status": {
-                "type": "string",
-                "title": "Status",
-                "enum": [
-                  "running",
-                  "completed",
-                  "failed"
-                ],
-                "description": "Current status of the memory processing task."
-              }
-            }
+            "$ref": "#/components/schemas/OpenMemGetStatusData"
           },
           "message": {
             "type": "string",
@@ -2441,7 +2851,7 @@
                   "type": "string",
                   "title": "Status",
                   "description": "File processing status",
-                  "enum":[
+                  "enum": [
                     "running",
                     "completed",
                     "failed"
@@ -2568,7 +2978,7 @@
                       "type": "string",
                       "title": "Status",
                       "description": "File processing status",
-                      "enum":[
+                      "enum": [
                         "running",
                         "completed",
                         "failed"
@@ -2931,6 +3341,624 @@
             "example": "ok"
           }
         }
+      },
+      "GetMemoryDetail": {
+        "type": "object",
+        "title": "GetMemoryDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "Unique identifier of the factual memory."
+          },
+          "memory_key": {
+            "type": "string",
+            "title": "Memory Key",
+            "description": "Title or keyword of the factual memory."
+          },
+          "memory_value": {
+            "type": "string",
+            "title": "Memory Value",
+            "description": "Detailed content of the factual memory."
+          },
+          "memory_type": {
+            "type": "string",
+            "title": "Memory Type",
+            "description": "Type of factual memory.",
+            "enum": [
+              "WorkingMemory",
+              "LongTermMemory",
+              "UserMemory"
+            ]
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "Creation time in ISO 8601 format."
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "Conversation identifier linked to this memory."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Factual memory status. Currently only activated is returned.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Confidence",
+            "description": "Confidence score between 0 and 1."
+          },
+          "tags": {
+            "type": "array",
+            "title": "Tags",
+            "description": "Tag list associated with the factual memory.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "Last update time in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance score between 0 and 1."
+          },
+          "sources": {
+            "type": "array",
+            "title": "Sources",
+            "description": "Source messages of the factual memory.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "Custom metadata provided when adding the message.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "GetPreferenceDetail": {
+        "type": "object",
+        "title": "GetPreferenceDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "Unique identifier of the preference memory."
+          },
+          "preference_type": {
+            "type": "string",
+            "title": "Preference Type",
+            "description": "Type of preference memory.",
+            "enum": [
+              "explicit_preference",
+              "implicit_preference"
+            ]
+          },
+          "preference": {
+            "type": "string",
+            "title": "Preference",
+            "description": "Detailed content of the preference memory."
+          },
+          "reasoning": {
+            "type": "string",
+            "title": "Reasoning",
+            "description": "Reason why the preference memory was extracted."
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "Creation time in ISO 8601 format."
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "Conversation identifier linked to this memory."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Preference memory status. Currently only activated is returned.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "Last update time in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance score between 0 and 1."
+          },
+          "sources": {
+            "type": "array",
+            "title": "Sources",
+            "description": "Source messages of the preference memory.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "Custom metadata provided when adding the message.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "GetToolMemoryDetail": {
+        "type": "object",
+        "title": "GetToolMemoryDetail",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "ID",
+            "description": "Unique identifier of the tool memory fragment."
+          },
+          "tool_type": {
+            "type": "string",
+            "title": "Tool Type",
+            "description": "Tool memory type. ToolTrajectoryMemory means tool trajectory memory; ToolSchema means tool schema memory.",
+            "enum": [
+              "ToolTrajectoryMemory",
+              "ToolSchema"
+            ]
+          },
+          "tool_value": {
+            "type": "string",
+            "title": "Tool Value",
+            "description": "Detailed content of the tool memory."
+          },
+          "tool_used_status": {
+            "type": "array",
+            "title": "Tool Used Status",
+            "description": "Tool trajectory records, each containing the used tool and experience.",
+            "items": {
+              "$ref": "#/components/schemas/ToolUsedStatus"
+            }
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "Creation time in ISO 8601 format."
+          },
+          "conversation_id": {
+            "type": "string",
+            "title": "Conversation ID",
+            "description": "Conversation identifier linked to this memory."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Tool memory status. Currently activated only.",
+            "enum": [
+              "activated"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "Last update time in ISO 8601 format."
+          },
+          "relativity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "title": "Relativity",
+            "description": "Relevance score between 0 and 1."
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "Source information of the tool memory."
+          },
+          "experience": {
+            "type": "string",
+            "title": "Experience",
+            "description": "Procedural experience of the entire trajectory."
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "Custom metadata provided when adding the message.",
+            "additionalProperties": true
+          }
+        }
+      },
+      "BindProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "bind_list"
+        ],
+        "properties": {
+          "bind_list": {
+            "type": "array",
+            "title": "Bind List",
+            "description": "List of bindings to create in a single call, up to 20 per request.",
+            "items": {
+              "type": "object",
+              "required": [
+                "profile_template_id"
+              ],
+              "properties": {
+                "user_id": {
+                  "type": "string",
+                  "description": "User ID to bind to the Profile template."
+                },
+                "agent_id": {
+                  "type": "string",
+                  "description": "Agent ID to bind to the Profile template. Available only when independent Agent memory is enabled; use either user_id or agent_id."
+                },
+                "profile_template_id": {
+                  "type": "string",
+                  "description": "ID of the Profile template to bind."
+                }
+              }
+            }
+          }
+        },
+        "title": "BindProfileTemplateRequest"
+      },
+      "BindProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code."
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Whether the binding succeeded.",
+                "example": true
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message."
+          }
+        },
+        "title": "BindProfileTemplateResponse"
+      },
+      "ProfileFieldValue": {
+        "type": "object",
+        "title": "ProfileFieldValue",
+        "description": "A leaf field-value node inside the metadata tree.",
+        "properties": {
+          "value": {
+            "type": "string",
+            "title": "Value",
+            "description": "The attribute field value."
+          },
+          "algorithm_updatable": {
+            "type": "boolean",
+            "title": "Algorithm Updatable",
+            "description": "Whether this field can be automatically updated by the algorithm. Defaults to true.",
+            "default": true
+          }
+        }
+      },
+      "EditProfileRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "User ID. Use either user_id or agent_id. Required for single-perspective projects."
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "Agent ID. Available only when independent Agent memory is enabled; use either user_id or agent_id."
+          },
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "ID of the target Profile template."
+          },
+          "metadata": {
+            "type": "object",
+            "title": "Metadata",
+            "description": "Fields to update. Existing fields are updated with the new value; new fields are added to the current instance.",
+            "properties": {
+              "{category_name}": {
+                "type": "object",
+                "description": "An optional grouping layer for attribute fields, keyed by a custom category name. Skip this layer and pass field values directly under metadata if categories are not needed.",
+                "properties": {
+                  "{field_name}": {
+                    "$ref": "#/components/schemas/ProfileFieldValue"
+                  }
+                }
+              }
+            }
+          },
+          "remove_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Remove Fields",
+            "description": "List of field paths to remove, e.g. [\"Basic Info.Occupation\"]."
+          }
+        },
+        "title": "EditProfileRequest"
+      },
+      "EditProfileResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code."
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Whether the edit succeeded.",
+                "example": true
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message."
+          }
+        },
+        "title": "EditProfileResponse"
+      },
+      "DeleteProfileRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id"
+        ],
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User ID",
+            "description": "User ID. Use either user_id or agent_id."
+          },
+          "agent_id": {
+            "type": "string",
+            "title": "Agent ID",
+            "description": "Agent ID. Use either user_id or agent_id."
+          },
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "ID of the target Profile template."
+          }
+        },
+        "title": "DeleteProfileRequest"
+      },
+      "DeleteProfileResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code."
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Whether the deletion succeeded.",
+                "example": true
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message."
+          }
+        },
+        "title": "DeleteProfileResponse"
+      },
+      "UpdateMemoryRequest": {
+        "type": "object",
+        "required": [
+          "memory_id"
+        ],
+        "properties": {
+          "memory_id": {
+            "type": "string",
+            "title": "Memory ID",
+            "description": "Memory ID, from the id field returned by search/memory or get/memory."
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "The updated memory content."
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "The updated memory title."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "enum": [
+              "activated",
+              "resolving",
+              "archived",
+              "deleted"
+            ],
+            "description": "Memory status: activated / resolving / archived / deleted."
+          }
+        },
+        "title": "UpdateMemoryRequest"
+      },
+      "UpdateMemoryResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code."
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Whether the update succeeded.",
+                "example": true
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message."
+          }
+        },
+        "title": "UpdateMemoryResponse"
+      },
+      "GetMemoryByIdResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code.",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Memory ID."
+              },
+              "memory_view": {
+                "type": "string",
+                "enum": [
+                  "detail_factual",
+                  "preference",
+                  "event",
+                  "profile",
+                  "skill",
+                  "tool_memory"
+                ],
+                "description": "Memory category."
+              },
+              "title": {
+                "type": "string",
+                "description": "Memory title."
+              },
+              "content": {
+                "description": "Memory content."
+              },
+              "conversation_id": {
+                "type": "string",
+                "description": "Source conversation ID."
+              },
+              "message_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of source message IDs."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "activated",
+                  "resolving",
+                  "archived",
+                  "deleted"
+                ],
+                "description": "Memory status."
+              },
+              "algorithm_updatable": {
+                "type": "boolean",
+                "description": "Whether the algorithm can update this memory automatically."
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Creation time."
+              },
+              "updated_at": {
+                "type": "string",
+                "description": "Last update time."
+              },
+              "user_id": {
+                "type": "string",
+                "description": "Owning user."
+              },
+              "agent_id": {
+                "type": "string",
+                "description": "Owning Agent."
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Custom tags."
+              },
+              "info": {
+                "type": "object",
+                "description": "Custom metadata."
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message.",
+            "example": "ok"
+          }
+        },
+        "title": "GetMemoryByIdResponse"
       }
     }
   }

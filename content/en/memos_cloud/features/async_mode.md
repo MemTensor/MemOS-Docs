@@ -27,36 +27,15 @@ When the `async_mode` parameter is set to `true`, the API returns a response imm
 }
 ```
 
-In async mode, memory writing is divided into two stages: "Rough Processing" and "Refined Processing". The system first performs millisecond-level rough processing on the current turn of messages, enabling them to be quickly retrieved in the next turn of conversation;
+In async mode, memory writing is split into two stages: "rough processing" and "refined processing". The system first performs millisecond-level rough processing on the current turn of messages, so they can already be retrieved in the next turn of conversation;
 <br>
-Subsequently, refined processing (taking seconds or more) continues in the background to improve memory quality. Processing progress can be queried via the [get/status](/api_docs/message/get_status) interface: during the rough processing stage, the task status is "running", and updates to "completed" after refined processing is finished.
-
-```json
-"memory_detail_list": [
-  {
-    "id": "c436a738-eec9-4010-b65d-dc9c135d3a37",
-    "memory_key": "user: [09:44 AM on 10 December, 2025 UTC]: I've booked a trip to Guangzhou for the summer vacation. What chain hotels are available for accommodation?",
-    "memory_value": "user: [09:44 AM on 10 December, 2025 UTC]: I've booked a trip to Guangzhou for the summer vacation. What chain hotels are available for accommodation?\nassistant: [09:44 AM on 10 December, 2025 UTC]: You can consider [7 Days Inn, Ji Hotel, Hilton], etc.\nuser: [09:44 AM on 10 December, 2025 UTC]: I'll choose 7 Days Inn\nassistant: [09:44 AM on 10 December, 2025 UTC]: Okay, let me know if you have any other questions.\n",
-    "memory_type": "WorkingMemory",
-    "create_time": 1765359875901,
-    "update_time": 1765359875902,
-    "conversation_id": "0610",
-    "status": "activated",
-    "confidence": 0.99,
-    "relativity": 0.05407696,
-    "tags": ["mode:fast"]
-  }
-]
-```
-
-Get the async task status via the [get/status](/api_docs/message/get_status) interface:
+Refined processing (seconds or longer) then continues in the background to improve memory quality. You can check progress via the [get/status](/api_docs/message/get_status) interface: the task status is `running` during rough processing and updates to `completed` once refined processing finishes. Once the task completes, `memory_views` in the response summarizes how many memories were added/updated/deleted in this turn, along with the memory IDs touched under each memory category.
 
 ```python
 import os
 import requests
 import json
 
-# Replace with your MemOS API Key
 os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
 os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
 
@@ -72,6 +51,28 @@ url = f"{os.environ['MEMOS_BASE_URL']}/get/status"
 res = requests.post(url=url, headers=headers, data=json.dumps(data))
 
 print(f"result: {res.json()}")
+```
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "data": {
+    "task_id": "c464e17e-f2ff-4e9a-a2c2-41cc55ab43b9",
+    "status": "completed",
+    "memory_views": {
+      "added": 1,
+      "updated": 1,
+      "deleted": 0,
+      "detail_factual": {
+        "memory_ids": ["memos_mem_001"]
+      },
+      "preference": {
+        "memory_ids": ["memos_mem_002"]
+      }
+    }
+  }
+}
 ```
 
 ### When to Use Async Mode

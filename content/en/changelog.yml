@@ -1,55 +1,4 @@
 versions:
-  - name: v2.0.23
-    date: '2026-07-09'
-    products:
-      cloud:
-        Improvements:
-          - type: Preference memory model invocation
-            changedInfo:
-              - Made preference-memory model calls compatible with Qwen3 hybrid-thinking models and disabled thinking by default
-      plugin:
-        New Features:
-          - type: OpenClaw local plugin
-            changedInfo:
-              - Added local memory data export
-              - Added automatic recall Phase 1 retrieval parameter configuration
-              - Added Chinese keyword tokenization configuration
-              - Added a dedicated model configuration for L3 abstraction
-        Improvements:
-          - type: OpenClaw local plugin
-            changedInfo:
-              - Optimized the plugin startup and registration flow
-              - Routed embedding inputs by usage
-              - Reduced unnecessary background evolution calls in lightweight memory mode
-              - Added Chinese README and usage documentation
-        Bug Fixes:
-          - type: OpenClaw local plugin
-            changedInfo:
-              - Fixed CPU spikes caused by vector scans in large-data scenarios
-              - Fixed recovery when SQLite native binding versions mismatch
-              - Fixed stability issues around Hermes provider links, OpenAI-compatible endpoint probing, FTS query escaping, and plugin entry publishing
-  - name: v2.0.22
-    date: '2026-07-03'
-    products:
-      cloud:
-        New Features:
-          - type: Preference memory extraction
-            changedInfo:
-              - Supports independent model configuration
-        Bug Fixes:
-          - type: Preference memory extraction
-            changedInfo:
-              - Tightened the preference memory prompt to fix over-extraction issues
-              - Improved preference memory post-processing
-          - type: Chat API compatibility
-            changedInfo:
-              - Added string input support for the Chat API content field
-      plugin:
-        Bug Fixes:
-          - type: OpenClaw local plugin
-            changedInfo:
-              - Fixed stability, recall accuracy, bridge process leaks, configuration compatibility, and local memory write issues in the OpenClaw local plugin flow
-              - Added preference memory and automatic recall capabilities
   - name: v2.0.21
     date: '2026-06-23'
     products:
@@ -708,6 +657,7 @@ versions:
           changedInfo:
             - Fixed general text memory processing logic
             - Fixed memreader component issues
+
   - name: v0.2.1
     date: 2025-07-21
     changedInfo:
@@ -735,6 +685,7 @@ versions:
           changedInfo:
             - Added new Cookbook content
             - Included Mud game example
+
   - name: v0.2.0
     date: 2025-07-11
     changedInfo:

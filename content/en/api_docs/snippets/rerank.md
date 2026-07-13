@@ -30,6 +30,25 @@ headers = {
 response = requests.post(url, headers=headers, data=json.dumps(payload))
 print(response.json())
 ```
+```python [Python (SDK)]
+# Ensure MemOS is installed (pip install MemoryOS -U)
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.rerank(
+    model="memos-reranker-0.6b",
+    query="What are the user's hobbies?",
+    documents=[
+        "User likes playing badminton",
+        "User is a backend developer in Hangzhou",
+        "User prefers concise replies",
+        "User prefers Jiangxiang-flavored baijiu",
+        "User is going on a business trip to Beijing next Wednesday"
+    ]
+)
+print(f"result: {res}")
+```
 ```bash [Curl]
 curl --request POST \
   --url https://memos.memtensor.cn/api/openmem/v1/rerank \

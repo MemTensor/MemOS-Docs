@@ -214,15 +214,36 @@ const useOpenApi = (collectionName: keyof Collections = 'openapi', parentPath: s
     return null
   }
 
-  function generateResponseExample(path: string, method: HttpMethods, statusCode: string | number, contentType?: string): Record<string, unknown> {
+  function getResponseExampleVariants(path: string, method: HttpMethods, statusCode: string | number, contentType?: string) {
+    if (import.meta.server || oasInstanceLoaded.value) {
+      const oas = _getOasInstance()
+      if (oas)
+        return oas.getResponseExampleVariants(path, method, statusCode, contentType)
+    }
+    return []
+  }
+
+  function generateResponseExample(
+    path: string,
+    method: HttpMethods,
+    statusCode: string | number,
+    contentType?: string,
+    exampleKey?: string
+  ): Record<string, unknown> {
     if (import.meta.server || oasInstanceLoaded.value) {
       const oas = _getOasInstance()
       if (oas) {
-        const examples = oas.generateResponseExample(path, method, statusCode)
-        if (contentType) {
-          return (examples?.[contentType] as Record<string, unknown>) ?? {}
+        const preferredType = contentType || oas.getResponseContentType(path, method, statusCode)
+        const variants = oas.getResponseExampleVariants(path, method, statusCode, preferredType)
+        if (exampleKey) {
+          const matched = variants.find(variant => variant.key === exampleKey)
+          if (matched)
+            return matched.value
         }
-        const preferredType = oas.getResponseContentType(path, method, statusCode)
+        if (variants.length > 0)
+          return variants[0]!.value
+
+        const examples = oas.generateResponseExample(path, method, statusCode)
         return (examples?.[preferredType] as Record<string, unknown>) ?? {}
       }
     }
@@ -503,6 +524,7 @@ const useOpenApi = (collectionName: keyof Collections = 'openapi', parentPath: s
     getResponseContentType,
     getResponseContentTypes,
     getResponseAsJSONSchema,
+    getResponseExampleVariants,
     generateResponseExample,
     generateSnippet
   }

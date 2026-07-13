@@ -18,19 +18,121 @@ Start using MemOS API through these two simple core steps:
 
 * [**Search Memory**](/api_docs/core/search_memory): Retrieve and recall relevant user memory fragments to provide reference for model-generated responses.
 
+### Add Message
+
+::code-group
+```python [Python (HTTP)]
+import os, requests, json
+
+os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
+os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+
+data = {
+  "user_id": "user_001",
+  "conversation_id": "conv_001",
+  "messages": [
+    {"role": "user", "content": "I have a business trip to Beijing next Tuesday"},
+    {"role": "assistant", "content": "Sure, shall I check the weather or hotels in Beijing for you?"}
+  ]
+}
+headers = {
+  "Content-Type": "application/json",
+  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
+}
+res = requests.post(f"{os.environ['MEMOS_BASE_URL']}/add/message", headers=headers, data=json.dumps(data))
+print(res.json())
+```
+```python [Python (SDK)]
+# pip install MemoryOS -U
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.add_message(
+    user_id="user_001",
+    conversation_id="conv_001",
+    messages=[
+        {"role": "user", "content": "I have a business trip to Beijing next Tuesday"},
+        {"role": "assistant", "content": "Sure, shall I check the weather or hotels in Beijing for you?"}
+    ]
+)
+print(res)
+```
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/add/message \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "user_id": "user_001",
+    "conversation_id": "conv_001",
+    "messages": [
+      {"role": "user", "content": "I have a business trip to Beijing next Tuesday"},
+      {"role": "assistant", "content": "Sure, shall I check the weather or hotels in Beijing for you?"}
+    ]
+  }'
+```
+::
+
+### Search Memory
+
+::code-group
+```python [Python (HTTP)]
+import os, requests, json
+
+os.environ["MEMOS_API_KEY"] = "YOUR_API_KEY"
+os.environ["MEMOS_BASE_URL"] = "https://memos.memtensor.cn/api/openmem/v1"
+
+data = {
+  "query": "What travel plans does the user have recently?",
+  "user_id": "user_001"
+}
+headers = {
+  "Content-Type": "application/json",
+  "Authorization": f"Token {os.environ['MEMOS_API_KEY']}"
+}
+res = requests.post(f"{os.environ['MEMOS_BASE_URL']}/search/memory", headers=headers, data=json.dumps(data))
+print(res.json())
+```
+```python [Python (SDK)]
+# pip install MemoryOS -U
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.search_memory(
+    query="What travel plans does the user have recently?",
+    user_id="user_001"
+)
+print(res)
+```
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/search/memory \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "query": "What travel plans does the user have recently?",
+    "user_id": "user_001"
+  }'
+```
+::
+
 ## 3. Interface Categories
 
 Explore the rich functional interfaces provided by MemOS:
 
-* [**Core Operations API**](/api_docs/core/add_message): Provides core memory operation capabilities, realizing the full process from memory production to consumption.
+* [**Core Operations API**](/api_docs/core/add_message): Core memory operations including adding messages, searching, deleting, updating memories, and feedback.
 
-* [**Message API**](/api_docs/message/add_feedback): Used for uploading and managing original message content data.
+* [**Profile API**](/api_docs/core/bind_profile_template): Manage Profile template binding, editing, and deletion.
 
-* [**Knowledge Base API**](/api_docs/knowledge/create_kb): Used for uploading and managing knowledge bases and their documents.
+* [**Self-developed Model API**](/api_docs/core/extract_memory): Call memory extraction and reranking model capabilities.
 
-* [**Chat API**](/api_docs/chat/chat): Used to generate chat responses with memory recall and knowledge base enhancement.
+* [**Message API**](/api_docs/message/get_message): Query historical messages and async task status.
 
-* [**Self-developed Model API**](/api_docs/core/extract_memory): Used to call memory extraction and reranking model capabilities.
+* [**Chat API**](/api_docs/chat/chat): Generate chat responses with memory recall and knowledge base enhancement.
+
+* [**Knowledge Base API**](/api_docs/knowledge/create_kb): Create and manage knowledge bases and their documents.
 
 ## 4. Authentication
 

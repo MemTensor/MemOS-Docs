@@ -606,7 +606,64 @@ export class SimpleOAS {
   }
 
   /**
-   * Generate response example (based on schema properties)
+   * Get named response example variants for a status code and content type.
+   */
+  getResponseExampleVariants(
+    path: string,
+    method: HttpMethods,
+    statusCode: string | number = '200',
+    contentType?: string
+  ): { key: string, label: string, value: Record<string, unknown> }[] {
+    const response = this.getResponseByStatusCode(path, method, statusCode)
+    if (!response?.content) return []
+
+    const mediaTypes = contentType ? [contentType] : Object.keys(response.content)
+    const variants: { key: string, label: string, value: Record<string, unknown> }[] = []
+
+    for (const mediaType of mediaTypes) {
+      const mediaObj = response.content?.[mediaType]
+      if (!mediaObj) continue
+
+      if (mediaObj.examples && Object.keys(mediaObj.examples).length > 0) {
+        for (const [key, exampleObj] of Object.entries(mediaObj.examples)) {
+          if (!exampleObj || typeof exampleObj !== 'object') continue
+          const value = 'value' in exampleObj ? exampleObj.value : exampleObj
+          if (value === undefined) continue
+          variants.push({
+            key,
+            label: ('summary' in exampleObj && exampleObj.summary) ? String(exampleObj.summary) : key,
+            value: value as Record<string, unknown>
+          })
+        }
+        continue
+      }
+
+      if (mediaObj.example !== undefined) {
+        variants.push({
+          key: '__default__',
+          label: statusCode.toString(),
+          value: mediaObj.example as Record<string, unknown>
+        })
+        continue
+      }
+
+      if (mediaObj.schema) {
+        const example = generateSampleFromSchema(mediaObj.schema as SchemaObject, this.api)
+        if (example !== null) {
+          variants.push({
+            key: '__generated__',
+            label: statusCode.toString(),
+            value: example as Record<string, unknown>
+          })
+        }
+      }
+    }
+
+    return variants
+  }
+
+  /**
+   * Generate response example (prefers explicit example / examples, then schema)
    */
   generateResponseExample(path: string, method: HttpMethods, statusCode: string | number = '200'): Record<string, unknown> {
     const response = this.getResponseByStatusCode(path, method, statusCode)
@@ -615,6 +672,24 @@ export class SimpleOAS {
     const examples: Record<string, unknown> = {}
 
     for (const [mediaType, mediaObj] of Object.entries(response.content)) {
+      if (mediaObj.example !== undefined) {
+        examples[mediaType] = mediaObj.example
+        continue
+      }
+
+      if (mediaObj.examples) {
+        const firstExampleKey = Object.keys(mediaObj.examples)[0]
+        if (firstExampleKey) {
+          const exampleObj = mediaObj.examples[firstExampleKey]
+          if (exampleObj && typeof exampleObj === 'object' && 'value' in exampleObj) {
+            examples[mediaType] = exampleObj.value
+          } else {
+            examples[mediaType] = exampleObj
+          }
+        }
+        continue
+      }
+
       if (mediaObj.schema) {
         const example = generateSampleFromSchema(mediaObj.schema as SchemaObject, this.api)
         if (example !== null) {

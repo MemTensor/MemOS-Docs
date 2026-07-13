@@ -15,12 +15,12 @@ desc: MemOS automatically processes multimodal content such as text, files, and 
 ## 1. Key Parameters
 
 - **User ID (`user_id`)**: identifies which user the messages belong to. Every added message must be associated with a unique user identifier.
-- **Conversation ID (`conversation_id`)**: identifies which conversation the messages belong to. Every added message must be associated with a unique conversation identifier.
+- **Conversation ID (`conversation_id`)**: identifies which conversation the messages belong to. When passed, multiple turns of messages under the same `conversation_id` are recognized as the same context.
 - **Messages (`messages`)**: an ordered list of user and AI messages to add to MemOS.
 
 ## 2. How It Works
 
-- **Information extraction**: MemOS uses LLMs internally to extract facts, preferences, and other information from messages, then processes them into memories such as fact memories, preference memories, and tool memories.
+- **Information extraction**: MemOS extracts information from messages and processes it into memories, including facts, preferences, [Profile](/memos_cloud/features/profile), [Event Memory](/memos_cloud/features/event_memory), tool memories, and more.
 - **Conflict resolution**: existing memories are checked for duplication or contradiction and updated when needed.
 - **Memory storage**: generated memories are stored with vector and graph databases so they can be recalled efficiently later.
 
@@ -116,26 +116,9 @@ Raw message content is the foundation of memory. MemOS processes added messages 
 
 The fields below are used to add time, categories, isolation, and business context when adding messages. You can use them separately or combine them as needed.
 
-### `chat_time`: specify when the conversation happened
+### Write User Preferences or Behavior Data
 
-By default, MemOS uses the Beijing time when a message is submitted as the memory time. If you are importing historical conversations in bulk, pass `chat_time` for each message so generated memories keep a more accurate timeline.
-
-```python
-data = {
-    "user_id": "memos_user_123",
-    "conversation_id": "0930",
-    "messages": [
-        {"role": "user", "content": "I like spicy food.", "chat_time": "2025-09-12 08:00:00"},
-        {"role": "assistant", "content": "I have noted that you like spicy flavors.", "chat_time": "2025-09-12 08:01:00"},
-        {"role": "user", "content": "I do not like heavy oil.", "chat_time": "2025-09-25 12:00:00"},
-        {"role": "assistant", "content": "Got it. You prefer spicy food with a lighter taste.", "chat_time": "2025-09-25 12:01:00"}
-    ]
-}
-```
-
-### `content`: write user preferences or behavior data
-
-Besides conversations, user preferences, behavior data, questionnaire information, and similar content can also be written to MemOS through `content`.
+Besides conversations, user preferences, behavior data, and any other text information can be written to MemOS as raw content.
 
 ```python
 data = {
@@ -154,6 +137,52 @@ Topics I care about most: artificial intelligence, future technology, film revie
 What I want AI to help with: daily study planning, movie and book recommendations, emotional companionship
             """
         }
+    ]
+}
+```
+
+### Write Multimodal Content
+
+Besides text, MemOS also supports extracting multimodal memories. When a message contains multimodal content, MemOS extracts text, visual information, and other content, then processes it into user memories.
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "1211",
+    "messages": [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "I am researching MemOS."
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://cdn.memtensor.com.cn/img/1758706201390_iluj1c_compressed.png"
+                    }
+                }
+            ]
+        },
+        {"role": "assistant", "content": "Sure, would you like me to explain it?"}
+    ]
+}
+```
+
+### `chat_time`: specify when the conversation happened
+
+By default, MemOS uses the Beijing time when a message is submitted as the memory time. If you are importing historical conversations in bulk, pass `chat_time` for each message so generated memories keep a more accurate timeline.
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0930",
+    "messages": [
+        {"role": "user", "content": "I like spicy food.", "chat_time": "2025-09-12 08:00:00"},
+        {"role": "assistant", "content": "I have noted that you like spicy flavors.", "chat_time": "2025-09-12 08:01:00"},
+        {"role": "user", "content": "I do not like heavy oil.", "chat_time": "2025-09-25 12:00:00"},
+        {"role": "assistant", "content": "Got it. You prefer spicy food with a lighter taste.", "chat_time": "2025-09-25 12:01:00"}
     ]
 }
 ```
@@ -177,6 +206,10 @@ data = {
 ::note
 During later retrieval, you can pass `"agent_id":"health_assistant"` in the `filter` parameter to retrieve memories from this user's conversations with that assistant. See [Memory Filters](/memos_cloud/features/filters).
 ::
+
+#### Create Memory for the Agent
+
+If [Create Independent Memory for an Agent](/memos_cloud/introduction/isolation_filters#create-independent-memory-for-an-agent) is enabled, MemOS not only extracts memories for the user, but also generates a separate memory for the Agent under that `agent_id`. This gives the Agent its own long-term memory, while still supporting simultaneous conversations and memory for multiple users.
 
 ### `tags`: classify memories semantically
 
@@ -231,6 +264,42 @@ data = {
 During later retrieval, you can pass `"scene":"flight"` in the `filter` parameter to retrieve user memories around that scenario. See [Memory Filters](/memos_cloud/features/filters).
 ::
 
+### `allow_memory_view`: control which memory categories are generated
+
+Use `allow_memory_view` to specify which [memory categories](/memos_cloud/introduction/memory_types) are allowed to be generated after this add-message call. If omitted, all categories are generated by default.
+
+As shown below, only event memory and Profile are generated. Fact memories, preference memories, and others are not generated.
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0624",
+    "allow_memory_view": ["event", "profile"],
+    "messages": [
+        {"role": "user", "content": "Last Tuesday afternoon, Li Si and I did a proposal review, and the customer was satisfied with the second version."},
+        {"role": "assistant", "content": "Got it. Would you like me to summarize the review conclusions?"}
+    ]
+}
+```
+
+### Group Chat: Pass a List for `user_id`
+
+When multiple users talk in the same conversation, `user_id` can accept a list. Use `role_id` and `role_name` to identify the speaker of each message; MemOS extracts memory for each participant. See [Group Chat](/memos_cloud/features/group_chat).
+
+```python
+data = {
+    "user_id": ["memos_user_1", "memos_user_2"],
+    "agent_id": "memos_agent",
+    "conversation_id": "group_conv_001",
+    "messages": [
+        {"role": "user", "role_id": "memos_user_1", "role_name": "Alex", "content": "Does next Tuesday work for the proposal review?"},
+        {"role": "user", "role_id": "memos_user_2", "role_name": "Jordan", "content": "Works for me, 2pm."},
+        {"role": "assistant", "role_id": "memos_agent", "content": "Got it. Proposal review next Tuesday at 2pm."}
+    ]
+}
+```
+
+
 ## 6. Common Errors and Troubleshooting
 
 | Error Code | Common Cause | How to Fix |
@@ -259,28 +328,20 @@ If you need more complex write methods, continue with these extended capabilitie
 
   :::card
   ---
-  icon: i-ri-tools-line
-  title: Tool Memory
-  to: /memos_cloud/features/tool_calling
-  ---
-  Write tool call processes and results into user memory.
-  :::
-
-  :::card
-  ---
   icon: i-ri-timer-flash-line
   title: Async Mode
   to: /memos_cloud/features/async_mode
   ---
-  Control how messages are processed after writing, suitable for different latency requirements.
+  Control how messages are processed after writing.
   :::
 
   :::card
   ---
-  icon: i-ri-database-2-line
-  title: Knowledge Base Memories
-  to: /memos_cloud/features/knowledge_base
+  icon: i-ri-group-line
+  title: Group Chat
+  to: /memos_cloud/features/group_chat
   ---
-  Write memories generated from messages into a specified knowledge base.
+  Multiple users in the same conversation; memory is extracted for each participant.
   :::
+
 ::

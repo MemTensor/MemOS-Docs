@@ -5,28 +5,6 @@ title: OpenClaw Plugin Changelog
 ::OpenclawReleaseTimeline
 ---
 releases:
-  - date: '2026-07-07'
-    plugins:
-      - title: 'Cloud Plugin'
-        version: 'v0.1.19'
-        sections:
-          - title: 'Improvements'
-            items:
-              - 'Improved system event filtering to skip scheduled tasks, reminders, and background command results, keeping memory cleaner.'
-              - 'Refined system prompt detection to support flattened single-line prompts and reduce false positives.'
-
-  - date: '2026-06-22'
-    plugins:
-      - title: 'Cloud Plugin'
-        version: 'v0.1.18'
-        summary: 'Added update checks in the settings page, with version status and host-specific update/restart command copying.'
-
-  - date: '2026-06-16'
-    plugins:
-      - title: 'Cloud Plugin'
-        version: 'v0.1.17'
-        summary: 'Added platform-aware memory source labeling for Windows, macOS, and Linux.'
-
   - date: '2026-05-21'
     plugins:
       - title: 'Cloud Plugin'

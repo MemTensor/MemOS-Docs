@@ -6,7 +6,6 @@ desc: MemOS 会将您添加的多模态内容如文本、文件、图片等，�
 ::note
 **&nbsp;为什么记忆很重要？**
 
-
 * 长期不丢失：能够实现跨会话的长期记忆，避免对话结束后信息丢失；
 * 把握用户偏好：随着交互不断积累，让 AI 越来越“**懂用户**”；
 * 随时间演进：会话过程中，持续动态更新用户记忆；
@@ -14,32 +13,19 @@ desc: MemOS 会将您添加的多模态内容如文本、文件、图片等，�
 
 ::
 
-
-
-
 ## 1. 关键参数
 
-*   **用户标识（user\_id）**：用于标识消息所属的用户，你添加的消息必须关联到唯一的用户标识符。
-    
-*   **会话标识（conversation\_id）**：用于标识消息所属的会话，你添加的消息必须关联到唯一的会话标识符。
-    
-*   **消息（messages）**：用于添加到 MemOS 的用户与 AI 对话内容的有序消息列表。
-
-
+* **用户标识（user\_id）**：用于标识消息所属的用户，你添加的消息必须关联到唯一的用户标识符。  
+* **会话标识（conversation\_id）**：用于标识消息所属的会话；传入后，相同 conversation_id 下的多轮消息会被识别为同一上下文。
+* **消息（messages）**：用于添加到 MemOS 的用户与 AI 对话内容的有序消息列表。
 
 ## 2. 工作原理
 
-*   **信息提取**：MemOS 在系统内部使用 LLM 提取消息中的事实、偏好等，并处理为记忆，包括：事实记忆、偏好记忆、工具记忆等。
-    
-*   **冲突解决**：现有记忆会被检查是否有重复或矛盾，完成更新。
-    
-*   **记忆储存**：最终产生的记忆会使用向量数据库与图数据库储存，便于在后续检索时快速召回。
+* **信息提取**：MemOS 从消息中提取并处理为记忆，包括事实、偏好、[属性记忆](/cn/memos_cloud/features/profile)、[事件记忆](/cn/memos_cloud/features/event_memory)、工具记忆等。
+* **冲突解决**：现有记忆会被检查是否有重复或矛盾，完成更新。
+* **记忆储存**：最终产生的记忆使用向量数据库与图数据库储存，便于后续检索时快速召回。
 
-
-
-以上所有流程，仅需调用`add/message`接口即可触发，无需您对用户的记忆手动操作。
-
-
+以上所有流程，仅需调用 `add/message` 接口即可触发，无需您对用户的记忆手动操作。
 
 ## 3. 快速上手
 
@@ -113,54 +99,27 @@ curl "$MEMOS_BASE_URL/add/message" \
 
 ::
 
-
-
 :::note
-想知道生成了哪些记忆？一键复制上述代码并运行，添加好记忆后，前往[**检索记忆**](/memos_cloud/mem_operations/search_memory)。
+想知道生成了哪些记忆？一键复制上述代码并运行，添加好记忆后，前往[**检索记忆**](/cn/memos_cloud/mem_operations/search_memory)。
 :::
 
-需要查看完整字段、请求格式和响应格式？详见 [Add Message 接口文档](/api_docs/core/add_message)。
-
-
+需要查看完整字段、请求格式和响应格式？详见 [Add Message 接口文档](/cn/api_docs/core/add_message)。
 
 ## 4. 何时添加消息？
 
 记忆的基础来源于原始消息内容。MemOS 会将您添加的消息统一加工为记忆，用于后续的检索与使用。您可以根据实际场景选择合适的添加时机：
 
-*   **一次性导入**：将已有的用户历史对话一键导入 MemOS，快速建立初始记忆；
-
-*   **实时添加**：在用户每次发送消息时，实时将消息添加至 MemOS；
-
-*   **按轮次添加**：根据业务需要，设置每隔若干轮对话再将用户消息添加至 MemOS。
-
-
-
-
+* **一次性导入**：将已有的用户历史对话一键导入 MemOS，快速建立初始记忆；
+* **实时添加**：在用户每次发送消息时，实时将消息添加至 MemOS；
+* **按轮次添加**：根据业务需要，设置每隔若干轮对话再将用户消息添加至 MemOS。
 
 ## 5. 更多使用方法
 
 下面这些字段用于在添加消息时补充时间、分类、隔离和业务上下文。你可以按场景单独使用，也可以组合使用。
 
-### `chat_time`：指定对话发生时间
+### 写入用户偏好或行为数据
 
-MemOS 默认以消息传入时的北京时间作为记忆时间。如果你在批量导入历史对话，可以为每条消息传入 `chat_time`，让生成的记忆保留更准确的时间线。
-
-```python
-data = {
-    "user_id": "memos_user_123",
-    "conversation_id": "0930",
-    "messages": [
-        {"role": "user", "content": "我喜欢吃辣。", "chat_time": "2025-09-12 08:00:00"},
-        {"role": "assistant", "content": "已记住你喜欢辣味。", "chat_time": "2025-09-12 08:01:00"},
-        {"role": "user", "content": "我不喜欢重油。", "chat_time": "2025-09-25 12:00:00"},
-        {"role": "assistant", "content": "记住了，你偏好清爽的辣味。", "chat_time": "2025-09-25 12:01:00"}
-    ]
-}
-```
-
-### `content`：写入用户偏好或行为数据
-
-除了对话内容，用户的个人偏好、行为、问卷信息等，也可以作为 `content` 写入 MemOS。
+除了对话内容，用户的个人偏好、行为等一切文本数据信息，都可以作为原始信息，添加到 MemOS。
 
 ```python
 data = {
@@ -179,6 +138,52 @@ data = {
 我希望AI帮助的事情: 规划日常学习计划, 推荐电影和书籍, 提供心情陪伴
             """
         }
+    ]
+}
+```
+
+### 写入多模态内容
+
+除了文本信息，MemOS 还支持抽取多模态记忆。当消息包含多模态内容时，MemOS 会提取文本、视觉信息等，处理为用户记忆。
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "1211",
+    "messages": [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "我正在研究MemOS。"
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://cdn.memtensor.com.cn/img/1758706201390_iluj1c_compressed.png"
+                    }
+                }
+            ]
+        },
+        {"role": "assistant", "content": "好的，需要我为您解答吗？"}
+    ]
+}
+```
+
+### `chat_time`：指定对话发生时间
+
+MemOS 默认以消息传入时的北京时间作为记忆时间。如果你在批量导入历史对话，可以为每条消息传入 `chat_time`，让生成的记忆保留更准确的时间线。
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0930",
+    "messages": [
+        {"role": "user", "content": "我喜欢吃辣。", "chat_time": "2025-09-12 08:00:00"},
+        {"role": "assistant", "content": "已记住你喜欢辣味。", "chat_time": "2025-09-12 08:01:00"},
+        {"role": "user", "content": "我不喜欢重油。", "chat_time": "2025-09-25 12:00:00"},
+        {"role": "assistant", "content": "记住了，你偏好清爽的辣味。", "chat_time": "2025-09-25 12:01:00"}
     ]
 }
 ```
@@ -202,6 +207,10 @@ data = {
 ::note
 后续检索时，可以通过 `filter` 参数传入 `"agent_id":"health_assistant"`，检索用户与该助手聊天的记忆。详细见[记忆过滤器（filter）](/memos_cloud/features/filters)。
 ::
+
+#### 为 Agent 创建记忆
+
+如果开启[为 Agent 创建独立记忆](/memos_cloud/introduction/isolation_filters#为-agent-创建独立记忆-new)功能，MemOS 不仅会为用户抽取记忆，还会以该 `agent_id` 为主体单独生成一份 Agent 记忆，使 Agent 具备自己的长期记忆能力，同时支持与多个用户同时对话并记忆。
 
 ### `tags`：对记忆进行语义分类
 
@@ -256,6 +265,41 @@ data = {
 后续检索时，可以通过 `filter` 参数传入 `"scene":"机票"`，检索围绕该场景的用户记忆。详细见[记忆过滤器（filter）](/memos_cloud/features/filters)。
 ::
 
+### `allow_memory_view`：控制生成的记忆种类
+
+通过 `allow_memory_view` 指定本次添加消息后允许生成的[记忆种类](/memos_cloud/introduction/memory_types)，不传时默认生成所有种类。
+
+如下所示，仅生成事件记忆和属性记忆，不会生成事实记忆、偏好记忆等。
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0624",
+    "allow_memory_view": ["event", "profile"],
+    "messages": [
+        {"role": "user", "content": "上周二下午和李四做了方案评审，客户对第二版比较满意。"},
+        {"role": "assistant", "content": "收到，需要我整理评审结论吗？"}
+    ]
+}
+```
+
+### 群聊：`user_id` 传入列表
+
+多个用户在同一会话中对话时，`user_id` 支持传入列表。使用 `role_id` 和 `role_name` 标识每条消息的发言人，MemOS 会为每个参与者抽取记忆。详见[群聊](/memos_cloud/features/group_chat)。
+
+```python
+data = {
+    "user_id": ["memos_user_1", "memos_user_2"],
+    "agent_id": "memos_agent",
+    "conversation_id": "group_conv_001",
+    "messages": [
+        {"role": "user", "role_id": "memos_user_1", "role_name": "张三", "content": "下周二方案评审，时间合适吗？"},
+        {"role": "user", "role_id": "memos_user_2", "role_name": "李四", "content": "我可以，下午两点。"},
+        {"role": "assistant", "role_id": "memos_agent", "content": "已记录，下周二下午两点方案评审。"}
+    ]
+}
+```
+
 ## 6. 常见错误与排查
 
 | 错误码 | 常见原因 | 处理方式 |
@@ -272,6 +316,7 @@ data = {
 
 如果你需要更复杂的写入方式，可以继续了解这些扩展能力。
 
+<!-- markdownlint-disable MD003 MD022 MD023 -->
 ::card-group
   :::card
   ---
@@ -279,16 +324,7 @@ data = {
   title: 多模态消息
   to: /cn/memos_cloud/features/multimodal
   ---
-  支持文本、图片、文档等多种输入内容。
-  :::
-
-  :::card
-  ---
-  icon: i-ri-tools-line
-  title: 工具记忆
-  to: /cn/memos_cloud/features/tool_calling
-  ---
-  将工具调用过程和结果写入用户记忆。
+  支持文本、图片、文档等多种输入内容
   :::
 
   :::card
@@ -297,15 +333,16 @@ data = {
   title: 异步模式
   to: /cn/memos_cloud/features/async_mode
   ---
-  控制消息写入后的处理方式，适合不同实时性要求。
+  控制消息写入后的处理方式
   :::
-
+  
   :::card
   ---
-  icon: i-ri-database-2-line
-  title: 知识库记忆
-  to: /cn/memos_cloud/features/knowledge_base
+  icon: i-ri-group-line
+  title: 群聊
+  to: /cn/memos_cloud/features/group_chat
   ---
-  将消息生成的记忆写入指定知识库。
+  多用户同一会话，为每个参与者抽取记忆
   :::
 ::
+<!-- markdownlint-enable MD003 MD022 MD023 -->

@@ -21,6 +21,15 @@ res = requests.post(url=url, headers=headers, data=json.dumps(data))
 
 print(f"result: {res.json()}")
 ```
+```python [Python (SDK)]
+# Ensure MemOS is installed (pip install MemoryOS -U)
+from memos.api.client import MemOSClient
+
+client = MemOSClient(api_key="YOUR_API_KEY")
+
+res = client.get_status(task_id="40aae834-4248-4944-b2bb-a674f37a2fdb")
+print(f"result: {res}")
+```
 ```bash [Curl]
 curl --request POST \
   --url https://memos.memtensor.cn/api/openmem/v1/get/status \

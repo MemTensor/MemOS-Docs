@@ -1,6 +1,6 @@
 ---
 title: Multi-user / Multi-Agent Isolation
-desc: Understand how MemOS Cloud separates users, Agents, conversations, and shared knowledge.
+desc: Implement memory sharing and isolation across users, Agents, conversations, and more.
 ---
 
 If your product is used by multiple users, Agents, projects, or business scenarios, memories need clear boundaries.
@@ -31,7 +31,7 @@ Write a memory for user A:
 
 ```json
 {
-  "user_id": "user_a",
+  "user_id": "memos_user_A",
   "messages": [
     { "role": "user", "content": "I like spicy food." }
   ]
@@ -42,12 +42,36 @@ Search memories for user B:
 
 ```json
 {
-  "user_id": "user_b",
-  "query": "Recommend a hotel for me"
+  "user_id": "memos_user_B",
+  "query": "Recommend food for me"
 }
 ```
 
 This search only looks in user B's personal memories. It will not retrieve user A's memories. Even if both users are in the same project and talk to the same Agent, different `user_id` values keep the memory boundary clear.
+
+<!-- markdownlint-disable MD033 -->
+### Multi-User Memory in Group Chat: Pass a `user_id` List <span style="font-size:11px;background:#10b981;color:#fff;padding:2px 6px;border-radius:4px;vertical-align:middle;position:relative;top:-1px;">NEW</span>
+<!-- markdownlint-enable MD033 -->
+
+When multiple users talk in the same conversation, `user_id` can accept a list, and MemOS extracts and maintains memory for each participant.
+
+```json
+{
+  "user_id": ["memos_user_1", "memos_user_2"],
+  "agent_id": "memos_agent",
+  "messages": [
+    { "role": "user", "role_id": "memos_user_1", "role_name": "Alex", "content": "Does next Tuesday work for everyone for the proposal review?" },
+    { "role": "user", "role_id": "memos_user_2", "role_name": "Jordan", "content": "Works for me. How about 2pm?" },
+    { "role": "assistant", "role_id": "memos_agent", "content": "Got it. Proposal review next Tuesday at 2pm." }
+  ]
+}
+```
+
+Use `role_id` and `role_name` to identify the speaker of each message so memory text can distinguish who said what.
+
+::note
+For more on group chat, see [Group Chat](/memos_cloud/features/group_chat).
+::
 
 ## 3. Multi-Agent Isolation: Use `agent_id`
 
@@ -57,7 +81,7 @@ When adding messages for a health assistant, pass `"agent_id": "health_assistant
 
 ```json
 {
-  "user_id": "user_123",
+  "user_id": "memos_user_123",
   "agent_id": "health_assistant",
   "messages": [
     { "role": "user", "content": "I ran 5 km today, and my knee feels a little sore." }
@@ -69,7 +93,7 @@ When searching memories, use `filter` to limit memories to the corresponding Age
 
 ```json
 {
-  "user_id": "user_123",
+  "user_id": "memos_user_123",
   "query": "Give me advice based on my recent exercise.",
   "filter": {
     "and": [
@@ -87,13 +111,30 @@ For more filtering options, see [Memory Filters](/memos_cloud/features/filters).
 
 ::
 
+<!-- markdownlint-disable MD033 -->
+### Create Independent Memory for an Agent <span style="font-size:11px;background:#10b981;color:#fff;padding:2px 6px;border-radius:4px;vertical-align:middle;position:relative;top:-1px;">NEW</span>
+<!-- markdownlint-enable MD033 -->
+
+Enable "Create Independent Memory for Agent" when creating or editing a project in the console to give each Agent its own memory.
+
+- Better preserve an AI character's experience, cognition, and state.
+- Support scenarios where multiple users share the same Agent, such as a household assistant or a company group-chat assistant.
+
+After enabling this feature:
+
+- When adding messages, MemOS extracts and updates memories for the user and the Agent separately.
+- When searching memories, you can search the Agent's independent memory using `agent_id` as the subject.
+- The Agent accumulates its own long-term memory, keeping the character consistent across different users and conversations.
+
+This feature is disabled by default. In that case, `agent_id` can still be used for filtering and tagging, but no independent memory instance is created for the Agent.
+
 ## 4. Current Conversation: Use `conversation_id`
 
-To help MemOS understand context, pass a `conversation_id` when adding user messages. It indicates which conversation or task the message belongs to.
+To help MemOS understand context, you can pass a `conversation_id` when adding user messages. It indicates which conversation or task the message belongs to. If omitted, the system generates one automatically.
 
 ```json
 {
-  "user_id": "user_123",
+  "user_id": "memos_user_123",
   "conversation_id": "order_refund_001",
   "messages": [
     { "role": "user", "content": "I want to ask about my refund progress." },
@@ -114,7 +155,7 @@ For project documents, policies, and product manuals, create a knowledge base an
 
 ```json
 {
-  "user_id": "user_123",
+  "user_id": "memos_user_123",
   "query": "Based on my situation and the company policy, can this expense be reimbursed?",
   "knowledgebase_ids": ["kb_finance_policy"]
 }
@@ -126,7 +167,7 @@ Public memory is suitable for lightweight shared information such as project ann
 
 ```json
 {
-  "user_id": "user_123",
+  "user_id": "memos_user_123",
   "allow_public": true,
   "messages": [
     { "role": "user", "content": "The reimbursement deadline for this quarter is June 25." }

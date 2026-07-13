@@ -26,17 +26,22 @@ nav:
       - "(ri:message-3-line) Add Message": memos_cloud/mem_operations/add_message.md
       - "(ri:search-2-line) Search Memory": memos_cloud/mem_operations/search_memory.md
       - "(ri:delete-bin-line) Delete Memory": memos_cloud/mem_operations/delete_memory.md
+      - "(ri:edit-line) Update Memory": memos_cloud/mem_operations/update_memory.md
       - "(ri:feedback-line) Add Feedback": memos_cloud/mem_operations/add_feedback.md
       - "(ri:chat-history-line) Chat": memos_cloud/mem_operations/chat.md
 
     - "(ri:function-line) 更多功能":
       - "(ri:filter-3-line) 记忆过滤": memos_cloud/features/filters.md
       - "(ri:timer-flash-line) 异步模式": memos_cloud/features/async_mode.md
-      - "(ri:image-add-line) 多模态支持": memos_cloud/features/multimodal.md
       - "(ri:price-tag-3-line) 自定义标签": memos_cloud/features/custom_tags.md
-      - "(ri:function-line) 记忆自进化": memos_cloud/features/self-evolving.md
       - "(ri:book-read-line) 知识库": memos_cloud/features/knowledge_base.md
+      - "(ri:node-tree) 属性记忆": memos_cloud/features/profile.md
+      - "(ri:calendar-event-line) 事件记忆": memos_cloud/features/event_memory.md
+      - "(ri:function-line) 记忆自进化": memos_cloud/features/self-evolving.md
+      - "(ri:group-line) 群聊": memos_cloud/features/group_chat.md
       - "(ri:tools-line) 工具记忆": memos_cloud/features/tool_calling.md
+      - "(ri:image-add-line) 多模态支持": memos_cloud/features/multimodal.md
+
 
     - "(ri:question-line) 支持与问题排查":
       - "(ri:question-line) 云服务 FAQs": memos_cloud/support/faq.md
@@ -124,9 +129,16 @@ nav:
     - "(ri:edit-box-line) 核心操作":
       - "(ri:message-3-line) Add Message": api_docs/core/add_message.md
       - "(ri:search-2-line) Search Memory": api_docs/core/search_memory.md
-      - "(ri:file-list-line) Get Memory": api_docs/core/get_memory.md
+      - "(ri:file-list-line) Get Memories": api_docs/core/get_memory.md
+      - "(ri:file-search-line) Get Memory": api_docs/core/get_memory_by_id.md
       - "(ri:delete-bin-line) Delete Memory": api_docs/core/delete_memory.md
+      - "(ri:edit-line) Update Memory": api_docs/core/update_memory.md
       - "(ri:feedback-line) Add Feedback": api_docs/message/add_feedback.md
+
+    - "(ri:node-tree) 属性记忆":
+      - "(ri:link) Bind Profile Template": api_docs/core/bind_profile_template.md
+      - "(ri:edit-2-line) Edit Profile": api_docs/core/edit_profile.md
+      - "(ri:delete-bin-2-line) Delete Profile": api_docs/core/delete_profile.md
 
     - "(ri:cpu-line) 自研模型":
       - "(ri:filter-3-line) Extract Memory": api_docs/core/extract_memory.md
