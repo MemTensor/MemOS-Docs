@@ -7,7 +7,7 @@ function processReleases(data) {
   return data.map((release) => {
     // Extract what's changed section from body
     const whatsChanged = []
-    const bodyLines = release.body.split('\r\n')
+    const bodyLines = release.body.split(/\r?\n/)
     let isInWhatsChanged = false
 
     for (const line of bodyLines) {
@@ -91,10 +91,9 @@ async function fetchReleases() {
     // Check if there are any new versions or changes
     if (existsSync(targetPath)) {
       const existingContent = readFileSync(targetPath, 'utf8')
-      const existingContentObj = JSON.parse(existingContent)
 
-      if (existingContentObj.versions[0].name === processedData[0].name) {
-        console.log(`current version is ${existingContentObj.versions[0].name}, No new versions or changes detected. Skipping write.`)
+      if (existingContent === changelogContent) {
+        console.log(`current version is ${processedData[0].name}, No new versions or changes detected. Skipping write.`)
         return
       }
     }
