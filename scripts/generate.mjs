@@ -38,13 +38,20 @@ if (existsSync(configPath)) {
 // Build documentation
 console.log('🏗️ Starting documentation build...')
 try {
-  const buildCommand = process.platform === 'win32'
-    ? `set NUXT_ENV_CONFIG=${env}&& set NUXT_PUBLIC_LOCALE=${locale}&& nuxt generate`
-    : `NUXT_ENV_CONFIG=${env} nuxt generate`
+  const nodeHeapMb = process.env.NODE_HEAP_MB || '6144'
+  const nuxtBin = join(__dirname, '..', 'node_modules', 'nuxt', 'bin', 'nuxt.mjs')
+  const buildEnv = {
+    ...process.env,
+    NUXT_ENV_CONFIG: env,
+    NUXT_PUBLIC_LOCALE: locale,
+    NODE_OPTIONS: `--max-old-space-size=${nodeHeapMb}`
+  }
 
-  execSync(buildCommand, {
+  console.log(`🧠 Node heap limit: ${nodeHeapMb}MB`)
+
+  execSync(`node --max-old-space-size=${nodeHeapMb} "${nuxtBin}" generate`, {
     stdio: 'inherit',
-    env: { ...process.env }
+    env: buildEnv
   })
 
   execSync('node scripts/export-markdown.mjs', {
