@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import {
+  CHANGELOG_CATEGORIES,
   getOrderedCategories,
   getOrderedProductLines,
   normalizeChangelogVersions,
   type ChangelogCategory,
+  type ChangelogCategoryMap,
   type ChangelogProductLine,
   type ChangelogVersion
 } from '~/composables/useChangelog'
@@ -15,7 +17,8 @@ useHead({ title: () => t('changelog.title', '更新日志') })
 const { data: releasesData } = await useAsyncData('releases', () => import('../../content/releases.json').then(m => m.default))
 const { data: enChangelogData } = await useAsyncData('changelog-en', () => import('../../content/en/changelog.yml').then(m => m.default))
 const { data: cnChangelogData } = await useAsyncData('changelog-cn', () => import('../../content/cn/changelog.yml').then(m => m.default))
-
+const { data: enPluginChangelogData } = await useAsyncData('plugin-changelog-en', () => import('../../content/en/plugin-changelog.yml').then(m => m.default))
+const { data: cnPluginChangelogData } = await useAsyncData('plugin-changelog-cn', () => import('../../content/cn/plugin-changelog.yml').then(m => m.default))
 
 interface OpenSourceChange {
   type: string
@@ -37,8 +40,18 @@ interface ChangelogData {
   versions: ChangelogVersion[]
 }
 
+type ChangelogUiVersion = ChangelogVersion & {
+  ui: {
+    container: string
+  }
+}
+
 const changelogData = computed(() => {
   return locale.value === 'cn' ? cnChangelogData.value : enChangelogData.value
+})
+
+const pluginChangelogData = computed(() => {
+  return locale.value === 'cn' ? cnPluginChangelogData.value : enPluginChangelogData.value
 })
 
 const activeTab = ref('0')
@@ -47,6 +60,10 @@ const tabs = [
   {
     name: 'highlight',
     label: 'Highlight'
+  },
+  {
+    name: 'plugin',
+    label: 'Plugin'
   },
   {
     name: 'opensource',
@@ -118,18 +135,55 @@ const getCategoryClass = (category: string) => {
   return categoryClass[category] || 'text-[#10B981]'
 }
 
-const highlightVersions = computed(() => {
+const withTimelineUi = (version: ChangelogVersion): ChangelogUiVersion => ({
+  ...version,
+  ui: {
+    container: 'max-w-3xl'
+  }
+})
+
+const highlightVersions = computed<ChangelogUiVersion[]>(() => {
   const data = changelogData.value as unknown as ChangelogData
-  return normalizeChangelogVersions(data).map(version => ({
-    ...version,
-    ui: {
-      container: 'max-w-3xl'
-    }
-  }))
+  return normalizeChangelogVersions(data).map(withTimelineUi)
 })
 
 const getProductLineLabel = (line: ChangelogProductLine) => t(`changelog.productLines.${line}`)
 const getCategoryLabel = (category: ChangelogCategory) => t(`changelog.categories.${category}`)
+
+function filterPluginCategories(categories: ChangelogCategoryMap | undefined): ChangelogCategoryMap {
+  if (!categories) return {}
+
+  return Object.fromEntries(
+    CHANGELOG_CATEGORIES
+      .filter(category => (categories[category]?.length ?? 0) > 0)
+      .map(category => [category, categories[category]!])
+  ) as ChangelogCategoryMap
+}
+
+const pluginVersions = computed<ChangelogUiVersion[]>(() => {
+  const data = pluginChangelogData.value as unknown as ChangelogData
+
+  // Plugin packages have their own v0.x version line. Do not run the main
+  // changelog legacy migration here, otherwise v0.x plugin entries are treated
+  // as pre-v2 Highlight entries and their products.plugin data is dropped.
+  return (data?.versions ?? [])
+    .reduce<ChangelogUiVersion[]>((versions, version) => {
+      const plugin = filterPluginCategories(version.products?.plugin)
+      if (Object.keys(plugin).length === 0) return versions
+
+      versions.push(withTimelineUi({
+        ...version,
+        changedInfo: undefined,
+        legacy: false,
+        products: {
+          plugin
+        }
+      }))
+
+      return versions
+    }, [])
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+})
 
 const opensourceVersions = computed<Version[]>(() => {
   const versions = (releasesData.value?.versions ?? []) as Version[]
@@ -147,12 +201,34 @@ const opensourceVersions = computed<Version[]>(() => {
     .filter(version => version.changedInfo.length > 0)
 })
 
-function handleTabChange(val: string | number) {
-  if (val === '2') {
+function scrollToChangelogTabs() {
+  const tabsEl = document.getElementById('changelog-tabs')
+  if (!tabsEl) return
+
+  const scrollContainer = document.getElementById('dashboard-panel-main')
+  if (!scrollContainer) {
+    tabsEl.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
     return
   }
 
+  const containerRect = scrollContainer.getBoundingClientRect()
+  const tabsRect = tabsEl.getBoundingClientRect()
+
+  scrollContainer.scrollTo({
+    top: scrollContainer.scrollTop + tabsRect.top - containerRect.top,
+    behavior: 'smooth'
+  })
+}
+
+function handleTabChange(val: string | number) {
   activeTab.value = val.toString()
+
+  nextTick(() => {
+    window.requestAnimationFrame(scrollToChangelogTabs)
+  })
 }
 </script>
 
@@ -176,6 +252,7 @@ function handleTabChange(val: string | number) {
     </UPageHero>
 
     <UTabs
+      id="changelog-tabs"
       v-model="activeTab"
       :items="tabs"
       variant="link"
@@ -191,14 +268,15 @@ function handleTabChange(val: string | number) {
     <UContainer>
       <div class="mt-8">
         <UChangelogVersions
-          v-if="activeTab === '0'"
-          :versions="highlightVersions"
+          v-if="activeTab === '0' || activeTab === '1'"
+          :key="activeTab"
+          :versions="activeTab === '0' ? highlightVersions : pluginVersions"
           :ui="{
             container: 'changelog-container'
           }"
         >
           <template #body="{ version }">
-            <div class="space-y-8 changelog-info rounded-lg">
+            <div class="changelog-card space-y-8">
               <div class="flex flex-col items-start">
                 <span class="text-xl text-slate-900 dark:text-white font-bold">{{ version.name }}</span>
               </div>
@@ -222,7 +300,11 @@ function handleTabChange(val: string | number) {
                     class="space-y-2"
                   >
                     <div class="text-l text-slate-900 dark:text-white changelog-info-title">
-                      {{ item.type }}:
+                      <MDC
+                        tag="span"
+                        unwrap="p"
+                        :value="`${item.type}:`"
+                      />
                     </div>
                     <ul class="text-sm list-disc list-inside space-y-1 ml-4">
                       <li
@@ -230,7 +312,11 @@ function handleTabChange(val: string | number) {
                         :key="idx"
                         class="text-gray-700 dark:text-gray-300"
                       >
-                        {{ change }}
+                        <MDC
+                          tag="span"
+                          unwrap="p"
+                          :value="change"
+                        />
                       </li>
                     </ul>
                   </div>
@@ -264,7 +350,11 @@ function handleTabChange(val: string | number) {
                       class="space-y-2"
                     >
                       <div class="text-l text-slate-900 dark:text-white changelog-info-title">
-                        {{ item.type }}:
+                        <MDC
+                          tag="span"
+                          unwrap="p"
+                          :value="`${item.type}:`"
+                        />
                       </div>
                       <ul class="text-sm list-disc list-inside space-y-1 ml-4">
                         <li
@@ -272,7 +362,11 @@ function handleTabChange(val: string | number) {
                           :key="idx"
                           class="text-gray-700 dark:text-gray-300"
                         >
-                          {{ change }}
+                          <MDC
+                            tag="span"
+                            unwrap="p"
+                            :value="change"
+                          />
                         </li>
                       </ul>
                     </div>
@@ -284,14 +378,14 @@ function handleTabChange(val: string | number) {
         </UChangelogVersions>
 
         <UChangelogVersions
-          v-if="activeTab === '1'"
+          v-if="activeTab === '2'"
           :versions="opensourceVersions"
           :ui="{
             container: 'changelog-container'
           }"
         >
           <template #body="{ version }">
-            <ol class="list-decimal list-inside space-y-2 changelog-list">
+            <ol class="changelog-card list-decimal list-inside space-y-2 changelog-list">
               <div class="flex flex-col items-start mb-[24px]">
                 <span class="text-xl text-slate-900 dark:text-white font-bold">{{ version.name }}</span>
               </div>
@@ -323,19 +417,53 @@ function handleTabChange(val: string | number) {
 .changelog-container :deep(article) {
   max-width: var(--container-3xl) !important;
 }
+
+.changelog-card {
+  border: 1px solid rgb(226 232 240 / 0.8);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.08);
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.dark .changelog-card {
+  border-color: rgb(148 163 184 / 0.18);
+  background: linear-gradient(160deg, rgb(8 13 25 / 0.96), rgb(5 8 18 / 0.96));
+  box-shadow: none;
+}
+
+.changelog-card :deep(strong) {
+  font-weight: 700;
+  color: rgb(15 23 42);
+}
+
+.dark .changelog-card :deep(strong) {
+  color: #fff;
+}
+
+.changelog-card :deep(code) {
+  border-radius: 0.375rem;
+  background: rgb(241 245 249 / 0.9);
+  padding: 0.1rem 0.3rem;
+  color: rgb(51 65 85);
+  font-size: 0.875em;
+}
+
+.dark .changelog-card :deep(code) {
+  background: rgb(30 41 59 / 0.9);
+  color: rgb(226 232 240);
+}
+
 .changelog-list {
   counter-reset: changelog;
 }
 
 .changelog-info {
-  /* background: var(--ui-bg-muted); */
   padding: 1rem;
 }
 
 .changelog-list {
-  padding: 1rem;
-  /* background: var(--ui-bg-muted);
-  border-radius: 0.5rem; */
+  padding: 1.25rem;
 }
 .changelog-list li {
   margin-bottom: 1rem;

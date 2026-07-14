@@ -1,0 +1,149 @@
+versions:
+  - name: v0.1.19
+    date: '2026-07-07'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**System-event filtering**: Skips scheduled tasks, reminders, and background command results to keep memory cleaner.'
+              - '**System prompt detection**: Supports flattened single-line prompts and reduces false positives on regular messages.'
+  - name: v0.1.18
+    date: '2026-06-22'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Update checks in settings**: Shows version status and lets users copy host-specific update or restart commands.'
+  - name: v0.1.17
+    date: '2026-06-16'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Platform-aware memory source labeling**: Distinguishes Windows, macOS, and Linux memory data automatically.'
+  - name: v0.1.16
+    date: '2026-05-21'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Recall Hook compatibility for modern OpenClaw hosts**: For host versions ≥ `2026.5.7`, recall logic moves to `before_prompt_build` while legacy hosts keep `before_agent_start` compatibility.'
+              - '**Automatic system-event skipping**: Detects and skips heartbeat polls, system commands, and other system events during recall and write phases to keep memory records clean.'
+              - '**End-to-end Tool Memory support**: Injects `<tool_memories>` during recall and converts `assistant.tool_calls` plus `toolResult` messages into the standard MemOS message structure during write.'
+              - '**System Note prefix stripping**: Removes previous-run interruption notes to improve recall queries and stored-memory accuracy.'
+        Improvements:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**System-event detection refactor**: Extracts heartbeat and system-command detection helpers to reduce false positives on normal user messages.'
+              - '**Memory filtering cleanup**: Consolidates duplicated relevance-threshold logic in `buildMemorySections`.'
+              - '**Hook compatibility tests**: Adds hook registration tests for both modern and legacy OpenClaw hosts.'
+              - '**Documentation updates**: Updates README and README_ZH working-mechanism explanations.'
+  - name: v0.1.15
+    date: '2026-05-08'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Hook capability declarations**: Adds `activation.onCapabilities: ["hook"]` to OpenClaw, Moltbot, and ClawDBot plugin manifests.'
+              - '**Modern plugin loading compatibility**: Supports the OpenClaw 5.3+ loading mechanism so lifecycle hook plugins are recognized and loaded correctly.'
+        Improvements:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Hook permission patch timing**: Applies `hooks.allowConversationAccess` after the gateway is ready so host config updates can restart the gateway and apply hook permissions.'
+  - name: v0.1.14
+    date: '2026-04-29'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**agent_end permission compatibility**: Supports OpenClaw 2026.4.23+ by checking host config on gateway startup and adding `hooks.allowConversationAccess` to avoid memory-write hook failures.'
+  - name: v0.1.13
+    date: '2026-04-16'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Shared knowledge base for multi-agent mode**: Allows different agent nodes to share, retrieve, and invoke data from the same knowledge base, improving context consistency in complex tasks.'
+  - name: v0.1.12
+    date: '2026-04-03'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Local visual configuration UI**: Adds a built-in HTTP configuration service for browser-based plugin configuration and real-time synchronization.'
+        Improvements:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**More stable configuration service startup**: Adds gateway readiness detection.'
+              - '**Configuration UI improvements**: Adds responsive layout, collapsible floating navigation, and new SVG icons.'
+              - '**Plugin security review compatibility**: Removes `child_process` usage and changes auto-update behavior to version checks plus manual update prompts.'
+              - '**Configuration resolution refactor**: Removes `plugin.json` default values and centralizes priority handling for environment variables, user configuration, and defaults.'
+  - name: v0.1.11
+    date: '2026-03-30'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Direct Session User ID support**: Parses real session user IDs from `sessionKey` for data isolation in complex agent scenarios.'
+              - '**Agent allowlist**: Adds `allowedAgents` so memory recall and recording can run only for selected agents in multi-agent mode.'
+              - '**Agent Overrides**: Supports per-agent overrides for knowledge base IDs, recall limits, feature switches, and other core parameters.'
+  - name: v0.1.10
+    date: '2026-03-24'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Higher-quality memory ingestion**: Cleans OpenClaw inbound metadata, timestamp wrappers, and trailing Feishu system hints to reduce noisy memory writes.'
+              - '**Multi-channel prefix cleanup**: Standardizes message envelope and prefix cleanup for WebChat, WhatsApp, Telegram, Slack, Discord, Zalo, and other channels.'
+              - '**More accurate recall display**: Recall result timestamps now prefer update time.'
+              - '**More robust Recall Filter**: Aligns defaults with runtime fallback values to improve local-model stability.'
+              - '**Resource management**: Fixes timer cleanup behavior to avoid resource leaks on exceptional paths.'
+              - '**Observability**: Completes Recall Filter configuration fields and adds before/after filtering counts.'
+  - name: v0.1.9
+    date: '2026-03-13'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Plugin version self-check**: Periodically checks the latest NPM version in the background.'
+              - '**Silent upgrade flow**: Automatically triggers upgrades when a new version is detected so users can receive updates without manual action.'
+              - '**Memory Recall secondary filtering**: Supports a dedicated model for relevance review, removing noisy results and keeping useful memory snippets.'
+        Improvements:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Lean prompt injection**: Moves static protocols and instructions to `appendSystemContext`, leaving only dynamic memory-list data in `prependContext` to reduce token usage.'
+  - name: v0.1.8
+    date: '2026-03-09'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Multi-agent memory isolation**: Identifies agents from context for memory isolation while keeping a compatibility switch for older versions.'
+  - name: v0.1.7
+    date: '2026-03-05'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Configurable recall relevance**: Supports user-defined `relativity` values in the `searchMemory` API.'
+  - name: OpenClaw Cloud Plugin History
+    date: '2026-02-26'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Core memory capability**: Supports `searchMemory` in `before_agent_start` and `addMessage` in `agent_end`.'

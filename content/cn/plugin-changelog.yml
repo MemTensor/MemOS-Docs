@@ -1,0 +1,149 @@
+versions:
+  - name: v0.1.19
+    date: '2026-07-07'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**系统事件过滤增强**：自动跳过定时任务、计划提醒和后台命令结果，减少记忆污染。'
+              - '**系统提示识别优化**：兼容单行压缩内容并降低普通消息误判概率。'
+  - name: v0.1.18
+    date: '2026-06-22'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**配置页新增更新检查**：可查看版本状态，并复制对应宿主的更新重启命令。'
+  - name: v0.1.17
+    date: '2026-06-16'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**跨平台记忆来源识别**：自动区分 Windows、macOS、Linux 的记忆数据。'
+  - name: v0.1.16
+    date: '2026-05-21'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**Recall Hook 兼容新版 OpenClaw**：当宿主版本 ≥ `2026.5.7` 时，召回逻辑自动迁移至新的阶段化 Hook `before_prompt_build`，旧版宿主继续兼容 `before_agent_start`。'
+              - '**系统事件自动跳过**：召回与写入阶段自动识别并跳过心跳探测、系统命令等系统事件，保持记忆数据纯净。'
+              - '**工具记忆全链路支持**：召回阶段注入 `<tool_memories>`，写入阶段支持 `assistant.tool_calls` 与 `toolResult` 消息转换，统一写入 MemOS 标准消息结构。'
+              - '**System Note 前缀自动剥离**：自动剔除上轮 Agent 中断提示词，提升召回查询与入库数据准确性。'
+        Improvements:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**系统事件检测重构**：提取心跳和系统命令识别逻辑，并降低正常用户消息误判概率。'
+              - '**记忆过滤逻辑精简**：整合 `buildMemorySections` 中重复的相关度阈值判断。'
+              - '**Hook 兼容性测试补齐**：新增 Hook 注册测试，验证新旧 OpenClaw 宿主版本兼容性。'
+              - '**文档说明完善**：更新 README 与 README_ZH 的工作机制说明。'
+  - name: v0.1.15
+    date: '2026-05-08'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**Hook 能力声明补齐**：为 OpenClaw、Moltbot、ClawDBot 插件清单新增 `activation.onCapabilities: ["hook"]` 能力声明。'
+              - '**适配新版插件加载机制**：兼容 OpenClaw 5.3 及之后版本，确保 lifecycle hook 插件可被正确识别和加载。'
+        Improvements:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**Hook 权限写入时机优化**：在 gateway 就绪后再补充 `hooks.allowConversationAccess`，使配置更新能够触发 gateway 自动重启并应用 hook 权限。'
+  - name: v0.1.14
+    date: '2026-04-29'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**适配 agent_end 权限限制**：兼容 OpenClaw 2026.4.23 及之后版本，gateway 启动时自动检查并补充 `hooks.allowConversationAccess`，避免记忆写入 hook 因权限缺失失败。'
+  - name: v0.1.13
+    date: '2026-04-16'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**多 Agent 共享知识库支持**：支持不同 Agent 节点共享、检索和调用同一个知识库，提升复杂任务下的知识获取效率与上下文一致性。'
+  - name: v0.1.12
+    date: '2026-04-03'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**本地可视化配置界面**：内置 HTTP 配置服务，支持在浏览器中查看与修改插件配置，并实时同步配置变更。'
+        Improvements:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**配置服务启动更稳定**：引入 gateway 就绪检测。'
+              - '**配置界面体验优化**：新增响应式布局、可折叠悬浮导航工具和全新 SVG 图标。'
+              - '**插件安全审查适配**：移除 `child_process` 调用，将自动更新改为版本检测和手动更新提示。'
+              - '**配置解析重构**：移除 `plugin.json` 默认值设置，并统一管理环境变量、用户配置与默认值优先级。'
+  - name: v0.1.11
+    date: '2026-03-30'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**Direct Session User ID 支持**：可从 `sessionKey` 中解析真实会话用户 ID，满足复杂代理场景下的数据隔离需求。'
+              - '**Agent 运行白名单**：新增 `allowedAgents`，支持多 Agent 模式下仅对指定 Agent 触发记忆召回和记录。'
+              - '**Agent Overrides 差异化覆盖**：支持针对不同 Agent 单独覆盖知识库 ID、召回条数和功能开关。'
+  - name: v0.1.10
+    date: '2026-03-24'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**消息入库质量提升**：增强 OpenClaw 入站元数据、时间戳包裹和飞书尾部系统提示清洗，减少无效噪音写入记忆。'
+              - '**多渠道消息前缀清洗**：统一处理 WebChat、WhatsApp、Telegram、Slack、Discord、Zalo 等渠道的消息 envelope 和前缀。'
+              - '**召回展示更准确**：召回结果时间展示优先使用更新时间。'
+              - '**Recall Filter 更稳健**：默认参数与运行时回退值保持对齐，提升本地模型场景稳定性。'
+              - '**资源管理优化**：修复定时器清理问题，避免异常路径下的资源泄漏。'
+              - '**可观测性增强**：补齐 Recall Filter 配置字段，并增加过滤前后数量日志。'
+  - name: v0.1.9
+    date: '2026-03-13'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**插件版本自检测**：后台定期检查 NPM 仓库最新版本。'
+              - '**静默升级流程**：检测到新版本后自动触发升级，让用户持续获取最新能力与修复。'
+              - '**Memory Recall 二次筛选**：支持用户配置独立模型进行相关性评审，剔除干扰项并保留真正有用的记忆片段。'
+        Improvements:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**对话注入瘦身**：将静态协议与指令移动到 `appendSystemContext`，`prependContext` 仅保留动态检索得到的 memory-list 数据，降低 Token 消耗。'
+  - name: v0.1.8
+    date: '2026-03-09'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**多 Agent 记忆隔离**：支持从上下文识别 Agent 并进行记忆隔离，同时保留兼容旧版本的开关。'
+  - name: v0.1.7
+    date: '2026-03-05'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**召回相关度可配置**：支持用户自定义 `searchMemory` 接口的 relativity 字段。'
+  - name: OpenClaw 云插件历史版本
+    date: '2026-02-26'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**基础记忆能力**：支持在 `before_agent_start` 事件中 `searchMemory`，并在 `agent_end` 事件中进行 `addMessage`。'
