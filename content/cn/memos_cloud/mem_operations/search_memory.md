@@ -181,8 +181,7 @@ data = {
 
 ### `include_memory_view`：指定检索的记忆种类
 
-支持通过 `include_memory_view` 控制本次检索允许返回的[记忆种类](/cn/memos_cloud/introduction/memory_types)，不传时默认检索所有记忆。
-
+支持通过 `include_memory_view` 控制本次检索允许返回的[记忆种类](/cn/memos_cloud/introduction/memory_types)。不传时默认召回事实记忆和偏好记忆。
 
 ```python
 data = {

@@ -230,7 +230,7 @@ curl --request POST \
 
 ### Search Profile
 
-When you ask about the user in a new session, MemOS returns the relevant Profile.
+When you ask about the user in a new session, call Search Memory and pass `"profile"` in `include_memory_view` to recall Profile.
 
 ::code-group
 

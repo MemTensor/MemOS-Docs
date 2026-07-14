@@ -285,7 +285,7 @@ data = {
 
 ### 群聊：`user_id` 传入列表
 
-多个用户在同一会话中对话时，`user_id` 支持传入列表。使用 `role_id` 和 `role_name` 标识每条消息的发言人，MemOS 会为每个参与者抽取记忆。详见[群聊](/memos_cloud/features/group_chat)。
+多个用户在同一会话中对话时，`user_id` 支持传入列表，表示记忆所属的主体。使用 `role_id` 和 `role_name` 标识每条消息的发言人。详见[群聊](/cn/memos_cloud/features/group_chat)。
 
 ```python
 data = {

@@ -6,7 +6,10 @@
     "version": "1.0.0"
   },
   "servers": [
-    {"url": "https://memos.memtensor.cn/api/openmem/v1", "description": "Production server"}
+    {
+      "url": "https://memos.memtensor.cn/api/openmem/v1",
+      "description": "Production server"
+    }
   ],
   "security": [
     {
@@ -30,12 +33,30 @@
                 "user_id": "memos_user_123",
                 "conversation_id": "0610",
                 "messages": [
-                  {"role": "user", "content": "I want to travel during summer vacation, can you recommend something?"},
-                  {"role": "assistant", "content": "Sure! Are you traveling alone, with family or with friends?"},
-                  {"role": "user", "content": "I'm bringing my kid. My family always travels together."},
-                  {"role": "assistant", "content": "Got it, so you're traveling with your children as a family, right?"},
-                  {"role": "user", "content": "Yes, with both kids and elderly, we usually travel as a whole family."},
-                  {"role": "assistant", "content": "Understood, I'll recommend destinations suitable for family trips."}
+                  {
+                    "role": "user",
+                    "content": "I want to travel during summer vacation, can you recommend something?"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Sure! Are you traveling alone, with family or with friends?"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I'm bringing my kid. My family always travels together."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Got it, so you're traveling with your children as a family, right?"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Yes, with both kids and elderly, we usually travel as a whole family."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Understood, I'll recommend destinations suitable for family trips."
+                  }
                 ]
               }
             }
@@ -130,7 +151,9 @@
                   },
                   "user": {
                     "and": [
-                      {"scene": "chat"}
+                      {
+                        "scene": "chat"
+                      }
                     ]
                   }
                 }
@@ -317,10 +340,22 @@
               },
               "example": {
                 "messages": [
-                  {"role": "user", "content": "I’ve planned a summer trip to Guangzhou. What chain hotels can you recommend for accommodation?"},
-                  {"role": "assistant", "content": "You can consider options like 7 Days Inn, All Seasons, Hilton, and others."},
-                  {"role": "user", "content": "I’ll go with 7 Days Inn."},
-                  {"role": "assistant", "content": "Alright—ask me anytime if you have more questions."}
+                  {
+                    "role": "user",
+                    "content": "I’ve planned a summer trip to Guangzhou. What chain hotels can you recommend for accommodation?"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "You can consider options like 7 Days Inn, All Seasons, Hilton, and others."
+                  },
+                  {
+                    "role": "user",
+                    "content": "I’ll go with 7 Days Inn."
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "Alright—ask me anytime if you have more questions."
+                  }
                 ],
                 "extraction_types": [
                   "memory",
@@ -625,7 +660,10 @@
               },
               "example": {
                 "bind_list": [
-                  {"user_id": "memos_user_123", "profile_template_id": "tpl_user_001"}
+                  {
+                    "user_id": "memos_user_123",
+                    "profile_template_id": "tpl_user_001"
+                  }
                 ]
               }
             }
@@ -1112,6 +1150,16 @@
             "title": "Role",
             "description": "Sender role."
           },
+          "role_id": {
+            "type": "string",
+            "title": "Role ID",
+            "description": "Speaker ID. Recommended in group chats."
+          },
+          "role_name": {
+            "type": "string",
+            "title": "Role Name",
+            "description": "Speaker display name. When passed, extracted memories can include the speaker name. Must be passed together with role_id."
+          },
           "content": {
             "title": "Content",
             "description": "Content of the message.",
@@ -1498,7 +1546,11 @@
               ]
             },
             "title": "Include Memory View",
-            "description": "Allowed memory types to retrieve. When omitted, all memory types are recalled by default."
+            "description": "Allowed memory types to retrieve. When omitted, fact memories (detail_factual) and preference memories (preference) are recalled by default. See <a href=\"/memos_cloud/introduction/memory_types\">Memory Categories</a> for details.",
+            "default": [
+              "detail_factual",
+              "preference"
+            ]
           },
           "memory_limit_number": {
             "type": "integer",

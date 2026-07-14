@@ -284,7 +284,7 @@ data = {
 
 ### Group Chat: Pass a List for `user_id`
 
-When multiple users talk in the same conversation, `user_id` can accept a list. Use `role_id` and `role_name` to identify the speaker of each message; MemOS extracts memory for each participant. See [Group Chat](/memos_cloud/features/group_chat).
+When multiple users talk in the same conversation, `user_id` can accept a list, indicating the subjects that own the memories. Use `role_id` and `role_name` to identify the speaker of each message. See [Group Chat](/memos_cloud/features/group_chat).
 
 ```python
 data = {

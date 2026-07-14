@@ -102,7 +102,7 @@ Currently, MemOS generates all memory categories by default. You can use `allow_
 
 ### Using memories
 
-When searching memories, use `include_memory_view` to control which memory categories can be retrieved. The mapping between memory categories and values is as follows:
+When searching memories, use `include_memory_view` to control which memory categories can be retrieved. If omitted, fact memories and preference memories are recalled by default. The mapping between values is as follows:
 
 | Memory Category | Value |
 | --- | --- |
@@ -119,7 +119,6 @@ For Knowledge Base memories, pass `knowledgebase_ids` when searching to specify 
 {
   "user_id": "memos_user_123",
   "query": "What is coming up recently?",
-  "include_memory_view": ["detail_factual", "preference", "event", "profile", "skill", "tool_memory"],
   "knowledgebase_ids": ["memos_kb_001"]
 }
 ```

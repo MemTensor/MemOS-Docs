@@ -20,7 +20,7 @@ Typical scenarios
 
 - **User ID (`user_id`)**: accepts a string (single user) or an array of strings (multiple users in a group chat).
 - **Agent ID (`agent_id`)**: also accepts a string or an array of strings; multiple Agents can participate in the same group chat.
-- **Speaker ID (`role_id`)**: recommended in group chats; identifies who sent each message, matching one of the values in the top-level `user_id` / `agent_id`.
+- **Speaker ID (`role_id`)**: recommended in group chats; identifies who sent each message. Recommended to match one of the values in the top-level `user_id` / `agent_id`.
 - **Speaker name (`role_name`)**: when passed together with `role_id`, memory text can include the person's name so speakers are easier to tell apart.
 - **Conversation ID (`conversation_id`)**: the unique identifier for the group chat session.
 

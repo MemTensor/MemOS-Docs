@@ -231,7 +231,7 @@ curl --request POST \
 
 ### 检索属性记忆
 
-在新会话中询问用户信息时，MemOS 会返回相关的属性记忆。
+在新会话中询问用户信息时，调用检索记忆接口，在 `include_memory_view` 中传入 `"profile"` 即可召回属性记忆。
 
 ::code-group
 

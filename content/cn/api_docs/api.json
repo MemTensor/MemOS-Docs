@@ -1055,11 +1055,6 @@
           "content"
         ],
         "properties": {
-          "id": {
-            "type": "string",
-            "title": "Message ID",
-            "description": "消息唯一标识，推荐传入，用于 message_id 级联删除和记忆溯源。"
-          },
           "chat_time": {
             "type": "string",
             "title": "Chat Time",
@@ -1079,7 +1074,7 @@
           "role_id": {
             "type": "string",
             "title": "Role ID",
-            "description": "具体发言人的 ID，群聊场景必传。对应顶层 user_id / agent_id 中的某个值。"
+            "description": "具体发言人的 ID，群聊场景建议传入。"
           },
           "role_name": {
             "type": "string",
@@ -1594,7 +1589,11 @@
               ]
             },
             "title": "Include Memory View",
-            "description": "允许检索的记忆种类，不传时默认召回所有种类的记忆。"
+            "description": "允许检索的记忆种类。不传时默认召回事实记忆（detail_factual）和偏好记忆（preference）。详细说明见 <a href=\"/cn/memos_cloud/introduction/memory_types\">记忆种类</a>。",
+            "default": [
+              "detail_factual",
+              "preference"
+            ]
           },
           "memory_limit_number": {
             "type": "integer",

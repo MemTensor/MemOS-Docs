@@ -53,7 +53,7 @@ desc: 实现记忆共享与隔离，区分不同用户、Agent、会话等。
 ### 群聊中的多用户记忆：传入 `user_id` 列表 <span style="font-size:11px;background:#10b981;color:#fff;padding:2px 6px;border-radius:4px;vertical-align:middle;position:relative;top:-1px;">NEW</span>
 <!-- markdownlint-enable MD033 -->
 
-当多个用户在同一会话中对话时，`user_id` 支持传入 list。MemOS 会把**同一份群聊记录**分别写入列表中每位参与者的记忆空间。
+当多个用户在同一会话中对话时，`user_id` 支持传入 list，MemOS 会为每个参与者抽取和维护记忆。
 
 ```json
 {

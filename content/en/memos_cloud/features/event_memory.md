@@ -122,7 +122,7 @@ curl --request POST \
 
 ### Search Event Memory
 
-When calling searchMemory, related events are returned in `event_detail_list`.
+When calling searchMemory, pass `"event"` in `include_memory_view` to recall Event Memory (not included by default). Related events are returned in `event_detail_list`.
 
 ::code-group
 

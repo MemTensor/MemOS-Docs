@@ -102,7 +102,7 @@ MemOS 从历史消息中自动提炼技能，实现记忆的自进化，也可�
 
 ### 使用记忆
 
-检索记忆时，可通过 `include_memory_view` 控制允许检索的记忆种类，与传入值的对应关系如下所示：
+检索记忆时，可通过 `include_memory_view` 控制允许检索的记忆种类。不传时默认召回事实记忆和偏好记忆。与传入值的对应关系如下所示：
 
 | 记忆种类 | 取值 |
 | --- | --- |
@@ -119,7 +119,6 @@ MemOS 从历史消息中自动提炼技能，实现记忆的自进化，也可�
 {
   "user_id": "memos_user_123",
   "query": "最近有什么安排？",
-  "include_memory_view": ["detail_factual", "preference", "event", "profile", "skill", "tool_memory"],
   "knowledgebase_ids": ["memos_kb_001"]
 }
 ```

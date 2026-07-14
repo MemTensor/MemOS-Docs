@@ -122,7 +122,7 @@ curl --request POST \
 
 ### 检索事件记忆
 
-调用 searchMemory 时，返回结果中的 `event_detail_list` 包含与查询相关的事件记忆。
+调用 searchMemory 时，在 `include_memory_view` 中传入 `"event"` 即可召回事件记忆。
 
 ::code-group
 

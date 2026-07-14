@@ -176,13 +176,13 @@ data = {
 
 ### `include_memory_view`: specify which memory categories to retrieve
 
-Use `include_memory_view` to control which [memory categories](/memos_cloud/introduction/memory_types) can be returned by this search. If omitted, all memory categories are searched by default.
+Use `include_memory_view` to control which [memory categories](/memos_cloud/introduction/memory_types) can be returned by this search. If omitted, fact memories and preference memories are recalled by default.
 
 ```python
 data = {
     "user_id": "memos_user_123",
     "query": "What happened last week?",
-    "include_memory_view": ["event", "profile"] # only search event memory and Profile
+    "include_memory_view": ["event", "profile"]  # search only Event Memory and Profile
 }
 ```
 
