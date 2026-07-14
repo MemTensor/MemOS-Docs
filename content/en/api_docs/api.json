@@ -3867,17 +3867,6 @@
             "type": "string",
             "title": "Title",
             "description": "The updated memory title."
-          },
-          "status": {
-            "type": "string",
-            "title": "Status",
-            "enum": [
-              "activated",
-              "resolving",
-              "archived",
-              "deleted"
-            ],
-            "description": "Memory status: activated / resolving / archived / deleted."
           }
         },
         "title": "UpdateMemoryRequest"

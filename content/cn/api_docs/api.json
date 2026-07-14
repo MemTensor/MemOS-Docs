@@ -3824,17 +3824,6 @@
             "type": "string",
             "title": "Title",
             "description": "更新后的记忆标题。"
-          },
-          "status": {
-            "type": "string",
-            "title": "Status",
-            "enum": [
-              "activated",
-              "resolving",
-              "archived",
-              "deleted"
-            ],
-            "description": "记忆状态。activated（生效）/ resolving（待确认）/ archived（归档）/ deleted（删除）。"
           }
         },
         "title": "UpdateMemoryRequest"
