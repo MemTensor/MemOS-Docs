@@ -26,7 +26,7 @@ const config: NuxtConfig = {
           type: 'text/javascript'
         },
         {
-          innerHTML: `(function(){var h=location.hostname;if(h.indexOf('-pre.')!==-1||h.indexOf('-gray.')!==-1||h==='localhost')return;(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","wfn83tdrco");window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','G-7J1J9RW0T1',{page_location:location.origin+(location.pathname.replace(/\\\/$/,'')||'/')+location.search});var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id=G-7J1J9RW0T1';document.head.appendChild(s);})();`,
+          innerHTML: `(function(){var h=location.hostname;if(h.indexOf('-pre.')!==-1||h.indexOf('-gray.')!==-1||h==='localhost')return;(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","wfn83tdrco");window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','G-7J1J9RW0T1',{page_location:location.origin+(location.pathname.replace(/\\/$/,'')||'/')+location.search});var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id=G-7J1J9RW0T1';document.head.appendChild(s);})();`,
           type: 'text/javascript'
         }
       ]
@@ -71,7 +71,7 @@ const config: NuxtConfig = {
   },
 
   devtools: {
-    enabled: process.dev
+    enabled: process.env.NUXT_DEVTOOLS === 'true'
   },
 
   // 本机开发时同时监听 IPv4，避免仅绑定 ::1 导致浏览器走 127.0.0.1 时「打不开」
