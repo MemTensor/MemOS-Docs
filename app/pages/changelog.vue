@@ -138,7 +138,7 @@ const getCategoryClass = (category: string) => {
 const withTimelineUi = (version: ChangelogVersion): ChangelogUiVersion => ({
   ...version,
   ui: {
-    container: 'max-w-3xl'
+    container: 'changelog-version-panel'
   }
 })
 
@@ -195,7 +195,7 @@ const opensourceVersions = computed<Version[]>(() => {
         allowedOpenSourceTypes.includes(change.type as (typeof allowedOpenSourceTypes)[number])
       ),
       ui: {
-        container: 'max-w-3xl'
+        container: 'changelog-version-panel'
       }
     }))
     .filter(version => version.changedInfo.length > 0)
@@ -270,6 +270,7 @@ function handleTabChange(val: string | number) {
         <UChangelogVersions
           v-if="activeTab === '0' || activeTab === '1'"
           :key="activeTab"
+          class="changelog-timeline"
           :versions="activeTab === '0' ? highlightVersions : pluginVersions"
           :ui="{
             container: 'changelog-container'
@@ -379,6 +380,7 @@ function handleTabChange(val: string | number) {
 
         <UChangelogVersions
           v-if="activeTab === '2'"
+          class="changelog-timeline"
           :versions="opensourceVersions"
           :ui="{
             container: 'changelog-container'
@@ -414,8 +416,33 @@ function handleTabChange(val: string | number) {
 </template>
 
 <style scoped>
-.changelog-container :deep(article) {
-  max-width: var(--container-3xl) !important;
+:deep(.changelog-timeline) {
+  margin-inline: auto;
+  width: min(100%, 72rem);
+}
+
+:deep(.changelog-container article) {
+  max-width: 100% !important;
+}
+
+:deep(.changelog-version-panel) {
+  width: 100%;
+  max-width: 100% !important;
+}
+
+@media (min-width: 1024px) {
+  :deep(.changelog-version-panel) {
+    margin-left: 11.25rem !important;
+    margin-right: auto !important;
+    max-width: min(64rem, calc(100% - 12.75rem)) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  :deep(.changelog-version-panel) {
+    margin-left: 11.75rem !important;
+    max-width: min(66rem, calc(100% - 13.25rem)) !important;
+  }
 }
 
 .changelog-card {
