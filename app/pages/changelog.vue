@@ -46,6 +46,19 @@ type ChangelogUiVersion = ChangelogVersion & {
   }
 }
 
+interface PluginReleaseCategory {
+  category: ChangelogCategory
+  changedInfo: string[]
+}
+
+interface PluginReleaseGroup {
+  key: string
+  productName: string
+  versionName: string
+  title: string
+  categories: PluginReleaseCategory[]
+}
+
 const changelogData = computed(() => {
   return locale.value === 'cn' ? cnChangelogData.value : enChangelogData.value
 })
@@ -149,6 +162,63 @@ const highlightVersions = computed<ChangelogUiVersion[]>(() => {
 
 const getProductLineLabel = (line: ChangelogProductLine) => t(`changelog.productLines.${line}`)
 const getCategoryLabel = (category: ChangelogCategory) => t(`changelog.categories.${category}`)
+
+const isPluginVersionName = (name: string | undefined) => /^v\d/i.test((name ?? '').trim())
+
+function getPluginProductName(type: string, versionName: string): string {
+  const cleanedType = type.replace(/[:：]\s*$/, '').trim()
+  const cleanedVersion = versionName.trim()
+
+  if (!isPluginVersionName(cleanedVersion)) return cleanedType
+
+  return cleanedType
+    .replace(new RegExp(`[-\\s]*${cleanedVersion.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'), '')
+    .trim()
+}
+
+function getPluginReleaseTitle(productName: string, versionName: string): string {
+  const cleanedVersion = versionName.trim()
+  if (!isPluginVersionName(cleanedVersion)) return cleanedVersion || productName
+
+  return locale.value === 'cn'
+    ? `${productName}-${cleanedVersion}`
+    : `${productName} ${cleanedVersion}`
+}
+
+function getPluginReleaseGroups(version: ChangelogVersion): PluginReleaseGroup[] {
+  const plugin = version.products?.plugin
+  if (!plugin) return []
+
+  const groups = new Map<string, PluginReleaseGroup>()
+
+  for (const category of getOrderedCategories(plugin)) {
+    for (const item of plugin[category] ?? []) {
+      const productName = getPluginProductName(item.type, version.name)
+      const key = productName || item.type
+      const group = groups.get(key) ?? {
+        key,
+        productName,
+        versionName: isPluginVersionName(version.name) ? version.name : '',
+        title: getPluginReleaseTitle(productName, version.name),
+        categories: []
+      }
+
+      const existingCategory = group.categories.find(entry => entry.category === category)
+      if (existingCategory) {
+        existingCategory.changedInfo.push(...item.changedInfo)
+      } else {
+        group.categories.push({
+          category,
+          changedInfo: [...item.changedInfo]
+        })
+      }
+
+      groups.set(key, group)
+    }
+  }
+
+  return Array.from(groups.values())
+}
 
 function filterPluginCategories(categories: ChangelogCategoryMap | undefined): ChangelogCategoryMap {
   if (!categories) return {}
@@ -268,10 +338,9 @@ function handleTabChange(val: string | number) {
     <UContainer>
       <div class="mt-8">
         <UChangelogVersions
-          v-if="activeTab === '0' || activeTab === '1'"
-          :key="activeTab"
+          v-if="activeTab === '0'"
           class="changelog-timeline"
-          :versions="activeTab === '0' ? highlightVersions : pluginVersions"
+          :versions="highlightVersions"
           :ui="{
             container: 'changelog-container'
           }"
@@ -374,6 +443,71 @@ function handleTabChange(val: string | number) {
                   </div>
                 </div>
               </template>
+            </div>
+          </template>
+        </UChangelogVersions>
+
+        <UChangelogVersions
+          v-if="activeTab === '1'"
+          class="changelog-timeline"
+          :versions="pluginVersions"
+          :ui="{
+            container: 'changelog-container'
+          }"
+        >
+          <template #body="{ version }">
+            <div class="changelog-card plugin-changelog-card space-y-6">
+              <section
+                v-for="group in getPluginReleaseGroups(version)"
+                :key="group.key"
+                class="plugin-release"
+              >
+                <header class="plugin-release-header">
+                  <div class="min-w-0">
+                    <div class="plugin-release-eyebrow">
+                      {{ group.productName }}
+                    </div>
+                    <h2 class="plugin-release-title">
+                      {{ group.title }}
+                    </h2>
+                  </div>
+                  <span
+                    v-if="group.versionName"
+                    class="plugin-version-badge"
+                  >
+                    {{ group.versionName }}
+                  </span>
+                </header>
+
+                <div class="space-y-5">
+                  <div
+                    v-for="entry in group.categories"
+                    :key="entry.category"
+                    class="plugin-category-block"
+                  >
+                    <div
+                      class="flex text-base items-center gap-2 font-bold"
+                      :class="getCategoryClass(entry.category)"
+                    >
+                      <UIcon :name="getCategoryIcon(entry.category)" class="w-5 h-5" />
+                      {{ getCategoryLabel(entry.category) }}
+                    </div>
+                    <ul class="text-sm list-disc space-y-1.5 ml-5 mt-3">
+                      <li
+                        v-for="(change, idx) in entry.changedInfo"
+                        :key="idx"
+                        class="text-gray-700 dark:text-gray-300 leading-7 pl-1"
+                      >
+                        <MDC
+                          tag="span"
+                          unwrap="p"
+                          :value="change"
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
             </div>
           </template>
         </UChangelogVersions>
@@ -487,6 +621,75 @@ function handleTabChange(val: string | number) {
 
 .changelog-info {
   padding: 1rem;
+}
+
+.plugin-changelog-card {
+  padding: 1.5rem;
+}
+
+.plugin-release + .plugin-release {
+  border-top: 1px solid rgb(226 232 240 / 0.8);
+  padding-top: 1.5rem;
+}
+
+.dark .plugin-release + .plugin-release {
+  border-top-color: rgb(148 163 184 / 0.18);
+}
+
+.plugin-release-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgb(226 232 240 / 0.8);
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.dark .plugin-release-header {
+  border-bottom-color: rgb(148 163 184 / 0.18);
+}
+
+.plugin-release-eyebrow {
+  margin-bottom: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: rgb(99 102 241);
+}
+
+.plugin-release-title {
+  color: rgb(15 23 42);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.dark .plugin-release-title {
+  color: #fff;
+}
+
+.plugin-version-badge {
+  flex: none;
+  border: 1px solid rgb(99 102 241 / 0.28);
+  background: rgb(238 242 255 / 0.9);
+  border-radius: 999px;
+  color: rgb(67 56 202);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.45rem 0.7rem;
+}
+
+.dark .plugin-version-badge {
+  border-color: rgb(129 140 248 / 0.32);
+  background: rgb(49 46 129 / 0.32);
+  color: rgb(199 210 254);
+}
+
+.plugin-category-block {
+  border-radius: 0.875rem;
 }
 
 .changelog-list {
