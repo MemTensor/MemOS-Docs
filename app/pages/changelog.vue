@@ -463,20 +463,9 @@ function handleTabChange(val: string | number) {
                 class="plugin-release"
               >
                 <header class="plugin-release-header">
-                  <div class="min-w-0">
-                    <div class="plugin-release-eyebrow">
-                      {{ group.productName }}
-                    </div>
-                    <h2 class="plugin-release-title">
-                      {{ group.title }}
-                    </h2>
-                  </div>
-                  <span
-                    v-if="group.versionName"
-                    class="plugin-version-badge"
-                  >
-                    {{ group.versionName }}
-                  </span>
+                  <h2 class="plugin-release-title">
+                    {{ group.title }}
+                  </h2>
                 </header>
 
                 <div class="space-y-5">
@@ -637,55 +626,25 @@ function handleTabChange(val: string | number) {
 }
 
 .plugin-release-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
   border-bottom: 1px solid rgb(226 232 240 / 0.8);
-  padding-bottom: 1rem;
-  margin-bottom: 1.25rem;
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.35rem;
 }
 
 .dark .plugin-release-header {
   border-bottom-color: rgb(148 163 184 / 0.18);
 }
 
-.plugin-release-eyebrow {
-  margin-bottom: 0.35rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  color: rgb(99 102 241);
-}
-
 .plugin-release-title {
   color: rgb(15 23 42);
-  font-size: 1.35rem;
+  font-size: 1.45rem;
   font-weight: 800;
-  line-height: 1.3;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
 }
 
 .dark .plugin-release-title {
   color: #fff;
-}
-
-.plugin-version-badge {
-  flex: none;
-  border: 1px solid rgb(99 102 241 / 0.28);
-  background: rgb(238 242 255 / 0.9);
-  border-radius: 999px;
-  color: rgb(67 56 202);
-  font-size: 0.8rem;
-  font-weight: 700;
-  line-height: 1;
-  padding: 0.45rem 0.7rem;
-}
-
-.dark .plugin-version-badge {
-  border-color: rgb(129 140 248 / 0.32);
-  background: rgb(49 46 129 / 0.32);
-  color: rgb(199 210 254);
 }
 
 .plugin-category-block {
