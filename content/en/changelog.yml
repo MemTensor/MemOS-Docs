@@ -1,4 +1,26 @@
 versions:
+  - name: v2.0.10
+    date: '2026-07-15'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Local Plugin
+            changedInfo:
+              - 'Added **lightweight memory mode configuration**: allows control of the memory evolution process through configuration to reduce backend processing overhead in lightweight scenarios'
+              - 'Added **L3 abstract model configuration**: a dedicated entry for L3 LLM configuration to independently manage model calls during the abstract summarization phase'
+              - 'Enhanced **Chinese keyword recall support**: improves the retrieval and recall of Chinese content'
+        Improvements:
+          - type: OpenClaw Local Plugin
+            changedInfo:
+              - '**Vector scanning performance optimization**: refactored vector reading and batch processing logic under large data volumes to reduce CPU pressure caused by synchronous full table scans'
+              - '**Retrieval context boundary optimization**: organized memory context using clearer XML boundaries to reduce the probability of the model misreading the context'
+              - '**Hermes integration stability enhancement**: improved provider startup waiting, link management, and installation scripts to enhance compatibility between the local plugin and Hermes'
+        Bug Fixes:
+          - type: OpenClaw Local Plugin
+            changedInfo:
+              - 'Fixed **lightweight memory mode not working**: resolved the issue where the evolution pipeline could still be triggered when `algorithm.lightweightMemory.enabled=true`'
+              - 'Fixed **OpenAI-compatible endpoint detection anomaly**: resolved the instability issue with provider detection under the complete endpoint path'
+              - 'Fixed **memory recovery and collection boundary issues**: addressed stability issues related to dirty data recovery, isolated trace writing, and LLM empty response retries'
   - name: v2.0.23
     date: '2026-07-09'
     products:
