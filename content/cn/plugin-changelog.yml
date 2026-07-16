@@ -1,4 +1,26 @@
 versions:
+  - name: v2.0.10
+    date: '2026-07-15'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**轻量记忆模式配置**：支持通过配置控制记忆演化流程，便于在轻量场景下降低后台处理开销。'
+              - '**L3 抽象模型配置**：新增专用的 L3 LLM 配置入口，用于独立管理抽象总结阶段的模型调用。'
+              - '**中文关键词召回支持**：增强 CJK 关键词分词能力，提升中文内容的检索与召回效果。'
+        Improvements:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**向量扫描性能优化**：重构大数据量下的向量读取与批处理逻辑，降低同步全表扫描导致的 CPU 压力。'
+              - '**检索上下文边界优化**：使用更清晰的 XML 边界组织记忆上下文，降低模型误读上下文的概率。'
+              - '**Hermes 集成稳定性增强**：改进 provider 启动等待、链接管理和安装脚本，提升本地插件与 Hermes 的兼容性。'
+        Bug Fixes:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**轻量记忆模式不生效**：修复 `algorithm.lightweightMemory.enabled=true` 时仍可能触发演化流水线的问题。'
+              - '**OpenAI-compatible endpoint 探测异常**：修复完整 endpoint 路径下 provider 探测不稳定的问题。'
+              - '**记忆恢复与采集边界问题**：修复脏数据恢复、孤立 trace 写入和 LLM 空响应重试等稳定性问题。'
   - name: v0.1.19
     date: '2026-07-07'
     products:
