@@ -9,29 +9,33 @@ versions:
               - 属性树
               - 事件记忆
               - 多视角
-      playground:
-        New Features:
-          - type: 上线「属性树」
+          - type: 属性树
             changedInfo:
               - 支持模板管理、实例绑定、字段编辑及实例删除
-          - type: 上线「事件记忆」
+          - type: 事件记忆
             changedInfo:
               - 支持事件提取、检索、展示、更新及删除
-          - type: Playground
+          - type: 事件记忆抽取配置
             changedInfo:
               - 新增事件记忆抽取配置，支持 Prompt 编辑、AI 优化、恢复默认和调试运行
+          - type: Agent 多视角
+            changedInfo:
               - 新增 Agent 多视角，支持为不同用户和 Agent 独立生产、更新与召回记忆
         Improvements:
-          - type: Playground
+          - type: 记忆列表
             changedInfo:
-              - 记忆列表新增属性树和事件记忆展示
+              - 新增属性树和事件记忆展示
+          - type: 云服务控制台
+            changedInfo:
               - 核心记忆接口全面适配多视角，支持按记忆视图限定生产和检索范围
               - 记忆检索支持多视图混排、统一重排及 related_id 范围过滤
               - 支持多人、多 Agent 对话场景
               - 优化异步任务的记忆变更结果查询
-              - 调用日志新增用户与 Agent 信息，并适配属性树、事件记忆的变更记录
+          - type: 调用日志
+            changedInfo:
+              - 新增用户与 Agent 信息，并适配属性树、事件记忆的变更记录
         Bug Fixes:
-          - type: Playground
+          - type: 云服务控制台
             changedInfo:
               - 修复知识库详情返回的关联项目 ID 不准确的问题
               - 修复 OpenMem 接口导入的消息误入本地聊天历史的问题
