@@ -1,4 +1,40 @@
 versions:
+  - name: v2.0.24
+    date: '2026-07-16'
+    products:
+      cloud:
+        New Features:
+          - type: Cloud service
+            changedInfo:
+              - Property Tree
+              - Event Memory
+              - Multi-view
+      playground:
+        New Features:
+          - type: Property Tree
+            changedInfo:
+              - Supports template management, instance binding, field editing, and instance deletion
+          - type: Event Memory
+            changedInfo:
+              - Supports event extraction, retrieval, display, update, and deletion
+          - type: Playground
+            changedInfo:
+              - Added Event Memory extraction configuration with prompt editing, AI optimization, restore defaults, and debug runs
+              - Added Agent multi-view support for independent memory generation, update, and recall by user and Agent
+        Improvements:
+          - type: Playground
+            changedInfo:
+              - Added Property Tree and Event Memory display to the memory list
+              - Updated core memory APIs for multi-view and supports scoping generation and retrieval by memory view
+              - Memory retrieval supports mixed multi-view results, unified reranking, and related_id range filtering
+              - Supports multi-user and multi-Agent conversations
+              - Optimized querying memory-change results for async tasks
+              - Added user and Agent information to call logs and adapted change records for Property Tree and Event Memory
+        Bug Fixes:
+          - type: Playground
+            changedInfo:
+              - Fixed inaccurate related project IDs returned by knowledge-base details
+              - Fixed messages imported through the OpenMem API being incorrectly written into local chat history
   - name: v2.0.23
     date: '2026-07-09'
     products:
