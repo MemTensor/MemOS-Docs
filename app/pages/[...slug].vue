@@ -372,7 +372,7 @@ useHead({
           highlight
           :links="page.body?.toc?.links"
           :ui="{
-            root: 'top-(--ui-topbar-height) lg:top-(--ui-header-height) lg:-mx-0 lg:px-0',
+            root: 'top-(--ui-topbar-height) lg:top-(--ui-header-height) lg:-mx-0 lg:px-0 scrollbar-hide',
             container:
               'pt-0 pb-2.5 sm:pb-4.5 lg:pt-[4.125rem] lg:pb-8 border-b border-dashed border-default lg:border-0 flex flex-col gap-0',
             trigger:

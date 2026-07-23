@@ -823,6 +823,20 @@ html::-webkit-scrollbar {
   }
 }
 
+/* Hide right TOC / main panel scrollbars while keeping scroll. */
+#dashboard-panel-main,
+.doc-page-grid > nav {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#dashboard-panel-main::-webkit-scrollbar,
+.doc-page-grid > nav::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 /* UContentToc renders the trigger twice (mobile <button> + desktop <p>).
    The base theme trigger class includes `flex`, which overrides `hidden`
    on the desktop <p> in Tailwind v4, causing a duplicate "本页导航" on mobile. */
