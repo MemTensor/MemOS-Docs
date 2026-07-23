@@ -1,4 +1,15 @@
 versions:
+  - name: v2.0.25
+    date: '2026-07-23'
+    products:
+      cloud:
+        Bug Fixes:
+          - type: Cloud service
+            changedInfo:
+              - Rewrote the Dockerfile to resolve ACK deployment issues.
+          - type: Event Memory
+            changedInfo:
+              - Fixed an issue where Event Memory was not truncated, causing errors due to overly long model inputs.
   - name: v2.0.24
     date: '2026-07-16'
     products:
