@@ -1,4 +1,15 @@
 versions:
+  - name: v2.0.25
+    date: '2026-07-23'
+    products:
+      cloud:
+        Bug Fixes:
+          - type: 云服务
+            changedInfo:
+              - 重写dockerfile以解决ack部署问题
+          - type: 事件记忆
+            changedInfo:
+              - 修复事件记忆未截断导致模型输入过长报错问题
   - name: v2.0.24
     date: '2026-07-16'
     products:
