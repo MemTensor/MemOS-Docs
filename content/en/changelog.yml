@@ -4,12 +4,37 @@ versions:
     products:
       cloud:
         Bug Fixes:
-          - type: Cloud service
+          - type: ACK deployment
             changedInfo:
-              - Rewrote the Dockerfile to resolve ACK deployment issues.
+              - Rewrote the Dockerfile to resolve ACK deployment issues
           - type: Event Memory
             changedInfo:
-              - Fixed an issue where Event Memory was not truncated, causing errors due to overly long model inputs.
+              - Fixed overlong model inputs caused by Event Memory content not being truncated
+      opensource:
+        Improvements:
+          - type: PolarDB interaction
+            changedInfo:
+              - Optimized PolarDB interaction by adding the return_fields parameter and applying it directly to SQL queries instead of trimming fields only in the result layer
+              - Uses search_by_embedding to fetch all fields required for MemoryItem construction, avoiding an extra get_nodes call and saving one round trip
+          - type: Result logging
+            changedInfo:
+              - Reduced serialization cost by replacing full-result logs in the original flow with result summaries
+          - type: MMR optimization
+            changedInfo:
+              - Optimized MMR by pruning candidates and reducing similarity-matrix computation latency
+        Bug Fixes:
+          - type: Feedback model parsing
+            changedInfo:
+              - Fixed model parsing failures in feedback processing
+          - type: Model configuration
+            changedInfo:
+              - Unified and simplified model-related configuration options
+          - type: Embedder logs
+            changedInfo:
+              - Fixed embedder logging issues
+          - type: SDK get_task_status
+            changedInfo:
+              - Fixed SDK get_task_status() parsing for legacy task-status responses
   - name: v2.0.24
     date: '2026-07-16'
     products:
