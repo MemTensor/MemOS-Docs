@@ -1,4 +1,16 @@
 versions:
+  - name: v2.0.11
+    date: '2026-07-27'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Local Plugin
+            changedInfo:
+              - '**Chunk batch reflection scoring**: Introduced chunk batch reflection scoring feature for performance optimization'
+        Bug Fixes:
+          - type: OpenClaw Local Plugin
+            changedInfo:
+              - '**Fix V7 session defaults**: Ensure V7 session defaults are preserved in the plugin'
   - name: v2.0.10
     date: '2026-07-15'
     products:
