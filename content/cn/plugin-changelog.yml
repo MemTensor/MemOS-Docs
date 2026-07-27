@@ -1,4 +1,16 @@
 versions:
+  - name: v2.0.11
+    date: '2026-07-27'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**批量反射评分功能**：新增批量反射评分功能以优化性能'
+        Bug Fixes:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**修复 V7 会话默认设置**：确保 V7 会话的默认设置在插件中得以保留'
   - name: v2.0.10
     date: '2026-07-15'
     products:
