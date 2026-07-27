@@ -4,21 +4,11 @@ versions:
     products:
       cloud:
         Bug Fixes:
-          - type: ACK 部署
-            changedInfo:
-              - 重写dockerfile以解决ack部署问题
           - type: 事件记忆
             changedInfo:
               - 修复事件记忆未截断导致模型输入过长报错问题
       opensource:
         Improvements:
-          - type: PolarDB 交互
-            changedInfo:
-              - 优化PolarDB交互，增加return_fields参数，并令其直接影响SQL查询而非在结果层面做裁剪
-              - 通过 search_by_embedding 获取构造MemoryItem的所有必要字段，避免二次调用 get_nodes，节省一次round trip的时延
-          - type: 结果日志
-            changedInfo:
-              - 精简原流程中打印完整结果的日志，改为结果摘要，减少序列化成本
           - type: MMR 优化
             changedInfo:
               - MMR优化：对MMR候选进行剪枝，减少相似度矩阵计算时延
