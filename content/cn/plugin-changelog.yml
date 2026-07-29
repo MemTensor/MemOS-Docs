@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.12
+    date: '2026-07-29'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**版本更新**：发布 OpenClaw 本地插件 v2.0.12'
   - name: v2.0.10
     date: '2026-07-15'
     products:
