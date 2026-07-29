@@ -1,4 +1,26 @@
 versions:
+  - name: v2.0.12
+    date: '2026-07-29'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw Local Plugin
+            changedInfo:
+              - '**Shared Hermes bridge runtime**: Reuses one Node bridge across Hermes providers while isolating state by data home to reduce duplicate startups and session bleed.'
+              - '**Hermes version metadata**: Syncs plugin.yaml with the package version during install so hosts display the correct local plugin version.'
+        Bug Fixes:
+          - type: OpenClaw Local Plugin
+            changedInfo:
+              - '**Hermes config reload and recovery**: Reloads config after restart and hardens recovery lifecycle to reduce bridge recovery failures.'
+              - '**Read-only compression turns**: Keeps Hermes compression turns read-only to prevent compression from mutating session state.'
+  - name: v2.0.11
+    date: '2026-07-27'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: OpenClaw Local Plugin
+            changedInfo:
+              - '**V7 session defaults**: Preserves default session parameters while overriding follow-up mode so V7 flows keep their expected behavior.'
   - name: v2.0.10
     date: '2026-07-15'
     products:
