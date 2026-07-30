@@ -1,4 +1,20 @@
 versions:
+  - name: v2.0.28
+    date: '2026-07-30'
+    products:
+      cloud:
+        Improvements:
+          - type: 云服务
+            changedInfo:
+              - 删除记忆时缺少路由信息，导致效率低、成本高
+          - type: 云服务控制台
+            changedInfo:
+              - 修改playground system prompt中小忆的角色认知部分
+      opensource:
+        Improvements:
+          - type: 开源项目
+            changedInfo:
+              - 优化MemOS文档抽取，返回模式和截断字符数调整
   - name: v2.0.25
     date: '2026-07-23'
     products:
