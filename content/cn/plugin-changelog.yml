@@ -1,4 +1,26 @@
 versions:
+  - name: v2.0.12
+    date: '2026-07-29'
+    products:
+      plugin:
+        Improvements:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**Hermes 共享桥接运行时**：多个 Hermes provider 复用同一 Node bridge，并按 data home 隔离状态，减少重复启动和会话串扰。'
+              - '**Hermes 版本元数据同步**：安装时同步 plugin.yaml 与包版本，确保宿主展示的本地插件版本一致。'
+        Bug Fixes:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**Hermes 配置重载与恢复**：重启后重新加载配置并强化恢复生命周期，降低桥接异常后的恢复失败风险。'
+              - '**压缩阶段只读保护**：保持 Hermes compression turn 只读，避免压缩流程意外写入会话状态。'
+  - name: v2.0.11
+    date: '2026-07-27'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: OpenClaw 本地插件
+            changedInfo:
+              - '**V7 会话默认配置**：保留默认 session 参数，仅覆盖 follow-up mode，避免 V7 会话链路丢失默认行为。'
   - name: v2.0.10
     date: '2026-07-15'
     products:
