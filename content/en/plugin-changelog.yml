@@ -4,12 +4,12 @@ versions:
     products:
       plugin:
         Improvements:
-          - type: OpenClaw Local Plugin
+          - type: MemOS Local Plugin
             changedInfo:
               - '**Shared Hermes bridge runtime**: Reuses one Node bridge across Hermes providers while isolating state by data home to reduce duplicate startups and session bleed.'
               - '**Hermes version metadata**: Syncs plugin.yaml with the package version during install so hosts display the correct local plugin version.'
         Bug Fixes:
-          - type: OpenClaw Local Plugin
+          - type: MemOS Local Plugin
             changedInfo:
               - '**Hermes config reload and recovery**: Reloads config after restart and hardens recovery lifecycle to reduce bridge recovery failures.'
               - '**Read-only compression turns**: Keeps Hermes compression turns read-only to prevent compression from mutating session state.'
@@ -18,7 +18,7 @@ versions:
     products:
       plugin:
         Bug Fixes:
-          - type: OpenClaw Local Plugin
+          - type: MemOS Local Plugin
             changedInfo:
               - '**V7 session defaults**: Preserves default session parameters while overriding follow-up mode so V7 flows keep their expected behavior.'
   - name: v2.0.10
@@ -26,19 +26,19 @@ versions:
     products:
       plugin:
         New Features:
-          - type: OpenClaw Local Plugin
+          - type: MemOS Local Plugin
             changedInfo:
               - '**Lightweight memory mode configuration**: controls the memory evolution process through configuration to reduce backend processing overhead in lightweight scenarios.'
               - '**L3 abstract model configuration**: adds a dedicated L3 LLM configuration entry for the abstract summarization stage.'
               - '**Chinese keyword recall support**: improves tokenization for CJK keywords and strengthens Chinese retrieval and recall.'
         Improvements:
-          - type: OpenClaw Local Plugin
+          - type: MemOS Local Plugin
             changedInfo:
               - '**Vector scanning performance**: refactors vector reading and batch processing for large datasets to reduce CPU pressure from synchronous full-table scans.'
               - '**Retrieval context boundaries**: uses clearer XML boundaries for memory context to reduce model misreading.'
               - '**Hermes integration stability**: improves provider startup waiting, link management, and installation scripts for better local plugin compatibility.'
         Bug Fixes:
-          - type: OpenClaw Local Plugin
+          - type: MemOS Local Plugin
             changedInfo:
               - '**Lightweight memory mode activation**: fixes cases where the evolution pipeline could still run when `algorithm.lightweightMemory.enabled=true`.'
               - '**OpenAI-compatible endpoint probing**: fixes unstable provider detection when a full endpoint path is configured.'
