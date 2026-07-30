@@ -1,4 +1,20 @@
 versions:
+  - name: v2.0.28
+    date: '2026-07-30'
+    products:
+      cloud:
+        Improvements:
+          - type: Cloud service
+            changedInfo:
+              - Missing routing information when deleting memories leads to low efficiency and high costs.
+          - type: Cloud Playground
+            changedInfo:
+              - Modified the role recognition part of Xiao Yi in the playground system prompt.
+      opensource:
+        Improvements:
+          - type: Open Source
+            changedInfo:
+              - Improved MemOS documentation extraction, adjusted return mode and truncation character count.
   - name: v2.0.25
     date: '2026-07-23'
     products:
