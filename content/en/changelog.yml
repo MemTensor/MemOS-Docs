@@ -6,10 +6,7 @@ versions:
         Improvements:
           - type: Cloud service
             changedInfo:
-              - Missing routing information when deleting memories leads to low efficiency and high costs.
-          - type: Cloud Playground
-            changedInfo:
-              - Modified the role recognition part of Xiao Yi in the playground system prompt.
+              - Resolved low efficiency and high costs caused by missing routing information when deleting memories.
       opensource:
         Improvements:
           - type: Open Source
