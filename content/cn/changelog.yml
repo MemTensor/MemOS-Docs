@@ -6,10 +6,7 @@ versions:
         Improvements:
           - type: 云服务
             changedInfo:
-              - 删除记忆时缺少路由信息，导致效率低、成本高
-          - type: 云服务控制台
-            changedInfo:
-              - 修改playground system prompt中小忆的角色认知部分
+              - 删除记忆时因缺少路由信息，而导致效率低、成本高的问题
       opensource:
         Improvements:
           - type: 开源项目
