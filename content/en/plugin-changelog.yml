@@ -1,4 +1,12 @@
 versions:
+  - name: v0.1.20
+    date: '2026-08-03'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw Cloud Plugin
+            changedInfo:
+              - '**Snapshot Deduplication**: Implemented deduplication for agent_end snapshots and enhanced API call timeout handling'
   - name: v2.0.12
     date: '2026-07-29'
     products:
