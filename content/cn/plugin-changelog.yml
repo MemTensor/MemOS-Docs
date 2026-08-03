@@ -1,4 +1,12 @@
 versions:
+  - name: v0.1.20
+    date: '2026-08-03'
+    products:
+      plugin:
+        New Features:
+          - type: OpenClaw 云插件
+            changedInfo:
+              - '**快照去重功能**：实现了对 agent_end 快照的去重，并增强了 API 调用超时处理'
   - name: v2.0.12
     date: '2026-07-29'
     products:
