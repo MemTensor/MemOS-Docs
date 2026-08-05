@@ -1,4 +1,13 @@
 versions:
+  - name: v2.0.13
+    date: '2026-08-05'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**前台资源管理修复**：修复了前台资源饥饿问题，并支持 Retry-After 头部'
+              - '**召回相关性改进**：改善了召回相关性和主机输入处理'
   - name: v0.1.20
     date: '2026-08-03'
     products:
