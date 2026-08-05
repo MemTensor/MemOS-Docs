@@ -1,4 +1,13 @@
 versions:
+  - name: v2.0.13
+    date: '2026-08-05'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Foreground resource management fix**: Prevented foreground starvation and honored Retry-After header'
+              - '**Recall relevance improvement**: Improved recall relevance and host input handling'
   - name: v0.1.20
     date: '2026-08-03'
     products:
