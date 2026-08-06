@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.29
+    date: '2026-08-03'
+    products:
+      cloud:
+        Improvements:
+          - type: 记忆列表
+            changedInfo:
+              - 删除记忆时缺少路由信息，优化了 dashboard 记忆列表的删除性能
   - name: v2.0.28
     date: '2026-07-30'
     products:

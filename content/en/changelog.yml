@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.29
+    date: '2026-08-03'
+    products:
+      cloud:
+        Improvements:
+          - type: Memory list
+            changedInfo:
+              - Missing routing information when deleting memories; improved the deletion performance of the dashboard memory list.
   - name: v2.0.28
     date: '2026-07-30'
     products:
