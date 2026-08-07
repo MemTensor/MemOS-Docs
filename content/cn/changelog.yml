@@ -4,9 +4,9 @@ versions:
     products:
       cloud:
         Improvements:
-          - type: 记忆列表
+          - type: 云服务控制台
             changedInfo:
-              - 删除记忆时缺少路由信息，优化了 dashboard 记忆列表的删除性能
+              - 优化 Dashboard 记忆列表删除链路，提升目标记忆的定位与删除效率
   - name: v2.0.28
     date: '2026-07-30'
     products:
