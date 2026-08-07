@@ -4,9 +4,9 @@ versions:
     products:
       cloud:
         Improvements:
-          - type: Memory list
+          - type: Cloud Playground
             changedInfo:
-              - Missing routing information when deleting memories; improved the deletion performance of the dashboard memory list.
+              - Optimized the Dashboard memory-list deletion flow to improve locating and deleting target memories
   - name: v2.0.28
     date: '2026-07-30'
     products:
