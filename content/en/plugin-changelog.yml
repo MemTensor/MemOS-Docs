@@ -1,4 +1,15 @@
 versions:
+  - name: v2.0.15
+    date: '2026-08-12'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**SimpleTextSplitter Fix**: Fixed the fallback mechanism of SimpleTextSplitter to be URL-safe, preventing potential errors'
+              - '**Fallback Alignment Fix**: Aligned the fallback mechanism to prevent URL collisions, ensuring accurate text splitting'
+              - '**Optional Dependency Lazy Loading**: Fixed the lazy loading issue of the optional cachetools dependency in embedders'
+              - '**Windows Path Fix**: Fixed the path issues for the Hermes plugin on Windows and improved user experience'
   - name: v2.0.13
     date: '2026-08-05'
     products:
