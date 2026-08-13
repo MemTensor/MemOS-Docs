@@ -1,4 +1,16 @@
 versions:
+  - name: v2.0.30
+    date: '2026-08-10'
+    products:
+      cloud:
+        New Features:
+          - type: 云服务
+            changedInfo:
+              - 新增接口支持各个记忆视图通过custom_extract_prompt参数自定义抽取prompt
+        Improvements:
+          - type: 云服务
+            changedInfo:
+              - 实现每个worker独立异步写入日志
   - name: v2.0.29
     date: '2026-08-03'
     products:
