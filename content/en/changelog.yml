@@ -1,4 +1,16 @@
 versions:
+  - name: v2.0.30
+    date: '2026-08-10'
+    products:
+      cloud:
+        New Features:
+          - type: Cloud service
+            changedInfo:
+              - Added an interface to support customizing the extraction prompt for each memory view through the custom_extract_prompt parameter.
+        Improvements:
+          - type: Cloud service
+            changedInfo:
+              - Implemented independent asynchronous logging for each worker.
   - name: v2.0.29
     date: '2026-08-03'
     products:
