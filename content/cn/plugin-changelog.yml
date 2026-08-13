@@ -10,6 +10,14 @@ versions:
               - '**回退对齐修复**：对齐了回退机制，防止 URL 冲突，确保文本分割的准确性'
               - '**可选依赖懒加载**：修复了 embedders 中的可选 cachetools 依赖的懒加载问题'
               - '**Windows 路径修复**：修复了 Hermes 插件在 Windows 上的路径问题，并改善了用户体验'
+  - name: v2.0.14
+    date: '2026-08-07'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**Windows 运行时生命周期修复**：修复了在 Windows 上的 Hermes 视图守护进程的启动和状态探测问题。'
   - name: v2.0.13
     date: '2026-08-05'
     products:
