@@ -1,6 +1,6 @@
 ---
 title: 云插件 vs 本地插件
-desc: 云插件面向快速接入 MemOS Cloud，本地插件面向 OpenClaw、Hermes 与 DeepSeek Harness 的本机长期记忆和自进化能力。本文将帮你快速理解两者差异，选择最适合自己的方案。
+desc: 云插件把记忆托管在 MemOS Cloud，适合快速接入和跨设备使用。本地插件在本机提供长期记忆和自进化能力，支持 OpenClaw、Hermes 与 DeepSeek Harness。本文将帮你理解两者差异，选择适合自己的方案。
 ---
 
 ## 插件简介

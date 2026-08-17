@@ -1,6 +1,6 @@
 ---
 title: Cloud Plugin vs Local Plugin
-desc: The cloud plugin is for quick MemOS Cloud adoption, while the local plugin brings local-first long-term memory and self-evolution to OpenClaw, Hermes, and DeepSeek Harness. This guide helps you choose the right option.
+desc: The cloud plugin hosts memory on MemOS Cloud for a quick start and cross-device use. The local plugin runs on your machine and brings long-term memory and self-evolution to OpenClaw, Hermes, and DeepSeek Harness. This guide helps you choose the right option.
 ---
 
 ## Overview
