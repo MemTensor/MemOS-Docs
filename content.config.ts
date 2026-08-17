@@ -3,6 +3,7 @@ import { defineCollection, defineContentConfig, z } from '@nuxt/content'
 const schema = z.object({
   title: z.string(),
   desc: z.string().optional(),
+  lead: z.string().optional(),
   category: z.enum(['layout', 'form', 'element', 'navigation', 'data', 'overlay']).optional(),
   navigation: z.object({
     title: z.string().optional()

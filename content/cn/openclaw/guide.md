@@ -1,5 +1,6 @@
 ---
-title: OpenClaw 云插件
+title: 云插件
+lead: 云插件当前已支持 DeepSeek Harness，通过 DSH 原生生命周期机制，让 DSH 拥有云端长期记忆。
 desc: 增强 OpenClaw 的记忆能力并减少 72% 的 Token 消耗：MemOS OpenClaw 插件现已上线！
 ---
 
@@ -244,6 +245,41 @@ openclaw gateway restart
 openclaw plugins update @memtensor/memos-cloud-openclaw-plugin@latest
 openclaw gateway restart
 ```
+
+## DeepSeek Harness 接入
+
+云插件通过 DSH 原生生命周期机制接入。每轮任务开始前，插件会从 MemOS Cloud 召回相关记忆。当前回合成功结束后，再把本轮用户与助手消息写回云端。整个过程无需修改 DSH 核心代码。云端记忆暂时不可用时，也不会中断当前任务。
+
+API Key 与上文相同，创建一次即可，不必再申请。
+
+### 1. 将云插件安装到 DSH 默认的 web profile
+
+```bash
+npx @deepseek-ai/dsh plugin --profile web add @memtensor/memos-cloud-dsh-plugin@latest
+```
+
+安装、移除和版本管理都由 DSH 官方机制完成。
+
+### 2. 在 `~/.dsh/.credentials.yaml` 中写入 API Key
+
+```yaml
+MEMOS_API_KEY: mpg-your-key
+```
+
+### 3. 在 `~/.dsh/settings.yaml` 中加入最小配置
+
+```yaml
+memos-cloud:
+  apiKeyEnv: MEMOS_API_KEY
+```
+
+### 4. 重新启动 DSH Web
+
+```bash
+npx @deepseek-ai/dsh web
+```
+
+安装后，DSH 会在每轮任务开始前自动获得相关的云端记忆。任务成功结束后，新的上下文和经验会继续沉淀。
 
 ## 开源项目进阶配置
 

@@ -1,5 +1,6 @@
 ---
-title: OpenClaw Cloud Plugin
+title: Cloud Plugin
+lead: The Cloud Plugin now supports DeepSeek Harness. Through DSH's native lifecycle mechanism, DSH gets long-term cloud memory.
 desc: Enhance your OpenClaw's memory and reduce token by 72%. MemOS OpenClaw plugin is now live!
 ---
 
@@ -244,6 +245,41 @@ You can manually update the cloud plugin to the latest version using the followi
 openclaw plugins update @memtensor/memos-cloud-openclaw-plugin@latest
 openclaw gateway restart
 ```
+
+## DeepSeek Harness Setup
+
+The cloud plugin connects through DSH's native lifecycle. Before the first model step of each turn, it retrieves relevant memories from MemOS Cloud. After the turn succeeds, it writes the user and assistant messages back. You do not need to change DSH core code. If cloud memory is temporarily unavailable, the current DSH task still continues.
+
+Use the same API Key created above. You do not need to create another one.
+
+### 1. Install the cloud plugin into the default DSH web profile
+
+```bash
+npx @deepseek-ai/dsh plugin --profile web add @memtensor/memos-cloud-dsh-plugin@latest
+```
+
+Install, removal, and version management stay on DSH's official plugin mechanism.
+
+### 2. Write the API Key to `~/.dsh/.credentials.yaml`
+
+```yaml
+MEMOS_API_KEY: mpg-your-key
+```
+
+### 3. Add the minimal config to `~/.dsh/settings.yaml`
+
+```yaml
+memos-cloud:
+  apiKeyEnv: MEMOS_API_KEY
+```
+
+### 4. Restart DSH Web
+
+```bash
+npx @deepseek-ai/dsh web
+```
+
+After that, DSH retrieves relevant cloud memory before each task, and writes new context back after a successful turn.
 
 ## Advanced Configuration for Open-Source Projects
 

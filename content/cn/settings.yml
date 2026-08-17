@@ -113,7 +113,7 @@ nav:
     - "(ri:book-open-line) 云插件 vs 本地插件": openclaw/plugin_compare.md
     - "(ri:file-list-3-line) 更新日志": openclaw/changes.md
     - "(ri:download-line) 安装指南": 
-      - "(ri:cloud-line) OpenClaw 云插件": openclaw/guide.md
+      - "(ri:cloud-line) 云插件": openclaw/guide.md
       - "(ri:computer-line) 本地插件": openclaw/local_plugin.md
     - "(ri:flask-line) 使用示例": 
       - "(ri:database-2-line) 知识库使用": openclaw/examples/knowledge_base.md

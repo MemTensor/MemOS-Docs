@@ -406,6 +406,23 @@ html.dark .doc-page-header h1 {
   color: rgb(248 250 252);
 }
 
+.doc-page-header .doc-page-lead {
+  margin: 0.15rem 0 0.45rem;
+  padding: 0 0 0 1rem;
+  border-left: 3px solid color-mix(in srgb, var(--ui-primary) 42%, #94a3b8);
+  color: rgb(30 41 59) !important;
+  font-style: italic;
+}
+
+.doc-page-header .doc-page-lead b {
+  font-weight: 600;
+}
+
+html.dark .doc-page-header .doc-page-lead {
+  border-left-color: color-mix(in srgb, var(--ui-primary) 55%, #64748b);
+  color: rgb(226 232 240) !important;
+}
+
 .doc-page-body {
   --doc-space-2xs: 0.3rem;
   --doc-space-xs: 0.45rem;

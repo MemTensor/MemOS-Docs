@@ -340,6 +340,12 @@ useHead({
             alt="MemOS Banner"
             class="w-full mt-4 rounded-lg object-cover"
           >
+          <blockquote
+            v-if="page.lead"
+            class="doc-page-lead"
+          >
+            <b>{{ page.lead }}</b>
+          </blockquote>
           <div v-if="description" v-html="description" />
         </template>
       </UPageHeader>
