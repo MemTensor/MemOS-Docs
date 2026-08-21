@@ -1,4 +1,23 @@
 versions:
+  - name: v2.0.30
+    date: '2026-08-10'
+    products:
+      cloud:
+        New Features:
+          - type: Cloud service
+            changedInfo:
+              - Added an interface to support customizing the extraction prompt for each memory view through the custom_extract_prompt parameter.
+        Improvements:
+          - type: Cloud service
+            changedInfo:
+              - Implemented independent asynchronous logging for each worker.
+      opensource:
+        Bug Fixes:
+          - type: Open Source
+            changedInfo:
+              - Fixed vLLM streaming responses retaining only the final chunk, which caused truncated answers and errors on empty streams.
+              - Fixed UniversalAPIEmbedder ignoring embedding_dims, enabling requested vector dimensions and automatic fallback for services that do not support the parameter.
+              - Added enable_thinking control for OpenAI-compatible and Azure models to prevent reasoning content from corrupting structured outputs such as JSON.
   - name: v2.0.29
     date: '2026-08-03'
     products:
