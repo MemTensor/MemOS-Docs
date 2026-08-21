@@ -11,6 +11,13 @@ versions:
           - type: 云服务
             changedInfo:
               - 实现每个worker独立异步写入日志
+      opensource:
+        Bug Fixes:
+          - type: 开源项目
+            changedInfo:
+              - 修复 vLLM 流式响应只保留最后一个 chunk，导致回答截断及空流报错的问题
+              - 修复 UniversalAPIEmbedder 忽略 embedding_dims、无法生成指定维度向量的问题，并为不支持该参数的服务提供自动降级
+              - 为 OpenAI-compatible 和 Azure 模型增加 enable_thinking 控制，避免思考内容破坏 JSON 等结构化输出
   - name: v2.0.29
     date: '2026-08-03'
     products:
