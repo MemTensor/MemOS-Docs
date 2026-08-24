@@ -4,9 +4,9 @@ versions:
     products:
       opensource:
         Improvements:
-          - type: Open Source Project
+          - type: Open Source
             changedInfo:
-              - The Qianwen model request now includes a header parameter to handle sudden rate limiting situations.
+              - Added request headers for Qwen model calls to better handle sudden rate limiting
   - name: v2.0.30
     date: '2026-08-10'
     products:

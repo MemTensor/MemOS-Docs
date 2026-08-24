@@ -6,7 +6,7 @@ versions:
         Improvements:
           - type: 开源项目
             changedInfo:
-              - 千问模型请求添加header参数，以应对突发限流情况
+              - 为 Qwen 模型请求补充请求头，以应对突发限流
   - name: v2.0.30
     date: '2026-08-10'
     products:
