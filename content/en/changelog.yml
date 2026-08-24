@@ -2,21 +2,11 @@ versions:
   - name: v2.0.31
     date: '2026-08-20'
     products:
-      cloud:
-        Improvements:
-          - type: Cloud Service
-            changedInfo:
-              - Standardized Qwen models on Qwen3.7-Flash after performance and quality validation
-              - Extended the default thinking-disable rule from Qwen3.5/3.6 to the full Qwen3 series to support migration to Qwen3.7
-        Bug Fixes:
-          - type: Cloud Service
-            changedInfo:
-              - Fixed fallback handling in the multi-view plugin so non-multi-view requests correctly fall back to the general-purpose model
       opensource:
         Improvements:
-          - type: Open Source
+          - type: Open Source Project
             changedInfo:
-              - Added request headers for Qwen model calls to better handle sudden rate limiting
+              - The Qianwen model request now includes a header parameter to handle sudden rate limiting situations.
   - name: v2.0.30
     date: '2026-08-10'
     products:
