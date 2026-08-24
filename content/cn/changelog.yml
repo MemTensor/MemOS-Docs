@@ -2,16 +2,6 @@ versions:
   - name: v2.0.31
     date: '2026-08-20'
     products:
-      cloud:
-        Improvements:
-          - type: 云服务
-            changedInfo:
-              - 将 Qwen 模型统一切换至 Qwen3.7-Flash，并完成性能与效果验证
-              - 将请求体默认关闭 thinking 的判断从 Qwen3.5/3.6 扩展至 Qwen3 全系列，支持 Qwen3.7 迁移
-        Bug Fixes:
-          - type: 云服务
-            changedInfo:
-              - 修复多视角插件的回退逻辑，非多视角请求可正常回退至通用模型
       opensource:
         Improvements:
           - type: 开源项目
