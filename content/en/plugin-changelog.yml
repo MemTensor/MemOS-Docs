@@ -1,4 +1,18 @@
 versions:
+  - name: v1.0.7
+    date: '2026-08-26'
+    products:
+      plugin:
+        New Features:
+          - type: MemOS CLI
+            changedInfo:
+              - '**DeepSeek Harness Integration**: Added integration for DeepSeek Harness agent, enhancing system functionality'
+        Improvements:
+          - type: MemOS CLI
+            changedInfo:
+              - '**Build Stability**: Hardened binary build for a more reliable release process'
+              - '**Release Automation**: Added CLI changelog release automation to streamline the release process'
+              - '**Release Trigger Fix**: Fixed CLI release trigger and permissions issues to ensure smooth releases'
   - name: v2.0.15
     date: '2026-08-12'
     products:

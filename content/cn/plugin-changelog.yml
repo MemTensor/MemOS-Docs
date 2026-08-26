@@ -1,4 +1,18 @@
 versions:
+  - name: v1.0.7
+    date: '2026-08-26'
+    products:
+      plugin:
+        New Features:
+          - type: MemOS CLI
+            changedInfo:
+              - '**DeepSeek Harness 集成**：新增 DeepSeek Harness 代理集成，提升了系统的功能性'
+        Improvements:
+          - type: MemOS CLI
+            changedInfo:
+              - '**构建稳定性**：增强了二进制构建的稳定性，确保更可靠的发布过程'
+              - '**发布自动化**：新增 CLI 变更日志发布自动化，简化了发布流程'
+              - '**发布触发修复**：修复了 CLI 发布触发和权限问题，确保发布顺利进行'
   - name: v2.0.15
     date: '2026-08-12'
     products:
