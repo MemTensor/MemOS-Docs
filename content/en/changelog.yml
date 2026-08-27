@@ -1,4 +1,17 @@
 versions:
+  - name: v2.0.32
+    date: '2026-08-26'
+    products:
+      cloud:
+        New Features:
+          - type: Cloud service
+            changedInfo:
+              - Added support for image and document extraction through the custom_extract_prompt parameter.
+        Improvements:
+          - type: Cloud Playground
+            changedInfo:
+              - Improved the documentation and examples for the env parameter in the .md file.
+              - Updated the model configuration method for question recommendation and scheduler to allow flexible model name configuration, no longer hardcoding api_base and api_key in the code, consistent with other model configurations.
   - name: v2.0.31
     date: '2026-08-20'
     products:
