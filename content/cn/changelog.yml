@@ -1,4 +1,17 @@
 versions:
+  - name: v2.0.32
+    date: '2026-08-26'
+    products:
+      cloud:
+        New Features:
+          - type: 云服务
+            changedInfo:
+              - 新增接口支持图像、文档抽取，通过custom_extract_prompt参数自定义抽取prompt
+        Improvements:
+          - type: 云服务控制台
+            changedInfo:
+              - 优化更新对env参数的.md说明文档和样例
+              - 问题推荐和调度器的模型配置方式修正为灵活的模型名配置，不再在代码中固定api_base和api_key，与其他模型配置保持一致
   - name: v2.0.31
     date: '2026-08-20'
     products:
