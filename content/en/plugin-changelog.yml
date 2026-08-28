@@ -1,4 +1,16 @@
 versions:
+  - name: v1.0.8
+    date: '2026-08-28'
+    products:
+      plugin:
+        New Features:
+          - type: MemOS CLI
+            changedInfo:
+              - '**Project Refactor**: The project has been refactored into hooks and skills, enhancing extensibility and flexibility'
+        Bug Fixes:
+          - type: MemOS CLI
+            changedInfo:
+              - '**Windows CLI Output Fix**: The Windows CLI output is now Unicode-safe, ensuring correct character display'
   - name: v1.0.7
     date: '2026-08-26'
     products:
