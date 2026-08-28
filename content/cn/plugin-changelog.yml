@@ -1,4 +1,16 @@
 versions:
+  - name: v1.0.8
+    date: '2026-08-28'
+    products:
+      plugin:
+        New Features:
+          - type: MemOS CLI
+            changedInfo:
+              - '**项目重构**：将项目重构为 hooks 和 skills，增强了可扩展性和灵活性'
+        Bug Fixes:
+          - type: MemOS CLI
+            changedInfo:
+              - '**Windows CLI 输出修复**：现在 Windows CLI 输出已支持 Unicode，确保字符正确显示'
   - name: v1.0.7
     date: '2026-08-26'
     products:
