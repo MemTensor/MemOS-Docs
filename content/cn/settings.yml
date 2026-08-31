@@ -161,16 +161,18 @@ nav:
     - "(ri:customer-service-line) 帮助与支持":
       - "(ri:error-warning-line) 错误码": api_docs/help/error_codes.md
 
-  - "(ri:projector-line) 示例项目":
-    - "(ri:lightbulb-line) 最佳实践":
-      - "(ri:customer-service-2-line) 问答助手": usecase/knowledge_qa_assistant.md
-      - "(ri:headset-line) 客服助手": usecase/customer_service_assistant.md
-      - "(ri:money-dollar-circle-line) 理财助手": usecase/financial_assistant.md
-      - "(ri:edit-line) 写作助手": usecase/writting_assistant.md
-      - "(ri:heart-line) 家庭生活助手": usecase/home_assistant.md
+  - "(ri:projector-line) 最佳实践":
+    - "(ri:book-open-line) 技术教程":
+      - "(ri:customer-service-2-line) 让知识库成为懂你的专属顾问": usecase/knowledge_qa_assistant.md
+      - "(ri:customer-service-2-line) 构建拥有长期记忆的智能客服": usecase/customer_service_assistant.md
+      - "(ri:money-dollar-circle-line) 让理财助手读懂客户偏好": usecase/financial_assistant.md
+      - "(ri:edit-line) 有记忆的写作搭子": usecase/writting_assistant.md
+      - "(ri:heart-line) 更贴心的家庭生活助手": usecase/home_assistant.md
       # - "(ri:customer-service-2-line) 企微客服": usecase/wecom_customer_service.md
-
-    - "(ri:layout-grid-line) 框架与平台":
       # - "(ri:chrome-line) 浏览器插件": usecase/frameworks/browser_extension.md
       - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
       - "(ri:puzzle-2-line) Coze 插件工具": usecase/frameworks/coze_plugin.md
+
+    - "(ri:article-line) 博客":
+      - "企业 Agent 需要独立的长期记忆基础设施": usecase/blog/chatgpt_dreaming_long_term_memory.md
+      - "Memory Poisoning：企业 Agent 必须建立的六道长期记忆控制": usecase/blog/memory_poisoning_controls.md

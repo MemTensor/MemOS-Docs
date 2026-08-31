@@ -160,15 +160,15 @@ nav:
     - "(ri:customer-service-line) Help & Support":
       - "(ri:error-warning-line) Error Codes": api_docs/help/error_codes.md
 
-  - "(ri:projector-line) Use Cases":
-    - "(ri:lightbulb-line) Best Practice":
+  - "(ri:projector-line) Best Practices":
+    - "(ri:book-open-line) Tutorials":
       - "(ri:customer-service-2-line) Knowledge Q&A Assistant": usecase/knowledge_qa_assistant.md
       - "(ri:money-dollar-circle-line) Financial Assistant": usecase/financial_assistant.md
       - "(ri:edit-line) Writing Assistant": usecase/writting_assistant.md
       - "(ri:heart-line) Life Assistant": usecase/home_assistant.md
       # - "(ri:customer-service-2-line) WeCom Customer Service": usecase/wecom_customer_service.md
-
-    - "(ri:layout-grid-line) Frameworks & Platforms":
       # - "(ri:chrome-line) Browser Extension": usecase/frameworks/browser_extension.md
       - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
       - "(ri:puzzle-2-line) Coze Plugin Tools": usecase/frameworks/coze_plugin.md
+
+    - "(ri:article-line) Blog": []

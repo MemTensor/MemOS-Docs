@@ -9,6 +9,14 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 const { t, locale } = useI18n()
 const config = useRuntimeConfig()
 
+const isDocumentTypeHeading = (link: ContentNavigationItem) => {
+  return link.page === false && ['技术教程', '博客', 'Tutorials', 'Blog'].includes(link.title)
+}
+
+const getDocumentTypeHeadingIcon = (link: ContentNavigationItem) => {
+  return isDocumentTypeHeading(link) && typeof link.icon === 'string' ? link.icon : undefined
+}
+
 // Remove trailing slash to match content path. Keep it reactive because this
 // catch-all page is reused during client-side navigation.
 const normalizedPath = computed(() => route.path.replace(/\/$/, '') || '/')
@@ -145,11 +153,11 @@ useHead({
                     @keydown.enter.stop.prevent="navigateTo(link.path)"
                   >
                     <span
-                      v-if="link.icon && typeof link.icon === 'string'"
+                      v-if="getDocumentTypeHeadingIcon(link)"
                       class="inline-flex size-4 flex-shrink-0 items-center justify-center"
                     >
                       <UIcon
-                        :name="link.icon as string"
+                        :name="getDocumentTypeHeadingIcon(link)!"
                         class="size-4"
                       />
                     </span>
@@ -165,11 +173,11 @@ useHead({
                     class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2"
                   >
                     <span
-                      v-if="link.icon && typeof link.icon === 'string'"
+                      v-if="getDocumentTypeHeadingIcon(link)"
                       class="inline-flex size-4 flex-shrink-0 items-center justify-center"
                     >
                       <UIcon
-                        :name="link.icon as string"
+                        :name="getDocumentTypeHeadingIcon(link)!"
                         class="size-4"
                       />
                     </span>
@@ -262,11 +270,11 @@ useHead({
                     @keydown.enter.stop.prevent="navigateTo(link.path)"
                   >
                     <span
-                      v-if="link.icon && typeof link.icon === 'string'"
+                      v-if="getDocumentTypeHeadingIcon(link)"
                       class="inline-flex size-4 flex-shrink-0 items-center justify-center"
                     >
                       <UIcon
-                        :name="link.icon as string"
+                        :name="getDocumentTypeHeadingIcon(link)!"
                         class="size-4"
                       />
                     </span>
@@ -282,11 +290,11 @@ useHead({
                     class="inline-flex w-full min-w-0 max-w-full items-center justify-start gap-2"
                   >
                     <span
-                      v-if="link.icon && typeof link.icon === 'string'"
+                      v-if="getDocumentTypeHeadingIcon(link)"
                       class="inline-flex size-4 flex-shrink-0 items-center justify-center"
                     >
                       <UIcon
-                        :name="link.icon as string"
+                        :name="getDocumentTypeHeadingIcon(link)!"
                         class="size-4"
                       />
                     </span>

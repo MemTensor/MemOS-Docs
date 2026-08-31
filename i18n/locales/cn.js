@@ -13,7 +13,7 @@ export default {
       openclaw: 'Agent插件',
       mcpAgent: 'MCP与Agent框架支持',
       apiDocs: 'API接口文档',
-      samples: '示例项目',
+      bestPractices: '最佳实践',
       changelog: '更新日志'
     },
     community: {
@@ -81,7 +81,7 @@ export default {
         description: '自托管开源记忆方案，私有部署、安全可控，支持自由定制与深度扩展。'
       },
       {
-        title: '示例项目',
+        title: '最佳实践',
         description: '面向真实业务场景的实战示例，助你快速搭建可上线的长期记忆 AI 应用。'
       },
       {

@@ -13,7 +13,7 @@ export default {
       openclaw: 'Agent Plugin',
       mcpAgent: 'MCP & Agent Framework',
       apiDocs: 'API Documentation',
-      samples: 'Sample Projects',
+      bestPractices: 'Best Practices',
       changelog: 'Changelog'
     },
     community: {
@@ -81,7 +81,7 @@ export default {
         description: 'Self-hosted open-source memory—deploy privately, stay in control, customize and extend freely.'
       },
       {
-        title: 'Sample Projects',
+        title: 'Best Practices',
         description: 'Real-world examples to help you quickly build production-ready AI apps with long-term memory.'
       },
       {

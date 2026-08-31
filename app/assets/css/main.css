@@ -236,6 +236,16 @@ html.dark .doc-sidebar-nav {
   border-radius: 0.5rem !important;
 }
 
+/* 博客使用完整标题，桌面侧栏和移动导航都允许长标题换行。 */
+.doc-sidebar-nav a[href*="/usecase/blog/"] .truncate,
+.doc-header-nav a[href*="/usecase/blog/"] .truncate {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
 .doc-sidebar-nav :where(a, button):hover::before {
   background: rgb(241 245 249 / 0.7) !important;
 }
@@ -315,7 +325,8 @@ html.dark .doc-sidebar-nav > div > nav > ul > li > button {
   display: none !important;
 }
 
-.doc-sidebar-nav > div > nav > ul > li > button > span:last-child .iconify {
+/* 空分类没有尾部箭头容器，不能用 last-child 误隐藏标题内的图标。 */
+.doc-sidebar-nav > div > nav > ul > li > button .iconify[class*="chevron-down"] {
   display: none !important;
 }
 

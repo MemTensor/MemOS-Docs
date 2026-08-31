@@ -21,7 +21,7 @@ const localizedMenus = computed(() => {
     { label: t('header.menus.openclaw'), to: '/openclaw/guide' },
     { label: t('header.menus.mcpAgent'), to: '/mcp_agent/mcp/guide' },
     { label: t('header.menus.apiDocs'), to: '/api_docs/start/overview' },
-    { label: t('header.menus.samples'), to: '/usecase/knowledge_qa_assistant' },
+    { label: t('header.menus.bestPractices'), to: '/usecase/knowledge_qa_assistant' },
     { label: t('header.menus.changelog'), to: '/changelog' }
   ]
   return menus.map(m => ({ ...m, to: localePath(m.to) }))
@@ -156,6 +156,7 @@ const dashboardUrl = computed(() => useDashboardLoginUrl('/quickstart/', locale.
             />
 
             <UContentNavigation
+              class="doc-header-nav"
               highlight
               :navigation="navigation"
             >
@@ -199,6 +200,7 @@ const dashboardUrl = computed(() => useDashboardLoginUrl('/quickstart/', locale.
         />
 
         <UContentNavigation
+          class="doc-header-nav"
           highlight
           :navigation="navigation"
         >
