@@ -63,12 +63,21 @@ memos init --api-key YOUR_API_KEY --agent codex
 | CodeBuddy | `workbuddy` |
 | Cline | `cline` |
 | GitHub Copilot | `copilot` |
+| DeepSeek Harness | `deepseek` |
 
 例如，为 Cursor 安装记忆 Skill：
 
 ```bash
 memos init --agent cursor
 ```
+
+接入 DeepSeek Harness：
+
+```bash
+memos init --agent deepseek
+```
+
+该命令会在 `~/.dsh/skills/memos-memory/` 安装 Skill；如果设置了 `DSH_HOME`，则安装到 `$DSH_HOME/skills/memos-memory/`。同时，CLI 会写入对应的 `AGENTS.md`，并注册 DeepSeek Harness 原生生命周期插件。插件会在每轮开始时检索相关记忆，将结果注入上下文；在本轮正常结束后写入新的长期记忆。重启 DeepSeek Harness 后生效。
 
 安装后，Agent 启动时会自动加载该 Skill。在每轮对话中，Agent 会：
 

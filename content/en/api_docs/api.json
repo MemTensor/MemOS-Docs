@@ -1123,6 +1123,13 @@
             "type": "boolean",
             "description": "Whether to enable asynchronous memory addition. When enabled, memory will be added asynchronously in the background to avoid blocking the call chain.",
             "default": true
+          },
+          "custom_extract_prompt": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Custom extraction prompts keyed by memory category or input modality, specifying the extraction strategy used for this add-message call. Only effective for the current request. Supported keys for memory categories: detail_factual, preference, skill, profile, event, tool_memory (see <a href=\"/en/memos_cloud/introduction/memory_types\">Memory Categories</a>); supported keys for input modalities: image (image content) and document (file content)."
           }
         },
         "title": "AddMessageRequest"

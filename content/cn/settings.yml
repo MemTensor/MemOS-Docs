@@ -164,6 +164,7 @@ nav:
   - "(ri:projector-line) 示例项目":
     - "(ri:lightbulb-line) 最佳实践":
       - "(ri:customer-service-2-line) 问答助手": usecase/knowledge_qa_assistant.md
+      - "(ri:headset-line) 客服助手": usecase/customer_service_assistant.md
       - "(ri:money-dollar-circle-line) 理财助手": usecase/financial_assistant.md
       - "(ri:edit-line) 写作助手": usecase/writting_assistant.md
       - "(ri:heart-line) 家庭生活助手": usecase/home_assistant.md

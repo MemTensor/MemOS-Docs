@@ -216,7 +216,7 @@ Claude Desktop, Cline, Chatbox, and other clients are configured similarly, thou
 
 ### 4. Use CLI + Skill
 
-If your Agent framework can execute shell commands (e.g. Cursor, Codex, Claude Code, Hermes), you can use the MemOS CLI to install a memory Skill with one command, enabling your Agent to automatically search and write memories.
+If your Agent framework can execute shell commands (e.g. Cursor, Codex, Claude Code, Hermes, or DeepSeek Harness), you can use the MemOS CLI to install a memory Skill with one command, enabling your Agent to automatically search and write memories.
 
 ::tip
 Using OpenClaw as an example, in the LOCOMO evaluation, using MemOS CLI alone reduced token usage by about 65.5%; integrating MemOS Cloud + CLI improved accuracy from 66.60% to 77.27%.
@@ -245,7 +245,10 @@ memos init --agent codex     # ~/.codex/skills/memos/
 memos init --agent claude    # ~/.claude/skills/memos/
 memos init --agent openclaw  # ~/.openclaw/skills/memos/
 memos init --agent hermes    # ~/.hermes/skills/memos/
+memos init --agent deepseek  # ~/.dsh/skills/memos-memory/
 ```
+
+For DeepSeek Harness, initialization also registers a native lifecycle plugin. It retrieves relevant memories and injects them into context before each turn, then writes new memories after a normally completed turn. When `DSH_HOME` is set, the Skill is installed at `$DSH_HOME/skills/memos-memory/`. Restart DeepSeek Harness after initialization.
 
 #### Start chatting
 

@@ -1251,6 +1251,13 @@
               "tool_memory"
             ]
           },
+          "custom_extract_prompt": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "自定义抽取提示词，按 key 指定本次添加消息时各环节使用的抽取策略，仅对本次请求生效。支持的 key 包括记忆种类和输入模态两类：记忆种类取值为 detail_factual、preference、skill、profile、event、tool_memory，含义见 <a href=\"/cn/memos_cloud/introduction/memory_types\">记忆种类</a>；输入模态取值为 image（图片内容）和 document（文件内容）。"
+          },
           "tags": {
             "type": "array",
             "items": {

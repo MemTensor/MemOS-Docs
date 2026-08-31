@@ -282,6 +282,45 @@ data = {
 }
 ```
 
+### `custom_extract_prompt`: customize extraction prompts
+
+By default, MemOS uses built-in strategies to extract memories from messages. If the default strategy does not fit your business needs, you can pass custom extraction prompts via `custom_extract_prompt` to specify "what to extract" for a given stage. This configuration only takes effect for the current request and is not saved.
+
+Supported keys fall into two categories:
+
+| Category | Values | Stage |
+| --- | --- | --- |
+| Memory category | `detail_factual`, `preference`, `skill`, `profile`, `event`, `tool_memory` | Extraction of the corresponding [memory category](/en/memos_cloud/introduction/memory_types) |
+| Input modality | `image`, `document` | Extraction of image content and file content |
+
+Note the following when using this field:
+
+* A custom prompt only replaces the default extraction strategy of the corresponding stage. Output formats and other protocol constraints are still enforced by the server, and memories are returned in the default structure.
+* If `document` is not configured, file content falls back to the custom prompt of `detail_factual`.
+* A memory-category key takes effect only when that category is allowed by `allow_memory_view`. `image` and `document` are not affected by `allow_memory_view`.
+
+As shown below, this call only extracts facts related to travel arrangements, and only visible text is extracted from images:
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0827",
+    "custom_extract_prompt": {
+        "detail_factual": "Extract only facts related to travel arrangements, and ignore greetings and small talk.",
+        "image": "Extract only visible text and ticket information from the image."
+    },
+    "messages": [
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Please take a look at this flight itinerary."},
+                {"type": "image_url", "image_url": {"url": "https://example.com/itinerary.png"}}
+            ]
+        }
+    ]
+}
+```
+
 ### Group Chat: Pass a List for `user_id`
 
 When multiple users talk in the same conversation, `user_id` can accept a list, indicating the subjects that own the memories. Use `role_id` and `role_name` to identify the speaker of each message. See [Group Chat](/memos_cloud/features/group_chat).

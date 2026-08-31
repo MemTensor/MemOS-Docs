@@ -59,12 +59,21 @@ The currently supported Agents are listed below. Pass the matching value via `--
 | CodeBuddy | `workbuddy` |
 | Cline | `cline` |
 | GitHub Copilot | `copilot` |
+| DeepSeek Harness | `deepseek` |
 
 For example, to install the memory Skill for Cursor:
 
 ```bash
 memos init --agent cursor
 ```
+
+To connect DeepSeek Harness:
+
+```bash
+memos init --agent deepseek
+```
+
+The command installs the Skill at `~/.dsh/skills/memos-memory/`, or `$DSH_HOME/skills/memos-memory/` when `DSH_HOME` is set. It also writes the matching `AGENTS.md` and registers a native DeepSeek Harness lifecycle plugin. The plugin retrieves relevant memories and injects them into context at the beginning of each turn, then writes new long-term memories after a normally completed turn. Restart DeepSeek Harness to activate it.
 
 Once installed, the Agent will automatically load the Skill. During each conversation turn, the Agent will:
 

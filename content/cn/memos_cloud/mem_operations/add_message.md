@@ -283,6 +283,45 @@ data = {
 }
 ```
 
+### `custom_extract_prompt`：自定义抽取提示词
+
+MemOS 默认使用内置策略从消息中抽取记忆。如果默认策略不符合业务需要，可以通过 `custom_extract_prompt` 传入自定义抽取提示词，指定某个环节“要抽取什么”。该配置仅对本次请求生效，不会被保存。
+
+支持的 key 分为两类：
+
+| 类别 | 取值 | 作用环节 |
+| --- | --- | --- |
+| 记忆种类 | `detail_factual`、`preference`、`skill`、`profile`、`event`、`tool_memory` | 对应[记忆种类](/cn/memos_cloud/introduction/memory_types)的抽取 |
+| 输入模态 | `image`、`document` | 图片内容、文件内容的抽取 |
+
+使用时注意以下几点：
+
+* 自定义提示词仅替换对应环节的默认抽取策略，输出格式等协议约束仍由服务端保留，记忆仍按默认结构返回。
+* 未配置 `document` 时，文件内容沿用 `detail_factual` 的自定义提示词。
+* 记忆种类的 key 仅在对应种类被 `allow_memory_view` 允许时生效，`image` 和 `document` 不受 `allow_memory_view` 影响。
+
+如下所示，本次添加只抽取与出行安排相关的事实，并要求图片只提取可见的文字信息：
+
+```python
+data = {
+    "user_id": "memos_user_123",
+    "conversation_id": "0827",
+    "custom_extract_prompt": {
+        "detail_factual": "仅抽取与出行安排相关的事实，忽略寒暄与闲聊内容。",
+        "image": "仅提取图片中可见的文字与票据信息。"
+    },
+    "messages": [
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "帮我看看这张机票行程单。"},
+                {"type": "image_url", "image_url": {"url": "https://example.com/itinerary.png"}}
+            ]
+        }
+    ]
+}
+```
+
 ### 群聊：`user_id` 传入列表
 
 多个用户在同一会话中对话时，`user_id` 支持传入列表，表示记忆所属的主体。使用 `role_id` 和 `role_name` 标识每条消息的发言人。详见[群聊](/cn/memos_cloud/features/group_chat)。

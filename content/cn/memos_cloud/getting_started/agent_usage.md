@@ -221,7 +221,7 @@ Claude Desktop、Cline、Chatbox 等客户端的配置方式类似，入口位�
 
 ### 4. 使用 CLI
 
-如果你的 Agent 框架可以执行 shell 命令（例如 Cursor、Codex、Hermes 等），可以通过 MemOS CLI 一键安装记忆 Skill，让 Agent 根据 Skill 自动检索和写入记忆。
+如果你的 Agent 框架可以执行 shell 命令（例如 Cursor、Codex、Hermes、DeepSeek Harness 等），可以通过 MemOS CLI 一键安装记忆 Skill，让 Agent 自动检索和写入记忆。
 
 ::tip
 以 OpenClaw 为例，在 LOCOMO 评测中，单独接入 MemOS CLI 后 Token 消耗降低约 65.5%；接入 MemOS Cloud + CLI 后，正确率从 66.60% 提升到 77.27%。
@@ -250,7 +250,10 @@ memos init --agent codex     # ~/.codex/skills/memos/
 memos init --agent claude    # ~/.claude/skills/memos/
 memos init --agent openclaw  # ~/.openclaw/skills/memos/
 memos init --agent hermes    # ~/.hermes/skills/memos/
+memos init --agent deepseek  # ~/.dsh/skills/memos-memory/
 ```
+
+DeepSeek Harness 初始化时还会注册原生生命周期插件：每轮开始前检索相关记忆并注入上下文，正常结束后写入新记忆。设置 `DSH_HOME` 后，Skill 会安装到 `$DSH_HOME/skills/memos-memory/`。完成初始化后请重启 DeepSeek Harness。
 
 #### 开始对话
 
