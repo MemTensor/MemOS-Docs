@@ -16,6 +16,10 @@ export function contentTypeFor(relativePath) {
     return TEXT_PLAIN_UTF8
   }
 
+  if (basename === 'sitemap.xml') {
+    return 'application/xml; charset=utf-8'
+  }
+
   if (normalized.endsWith('.md')) {
     return TEXT_MARKDOWN_UTF8
   }

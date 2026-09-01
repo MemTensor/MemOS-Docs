@@ -1,7 +1,7 @@
 import { defineEventHandler, getRequestURL, getHeader } from 'h3'
 import fs from 'node:fs'
 import path from 'node:path'
-import { renderOpenApiMdFromSource, stripNuxtComponents, generateLlmsTxt, generateLlmsFullTxt } from '../utils/llms-core.mjs'
+import { renderOpenApiMdFromSource, stripNuxtComponents, generateLlmsTxt, generateLlmsFullTxt, generateSitemapXml } from '../utils/llms-core.mjs'
 
 const contentDir = path.resolve(process.cwd(), 'content')
 const hasContent = fs.existsSync(path.join(contentDir, 'en', 'settings.yml'))
@@ -58,14 +58,21 @@ export default defineEventHandler((event) => {
   if (pathname.startsWith('/_') || (pathname.startsWith('/api/') && !pathname.startsWith('/api_docs'))) return
 
   // Serve llms.txt dynamically in dev (in production, static files from export-llms.mjs are used)
+  const locales = pathname.startsWith('/cn/') ? ['cn'] : ['en', 'cn']
   if (pathname === '/llms.txt' || pathname === '/cn/llms.txt') {
-    return new Response(generateLlmsTxt(), {
+    return new Response(generateLlmsTxt(locales), {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     })
   }
   if (pathname === '/llms-full.txt' || pathname === '/cn/llms-full.txt') {
-    return new Response(generateLlmsFullTxt(), {
+    return new Response(generateLlmsFullTxt(locales), {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+    })
+  }
+
+  if (pathname === '/sitemap.xml') {
+    return new Response(generateSitemapXml(), {
+      headers: { 'Content-Type': 'application/xml; charset=utf-8' }
     })
   }
 

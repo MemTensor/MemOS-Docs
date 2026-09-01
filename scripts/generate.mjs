@@ -64,6 +64,11 @@ try {
     env: { ...process.env }
   })
 
+  execSync('node scripts/export-sitemap.mjs', {
+    stdio: 'inherit',
+    env: { ...process.env }
+  })
+
   if (process.env.OSS_BUCKET) {
     console.log('🔧 Applying OSS Content-Type metadata...')
     execSync('node scripts/set-oss-content-types.mjs', {

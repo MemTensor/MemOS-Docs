@@ -213,11 +213,10 @@ function loadHeader() {
 
 // --- Public API ---
 
-export function generateLlmsTxt() {
+export function generateLlmsTxt(locales = ['en', 'cn']) {
   const header = loadHeader()
-  const { sections } = parseSettingsNav('en')
-  const body = renderSections(sections)
-  return (header + body).trimEnd() + '\n'
+  const body = locales.map(locale => renderSections(parseSettingsNav(locale).sections)).join('\n')
+  return `${header.trimEnd()}\n\n${body.trimEnd()}\n`
 }
 
 export function stripNuxtComponents(text) {
@@ -275,8 +274,8 @@ export function stripNuxtComponents(text) {
   return text.trim()
 }
 
-export function generateLlmsFullTxt() {
-  const { sections, dashboardApiSpec } = parseSettingsNav('en')
+function renderLlmsFullForLocale(locale) {
+  const { sections, dashboardApiSpec } = parseSettingsNav(locale)
   const entries = flattenEntries(sections)
   const pages = []
 
@@ -302,12 +301,36 @@ export function generateLlmsFullTxt() {
   return pages.join('\n\n---\n\n').trimEnd() + '\n'
 }
 
-export function writeStaticLlmsFiles(outputDir) {
+export function generateLlmsFullTxt(locales = ['en', 'cn']) {
+  return locales.map(locale => renderLlmsFullForLocale(locale).trimEnd()).join('\n\n---\n\n') + '\n'
+}
+
+export function generateSitemapXml(siteUrl = 'https://memos-docs.openmem.net') {
+  const routes = new Set(['/', '/cn', '/changelog', '/cn/changelog'])
+  for (const locale of ['en', 'cn']) {
+    for (const entry of flattenEntries(parseSettingsNav(locale).sections)) {
+      routes.add(entry.url)
+    }
+  }
+
+  const escapeXml = value => value.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;')
+  const entries = [...routes].map(route => {
+    const url = new URL(`${route.replace(/\/$/, '')}/`, siteUrl).href
+    return `  <url><loc>${escapeXml(url)}</loc></url>`
+  })
+
+  return '<?xml version="1.0" encoding="UTF-8"?>\n'
+    + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + entries.join('\n') + '\n</urlset>\n'
+}
+
+export function writeStaticLlmsFiles(outputDir, locales = ['en', 'cn']) {
   fs.mkdirSync(outputDir, { recursive: true })
   const UTF8_BOM = '\uFEFF'
   const files = {
-    'llms.txt': generateLlmsTxt(),
-    'llms-full.txt': generateLlmsFullTxt()
+    'llms.txt': generateLlmsTxt(locales),
+    'llms-full.txt': generateLlmsFullTxt(locales)
   }
   for (const [name, content] of Object.entries(files)) {
     // BOM helps browsers detect UTF-8 when OSS serves text/plain without charset
