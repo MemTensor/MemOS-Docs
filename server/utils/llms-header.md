@@ -5,7 +5,7 @@
 ## For agents reading this file
 
 - To get raw Markdown of any page below, append `.md` to its URL.
-- **Locale**: all links below are English. Prefix `/cn` to get Chinese: `/cn/memos_cloud/getting_started/quick_start.md`
+- **Locale**: links use their actual language paths. Chinese pages start with `/cn/`; some pages are available in only one language. Chinese documentation index: [/cn/llms.txt](/cn/llms.txt).
 - Full documentation text: [/llms-full.txt](/llms-full.txt)
 - OpenAPI spec (Cloud): [/cn/api_docs/api.json](/cn/api_docs/api.json)
 - Source repo: https://github.com/MemTensor/MemOS
@@ -74,4 +74,3 @@ print(f"search result: {res.json()}")
 | API reference | [API Overview](/api_docs/start/overview) |
 
 ---
-
