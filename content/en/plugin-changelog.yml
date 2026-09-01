@@ -25,6 +25,32 @@ versions:
               - '**Build Stability**: Hardened binary build for a more reliable release process'
               - '**Release Automation**: Added CLI changelog release automation to streamline the release process'
               - '**Release Trigger Fix**: Fixed CLI release trigger and permissions issues to ensure smooth releases'
+  - name: v2.0.17
+    date: '2026-08-24'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Fix embedding review findings**: Addressed embedding review findings to enhance plugin stability'
+              - '**Harden oversized embedding inputs**: Improved handling of oversized embedding inputs to prevent potential crashes'
+              - '**Tolerate omitted dev peer conflicts**: Fixed tolerance for omitted developer peer conflicts to enhance system robustness'
+              - '**Distinguish held locks from recycled PIDs**: Improved lock management by distinguishing held locks from recycled PIDs to avoid conflicts'
+              - '**Fix pidIsAlive self-PID check**: Fixed the pidIsAlive self-PID check to enhance the accuracy of stale lock detection'
+  - name: v2.0.16
+    date: '2026-08-16'
+    products:
+      plugin:
+        New Features:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**DeepSeek Harness long-term memory integration**: Install MemOS Local into a selected DSH profile with `install.sh --agent dsh --profile <name>`; the plugin provides up to three seconds of automatic memory recall per round and six on-demand memory tools'
+        Bug Fixes:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Automatic pnpm bootstrap for DSH installation**: When pnpm is missing from PATH, the one-command installer temporarily prepares and verifies pnpm 11.7.0 through the existing npm installation before running `dsh plugin add`, then cleans it up after installation'
+              - '**More reliable native dependency setup for DSH on Linux**: The installer skips unnecessary `onnxruntime-node` CUDA downloads, approves only required build scripts, verifies or repairs `better-sqlite3`, and verifies the ONNX CPU binding so installation cannot report success while the Memory Viewer port remains unavailable'
+              - '**Correct DSH Viewer resolution in clean installs and release packages**: Both the source layout and the npm package `dist` layout now resolve the bundled `viewer/dist`, preventing CI and fresh installations from incorrectly pointing to `apps/viewer/dist`'
   - name: v2.0.15
     date: '2026-08-12'
     products:
