@@ -25,6 +25,32 @@ versions:
               - '**构建稳定性**：增强了二进制构建的稳定性，确保更可靠的发布过程'
               - '**发布自动化**：新增 CLI 变更日志发布自动化，简化了发布流程'
               - '**发布触发修复**：修复了 CLI 发布触发和权限问题，确保发布顺利进行'
+  - name: v2.0.17
+    date: '2026-08-24'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**修复嵌入检查**：解决了嵌入审查发现的问题，提升了插件的稳定性'
+              - '**增强输入处理**：加强了对超大嵌入输入的处理，避免了潜在的崩溃问题'
+              - '**容错处理**：修复了对缺失开发者对等冲突的容忍性问题，提升了系统的健壮性'
+              - '**锁定管理**：区分持有的锁与回收的PID，避免了锁定冲突'
+              - '**自PID检查**：修复了pidIsAlive自PID检查的问题，增强了过期锁检测的准确性'
+  - name: v2.0.16
+    date: '2026-08-16'
+    products:
+      plugin:
+        New Features:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**DeepSeek Harness 长期记忆接入**：现在可通过 `install.sh --agent dsh --profile <name>` 将 MemOS Local 安装到指定 DSH profile；插件提供每轮最长 3 秒的自动记忆召回、六个按需记忆工具'
+        Bug Fixes:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**DSH 安装自动补齐 pnpm**：一键安装检测到 PATH 中缺少 pnpm 时，会通过现有 npm 临时准备并验证 pnpm 11.7.0，避免安装在执行 `dsh plugin add` 前直接中断；临时 pnpm 会在安装结束后清理'
+              - '**DSH Linux 原生依赖安装更可靠**：安装器跳过 `onnxruntime-node` 的非必要 CUDA 下载，只批准实际需要的构建脚本，并验证或修复 `better-sqlite3`、验证 ONNX CPU binding，避免安装显示成功但 Memory Viewer 端口未启动'
+              - '**DSH Viewer 在干净安装和发布包中正确定位**：源码布局和 npm 包的 `dist` 布局现在都固定解析插件自带的 `viewer/dist`，避免 CI 或全新安装错误指向 `apps/viewer/dist`'
   - name: v2.0.15
     date: '2026-08-12'
     products:
