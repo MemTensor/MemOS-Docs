@@ -1,4 +1,17 @@
 versions:
+  - name: v2.0.18
+    date: '2026-09-01'
+    products:
+      plugin:
+        Improvements:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Memory Recovery and Capture Boundaries**: Fixed dirty-data recovery, orphan trace writes, and LLM empty-response retry stability issues'
+        Bug Fixes:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Memory Recovery and Capture Boundaries**: Fixed dirty-data recovery, orphan trace writes, and LLM empty-response retry stability issues'
+              - '**Hermes and Bridge Experience**: Combines Hermes, provider, and bridge-flow improvements to reduce startup and connection friction'
   - name: v1.0.8
     date: '2026-08-28'
     products:
