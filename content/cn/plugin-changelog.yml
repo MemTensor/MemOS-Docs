@@ -1,4 +1,17 @@
 versions:
+  - name: v2.0.18
+    date: '2026-09-01'
+    products:
+      plugin:
+        Improvements:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**记忆恢复与采集边界问题**：修复脏数据恢复、孤立 trace 写入和 LLM 空响应重试等稳定性问题'
+        Bug Fixes:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**记忆恢复与采集边界问题**：修复脏数据恢复、孤立 trace 写入和 LLM 空响应重试等稳定性问题'
+              - '**Hermes 与桥接体验**：合并 Hermes、provider 和桥接链路优化，减少启动和连接过程中的干扰'
   - name: v1.0.8
     date: '2026-08-28'
     products:
