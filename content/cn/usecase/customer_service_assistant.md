@@ -1,134 +1,312 @@
 ---
-title: 构建记忆增强型的智能客服助手
-desc: 融合长期记忆与知识库，让客服 Agent 跨渠道记住每一位消费者：未完成事项自动衔接、偏好自动生效、政策口径一致、客服经验持续复用。
+title: 让客服 Agent 记住用户：用 MemOS 实现跨会话客服记忆
+desc: 分离用户记忆、Agent Skill 与政策知识库，让客服 Agent 跨会话延续用户事项，并复用通用处理流程。
 ---
 
-## 1. 概述
+用户昨天在在线客服里反馈耳机故障，今天改用邮件追问进度，客服却又让他提供订单号、重新描述问题。对用户来说这是服务中断；系统侧的原因往往很简单：新会话没有拿到此前已经确认的信息。
 
-客服是 AI Agent 落地最密集的场景之一，也是「失忆」代价最高的场景。消费者在线上报了商品故障，三天后换个渠道追问进度，客服 Agent 却让他把订单号和问题再描述一遍。这类体验直接拉低满意度与一次解决率。
+客服 Agent 需要记住两类不同的内容：一类属于当前用户，例如订单、未完成事项和通知偏好；另一类属于 Agent，例如处理同类问题时可以复用的工具流程。售后政策则继续由知识库统一维护。
 
-问题不在于模型能力。主流大模型的上下文窗口足以装下整场对话，但多数客服架构里，每个渠道、每个会话各自为政。对话记录分散在各自的工单系统中，Agent 生成回复时面对的仍是空白上下文。这是一个记忆架构问题，需要一层独立的记忆基础设施来解决。
+本文通过 Python 代码片段，展示如何把这三类信息组合成一套完整的客服记忆方案。
 
-MemOS 为客服 Agent 提供这层记忆能力。它跨渠道、跨会话记住消费者的交互历史、未完成事项与偏好，并与知识库中的售后政策联合检索。每一次回复都建立在完整背景之上。
+## 方案要点
 
-### 1.1 客服场景的四个断点
+- 用户事实和偏好写入用户记忆，使用稳定 `user_id` 跨会话召回。
+- 每轮任务记录都提交给客服 Agent 的独立记忆，由 MemOS 判断是否生成或更新 Skill。
+- 售后政策写入政策知识库，与 Agent Skill 一起从客服 Agent 视角检索。
+- 生成回复前执行两路召回：一路读取用户事实和偏好，一路读取 Agent Skill 和政策。
+- 当前会话历史由 Agent 自己维护，MemOS 负责跨会话记忆。
 
-渠道各自为政的客服架构，会在四个环节集中爆发问题：
+## 我们要构建什么
 
-1. **重复询问**：消费者换渠道或隔几天再来，被要求重复订单号、故障描述等已提供的信息。
-2. **进度断裂**：换货、补发、投诉等未完成事项跨周期无人衔接，消费者追问时 Agent 无从查起。
-3. **政策不一致**：售后政策存在多个版本，不同时间、不同坐席给出的答复互相矛盾。
-4. **经验流失**：资深客服的处理经验留在个人脑子里，新坐席与新 Agent 无法复用。
-
-### 1.2 知识与记忆的边界
-
-落地的第一步是划清边界：什么进知识库，什么进记忆系统。两者在 MemOS 中统一管理、联合检索，但承载的内容不同。
-
-| 维度 | 知识库 | 记忆系统 |
-| --- | --- | --- |
-| 内容性质 | 稳定、全员共享 | 动态、按消费者隔离 |
-| 典型内容 | 售后政策、保修条款、物流规则 | 交互历史、未完成事项进度、偏好、处理经验 |
-| 更新方式 | 业务方版本化维护 | 对话中自动沉淀、持续演化 |
-| 错误代价 | 回答口径不一致 | 张冠李戴、误用他人信息 |
-
-一句话概括：**知识库回答「按规定该怎么办」，记忆系统回答「这位消费者现在到哪一步了」。**
-
-### 1.3 真实场景对比：跨渠道售后
-
-以一次典型的换货售后为例，直观感受有无记忆层的差异：
+示例场景包含三个客服阶段：
 
 ```text
 DAY 1 · 在线客服
-消费者：我 8 月 20 日签收的订单 20260820-88，降噪耳机左耳有电流声，想换货。
-消费者：换的耳机最好这周五前寄到公司地址，进度发短信就行。
+customer_001 提交耳机换货请求，客服 Agent 查询订单、检查政策、创建工单，
+并记录收货时间、地址和短信通知要求。
 
-DAY 4 · 邮件工单（同一消费者，新会话）
-消费者：我之前反馈的耳机换货，现在进行到哪一步了？
+DAY 4 · 邮件工单
+customer_001 使用新的 conversation_id 追问换货进度。
+
+DAY 7 · 在线客服
+customer_002 遇到相似的耳机杂音问题，客服 Agent 尝试复用此前形成的 Skill。
 ```
 
-无记忆层的客服 Agent：
+DAY 4 验证用户事实和偏好能否跨会话延续。DAY 7 换成另一位消费者，验证用户信息保持隔离的同时，客服 Agent 能否复用通用 Skill。
+
+## 三类信息如何分工
+
+这套方案把客服上下文分为三个范围：
+
+1. **用户记忆**：保存订单、故障、工单状态、地址和通知偏好，只属于当前 `user_id`。
+2. **Agent Skill**：保存客服 Agent 从完整任务轨迹中提炼的通用处理流程，属于稳定 `agent_id`。
+3. **政策知识库**：保存退换货、保修、物流和发票等正式规则，由业务方统一维护。
+
+三者的分工可以这样理解：政策知识库回答“按规定应该怎么处理”，用户记忆回答“这位消费者已经处理到哪一步”，Agent Skill 回答“完成这类任务通常需要执行哪些步骤”。
+
+## 完整处理流程
+
+一次客服请求经过以下链路：
 
 ```text
-# 只能看到当前这封邮件，订单号、故障、地址、偏好全部丢失
-❌ 客服助手：您好，请提供您的订单号，并描述一下遇到的问题，我来为您查询。
+用户请求
+  │
+  ├─ Agent 从业务应用读取当前会话历史
+  │
+  ├─ 召回一：user_id → 用户事实、偏好
+  │
+  ├─ 召回二：agent_id → 通用 Skill + 政策知识库
+  │
+  ├─ 合并上下文并执行订单、工单、通知等业务工具
+  │
+  ├─ 大模型根据工具结果生成最终回复
+  │
+  ├─ 写入一：user_id → 事实、偏好
+  │
+  └─ 写入二：agent_id → 请求生成或更新 Skill
 ```
 
-接入 MemOS 的客服 Agent：
+两次写入使用同一份任务记录，但通过 `allow_memory_view` 指定不同的记忆类型。用户视角不生成 Skill，Agent 视角不重复生成用户事实和偏好。
 
-```text
-# 生成回复前，先检索到该消费者的跨渠道记忆与售后政策
-检索到记忆：
-1. 订单 20260820-88 的耳机换货工单处理中（DAY 1 在线客服渠道登记）
-2. 消费者反馈降噪耳机左耳有明显电流声
-3. 知识库：商品性能故障 15 天内支持换货，换货双向免运费
-4. 偏好：换货件本周五前寄至公司地址，短信同步进度
+## 接入前准备
 
-✅ 客服助手：您好，您反馈的订单 20260820-88 耳机换货工单正在处理中。
-换货件将于本周五前寄往您的公司地址，发出后会短信通知物流单号，请留意查收。
-```
+文章末尾提供了可直接运行的[完整 Demo](#完整-demo)。你可以展开代码块，一键复制全部内容并保存到本地验证。
 
-差异的本质：DAY 4 的 Agent 没有「重新接待」，而是「接着办理」。
+你需要 MemOS API Key，以及 OpenAI 或 OpenAI 兼容的大模型接口。
 
-### 1.4 为什么使用 MemOS？
-
-1. **一个 user_id 贯通多渠道**
-
-   渠道身份是路由问题，记忆身份是统一的。在线客服、邮件、电话都向同一个 user_id 读写记忆，消费者换渠道无需重启上下文。渠道本身记入 tags 与 info，用于审计与归因分析。
-
-2. **知识与记忆联合检索**
-
-   一次 searchMemory 调用同时召回个人记忆、偏好与知识库政策。Agent 既知道「这位消费者的换货单到哪了」，也知道「按规定该怎么办」。
-
-3. **客服经验沉淀为 Skill**
-
-   处理某类问题的标准流程可以沉淀为 Skill，由 MemOS 统一管理其沉淀、更新、召回与失效。新坐席、新 Agent 上线即可复用。
-
-4. **权限隔离与审计**
-
-   记忆默认按 user_id 严格隔离，脱敏后的客服经验可写入公共记忆库供全员检索。每次调用带渠道标签，调用日志可审计。
-
-## 2. 搭建教程
-
-本教程搭建一个跨渠道的消费者售后客服助手，覆盖 DAY 1 在线客服受理、DAY 4 邮件追问进度的完整链路，约 10 分钟跑通。
-
-### 2.1 知识库与 Skill 准备（5min）
-
-售后政策等稳定内容上传至知识库，换货处理流程作为 Skill 上传。两种方式任选其一：
-
-- 方式一（推荐）：运行 Demo 自带的初始化命令，自动创建知识库并上传示例政策文档与 Skill：
+在你的项目中准备 Python 环境并安装依赖：
 
 ```bash
-python customer_service_demo.py --setup
-# 命令输出知识库 ID 后配置：
-export MEMOS_KB_ID="base****-****-****-****"
+python3 -m venv .venv
+./.venv/bin/python -m pip install openai requests
 ```
 
-- 方式二：通过[控制台](https://memos-dashboard.openmem.net/cn/knowledgeBase/)手动创建知识库，上传时选择对应文件类型（文档 / 技能文件）。
+在接入代码中配置以下参数：
 
-上传后等待文件状态变为「可用」即可，存储、解析、分段、生成记忆全部由 MemOS 完成。
+```python
+MEMOS_API_KEY = "YOUR_MEMOS_API_KEY"
+OPENAI_API_KEY = "YOUR_OPENAI_API_KEY"
+MEMOS_BASE_URL = "YOUR_MEMOS_BASE_URL"
+OPENAI_MODEL = "YOUR_MODEL_NAME"
+OPENAI_BASE_URL = "YOUR_OPENAI_BASE_URL"
+AGENT_ID = "YOUR_AGENT_ID"
+```
 
-### 2.2 运行代码（5min）
+`user_id` 应来自用户登录态或 CRM。`agent_id` 表示同一个客服 Agent，应在不同用户和会话之间保持稳定。
 
-以下代码示例基于 Python 运行环境进行展示。
+在控制台为当前项目开启「为 Agent 创建独立记忆」。该功能默认关闭；未开启时，`agent_id` 只能用于标记和过滤，不能作为独立主体写入或检索 Agent Skill。具体说明见[多 Agent 隔离](/cn/memos_cloud/introduction/isolation_filters#为-agent-创建独立记忆-new)。
 
-#### 2.2.1 拷贝完整运行代码
+## 第一步：准备政策知识库
+
+初始化时创建一个政策知识库，上传售后政策文档，并等待文件处理完成：
+
+```python
+def create_policy_knowledge_base():
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Token {MEMOS_API_KEY}",
+    }
+    policy_kb_id = _create_kb(
+        headers,
+        "消费者售后政策知识库",
+        "消费者退换货、保修、物流与发票政策",
+    )
+    _upload_file(
+        headers,
+        policy_kb_id,
+        "consumer-after-sale-policy.md",
+        POLICY_DOC_MD,
+    )
+    print("政策文档已上传，等待解析...")
+    _wait_kb_ready(headers, policy_kb_id)
+    print(f"政策知识库已就绪：{policy_kb_id}")
+    return policy_kb_id
+```
+
+知识库 ID 直接来自创建接口的响应，随后传给客服助手：
+
+```python
+policy_kb_id = create_policy_knowledge_base()
+assistant = CustomerServiceAssistant(policy_kb_id)
+```
+
+## 第二步：划分写入类型
+
+用户与 Agent 使用不同的写入视图：
+
+```python
+USER_WRITE_VIEWS = ["detail_factual", "preference"]
+AGENT_SKILL_WRITE_VIEWS = ["skill"]
+USER_CONTEXT_VIEWS = ["detail_factual", "preference"]
+AGENT_CONTEXT_VIEWS = ["detail_factual", "skill"]
+```
+
+这样，同一份任务记录可以写入两个记忆空间，又不会重复生成同类型的记忆。
+
+### 写入用户事实和偏好
+
+第一条 `/add/message` 只传 `user_id`：
+
+```python
+def add_user_memories(self, messages, user_id, conversation_id, channel):
+    """第一次写入：只在用户视角生成事实与偏好。"""
+    user_data = {
+        "user_id": user_id,
+        "conversation_id": conversation_id,
+        "info": {"channel": channel, "scene": "consumer_support"},
+        "allow_memory_view": USER_WRITE_VIEWS,
+        "messages": messages,
+    }
+    self._post_memory(user_data, "用户事实与偏好", timeout_seconds=120)
+```
+
+MemOS 根据对话内容判断是否形成事实或偏好。某轮对话没有表达稳定偏好时，可以只生成事实。
+
+### 写入 Agent Skill
+
+第二条 `/add/message` 只传 `agent_id`，并且只允许生成 Skill：
+
+```python
+def add_agent_skill(self, messages, conversation_id, channel):
+    """第二次写入：只在 Agent 视角请求生成或更新 Skill。"""
+    skill_data = {
+        "agent_id": AGENT_ID,
+        "conversation_id": conversation_id,
+        "info": {"channel": channel, "scene": "consumer_support"},
+        "allow_memory_view": AGENT_SKILL_WRITE_VIEWS,
+        "custom_extract_prompt": {"skill": SKILL_EXTRACT_PROMPT},
+        "messages": messages,
+    }
+    self._post_memory(skill_data, "Agent Skill", timeout_seconds=300)
+```
+
+每轮回答后都会执行这次写入。调用方只声明本次写入允许生成 Skill，不根据对话内容预判是否应该沉淀；MemOS 会结合任务轨迹和已有 Skill，自行决定生成、更新或跳过。
+
+## 第三步：让 Skill 保持通用
+
+Skill 抽取由 MemOS 完成。可以通过 `custom_extract_prompt.skill` 补充客服场景中的通用化要求：
+
+- 以业务目标、触发条件、核心工具链和成功标准判断是否属于同一个 Skill。
+- 相同流程优先合并已有 Skill，没有新的通用信息时不重复生成。
+- 移除姓名、地址、用户 ID、订单号、工单号和具体日期。
+- 把实例值替换为 `order_id`、`ticket_id`、`shipping_address` 等参数。
+- 不把用户个人偏好或单次时间要求写成通用规则。
+- 只保留工具结果能够证明的执行步骤。
+
+MemOS 会结合已有 Skill 完成相似性判断和更新，调用方不需要管理 Skill ID 或实现合并逻辑。
+
+## 第四步：执行两路召回
+
+生成回复前，客服助手分别召回用户上下文，以及 Agent Skill 与政策知识。
+
+### 召回用户事实和偏好
+
+第一路以 `user_id` 作为主体，只检索当前用户的事实和偏好：
+
+```python
+context_data = {
+    "query": query,
+    "user_id": user_id,
+    "conversation_id": conversation_id,
+    "include_memory_view": USER_CONTEXT_VIEWS,
+    "memory_limit_number": 9,
+    "preference_limit_number": 6,
+}
+```
+
+返回结果只包含当前用户的事实和偏好。
+
+### 召回 Agent Skill 和政策
+
+第二路以稳定的 `agent_id` 作为主体，并把政策知识库加入同一次检索：
+
+```python
+agent_data = {
+    "query": f"处理当前客服请求所需的通用方法：{query}",
+    "agent_id": AGENT_ID,
+    "knowledgebase_ids": self.knowledgebase_ids,
+    "include_memory_view": AGENT_CONTEXT_VIEWS,
+    "memory_limit_number": 9,
+}
+```
+
+这样，用户事实和偏好只在用户视角检索，通用 Skill 和正式政策一起作为客服 Agent 的处理依据。不同用户复用同一个 Agent Skill，政策口径也保持一致。
+
+## 第五步：写回完整任务轨迹
+
+每条写入消息通过 `role_id` 标明真实发言主体。用户消息使用 `user_id`，客服回复与工具调用使用 `agent_id`：
+
+```python
+memory_messages = [
+    {"role": "user", "role_id": user_id, "content": query}
+]
+
+# 工具调用消息使用 role_id=AGENT_ID
+# 工具结果通过 tool_call_id 与调用对应
+
+memory_messages.append({
+    "role": "assistant",
+    "role_id": AGENT_ID,
+    "content": reply,
+})
+```
+
+客服 Agent 在业务应用中维护当前会话历史。写回 MemOS 时，用户请求、工具调用、工具结果和最终回复组成完整任务记录：
+
+```text
+user
+→ assistant.tool_calls
+→ tool
+→ assistant
+```
+
+完整轨迹用于 Skill 提炼；用户事实和偏好则从同一份记录中生成。
+
+## 第六步：验证记忆效果
+
+接入完成后，按三个阶段验证读写与隔离是否符合预期：
+
+1. DAY 1 完成换货任务后，确认用户事实和偏好写入 User Cube，同一任务记录提交给 Agent Cube 进行 Skill 判断。
+2. DAY 4 使用新的 `conversation_id`，确认仍能通过 `customer_001` 召回此前订单、故障和通知要求。
+3. DAY 7 使用 `customer_002`，确认不会获得第一位消费者的个人事实，但可以检索当前客服 Agent 的通用 Skill。
+
+用户记忆、Agent Skill 和政策知识库各自保持清晰的边界后，客服 Agent 才能记住当前用户、遵循统一政策，并把已经完成的任务转化为下一次可以复用的处理能力。
+
+## 完整 Demo
+
+展开下面的代码块，点击右上角的复制按钮即可复制全部内容。将代码保存为 `app.py`，填写「Demo 配置」中的参数后运行。
+
+<details class="not-prose my-5 rounded-md border border-default bg-muted/30 px-4 py-3">
+  <summary class="cursor-pointer select-none text-sm font-medium text-highlighted">
+    展开并复制完整 Python Demo
+  </summary>
+  <div class="mt-4">
 
 ```python
 # -*- coding: utf-8 -*-
 """
-MemOS 客服场景最佳实践 Demo：跨渠道记忆增强的消费者客服助手
+MemOS 客服场景最佳实践：跨渠道记忆增强的消费者客服助手
 
-场景：某智能硬件品牌的消费者售后客服。消费者通过「在线客服」「邮件工单」两个
-渠道咨询售后问题，MemOS 作为记忆基础设施，为客服 Agent 提供三项能力：
+场景：消费者售后客服，MemOS 作为记忆基础设施，为客服 Agent
+提供三项能力：
 
-1. 跨渠道、跨会话的用户记忆：未完成事项（换货工单）、消费者偏好自动延续
-2. 知识库联合检索：售后政策等稳定内容归入知识库，与个人记忆一起召回
-3. 客服 Skill 沉淀与召回：质量问题换货 SOP 作为 Skill 上传，指导 Agent 按标准流程处理
+1. 每轮分别请求写入用户事实/偏好与 Agent Skill，由 MemOS 判断实际沉淀内容
+2. 售后政策放入政策知识库，与 Agent 记忆一起检索
+3. 事实与偏好按 user_id 召回，Skill 从 Agent 视角跨用户召回
+
+记忆种类只启用客服场景需要的三类：事实记忆、偏好记忆、技能记忆。
+技能由 MemOS 从写回的任务执行轨迹（user → assistant.tool_calls → tool →
+assistant）中自动提炼，异步生成，无需事先上传。
+
+运行方式：
+    pip install openai requests
+
+    # 在下方「Demo 配置」中填写各项参数
+    python app.py
 """
 
-import argparse
 import base64
-import os
 import sys
 import time
 from datetime import datetime
@@ -137,28 +315,50 @@ import requests
 
 try:
     from openai import OpenAI
-except ImportError:  # 允许仅做 --setup 时不安装 openai
+except ImportError:
     OpenAI = None
 
 # ---------------------------------------------------------------------------
-# 环境配置
+# Demo 配置
 # ---------------------------------------------------------------------------
 
-os.environ.setdefault("MEMOS_API_KEY", "mpg-xxx")   # 替换为你的 MemOS API Key
-os.environ.setdefault("OPENAI_API_KEY", "sk-xxx")   # 替换为你的大模型 Key
+MEMOS_API_KEY = "YOUR_MEMOS_API_KEY"
+OPENAI_API_KEY = "YOUR_OPENAI_API_KEY"
+MEMOS_BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
+OPENAI_MODEL = "YOUR_MODEL_NAME"
+OPENAI_BASE_URL = "YOUR_OPENAI_BASE_URL"
+AGENT_ID = "YOUR_AGENT_ID"
 
-MEMOS_BASE_URL = os.environ.get(
-    "MEMOS_BASE_URL", "https://memos.memtensor.cn/api/openmem/v1"
-)
-OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o")
-OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL")  # 兼容接口时填写
-KNOWLEDGE_BASE_ID = os.environ.get("MEMOS_KB_ID", "")
+# 用户与 Agent 分别写入不同记忆类型；检索仍拆成两路
+USER_WRITE_VIEWS = ["detail_factual", "preference"]
+AGENT_SKILL_WRITE_VIEWS = ["skill"]
+USER_CONTEXT_VIEWS = ["detail_factual", "preference"]
+AGENT_CONTEXT_VIEWS = ["detail_factual", "skill"]
+
+SKILL_EXTRACT_PROMPT = """从完整的客服任务轨迹中提炼可跨用户复用的 Skill。
+
+Skill 的唯一性由业务目标、触发条件、核心工具链和成功标准共同决定。
+提炼前必须比较已有 Skill：
+- 如果已有 Skill 覆盖相同目标、触发条件和核心工具链，将新信息合并到已有 Skill，
+  不要创建重复 Skill。
+- 如果本次轨迹没有提供新的通用步骤、判断分支或验证依据，不生成 Skill。
+- 只有业务目标或核心处理流程实质不同，才创建新的 Skill。
+
+Skill 内容必须通用化：
+- 移除姓名、联系方式、地址、用户 ID、Agent ID、会话 ID、订单号、工单号和具体日期。
+- 将实例值替换为 order_id、ticket_id、shipping_address 等参数。
+- 不保留用户个人偏好，不把单个用户的时间要求或通知方式写成通用规则。
+- 不复制具体政策结论；流程中只描述“查询并校验当前政策”。
+- 只保留工具结果能够证明的步骤，不把模型建议或未执行操作写成已验证经验。
+
+Skill 名称应稳定、简洁，并以问题类型和处理目标命名，不能包含用户或案例信息。
+"""
 
 # 相关性阈值：低于该值的记忆不进入 prompt，防止噪音干扰客服判断
 RELATIVITY_THRESHOLD = 0.5
 
 # ---------------------------------------------------------------------------
-# 示例知识：售后政策文档（稳定内容，归入知识库）与换货 Skill（可复用流程）
+# 示例政策上传到政策知识库
 # ---------------------------------------------------------------------------
 
 POLICY_DOC_MD = """# 消费者售后政策（示例）
@@ -180,100 +380,137 @@ POLICY_DOC_MD = """# 消费者售后政策（示例）
 - 默认开具电子普通发票，订单完成后可在订单页自助申请。
 """
 
-EXCHANGE_SKILL_MD = """---
-name: 质量问题换货处理
-description: 消费者反馈商品性能故障、要求换货时的标准处理流程，覆盖核实、建单、取件与进度同步
----
-
-## Procedure
-1. 核对消费者身份与订单号，确认故障商品与故障现象
-2. 引导消费者做一次简单排查（如重启、重置连接），排除使用问题
-3. 确认属于质量问题后创建换货工单，记录期望收货时间与收货地址
-4. 安排上门取件或引导寄回，告知换货双向免运费
-5. 换货件发出后，按消费者偏好的渠道同步物流单号
-
-## Experience
-- 耳机类「杂音、电流声」问题，先引导重置蓝牙配对再判定故障
-- 消费者提出明确时间要求时，在工单中标注并优先处理
-"""
-
 
 # ---------------------------------------------------------------------------
 # 客服助手：记忆检索 -> 组装 prompt -> 生成回复 -> 写回记忆
 # ---------------------------------------------------------------------------
 
 class CustomerServiceAssistant:
-    def __init__(self):
-        if OpenAI is None:
-            raise RuntimeError("请先安装 openai：pip install openai")
+    def __init__(self, policy_kb_id):
         self.openai_client = OpenAI(
-            api_key=os.environ["OPENAI_API_KEY"],
+            api_key=OPENAI_API_KEY,
             base_url=OPENAI_BASE_URL or None,
         )
         self.headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
+            "Authorization": f"Token {MEMOS_API_KEY}",
         }
-        self.knowledgebase_ids = [KNOWLEDGE_BASE_ID] if KNOWLEDGE_BASE_ID else []
+        self.knowledgebase_ids = [policy_kb_id]
+        # 当前会话历史由 Agent 自己维护，不依赖 MemOS 的消息读取接口
+        self.conversation_histories = {}
 
     # ---- MemOS 读写 ----
 
     def search_memory(self, query, user_id, conversation_id):
-        """检索个人记忆、偏好、知识库与 Skill，按相关性阈值过滤"""
-        data = {
+        """分别检索用户事实/偏好，以及 Agent Skill/政策知识。"""
+        agent_data = {
+            "query": f"处理当前客服请求所需的通用方法：{query}",
+            "agent_id": AGENT_ID,
+            "knowledgebase_ids": self.knowledgebase_ids,
+            "include_memory_view": AGENT_CONTEXT_VIEWS,
+            "memory_limit_number": 9,
+        }
+        agent_res = requests.post(
+            f"{MEMOS_BASE_URL}/search/memory",
+            headers=self.headers,
+            json=agent_data,
+        )
+        agent_body = agent_res.json()
+        if agent_body.get("code") == 0:
+            agent_result = agent_body.get("data") or {}
+            policy_memories = [
+                item for item in agent_result.get("memory_detail_list", [])
+                if item.get("relativity", 0) >= RELATIVITY_THRESHOLD
+            ]
+            skills = agent_result.get("skill_detail_list", [])
+        else:
+            print(f"  [MemOS] 检索 Agent Skill 与政策失败：{agent_body.get('message')}")
+            policy_memories = []
+            skills = []
+
+        context_data = {
             "query": query,
             "user_id": user_id,
             "conversation_id": conversation_id,
-            "knowledgebase_ids": self.knowledgebase_ids,
-            "include_skill": True,
+            "include_memory_view": USER_CONTEXT_VIEWS,
             "memory_limit_number": 9,
+            "preference_limit_number": 6,
         }
-        res = requests.post(
-            f"{MEMOS_BASE_URL}/search/memory", headers=self.headers, json=data
+        context_res = requests.post(
+            f"{MEMOS_BASE_URL}/search/memory",
+            headers=self.headers,
+            json=context_data,
         )
-        body = res.json()
-        if body.get("code") != 0:
-            print(f"  [MemOS] 检索记忆失败：{body.get('message')}，本轮按无记忆处理")
-            return [], [], []
+        context_body = context_res.json()
+        if context_body.get("code") == 0:
+            context_result = context_body.get("data", {})
+        else:
+            print(f"  [MemOS] 检索用户上下文失败：{context_body.get('message')}")
+            context_result = {}
 
-        result = body.get("data", {})
-        memories = [
-            m for m in result.get("memory_detail_list", [])
+        user_memories = [
+            m for m in context_result.get("memory_detail_list", [])
             if m.get("relativity", 0) >= RELATIVITY_THRESHOLD
         ]
-        preferences = result.get("preference_detail_list", [])
-        skills = result.get("skill_detail_list", [])
-        return memories, preferences, skills
+        preferences = context_result.get("preference_detail_list", [])
+        return [*user_memories, *policy_memories], preferences, skills
 
-    def add_message(self, messages, user_id, conversation_id, channel):
-        """写回一轮对话。渠道记入 tags 与 info，便于审计与按渠道分析"""
-        data = {
+    def add_user_memories(self, messages, user_id, conversation_id, channel):
+        """第一次写入：只在用户视角生成事实与偏好。"""
+        user_data = {
             "user_id": user_id,
             "conversation_id": conversation_id,
-            "tags": [channel],
             "info": {"channel": channel, "scene": "consumer_support"},
+            "allow_memory_view": USER_WRITE_VIEWS,
             "messages": messages,
         }
+        self._post_memory(user_data, "用户事实与偏好", timeout_seconds=120)
+
+    def add_agent_skill(self, messages, conversation_id, channel):
+        """第二次写入：只在 Agent 视角请求生成或更新 Skill。"""
+        skill_data = {
+            "agent_id": AGENT_ID,
+            "conversation_id": conversation_id,
+            "info": {"channel": channel, "scene": "consumer_support"},
+            "allow_memory_view": AGENT_SKILL_WRITE_VIEWS,
+            "custom_extract_prompt": {"skill": SKILL_EXTRACT_PROMPT},
+            "messages": messages,
+        }
+        self._post_memory(skill_data, "Agent Skill", timeout_seconds=300)
+
+    def _post_memory(self, data, label, timeout_seconds):
         res = requests.post(
             f"{MEMOS_BASE_URL}/add/message", headers=self.headers, json=data
         )
-        if res.json().get("code") != 0:
-            # 写回失败不阻塞本轮回复
-            print(f"  [MemOS] 写入记忆失败：{res.json().get('message')}")
+        body = res.json()
+        if body.get("code") != 0:
+            print(f"  [MemOS] 写入{label}失败：{body.get('message')}")
+            return
 
-    def get_message(self, user_id, conversation_id):
-        """获取当前会话的近期消息"""
-        data = {
-            "user_id": user_id,
-            "conversation_id": conversation_id,
-            "message_limit_number": 10,
-        }
-        res = requests.post(
-            f"{MEMOS_BASE_URL}/get/message", headers=self.headers, json=data
-        )
-        if res.json().get("code") == 0:
-            return res.json().get("data", {}).get("message_detail_list", [])
-        return []
+        details = body.get("data") or {}
+        if details.get("status") == "running" and details.get("task_id"):
+            self._wait_for_task(details["task_id"], label, timeout_seconds)
+
+    def _wait_for_task(self, task_id, label, timeout_seconds):
+        """等待异步记忆任务完成。"""
+        deadline = time.time() + timeout_seconds
+        while time.time() < deadline:
+            time.sleep(2)
+            res = requests.post(
+                f"{MEMOS_BASE_URL}/get/status",
+                headers=self.headers,
+                json={"task_id": task_id},
+            )
+            body = res.json()
+            if body.get("code") != 0:
+                sys.exit(f"查询记忆任务失败：{body.get('message')}")
+            status = (body.get("data") or {}).get("status")
+            if status == "completed":
+                print(f"  [MemOS] {label}写入完成")
+                return
+            if status in {"failed", "error", "cancelled", "canceled"}:
+                sys.exit(f"记忆任务失败：{task_id} -> {status}")
+        sys.exit(f"等待{label}任务超时：{task_id}")
 
     # ---- prompt 与生成 ----
 
@@ -302,10 +539,10 @@ class CustomerServiceAssistant:
 # 当前时间
 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
-# 检索到的信息
-<memories>
+# 检索到的用户记忆、售后政策与 Agent Skill
+<agent_memories>
 {memory_text}
-</memories>
+</agent_memories>
 
 <preferences>
 {preference_text}
@@ -320,48 +557,82 @@ class CustomerServiceAssistant:
 2. 确认记忆描述的主体是当前消费者，而非其他用户或历史案例，禁止张冠李戴。
 3. 只使用与当前问题直接相关的记忆，关键词偶合但语境不同的记忆必须忽略。
 4. 记忆与消费者当前输入冲突时，以当前输入为准。
-5. 涉及政策、时效、金额的内容，以知识库内容为准。
+5. 涉及政策、时效、金额的内容，以政策知识库内容为准。
 
 # 输出要求
-1. 直接回答问题，不向消费者提及「记忆」「检索」「知识库」等内部实现。
+1. 直接回答问题，不向消费者提及「记忆」「检索」等内部实现。
 2. 存在未完成事项时主动衔接进度，不要让消费者重复描述已反馈过的信息。
 3. 回答语言与消费者的输入语言一致。"""
 
-    def generate_reply(self, system_prompt, history, query):
-        messages = [{"role": "system", "content": system_prompt}, *history,
-                    {"role": "user", "content": query}]
+    def generate_reply(self, system_prompt, messages):
         response = self.openai_client.chat.completions.create(
-            model=OPENAI_MODEL, messages=messages, temperature=0.3, top_p=0.9
+            model=OPENAI_MODEL,
+            messages=[{"role": "system", "content": system_prompt}, *messages],
+            temperature=0.3,
+            top_p=0.9,
         )
         return response.choices[0].message.content
 
     # ---- 主流程 ----
 
-    def chat(self, query, user_id, conversation_id, channel):
-        # 1. 拉取当前会话近期消息
-        history = self.get_message(user_id, conversation_id)
+    def chat(self, query, user_id, conversation_id, channel, tool_steps=None):
+        # 1. 从 Agent 本地状态读取当前会话历史
+        history_key = (user_id, conversation_id)
+        history = self.conversation_histories.get(history_key, [])
 
-        # 2. 检索跨渠道记忆、偏好、知识库与 Skill
+        # 2. 检索用户事实/偏好，并单独检索 Agent Skill/政策知识
         memories, preferences, skills = self.search_memory(
             query, user_id, conversation_id
         )
         self._print_retrieved(memories, preferences, skills)
 
-        # 3. 组装 prompt 并生成回复
-        system_prompt = self.build_system_prompt(channel, memories, preferences, skills)
-        reply = self.generate_reply(system_prompt, history, query)
+        # 3. 组装当前任务轨迹，让模型基于工具结果生成最终回复
+        llm_turn = [{"role": "user", "content": query}]
+        memory_messages = [{"role": "user", "role_id": user_id, "content": query}]
+        for step in tool_steps or []:
+            tool_call = {
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [{
+                    "id": step["id"],
+                    "type": "function",
+                    "function": {
+                        "name": step["name"],
+                        "arguments": step["arguments"],
+                    },
+                }],
+            }
+            tool_result = {
+                "role": "tool",
+                "tool_call_id": step["id"],
+                "content": step["result"],
+            }
+            llm_turn.extend([tool_call, tool_result])
+            memory_messages.extend([
+                {**tool_call, "role_id": AGENT_ID},
+                tool_result,
+            ])
 
-        # 4. 写回本轮对话，沉淀为长期记忆
-        self.add_message(
-            [{"role": "user", "content": query},
-             {"role": "assistant", "content": reply}],
-            user_id, conversation_id, channel,
-        )
+        system_prompt = self.build_system_prompt(channel, memories, preferences, skills)
+        reply = self.generate_reply(system_prompt, [*history, *llm_turn])
+
+        # 4. Agent 本地保存对话；MemOS 分别写入用户上下文与通用 Skill
+        self.conversation_histories.setdefault(history_key, []).extend([
+            {"role": "user", "content": query},
+            {"role": "assistant", "content": reply},
+        ])
+        memory_messages.append({
+            "role": "assistant",
+            "role_id": AGENT_ID,
+            "content": reply,
+        })
+        self.add_user_memories(memory_messages, user_id, conversation_id, channel)
+        self.add_agent_skill(memory_messages, conversation_id, channel)
         return reply
 
     @staticmethod
     def _print_retrieved(memories, preferences, skills):
-        print("  ---- MemOS 召回内容 ----")
+        print("  ---- MemOS Agent 记忆召回内容 ----")
         for m in memories:
             value = str(m.get("memory_value", "")).replace("\n", " ")
             print(f"  [记忆 {m.get('relativity', 0):.2f}] {value[:80]}")
@@ -371,11 +642,12 @@ class CustomerServiceAssistant:
             value = s.get("skill_value") or {}
             label = value.get("name") or f"id={s.get('id')}"
             print(f"  [Skill {s.get('relativity', 0):.2f}] {label}")
+            print(f"  [Skill 详情] {value}")
         print("  ------------------------")
 
 
 # ---------------------------------------------------------------------------
-# 知识库初始化：创建知识库，上传政策文档与 Skill，等待处理完成
+# 初始化政策知识库
 # ---------------------------------------------------------------------------
 
 def _b64_md(text):
@@ -383,44 +655,37 @@ def _b64_md(text):
     return f"data:text/markdown;base64,{encoded}"
 
 
-def setup_knowledge_base():
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Token {os.environ['MEMOS_API_KEY']}",
-    }
-
+def _create_kb(headers, name, description):
     res = requests.post(
         f"{MEMOS_BASE_URL}/create/knowledgebase",
         headers=headers,
-        json={
-            "knowledgebase_name": "消费者售后政策知识库",
-            "knowledgebase_description": "消费者退换货、保修、物流与发票政策，以及客服处理 Skill",
-        },
+        json={"knowledgebase_name": name, "knowledgebase_description": description},
     )
     body = res.json()
     if body.get("code") != 0:
         sys.exit(f"创建知识库失败：{body.get('message')}")
     kb_id = body.get("data", {}).get("id") or body.get("data", {}).get("knowledgebase_id")
-    print(f"知识库已创建：{kb_id}")
+    if not kb_id:
+        sys.exit(f"创建知识库成功，但接口未返回知识库 ID：{name}")
+    print(f"知识库已创建：{name} -> {kb_id}")
+    return kb_id
 
+
+def _upload_file(headers, kb_id, name, text):
     res = requests.post(
         f"{MEMOS_BASE_URL}/add/knowledgebase-file",
         headers=headers,
         json={
             "knowledgebase_id": kb_id,
-            "file": [
-                {"type": "document", "name": "consumer-after-sale-policy.md",
-                 "content": _b64_md(POLICY_DOC_MD)},
-                {"type": "skill", "name": "quality-exchange-sop.md",
-                 "content": _b64_md(EXCHANGE_SKILL_MD)},
-            ],
+            "file": [{"type": "document", "name": name, "content": _b64_md(text)}],
         },
     )
     if res.json().get("code") != 0:
         sys.exit(f"上传文件失败：{res.json().get('message')}")
-    print("政策文档与 Skill 已上传，等待解析...")
 
-    for _ in range(40):  # 最长等待约 2 分钟
+
+def _wait_kb_ready(headers, kb_id):
+    for _ in range(40):
         time.sleep(3)
         res = requests.post(
             f"{MEMOS_BASE_URL}/get/knowledgebase-file",
@@ -428,26 +693,47 @@ def setup_knowledge_base():
             json={"knowledgebase_id": kb_id, "page": 1, "page_size": 20},
         )
         files = res.json().get("data", {}).get("file_detail_list", [])
-        statuses = {str(f.get("status", "")).lower() for f in files}
+        statuses = {str(item.get("status", "")).lower() for item in files}
         if files and statuses <= {"completed", "available", "failed"}:
             if "failed" in statuses:
-                sys.exit("有文件解析失败，请在控制台查看详情")
-            break
-    else:
-        sys.exit("等待文件解析超时，请稍后在控制台确认状态")
+                sys.exit(f"政策知识库 {kb_id} 文件解析失败")
+            return
+    sys.exit(f"等待政策知识库 {kb_id} 处理超时")
 
-    print(f"知识库已就绪。请执行：export MEMOS_KB_ID=\"{kb_id}\"，然后运行演示。")
+
+def create_policy_knowledge_base():
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Token {MEMOS_API_KEY}",
+    }
+    policy_kb_id = _create_kb(
+        headers,
+        "消费者售后政策知识库",
+        "消费者退换货、保修、物流与发票政策",
+    )
+    _upload_file(
+        headers,
+        policy_kb_id,
+        "consumer-after-sale-policy.md",
+        POLICY_DOC_MD,
+    )
+    print("政策文档已上传，等待解析...")
+    _wait_kb_ready(headers, policy_kb_id)
+    print(f"政策知识库已就绪：{policy_kb_id}")
+    return policy_kb_id
 
 
 # ---------------------------------------------------------------------------
-# 演示场景：同一消费者，跨「在线客服」与「邮件工单」两个渠道
+# 演示场景：用户上下文隔离与 Agent Skill 跨用户复用
 # ---------------------------------------------------------------------------
 
-CUSTOMER_ID = "customer_001"  # 生产环境中应来自登录态的稳定用户 ID
+CUSTOMER_ID = "customer_001"    # 生产环境中应来自登录态的稳定用户 ID
+CUSTOMER_ID_2 = "customer_002"  # 第二位消费者，用于验证 Skill 复用与用户隔离
 
 
 def run_demo():
-    assistant = CustomerServiceAssistant()
+    policy_kb_id = create_policy_knowledge_base()
+    assistant = CustomerServiceAssistant(policy_kb_id)
 
     print("=" * 64)
     print("DAY 1 · 在线客服渠道：消费者反馈耳机杂音要求换货，并说明时间与通知偏好")
@@ -457,7 +743,26 @@ def run_demo():
     q1 = ("你好，我 8 月 20 日签收的订单 20260820-88，里面的降噪耳机左耳一直有"
           "电流声，杂音很明显，我想换货。")
     print(f"\n[消费者] {q1}")
-    print(f"[客服助手] {assistant.chat(q1, CUSTOMER_ID, chat_conv, 'webchat')}")
+    # 客服 Agent 在业务系统中的实际办理过程（订单、工单、通知系统），
+    # 随对话一起写回 MemOS，作为技能自动提炼的任务轨迹素材
+    tool_steps = [
+        {"id": "call_1", "name": "query_order",
+         "arguments": '{"order_id": "20260820-88"}',
+         "result": '{"order_id": "20260820-88", "product": "降噪耳机", "sign_date": "2026-08-20", "status": "已签收"}'},
+        {"id": "call_2", "name": "check_exchange_policy",
+         "arguments": '{"order_id": "20260820-88", "issue": "左耳电流声杂音"}',
+         "result": '{"eligible": true, "policy": "性能故障 15 天内换货", "shipping": "双向免运费"}'},
+        {"id": "call_3", "name": "create_exchange_ticket",
+         "arguments": '{"order_id": "20260820-88", "reason": "左耳电流声杂音", "type": "质量问题换货"}',
+         "result": '{"ticket_id": "EX20260821-03", "status": "已创建"}'},
+        {"id": "call_4", "name": "update_ticket",
+         "arguments": '{"ticket_id": "EX20260821-03", "address": "上海市浦东新区世纪大道 100 号", "deliver_before": "本周五", "notify": "sms"}',
+         "result": '{"ticket_id": "EX20260821-03", "updated": true}'},
+        {"id": "call_5", "name": "schedule_notification",
+         "arguments": '{"ticket_id": "EX20260821-03", "channel": "sms", "events": ["已发出", "派送中"]}',
+         "result": '{"scheduled": true, "channel": "sms"}'},
+    ]
+    print(f"[客服助手] {assistant.chat(q1, CUSTOMER_ID, chat_conv, 'webchat', tool_steps=tool_steps)}")
 
     q2 = ("对了，我下周要出差，换的耳机最好这周五前寄到我公司地址："
           "上海市浦东新区世纪大道 100 号。进度发短信告诉我就行。")
@@ -475,106 +780,39 @@ def run_demo():
     print(f"[客服助手] {assistant.chat(q3, CUSTOMER_ID, mail_conv, 'email')}")
 
     print()
-    print("演示结束：DAY 4 的回复应自动关联 DAY 1 的订单、故障商品、收货时间要求")
-    print("与通知偏好，无需消费者重复描述。这就是跨渠道记忆带来的体验差异。")
+    print("=" * 64)
+    print("DAY 7 · 在线客服渠道：另一位消费者遇到同类问题（Agent Skill 复用）")
+    print("=" * 64)
+    conv_2 = "conv_chat_0828"
+
+    q4 = "你好，我刚买的降噪耳机有杂音，滋滋的电流声，怎么办？"
+    print(f"\n[消费者] {q4}")
+    print(f"[客服助手] {assistant.chat(q4, CUSTOMER_ID_2, conv_2, 'webchat')}")
+
+    print()
+    print("演示结束，三个观察点：")
+    print("1. 用户 Cube 只生成事实与偏好，Agent Cube 只生成 Skill。")
+    print("2. DAY 4 从 customer_001 的用户记忆中召回事实与偏好。")
+    print("3. DAY 7 不应看到 customer_001 的事实与偏好，但可以召回")
+    print(f"   {AGENT_ID} 已通用化的 Skill。")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="MemOS 客服场景最佳实践 Demo")
-    parser.add_argument("--setup", action="store_true",
-                        help="创建知识库并上传示例政策文档与 Skill")
-    args = parser.parse_args()
-
-    if os.environ["MEMOS_API_KEY"] == "mpg-xxx":
-        sys.exit("请先配置 MEMOS_API_KEY")
-
-    if args.setup:
-        setup_knowledge_base()
-    else:
-        if os.environ["OPENAI_API_KEY"] == "sk-xxx":
-            sys.exit("请先配置 OPENAI_API_KEY")
-        if not KNOWLEDGE_BASE_ID:
-            sys.exit("请先运行 python customer_service_demo.py --setup 并配置 MEMOS_KB_ID")
-        run_demo()
+    config = {
+        "MEMOS_API_KEY": MEMOS_API_KEY,
+        "OPENAI_API_KEY": OPENAI_API_KEY,
+        "MEMOS_BASE_URL": MEMOS_BASE_URL,
+        "OPENAI_MODEL": OPENAI_MODEL,
+        "OPENAI_BASE_URL": OPENAI_BASE_URL,
+        "AGENT_ID": AGENT_ID,
+    }
+    missing = [name for name, value in config.items() if not value or value.startswith("YOUR_")]
+    if missing:
+        sys.exit(f"请先在文件顶部配置：{', '.join(missing)}")
+    if OpenAI is None:
+        sys.exit("请先安装 openai：pip install openai")
+    run_demo()
 ```
 
-#### 2.2.2 初始化运行环境
-
-```bash
-pip install openai requests
-```
-
-#### 2.2.3 配置环境变量
-
-登录[控制台](https://memos-dashboard.openmem.net/cn/apikeys/)复制 MemOS 密钥，大模型密钥可替换为任意 OpenAI 兼容接口：
-
-```bash
-export MEMOS_API_KEY="mpg-xxx"
-export OPENAI_API_KEY="sk-xxx"
-export MEMOS_KB_ID="<2.1 创建的知识库 ID>"
-```
-
-#### 2.2.4 执行代码
-
-```bash
-python customer_service_demo.py
-```
-
-### 2.3 演示效果
-
-DAY 1 在线客服渠道，Agent 受理换货并记下消费者的时间要求与通知偏好。DAY 4 消费者改从邮件渠道追问进度，以下是 MemOS 实际召回的内容：
-
-```text
-DAY 4 · 邮件工单渠道（新会话、不同渠道、同一 user_id）
-
-[消费者] 你好，我之前反馈的耳机换货，现在进行到哪一步了？
-  ---- MemOS 召回内容 ----
-  [记忆 0.75] 订单 20260820-88 的耳机换货正在处理中，换货件预计本周五寄达公司地址
-  [记忆 0.75] 订单 20260820-88 的耳机问题属于 15 天质量问题换货范围
-  [记忆 0.63] 消费者反馈降噪耳机左耳有明显电流声和杂音
-  [记忆 0.61] 知识库：换货件发出前支持修改一次收货地址
-  [偏好] 换货件本周五前寄至公司地址（上海市浦东新区世纪大道 100 号），短信接收进度通知
-  [Skill 0.69] 质量问题换货处理
-  ------------------------
-[客服助手] 您好，您反馈的订单 20260820-88 耳机换货工单正在处理中：
-换货件将于本周五前寄往上海市浦东新区世纪大道 100 号，发出后会短信通知物流单号，请留意查收。
-```
-
-新会话、新渠道，但订单号、故障描述、地址要求与通知偏好全部自动衔接，无需消费者重复描述。
-
-### 2.4 代码说明
-
-1. 在环境变量中配置 MemOS 密钥、大模型密钥与知识库 ID。
-2. 实例化 `CustomerServiceAssistant`。
-3. `run_demo()` 模拟两天、两个渠道的三轮对话。
-4. 每轮对话由 `chat()` 执行固定闭环：
-   - 调用 `get_message`，拉取当前会话近期消息；
-   - 调用 `search_memory`，一次调用联合召回个人记忆、偏好、知识库与 Skill，并按相关性阈值过滤；
-   - 用通过筛选的记忆组装 system prompt，注入大模型生成回复；
-   - 调用 `add_message` 写回本轮对话，沉淀为长期记忆，渠道记入 tags 与 info。
-5. 检索或写回失败时降级为无记忆回复，不阻塞消费者。
-
-## 3. 生产落地建议
-
-### 3.1 user_id 与权限
-
-- user_id 必须来自登录态或 CRM 的稳定标识，不要按会话随机生成。消费者换设备、清缓存、换渠道后，仍能命中同一份记忆。
-- 记忆默认按 user_id 隔离。写入时开启 `allow_public` 的记忆进入公共记忆库，项目下所有用户可检索，适合存放脱敏后的客服经验；个体消费者的对话记忆不要写入公共记忆库。
-- 多渠道接入时用 tags 或 info 标记渠道来源，便于审计「哪条记忆来自哪个渠道」。
-
-### 3.2 时延与异步
-
-- 检索接口典型响应约 200–300 毫秒，放在生成回复前同步调用即可。
-- 记忆写入默认异步执行，后台数秒内完成结构化处理。写回操作不要阻塞客服回复链路。
-- 写入后立刻检索可能查不到最新记忆。演示脚本为此预留了等待时间，生产环境中下一轮对话自然命中即可。
-
-### 3.3 召回调优
-
-- 用 `relativity` 控制相关性阈值，用 `memory_limit_number` 控制返回条数。阈值过低会带入噪音，过高会漏掉有效背景，可从 0.5 起步按 badcase 调整。
-- 调优按根因分层：回答内容错误优先修订知识库文档；该召回的没召回、召回了不相关内容，再调整检索参数或联系 MemOS 支持。
-
-### 3.4 Skill 生命周期
-
-- 通用服务流程由业务方统一维护为 Skill 并上传知识库，保证全员处理口径一致。
-- 坐席个人在授权范围内沉淀的经验，可随对话写入由 MemOS 自动沉淀。
-- 检索时开启 `include_skill`，匹配的 Skill 随记忆一起返回。若返回的 Skill 缺少结构化内容字段，可将 SOP 要点同时作为普通文档上传知识库，确保处理流程能进入 prompt。
+  </div>
+</details>

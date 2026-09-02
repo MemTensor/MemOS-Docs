@@ -163,6 +163,7 @@ nav:
   - "(ri:projector-line) Best Practices":
     - "(ri:book-open-line) Tutorials":
       - "(ri:customer-service-2-line) Knowledge Q&A Assistant": usecase/knowledge_qa_assistant.md
+      - "(ri:customer-service-2-line) Customer Service Agent with Long-Term Memory": usecase/customer_service_assistant.md
       - "(ri:money-dollar-circle-line) Financial Assistant": usecase/financial_assistant.md
       - "(ri:edit-line) Writing Assistant": usecase/writting_assistant.md
       - "(ri:heart-line) Life Assistant": usecase/home_assistant.md
