@@ -1,4 +1,22 @@
 versions:
+  - name: v2.0.33
+    date: '2026-09-03'
+    products:
+      cloud:
+        Bug Fixes:
+          - type: 云服务
+            changedInfo:
+              - 修复请求参数校验信息中的异常对象无法序列化，导致 422 校验错误被掩盖为 500 服务异常的问题
+              - 修复获取记忆列表接口skill URL返回空，解决metadata.getKey()判断和加密空字符串问题
+      opensource:
+        Improvements:
+          - type: 偏好记忆抽取
+            changedInfo:
+              - 提升偏好记忆抽取的准确性，排除 Agent 输出、工具调用及拼接上下文的干扰，仅根据用户本人表达识别偏好
+        Bug Fixes:
+          - type: 开源项目
+            changedInfo:
+              - 修复add时异步任务失败时，不再清理fast节点
   - name: v2.0.32
     date: '2026-08-26'
     products:
