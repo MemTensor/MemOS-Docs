@@ -1,4 +1,22 @@
 versions:
+  - name: v2.0.33
+    date: '2026-09-03'
+    products:
+      cloud:
+        Bug Fixes:
+          - type: Cloud Service
+            changedInfo:
+              - Fixed the issue where the exception object in the request parameter validation information could not be serialized, causing the 422 validation error to be masked as a 500 service exception.
+              - Fixed the issue where the skill URL returned empty for the memory list interface, resolving the problem with metadata.getKey() judgment and encrypting empty strings.
+      opensource:
+        Improvements:
+          - type: Preference Memory Extraction
+            changedInfo:
+              - Improved the accuracy of preference memory extraction by excluding interference from Agent output, tool calls, and concatenated context, focusing solely on user expressions to identify preferences.
+        Bug Fixes:
+          - type: Open Source Project
+            changedInfo:
+              - Fixed the issue where asynchronous tasks failed during add operations, preventing the cleanup of fast nodes.
   - name: v2.0.32
     date: '2026-08-26'
     products:
