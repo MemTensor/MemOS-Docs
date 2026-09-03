@@ -153,7 +153,7 @@ nav:
 
     - "(ri:book-read-line) 知识库":
       - "(ri:add-box-line) 创建知识库": api_docs/knowledge/create_kb.md
-      - "(ri:delete-back-2-line) 移除知识库": api_docs/knowledge/remove_kb.md
+      - "(ri:delete-back-2-line) 删除知识库": api_docs/knowledge/remove_kb.md
       - "(ri:file-add-line) 添加知识库文件": api_docs/knowledge/add_kb_doc.md
       - "(ri:file-search-line) 获取知识库文件": api_docs/knowledge/get_kb_doc.md
       - "(ri:file-reduce-line) 删除知识库文件": api_docs/knowledge/delete_kb_doc.md

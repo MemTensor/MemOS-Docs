@@ -532,8 +532,8 @@
     },
     "/delete/knowledgebase": {
       "post": {
-        "summary": "移除知识库",
-        "description": "从当前项目中移除知识库，彻底删除知识库需从控制台-知识库页面操作。",
+        "summary": "删除知识库",
+        "description": "删除知识库，或解除知识库与当前项目的关联。",
         "operationId": "delete_knowledgebase",
         "requestBody": {
           "required": true,
@@ -3068,7 +3068,13 @@
           "knowledgebase_id": {
             "type": "string",
             "title": "Knowledgebase ID",
-            "description": "要移除的知识库ID"
+            "description": "要删除或从当前项目中移除的知识库 ID"
+          },
+          "delete_all": {
+            "type": "boolean",
+            "title": "Delete All",
+            "description": "是否彻底删除知识库。默认为 false，仅解除知识库与当前 API Key 所属项目的关联；设为 true 时，将删除知识库及其中的文件，并解除该知识库与所有项目的关联。",
+            "default": false
           }
         },
         "title": "DeleteKnowledgebaseRequest"

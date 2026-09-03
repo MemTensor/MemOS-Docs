@@ -533,7 +533,7 @@
     "/delete/knowledgebase": {
       "post": {
         "summary": "Delete Knowledgebase",
-        "description": "Delete a knowledgebase from the current project. To permanently delete it, please operate from the Console - Knowledgebase page.",
+        "description": "Delete a knowledge base or remove its association with the current project.",
         "operationId": "delete_knowledgebase",
         "requestBody": {
           "required": true,
@@ -2782,7 +2782,13 @@
           "knowledgebase_id": {
             "type": "string",
             "title": "Knowledgebase ID",
-            "description": "Knowledgebase ID to be deleted"
+            "description": "ID of the knowledge base to delete or remove from the current project"
+          },
+          "delete_all": {
+            "type": "boolean",
+            "title": "Delete All",
+            "description": "Whether to permanently delete the knowledge base. Defaults to false, which only removes the association with the project that owns the current API key. Set it to true to delete the knowledge base and its files, and remove its associations with all projects.",
+            "default": false
           }
         },
         "title": "DeleteKnowledgebaseRequest"
