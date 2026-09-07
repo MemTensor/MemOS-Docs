@@ -260,11 +260,29 @@ npx @deepseek-ai/dsh plugin --profile web add @memtensor/memos-cloud-dsh-plugin@
 
 安装、移除和版本管理都由 DSH 官方机制完成。
 
-### 2. 在 `~/.dsh/.credentials.yaml` 中写入 API Key
+### 2. 在 `~/.dsh/.env` 中配置 API Key 和用户 ID（推荐）
+
+创建或编辑 `~/.dsh/.env`：
+
+```dotenv
+MEMOS_API_KEY=mpg-your-key
+MEMOS_USER_ID=your-stable-user-id
+```
+
+`MEMOS_USER_ID` 用于记忆召回和写入，请为每位用户设置稳定且不同的 ID。未配置时默认为 `deepseek-harness-user`。已有用户升级时请沿用原 ID；此前使用默认值的用户可继续填写 `deepseek-harness-user`，以访问原有记忆。
+
+**从旧配置升级到 0.1.1：** 如果此前将 `MEMOS_API_KEY` 直接写在 `.credentials.yaml` 顶层，请将 Key 移到上述 `.env`，或使用下面的凭据格式。
+
+也可以将 API Key 保存在 `~/.dsh/.credentials.yaml` 的 `refs` 下。以下是新建文件的示例；编辑已有文件时，将 Key 合并到原有 `refs`，保留其他凭据和 `records`：
 
 ```yaml
-MEMOS_API_KEY: mpg-your-key
+version: 1
+refs:
+  MEMOS_API_KEY: mpg-your-key
+records: {}
 ```
+
+使用凭据文件时，用户 ID 仍通过 `.env` 中的 `MEMOS_USER_ID` 或 `settings.yaml` 中的 `memos-cloud.userId` 配置。
 
 ### 3. 在 `~/.dsh/settings.yaml` 中加入最小配置
 
@@ -273,13 +291,21 @@ memos-cloud:
   apiKeyEnv: MEMOS_API_KEY
 ```
 
+`apiKeyEnv` 填写凭据名称，实际 Key 保存在 `.env` 或 `.credentials.yaml` 中。`baseURL`、记忆召回和写入等普通选项在 `settings.yaml` 中配置。
+
+同一选项支持多个来源时，优先级从高到低为：`settings.yaml` 中直接设置的值 → 继承的进程环境变量 → `.credentials.yaml` 中的凭据 → 启动目录的 `.env` → `~/.dsh/.env` → 插件默认值。其中，凭据文件仅用于 API Key。更新 Key 后仍读取到旧值时，请检查优先级更高的配置来源。
+
 ### 4. 重新启动 DSH Web
+
+`.env` 在 DSH 启动时加载。修改配置后，先在运行 DSH 的终端按 `Ctrl+C` 停止服务，再启动：
 
 ```bash
 npx @deepseek-ai/dsh web
 ```
 
 安装后，DSH 会在每轮任务开始前自动获得相关的云端记忆。任务成功结束后，新的上下文和经验会继续沉淀。
+
+完整配置项与兼容性说明请参考 [DSH 插件 README](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin/blob/test/packages/dsh/README.md#configuration)。
 
 ## 开源项目进阶配置
 

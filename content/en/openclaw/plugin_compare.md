@@ -71,10 +71,13 @@ Use the API Key created above.
     npx @deepseek-ai/dsh plugin --profile web add @memtensor/memos-cloud-dsh-plugin@latest
     ```
 
-2. **Write the API Key to `~/.dsh/.credentials.yaml`**
-    ```yaml
-    MEMOS_API_KEY: mpg-your-key
+2. **Configure the API Key and User ID in `~/.dsh/.env`**
+    ```dotenv
+    MEMOS_API_KEY=mpg-your-key
+    MEMOS_USER_ID=your-stable-user-id
     ```
+
+    Use a stable, distinct ID for each user. Keep your existing ID when upgrading; if it was not configured, use the previous default, `deepseek-harness-user`.
 
 3. **Add the minimal config to `~/.dsh/settings.yaml`**
     ```yaml
@@ -83,11 +86,14 @@ Use the API Key created above.
     ```
 
 4. **Restart DSH Web**
+
+    After editing `.env`, press `Ctrl+C` in the original terminal to stop DSH, then start it again:
+
     ```bash
     npx @deepseek-ai/dsh web
     ```
 
-> For more details, see the [Cloud Plugin documentation](/openclaw/guide#quick-start).
+> For migration of older credential configurations to 0.1.1, the alternative `.credentials.yaml` format, and configuration precedence, see the [DeepSeek Harness setup guide](/openclaw/guide#deepseek-harness-setup).
 
 ### Local Plugin (one command)
 

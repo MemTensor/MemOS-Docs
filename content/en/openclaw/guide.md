@@ -260,11 +260,29 @@ npx @deepseek-ai/dsh plugin --profile web add @memtensor/memos-cloud-dsh-plugin@
 
 Install, removal, and version management stay on DSH's official plugin mechanism.
 
-### 2. Write the API Key to `~/.dsh/.credentials.yaml`
+### 2. Configure the API Key and User ID in `~/.dsh/.env` (Recommended)
+
+Create or edit `~/.dsh/.env`:
+
+```dotenv
+MEMOS_API_KEY=mpg-your-key
+MEMOS_USER_ID=your-stable-user-id
+```
+
+`MEMOS_USER_ID` identifies the user's memories for both recall and add. Use a stable, distinct ID for each user. The default is `deepseek-harness-user`. When upgrading, keep your existing ID; if you previously used the default, set it to `deepseek-harness-user` to keep accessing those memories.
+
+**Upgrading an older configuration to 0.1.1:** If you previously placed `MEMOS_API_KEY` at the top level of `.credentials.yaml`, move the key to `.env` as shown above, or use the credential format below.
+
+Alternatively, store the API Key under `refs` in `~/.dsh/.credentials.yaml`. The following example is for a new file. When editing an existing file, merge the key into its `refs` mapping and preserve other credentials and `records`:
 
 ```yaml
-MEMOS_API_KEY: mpg-your-key
+version: 1
+refs:
+  MEMOS_API_KEY: mpg-your-key
+records: {}
 ```
+
+With the credentials file, configure the user ID through `MEMOS_USER_ID` in `.env` or `memos-cloud.userId` in `settings.yaml`.
 
 ### 3. Add the minimal config to `~/.dsh/settings.yaml`
 
@@ -273,13 +291,21 @@ memos-cloud:
   apiKeyEnv: MEMOS_API_KEY
 ```
 
+Set `apiKeyEnv` to the credential name and store the actual key in `.env` or `.credentials.yaml`. Configure ordinary options such as `baseURL`, recall, and add in `settings.yaml`.
+
+For options with multiple supported sources, precedence is highest first: values set directly in `settings.yaml` → inherited process environment → credentials in `.credentials.yaml` → launch-directory `.env` → `~/.dsh/.env` → plugin defaults. The credentials file applies only to the API Key. If DSH still uses an old key after an update, check the higher-priority sources.
+
 ### 4. Restart DSH Web
+
+DSH loads `.env` at startup. After changing the configuration, press `Ctrl+C` in the terminal running DSH, then start it again:
 
 ```bash
 npx @deepseek-ai/dsh web
 ```
 
 After that, DSH retrieves relevant cloud memory before each task, and writes new context back after a successful turn.
+
+For all configuration options and compatibility details, see the [DSH plugin README](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin/blob/test/packages/dsh/README.md#configuration).
 
 ## Advanced Configuration for Open-Source Projects
 

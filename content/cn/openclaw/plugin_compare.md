@@ -71,10 +71,13 @@ openclaw gateway restart
     npx @deepseek-ai/dsh plugin --profile web add @memtensor/memos-cloud-dsh-plugin@latest
     ```
 
-2. **在 `~/.dsh/.credentials.yaml` 中写入 API Key**
-    ```yaml
-    MEMOS_API_KEY: mpg-your-key
+2. **在 `~/.dsh/.env` 中配置 API Key 和用户 ID**
+    ```dotenv
+    MEMOS_API_KEY=mpg-your-key
+    MEMOS_USER_ID=your-stable-user-id
     ```
+
+    每位用户使用稳定且不同的 ID。升级时沿用原 ID；此前未配置时，使用原默认值 `deepseek-harness-user`。
 
 3. **在 `~/.dsh/settings.yaml` 中加入最小配置**
     ```yaml
@@ -83,11 +86,14 @@ openclaw gateway restart
     ```
 
 4. **重新启动 DSH Web**
+
+    修改 `.env` 后，先在原终端按 `Ctrl+C` 停止 DSH，再启动：
+
     ```bash
     npx @deepseek-ai/dsh web
     ```
 
-> 更多信息请参考 [云插件文档](/cn/openclaw/guide#快速开始)
+> 0.1.1 的旧凭据配置迁移、`.credentials.yaml` 备选格式与配置优先级，请参考 [DeepSeek Harness 接入指南](/cn/openclaw/guide#deepseek-harness-接入)。
 
 ### 本地插件（一行命令）
 
