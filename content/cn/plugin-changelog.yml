@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.19
+    date: '2026-09-08'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**修复 OpenClaw 安装**：恢复了 OpenClaw 的安装和自动内存钩子功能'
   - name: v2.0.18
     date: '2026-09-01'
     products:
