@@ -1,4 +1,12 @@
 versions:
+  - name: v2.0.19
+    date: '2026-09-08'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Fixed OpenClaw Installation**: Restored the installation and automatic memory hooks for OpenClaw'
   - name: v2.0.18
     date: '2026-09-01'
     products:
