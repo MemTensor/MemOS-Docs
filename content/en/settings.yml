@@ -172,4 +172,6 @@ nav:
       - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
       - "(ri:puzzle-2-line) Coze Plugin Tools": usecase/frameworks/coze_plugin.md
 
-    - "(ri:article-line) Blog": []
+    - "(ri:article-line) Blog":
+      - "Agent Memory Is Not RAG: A 2026 Production Field Guide": usecase/blog/agent_memory_is_not_rag.md
+      - "Claude Made Memory Editable. Production Agents Still Need a Governed Memory Layer": usecase/blog/claude_editable_memory_governed_layer.md
