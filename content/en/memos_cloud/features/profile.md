@@ -68,7 +68,7 @@ sequenceDiagram
 
 The diagram above shows the full interaction flow between the developer, end user, AI product, and MemOS:
 
-1. **Prepare a template**: create a Profile template in the dashboard and define the field structure;
+1. **Prepare a template**: create a Profile template in the dashboard or via API and define the field structure;
 2. **Bind to a subject**: bind the template to a user or Agent to create their own Profile instance;
 3. **Retrieve and use**: recall memories relevant to the current question, including the Profile, and add them to the LLM context to generate a reply that better understands the user;
 4. **Auto-update**: as more messages are added, MemOS extracts information from the conversation and updates the corresponding fields in the instance.
@@ -85,7 +85,7 @@ For the complete list of API fields, formats, and other details, see the [Bind P
 
 ### Create a template
 
-Profile templates are created and maintained in the [MemOS Dashboard](https://memos-dashboard.openmem.net). Templates are described in JSON, with **up to three levels** of nesting:
+Profile templates can be created and maintained in the [MemOS Dashboard](https://memos-dashboard.openmem.net) or via API. Templates are described in JSON, with **up to three levels** of nesting:
 
 ```json
 {
@@ -103,8 +103,86 @@ Profile templates are created and maintained in the [MemOS Dashboard](https://me
 - `value`: the field's value; leave it empty or provide a default;
 - `algorithm_updatable`: marks whether the field can be automatically updated by the algorithm from conversations.
 
+Create a template via API:
+
+::code-group
+
+```python [Python (HTTP)]
+import requests
+
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
+
+data = {
+    "name": "User Profile",
+    "metadata": {
+        "Basic Info": {
+            "Name": {"value": "", "algorithm_updatable": False},
+            "Occupation": {"value": "", "algorithm_updatable": True},
+            "Location": {"value": "", "algorithm_updatable": True}
+        },
+        "Personality Tags": {
+            "Three keywords": {"value": "", "algorithm_updatable": True}
+        }
+    }
+}
+
+res = requests.post(
+    f"{BASE_URL}/add/profile_template",
+    headers={"Authorization": f"Token {API_KEY}"},
+    json=data
+)
+print(res.json())
+```
+
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/add/profile_template \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "User Profile",
+    "metadata": {
+      "Basic Info": {
+        "Name": {"value": "", "algorithm_updatable": false},
+        "Occupation": {"value": "", "algorithm_updatable": true},
+        "Location": {"value": "", "algorithm_updatable": true}
+      },
+      "Personality Tags": {
+        "Three keywords": {"value": "", "algorithm_updatable": true}
+      }
+    }
+  }'
+```
+
+::
+
+Example response:
+
+```json
+{
+  "code": 0,
+  "data": { "profile_template_id": "tpl_user_001" },
+  "message": "ok"
+}
+```
+
+Once created, use the returned template ID to bind, query, update, and delete the template. The full set of template management APIs:
+
+| Operation | API | Description |
+| --- | --- | --- |
+| Create a template | [Add Profile Template](/api_docs/core/add_profile_template) | Define the attribute structure, default values, and per-field auto-update settings |
+| List templates | [List Profile Templates](/api_docs/core/list_profile_template) | Paginated list of templates in the project |
+| Get template details | [Get Profile Template](/api_docs/core/get_profile_template) | Full template structure and binding count |
+| Update a template | [Update Profile Template](/api_docs/core/update_profile_template) | Update the name or attribute structure; behaves the same as editing in the dashboard |
+| Delete a template | [Delete Profile Template](/api_docs/core/delete_profile_template) | Delete the template along with all bound instances |
+
+:::note
+Python SDK methods for template management are under development. Please call the template management APIs over HTTP for now; SDK examples for binding, editing, and deleting instances are shown below.
+:::
+
 :::warning
-Editing or deleting a field in a template affects that field across every Profile instance already bound to the template. Be careful when modifying a template that has bound instances.
+Editing or deleting a field in a template affects that field across every Profile instance already bound to the template. Be careful when modifying a template that has bound instances. Deleting a template also deletes all of its bound instances; to delete only the instance of a specific user or Agent, use [Delete Profile](/api_docs/core/delete_profile).
 :::
 
 ### Bind a user to a template

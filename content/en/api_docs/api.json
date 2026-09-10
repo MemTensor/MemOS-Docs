@@ -757,6 +757,208 @@
         }
       }
     },
+    "/add/profile_template": {
+      "post": {
+        "summary": "Create Profile Template",
+        "description": "Create a Profile template in the project of the API Key and return the template ID. A template defines the field structure, default values, and whether each field can be updated by the algorithm. Once created, bind it to users or Agents via Bind Profile Template to create Profile instances. Each call creates a new template.",
+        "operationId": "add_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddProfileTemplateRequest"
+              },
+              "example": {
+                "name": "Customer Service User Profile",
+                "metadata": {
+                  "Basic Info": {
+                    "Name": {
+                      "value": "",
+                      "algorithm_updatable": false
+                    },
+                    "Occupation": {
+                      "value": "",
+                      "algorithm_updatable": true
+                    }
+                  },
+                  "Service Preferences": {
+                    "Preferred Contact Time": {
+                      "value": "Weekday daytime",
+                      "algorithm_updatable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/list/profile_template": {
+      "post": {
+        "summary": "List Profile Templates",
+        "description": "Return a paginated list of Profile template summaries in the project of the API Key, sorted by creation time descending; templates created at the same time are sorted by template ID descending. Returns an empty array when the project has no templates; when the page number is out of range, returns an empty array with the actual total and page count.",
+        "operationId": "list_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListProfileTemplateRequest"
+              },
+              "example": {
+                "page": 1,
+                "size": 10
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get/profile_template": {
+      "post": {
+        "summary": "Get Profile Template",
+        "description": "Return the full structure and summary of a Profile template. Use instance_count to understand the template's scope of impact; read instance field values via the memory query APIs.",
+        "operationId": "get_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetProfileTemplateRequest"
+              },
+              "example": {
+                "profile_template_id": "tpl_user_001"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/update/profile_template": {
+      "post": {
+        "summary": "Update Profile Template",
+        "description": "Update the template name or attribute structure. Behaves the same as editing in the Dashboard: changes are synced to every Profile instance bound to the template. New fields are filled with the template's values and settings; modified field values or algorithm-updatable settings overwrite the corresponding fields; removed fields and their saved values are deleted; unchanged fields stay as they are.",
+        "operationId": "update_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileTemplateRequest"
+              },
+              "example": {
+                "profile_template_id": "tpl_user_001",
+                "name": "Customer Service User Profile",
+                "metadata": {
+                  "Basic Info": {
+                    "Name": {
+                      "value": "",
+                      "algorithm_updatable": false
+                    },
+                    "Occupation": {
+                      "value": "",
+                      "algorithm_updatable": true
+                    },
+                    "City of Residence": {
+                      "value": "",
+                      "algorithm_updatable": true
+                    }
+                  },
+                  "Service Preferences": {
+                    "Preferred Contact Time": {
+                      "value": "Weekday daytime",
+                      "algorithm_updatable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete/profile_template": {
+      "post": {
+        "summary": "Delete Profile Template",
+        "description": "Delete a Profile template along with all of its active instances and bindings. Other templates, instances of other templates bound to the same subjects, and other memories (facts, preferences, etc.) are unaffected. After deletion, newly added messages are no longer extracted into this template. To delete only the instance of a specific user or Agent, use /delete/profile.",
+        "operationId": "delete_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteProfileTemplateRequest"
+              },
+              "example": {
+                "profile_template_id": "tpl_user_001"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/update/memory": {
       "post": {
         "summary": "Update Memory",
@@ -3859,6 +4061,374 @@
           }
         },
         "title": "DeleteProfileResponse"
+      },
+      "ProfileTemplateMetadata": {
+        "type": "object",
+        "title": "Metadata",
+        "description": "Attribute tree structure with up to three levels of nesting; leaf nodes are field value objects.",
+        "properties": {
+          "{category name}": {
+            "type": "object",
+            "description": "Attribute category (optional intermediate level); the key is a user-defined category name. Skip this level if no category is needed and pass field value objects directly.",
+            "properties": {
+              "{field name}": {
+                "$ref": "#/components/schemas/ProfileFieldValue"
+              }
+            }
+          }
+        }
+      },
+      "AddProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "metadata"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Template name. Must contain at least one character after trimming leading and trailing whitespace."
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ProfileTemplateMetadata"
+          }
+        },
+        "title": "AddProfileTemplateRequest"
+      },
+      "AddProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code.",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "profile_template_id": {
+                "type": "string",
+                "title": "Profile Template ID",
+                "description": "ID of the newly created template. Use this ID for subsequent get, bind, update, and delete operations.",
+                "example": "tpl_user_001"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message.",
+            "example": "ok"
+          }
+        },
+        "title": "AddProfileTemplateResponse"
+      },
+      "ProfileTemplateSummary": {
+        "type": "object",
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "Template ID."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Template name."
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project ID",
+            "description": "ID of the project the template belongs to."
+          },
+          "instance_count": {
+            "type": "integer",
+            "title": "Instance Count",
+            "description": "Number of active instances currently bound to the template."
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "Template creation time in ISO 8601 format."
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "Template's last update time in ISO 8601 format."
+          }
+        },
+        "title": "ProfileTemplateSummary"
+      },
+      "ProfileTemplateDetail": {
+        "type": "object",
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "Template ID."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Template name."
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project ID",
+            "description": "ID of the project the template belongs to."
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ProfileTemplateMetadata"
+          },
+          "instance_count": {
+            "type": "integer",
+            "title": "Instance Count",
+            "description": "Number of active instances currently bound to the template."
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "Template creation time in ISO 8601 format."
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "Template's last update time in ISO 8601 format."
+          }
+        },
+        "title": "ProfileTemplateDetail"
+      },
+      "ListProfileTemplateRequest": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "Page number, starting from 1.",
+            "default": 1
+          },
+          "size": {
+            "type": "integer",
+            "title": "Size",
+            "description": "Items per page, from 1 to 100.",
+            "default": 10
+          }
+        },
+        "title": "ListProfileTemplateRequest"
+      },
+      "ListProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code.",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "profile_templates": {
+                "type": "array",
+                "title": "Profile Templates",
+                "description": "List of template summaries.",
+                "items": {
+                  "$ref": "#/components/schemas/ProfileTemplateSummary"
+                }
+              },
+              "total": {
+                "type": "integer",
+                "title": "Total",
+                "description": "Total number of templates in the project."
+              },
+              "current": {
+                "type": "integer",
+                "title": "Current",
+                "description": "Page number of this response."
+              },
+              "size": {
+                "type": "integer",
+                "title": "Size",
+                "description": "Items per page in this response."
+              },
+              "pages": {
+                "type": "integer",
+                "title": "Pages",
+                "description": "Total number of pages."
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message.",
+            "example": "ok"
+          }
+        },
+        "title": "ListProfileTemplateResponse"
+      },
+      "GetProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id"
+        ],
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "ID of a template in the current project."
+          }
+        },
+        "title": "GetProfileTemplateRequest"
+      },
+      "GetProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code.",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "profile_template": {
+                "$ref": "#/components/schemas/ProfileTemplateDetail"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message.",
+            "example": "ok"
+          }
+        },
+        "title": "GetProfileTemplateResponse"
+      },
+      "UpdateProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id",
+          "name",
+          "metadata"
+        ],
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "ID of a template in the current project."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The new template name."
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ProfileTemplateMetadata"
+          }
+        },
+        "title": "UpdateProfileTemplateRequest"
+      },
+      "UpdateProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code.",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Whether the update succeeded.",
+                "example": true
+              },
+              "profile_template_id": {
+                "type": "string",
+                "title": "Profile Template ID",
+                "description": "ID of the updated template."
+              },
+              "affected_instances": {
+                "type": "integer",
+                "title": "Affected Instances",
+                "description": "Number of bound Profile instances synced in this update."
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message.",
+            "example": "ok"
+          }
+        },
+        "title": "UpdateProfileTemplateResponse"
+      },
+      "DeleteProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id"
+        ],
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "ID of a template in the current project."
+          }
+        },
+        "title": "DeleteProfileTemplateRequest"
+      },
+      "DeleteProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "API status code.",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "Whether the deletion succeeded.",
+                "example": true
+              },
+              "profile_template_id": {
+                "type": "string",
+                "title": "Profile Template ID",
+                "description": "ID of the deleted template."
+              },
+              "deleted_instances": {
+                "type": "integer",
+                "title": "Deleted Instances",
+                "description": "Number of active instances deleted in this operation; 0 when the template had no bound instances."
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "API response message.",
+            "example": "ok"
+          }
+        },
+        "title": "DeleteProfileTemplateResponse"
       },
       "UpdateMemoryRequest": {
         "type": "object",

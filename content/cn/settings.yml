@@ -136,6 +136,11 @@ nav:
       - "(ri:feedback-line) Add Feedback": api_docs/message/add_feedback.md
 
     - "(ri:node-tree) 属性记忆":
+      - "(ri:add-box-line) Add Profile Template": api_docs/core/add_profile_template.md
+      - "(ri:file-list-line) List Profile Templates": api_docs/core/list_profile_template.md
+      - "(ri:file-search-line) Get Profile Template": api_docs/core/get_profile_template.md
+      - "(ri:edit-line) Update Profile Template": api_docs/core/update_profile_template.md
+      - "(ri:delete-bin-line) Delete Profile Template": api_docs/core/delete_profile_template.md
       - "(ri:link) Bind Profile Template": api_docs/core/bind_profile_template.md
       - "(ri:edit-2-line) Edit Profile": api_docs/core/edit_profile.md
       - "(ri:delete-bin-2-line) Delete Profile": api_docs/core/delete_profile.md

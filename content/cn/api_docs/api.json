@@ -757,6 +757,208 @@
         }
       }
     },
+    "/add/profile_template": {
+      "post": {
+        "summary": "创建属性记忆模板",
+        "description": "在 API Key 所属项目中创建属性记忆模板，返回模板 ID。模板用于定义属性字段结构、字段默认值及是否允许算法自动更新；创建成功后可通过绑定接口为用户或 Agent 创建属性记忆实例。每次调用都会生成一个新模板。",
+        "operationId": "add_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddProfileTemplateRequest"
+              },
+              "example": {
+                "name": "客服用户属性",
+                "metadata": {
+                  "基础信息": {
+                    "姓名": {
+                      "value": "",
+                      "algorithm_updatable": false
+                    },
+                    "职业": {
+                      "value": "",
+                      "algorithm_updatable": true
+                    }
+                  },
+                  "服务偏好": {
+                    "联系时段": {
+                      "value": "工作日白天",
+                      "algorithm_updatable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/list/profile_template": {
+      "post": {
+        "summary": "获取属性记忆模板列表",
+        "description": "分页返回 API Key 所属项目下的属性记忆模板摘要，按创建时间倒序排列；创建时间相同的按模板 ID 倒序排列。项目无模板时返回空数组；页码超出范围时返回空数组，并保留实际总数和总页数。",
+        "operationId": "list_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListProfileTemplateRequest"
+              },
+              "example": {
+                "page": 1,
+                "size": 10
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get/profile_template": {
+      "post": {
+        "summary": "获取属性记忆模板详情",
+        "description": "返回指定属性记忆模板的完整结构和摘要信息。instance_count 用于了解模板影响范围；实例的属性值通过记忆查询接口读取。",
+        "operationId": "get_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetProfileTemplateRequest"
+              },
+              "example": {
+                "profile_template_id": "tpl_user_001"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/update/profile_template": {
+      "post": {
+        "summary": "修改属性记忆模板",
+        "description": "修改模板名称或属性结构，更新行为与控制台（Dashboard）一致，变更同步到所有绑定该模板的用户或 Agent 属性记忆：新增字段按模板中的值和自动更新设置填入；修改字段的值或自动更新设置会覆盖对应字段；删除字段会同时删除对应字段及已保存的值；未修改的字段保持原样。",
+        "operationId": "update_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileTemplateRequest"
+              },
+              "example": {
+                "profile_template_id": "tpl_user_001",
+                "name": "客服用户属性",
+                "metadata": {
+                  "基础信息": {
+                    "姓名": {
+                      "value": "",
+                      "algorithm_updatable": false
+                    },
+                    "职业": {
+                      "value": "",
+                      "algorithm_updatable": true
+                    },
+                    "常住城市": {
+                      "value": "",
+                      "algorithm_updatable": true
+                    }
+                  },
+                  "服务偏好": {
+                    "联系时段": {
+                      "value": "工作日白天",
+                      "algorithm_updatable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete/profile_template": {
+      "post": {
+        "summary": "删除属性记忆模板",
+        "description": "删除属性记忆模板，同时删除该模板的全部有效实例和绑定关系。其他模板、同一主体绑定的其他模板实例，以及事实、偏好等其他记忆保持原状。删除成功后，后续消息写入不再按该模板抽取属性。只需删除某个用户或 Agent 的实例时，请使用 /delete/profile。",
+        "operationId": "delete_profile_template",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteProfileTemplateRequest"
+              },
+              "example": {
+                "profile_template_id": "tpl_user_001"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteProfileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/update/memory": {
       "post": {
         "summary": "修改记忆",
@@ -3816,6 +4018,374 @@
           }
         },
         "title": "DeleteProfileRequest"
+      },
+      "ProfileTemplateMetadata": {
+        "type": "object",
+        "title": "Metadata",
+        "description": "属性树结构，最多三层嵌套，叶子节点为字段值对象。",
+        "properties": {
+          "{分类名}": {
+            "type": "object",
+            "description": "属性分类（可选的中间层），键名为用户自定义的分类名称。如无需分类可跳过此层，直接传字段值对象。",
+            "properties": {
+              "{字段名}": {
+                "$ref": "#/components/schemas/ProfileFieldValue"
+              }
+            }
+          }
+        }
+      },
+      "AddProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "metadata"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "模板名称，去除首尾空白后至少包含一个字符。"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ProfileTemplateMetadata"
+          }
+        },
+        "title": "AddProfileTemplateRequest"
+      },
+      "AddProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "接口状态码。",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "profile_template_id": {
+                "type": "string",
+                "title": "Profile Template ID",
+                "description": "新建模板的 ID，后续查询、绑定、修改和删除均使用该 ID。",
+                "example": "tpl_user_001"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "接口提示信息。",
+            "example": "ok"
+          }
+        },
+        "title": "AddProfileTemplateResponse"
+      },
+      "ProfileTemplateSummary": {
+        "type": "object",
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "模板 ID。"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "模板名称。"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project ID",
+            "description": "模板所属项目 ID。"
+          },
+          "instance_count": {
+            "type": "integer",
+            "title": "Instance Count",
+            "description": "当前绑定该模板的有效实例数量。"
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "模板创建时间，ISO 8601 格式。"
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "模板最近更新时间，ISO 8601 格式。"
+          }
+        },
+        "title": "ProfileTemplateSummary"
+      },
+      "ProfileTemplateDetail": {
+        "type": "object",
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "模板 ID。"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "模板名称。"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project ID",
+            "description": "模板所属项目 ID。"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ProfileTemplateMetadata"
+          },
+          "instance_count": {
+            "type": "integer",
+            "title": "Instance Count",
+            "description": "当前绑定该模板的有效实例数量。"
+          },
+          "create_time": {
+            "type": "string",
+            "title": "Create Time",
+            "description": "模板创建时间，ISO 8601 格式。"
+          },
+          "update_time": {
+            "type": "string",
+            "title": "Update Time",
+            "description": "模板最近更新时间，ISO 8601 格式。"
+          }
+        },
+        "title": "ProfileTemplateDetail"
+      },
+      "ListProfileTemplateRequest": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "页码，从 1 开始。",
+            "default": 1
+          },
+          "size": {
+            "type": "integer",
+            "title": "Size",
+            "description": "每页条数，取值 1～100。",
+            "default": 10
+          }
+        },
+        "title": "ListProfileTemplateRequest"
+      },
+      "ListProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "接口状态码。",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "profile_templates": {
+                "type": "array",
+                "title": "Profile Templates",
+                "description": "模板摘要列表。",
+                "items": {
+                  "$ref": "#/components/schemas/ProfileTemplateSummary"
+                }
+              },
+              "total": {
+                "type": "integer",
+                "title": "Total",
+                "description": "项目内模板总数。"
+              },
+              "current": {
+                "type": "integer",
+                "title": "Current",
+                "description": "本次返回的页码。"
+              },
+              "size": {
+                "type": "integer",
+                "title": "Size",
+                "description": "本次每页条数。"
+              },
+              "pages": {
+                "type": "integer",
+                "title": "Pages",
+                "description": "总页数。"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "接口提示信息。",
+            "example": "ok"
+          }
+        },
+        "title": "ListProfileTemplateResponse"
+      },
+      "GetProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id"
+        ],
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "当前项目内的模板 ID。"
+          }
+        },
+        "title": "GetProfileTemplateRequest"
+      },
+      "GetProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "接口状态码。",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "profile_template": {
+                "$ref": "#/components/schemas/ProfileTemplateDetail"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "接口提示信息。",
+            "example": "ok"
+          }
+        },
+        "title": "GetProfileTemplateResponse"
+      },
+      "UpdateProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id",
+          "name",
+          "metadata"
+        ],
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "当前项目内的模板 ID。"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "修改后的模板名称。"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ProfileTemplateMetadata"
+          }
+        },
+        "title": "UpdateProfileTemplateRequest"
+      },
+      "UpdateProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "接口状态码。",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "是否操作成功。",
+                "example": true
+              },
+              "profile_template_id": {
+                "type": "string",
+                "title": "Profile Template ID",
+                "description": "被修改的模板 ID。"
+              },
+              "affected_instances": {
+                "type": "integer",
+                "title": "Affected Instances",
+                "description": "本次同步处理的已绑定属性记忆数量。"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "接口提示信息。",
+            "example": "ok"
+          }
+        },
+        "title": "UpdateProfileTemplateResponse"
+      },
+      "DeleteProfileTemplateRequest": {
+        "type": "object",
+        "required": [
+          "profile_template_id"
+        ],
+        "properties": {
+          "profile_template_id": {
+            "type": "string",
+            "title": "Profile Template ID",
+            "description": "当前项目内的模板 ID。"
+          }
+        },
+        "title": "DeleteProfileTemplateRequest"
+      },
+      "DeleteProfileTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code",
+            "description": "接口状态码。",
+            "example": 0
+          },
+          "data": {
+            "type": "object",
+            "title": "Data",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "title": "Success",
+                "description": "是否操作成功。",
+                "example": true
+              },
+              "profile_template_id": {
+                "type": "string",
+                "title": "Profile Template ID",
+                "description": "被删除的模板 ID。"
+              },
+              "deleted_instances": {
+                "type": "integer",
+                "title": "Deleted Instances",
+                "description": "本次删除的有效实例数量，无绑定实例删除成功时为 0。"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "接口提示信息。",
+            "example": "ok"
+          }
+        },
+        "title": "DeleteProfileTemplateResponse"
       },
       "UpdateMemoryRequest": {
         "type": "object",

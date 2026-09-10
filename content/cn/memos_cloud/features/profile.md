@@ -69,7 +69,7 @@ sequenceDiagram
 
 上图展示了开发者、终端用户、AI 产品 与 MemOS 的完整交互流程：
 
-1. **准备模板**：在控制台创建属性记忆模板，定义字段结构；
+1. **准备模板**：在控制台或通过 API 创建属性记忆模板，定义字段结构；
 2. **绑定到主体**：为 用户/ AI 角色 绑定模板，生成属于 TA 的属性记忆实例；
 3. **检索使用**：召回与当前问题相关的记忆，包含属性记忆，拼接到大模型上下文中，生成更懂用户的回复；
 4. **自动更新**：后续添加消息时，MemOS 从对话中抽取信息，更新实例中对应的属性字段值。
@@ -86,7 +86,7 @@ sequenceDiagram
 
 ### 创建模板
 
-属性记忆模板在 [MemOS 控制台](https://memos-dashboard.openmem.net) 中创建和维护。模板使用 JSON 描述，**最多三层**嵌套：
+属性记忆模板可以在 [MemOS 控制台](https://memos-dashboard.openmem.net) 中创建和维护，也可以通过 API 创建。模板使用 JSON 描述，**最多三层**嵌套：
 
 ```json
 {
@@ -104,8 +104,86 @@ sequenceDiagram
 - `value`：属性字段值，可以留空或填入默认值；
 - `algorithm_updatable`：标记该属性是否允许算法从对话中自动更新。
 
+通过 API 创建模板：
+
+::code-group
+
+```python [Python (HTTP)]
+import requests
+
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://memos.memtensor.cn/api/openmem/v1"
+
+data = {
+    "name": "用户画像",
+    "metadata": {
+        "基础信息": {
+            "姓名": {"value": "", "algorithm_updatable": False},
+            "职业": {"value": "", "algorithm_updatable": True},
+            "居住地": {"value": "", "algorithm_updatable": True}
+        },
+        "性格标签": {
+            "三个关键词": {"value": "", "algorithm_updatable": True}
+        }
+    }
+}
+
+res = requests.post(
+    f"{BASE_URL}/add/profile_template",
+    headers={"Authorization": f"Token {API_KEY}"},
+    json=data
+)
+print(res.json())
+```
+
+```bash [Curl]
+curl --request POST \
+  --url https://memos.memtensor.cn/api/openmem/v1/add/profile_template \
+  --header 'Authorization: Token YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "用户画像",
+    "metadata": {
+      "基础信息": {
+        "姓名": {"value": "", "algorithm_updatable": false},
+        "职业": {"value": "", "algorithm_updatable": true},
+        "居住地": {"value": "", "algorithm_updatable": true}
+      },
+      "性格标签": {
+        "三个关键词": {"value": "", "algorithm_updatable": true}
+      }
+    }
+  }'
+```
+
+::
+
+响应示例：
+
+```json
+{
+  "code": 0,
+  "data": { "profile_template_id": "tpl_user_001" },
+  "message": "ok"
+}
+```
+
+创建成功后，使用返回的模板 ID 进行绑定、查询、修改和删除。模板管理的完整 API 如下：
+
+| 操作 | 接口 | 说明 |
+| --- | --- | --- |
+| 创建模板 | [Add Profile Template](/api_docs/core/add_profile_template) | 创建属性结构，设置字段默认值和是否允许自动更新 |
+| 获取模板列表 | [List Profile Templates](/api_docs/core/list_profile_template) | 分页查看项目内的模板 |
+| 获取模板详情 | [Get Profile Template](/api_docs/core/get_profile_template) | 查看模板完整结构和绑定数量 |
+| 修改模板 | [Update Profile Template](/api_docs/core/update_profile_template) | 修改名称或属性结构，与控制台更新行为一致 |
+| 删除模板 | [Delete Profile Template](/api_docs/core/delete_profile_template) | 删除模板，同时删除全部绑定实例 |
+
+:::note
+Python SDK 的模板管理方法正在开发中，请暂时通过 HTTP 方式调用模板管理接口；绑定、编辑、删除实例等接口的 SDK 示例见下文。
+:::
+
 :::warning
-修改或删除模板中的字段，会影响所有绑定过该模板的属性记忆实例字段，请谨慎修改已绑定示例的属性树模板。
+修改或删除模板中的字段，会影响所有绑定过该模板的属性记忆实例字段，请谨慎修改已绑定实例的属性树模板。删除模板会同时删除该模板的全部绑定实例；只需删除某个用户或 Agent 的实例时，请使用 [Delete Profile](/api_docs/core/delete_profile)。
 :::
 
 ### 绑定用户到模板
