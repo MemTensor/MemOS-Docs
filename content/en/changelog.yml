@@ -1,4 +1,14 @@
 versions:
+  - name: v2.0.34
+    date: '2026-09-10'
+    products:
+      opensource:
+        New Features:
+          - type: Open Source Project
+            changedInfo:
+              - Added LLM rate limiting capability based on Redis GCRA, supports independent configuration per model, sharing quotas across uvicorn workers, and smoothing burst requests (default off, can be enabled flexibly via environment variables).
+              - Supports local bounded queuing for LLM requests, with timeout and retry options.
+              - Provides synchronized documentation in both Chinese and English, along with environment examples.
   - name: v2.0.33
     date: '2026-09-03'
     products:
