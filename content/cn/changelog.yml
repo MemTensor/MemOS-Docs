@@ -1,4 +1,14 @@
 versions:
+  - name: v2.0.34
+    date: '2026-09-10'
+    products:
+      opensource:
+        New Features:
+          - type: 开源项目
+            changedInfo:
+              - 新增基于 Redis GCRA 的 LLM 限流能力，支持按模型独立配置、跨uvicorn worker共享额度，突发请求平滑化（默认关闭，可通过环境变量灵活启用）
+              - 支持LLM请求本地有界排队、等待超时与重试
+              - 同步提供中英文说明文档和env示例
   - name: v2.0.33
     date: '2026-09-03'
     products:
