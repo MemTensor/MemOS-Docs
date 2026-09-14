@@ -11,10 +11,10 @@ desc: 分离用户记忆、Agent Skill 与政策知识库，让客服 Agent 跨�
 
 ## 方案要点
 
-- 用户事实和偏好写入用户记忆，使用稳定 `user_id` 跨会话召回。
-- 每轮任务记录都提交给客服 Agent 的独立记忆，由 MemOS 判断是否生成或更新 Skill。
-- 售后政策写入政策知识库，与 Agent Skill 一起从客服 Agent 视角检索。
-- 生成回复前执行两路召回：一路读取用户事实和偏好，一路读取 Agent Skill 和政策。
+- 用户事实和偏好写入用户记忆：写入时同时携带 `user_id` 与 `agent_id`，召回时用 `related_id` 精确选中当前用户。
+- 每轮任务记录都提交给客服 Agent 的独立记忆，只请求生成 Skill，由 MemOS 判断是否生成或更新。
+- 售后政策写入政策知识库，通过 `knowledgebase_ids` 加入同一次召回。
+- 生成回复前只调用一次 `/search/memory`：用户事实、偏好、Agent Skill 和政策一次取回。
 - 当前会话历史由 Agent 自己维护，MemOS 负责跨会话记忆。
 
 ## 我们要构建什么
@@ -54,20 +54,22 @@ DAY 4 验证用户事实和偏好能否跨会话延续。DAY 7 换成另一位�
   │
   ├─ Agent 从业务应用读取当前会话历史
   │
-  ├─ 召回一：user_id → 用户事实、偏好
-  │
-  ├─ 召回二：agent_id → 通用 Skill + 政策知识库
+  ├─ 一次组合召回：agent_id + knowledgebase_ids
+  │   filter 选中当前用户记忆（related_id）与 Agent Skill（SkillMemory）
+  │   → 用户事实、偏好、Skill、政策
   │
   ├─ 合并上下文并执行订单、工单、通知等业务工具
   │
   ├─ 大模型根据工具结果生成最终回复
   │
-  ├─ 写入一：user_id → 事实、偏好
+  ├─ 写入一：user_id + agent_id → 事实、偏好
   │
   └─ 写入二：agent_id → 请求生成或更新 Skill
 ```
 
-两次写入使用同一份任务记录，但通过 `allow_memory_view` 指定不同的记忆类型。用户视角不生成 Skill，Agent 视角不重复生成用户事实和偏好。
+两次写入使用同一份任务记录，但通过 `allow_memory_view` 指定不同的记忆类型。用户写入同时携带 `user_id` 与 `agent_id`，让记忆归属当前用户、并挂到客服 Agent 的记忆空间下；Skill 写入只传 `agent_id`，不与某个用户绑定。用户视角不生成 Skill，Agent 视角不重复生成用户事实和偏好。
+
+召回合并为一次 `/search/memory`：`related_id` 把用户事实和偏好限定在当前用户，`SkillMemory` 让 Agent Skill 跨用户返回，政策知识库通过 `knowledgebase_ids` 加入同一次检索。
 
 ## 接入前准备
 
@@ -133,26 +135,26 @@ assistant = CustomerServiceAssistant(policy_kb_id)
 
 ## 第二步：划分写入类型
 
-用户与 Agent 使用不同的写入视图：
+用户与 Agent 使用不同的写入视图；召回时三类视图一次取回：
 
 ```python
 USER_WRITE_VIEWS = ["detail_factual", "preference"]
 AGENT_SKILL_WRITE_VIEWS = ["skill"]
-USER_CONTEXT_VIEWS = ["detail_factual", "preference"]
-AGENT_CONTEXT_VIEWS = ["detail_factual", "skill"]
+CONTEXT_VIEWS = ["detail_factual", "preference", "skill"]
 ```
 
 这样，同一份任务记录可以写入两个记忆空间，又不会重复生成同类型的记忆。
 
 ### 写入用户事实和偏好
 
-第一条 `/add/message` 只传 `user_id`：
+第一条 `/add/message` 同时传入 `user_id` 和 `agent_id`：
 
 ```python
 def add_user_memories(self, messages, user_id, conversation_id, channel):
     """第一次写入：只在用户视角生成事实与偏好。"""
     user_data = {
         "user_id": user_id,
+        "agent_id": AGENT_ID,
         "conversation_id": conversation_id,
         "info": {"channel": channel, "scene": "consumer_support"},
         "allow_memory_view": USER_WRITE_VIEWS,
@@ -161,7 +163,7 @@ def add_user_memories(self, messages, user_id, conversation_id, channel):
     self._post_memory(user_data, "用户事实与偏好", timeout_seconds=120)
 ```
 
-MemOS 根据对话内容判断是否形成事实或偏好。某轮对话没有表达稳定偏好时，可以只生成事实。
+记忆归属当前 `user_id`，同时挂到客服 Agent 的记忆空间下，后续才能在 Agent 视角的组合召回中通过 `related_id` 精确选中。MemOS 根据对话内容判断是否形成事实或偏好。某轮对话没有表达稳定偏好时，可以只生成事实。
 
 ### 写入 Agent Skill
 
@@ -181,7 +183,7 @@ def add_agent_skill(self, messages, conversation_id, channel):
     self._post_memory(skill_data, "Agent Skill", timeout_seconds=300)
 ```
 
-每轮回答后都会执行这次写入。调用方只声明本次写入允许生成 Skill，不根据对话内容预判是否应该沉淀；MemOS 会结合任务轨迹和已有 Skill，自行决定生成、更新或跳过。
+Skill 写入不与任何用户绑定，只在 Agent 视角存在，因此可以跨用户复用。每轮回答后都会执行这次写入。调用方只声明本次写入允许生成 Skill，不根据对话内容预判是否应该沉淀；MemOS 会结合任务轨迹和已有 Skill，自行决定生成、更新或跳过。
 
 ## 第三步：让 Skill 保持通用
 
@@ -196,42 +198,32 @@ Skill 抽取由 MemOS 完成。可以通过 `custom_extract_prompt.skill` 补充
 
 MemOS 会结合已有 Skill 完成相似性判断和更新，调用方不需要管理 Skill ID 或实现合并逻辑。
 
-## 第四步：执行两路召回
+## 第四步：执行一次组合召回
 
-生成回复前，客服助手分别召回用户上下文，以及 Agent Skill 与政策知识。
-
-### 召回用户事实和偏好
-
-第一路以 `user_id` 作为主体，只检索当前用户的事实和偏好：
+生成回复前，客服助手只调用一次 `/search/memory`，同时取回用户事实、偏好、Agent Skill 和政策知识：
 
 ```python
 context_data = {
     "query": query,
-    "user_id": user_id,
-    "conversation_id": conversation_id,
-    "include_memory_view": USER_CONTEXT_VIEWS,
-    "memory_limit_number": 9,
-    "preference_limit_number": 6,
-}
-```
-
-返回结果只包含当前用户的事实和偏好。
-
-### 召回 Agent Skill 和政策
-
-第二路以稳定的 `agent_id` 作为主体，并把政策知识库加入同一次检索：
-
-```python
-agent_data = {
-    "query": f"处理当前客服请求所需的通用方法：{query}",
     "agent_id": AGENT_ID,
     "knowledgebase_ids": self.knowledgebase_ids,
-    "include_memory_view": AGENT_CONTEXT_VIEWS,
+    "include_memory_view": CONTEXT_VIEWS,
     "memory_limit_number": 9,
+    "preference_limit_number": 6,
+    "filter": {
+        "user": {
+            "or": [
+                {"related_id": [user_id]},
+                {"memory_type": "SkillMemory"},
+            ]
+        }
+    },
 }
 ```
 
-这样，用户事实和偏好只在用户视角检索，通用 Skill 和正式政策一起作为客服 Agent 的处理依据。不同用户复用同一个 Agent Skill，政策口径也保持一致。
+`filter` 中的两个条件是或关系：`related_id` 选中当前用户的记忆，保证不同用户之间的事实和偏好保持隔离；`memory_type: "SkillMemory"` 让 Agent Skill 不受用户限制、跨用户返回。政策知识库通过 `knowledgebase_ids` 加入同一次检索，不需要单独调用。
+
+三类内容在一次召回中各回答一个问题：政策知识库回答“按规定应该怎么处理”，用户记忆回答“这位消费者已经处理到哪一步”，Agent Skill 回答“完成这类任务通常需要执行哪些步骤”。
 
 ## 第五步：写回完整任务轨迹
 
@@ -292,8 +284,9 @@ MemOS 客服场景最佳实践：跨渠道记忆增强的消费者客服助手
 提供三项能力：
 
 1. 每轮分别请求写入用户事实/偏好与 Agent Skill，由 MemOS 判断实际沉淀内容
-2. 售后政策放入政策知识库，与 Agent 记忆一起检索
-3. 事实与偏好按 user_id 召回，Skill 从 Agent 视角跨用户召回
+2. 售后政策放入政策知识库，与记忆一起进入同一次召回
+3. 一次 /search/memory 组合召回：related_id 选中当前用户记忆，
+   SkillMemory 让 Agent Skill 跨用户返回
 
 记忆种类只启用客服场景需要的三类：事实记忆、偏好记忆、技能记忆。
 技能由 MemOS 从写回的任务执行轨迹（user → assistant.tool_calls → tool →
@@ -329,11 +322,10 @@ OPENAI_MODEL = "YOUR_MODEL_NAME"
 OPENAI_BASE_URL = "YOUR_OPENAI_BASE_URL"
 AGENT_ID = "YOUR_AGENT_ID"
 
-# 用户与 Agent 分别写入不同记忆类型；检索仍拆成两路
+# 用户与 Agent 分别写入不同记忆类型；召回合并为一次组合检索
 USER_WRITE_VIEWS = ["detail_factual", "preference"]
 AGENT_SKILL_WRITE_VIEWS = ["skill"]
-USER_CONTEXT_VIEWS = ["detail_factual", "preference"]
-AGENT_CONTEXT_VIEWS = ["detail_factual", "skill"]
+CONTEXT_VIEWS = ["detail_factual", "preference", "skill"]
 
 SKILL_EXTRACT_PROMPT = """从完整的客服任务轨迹中提炼可跨用户复用的 Skill。
 
@@ -382,7 +374,7 @@ POLICY_DOC_MD = """# 消费者售后政策（示例）
 
 
 # ---------------------------------------------------------------------------
-# 客服助手：记忆检索 -> 组装 prompt -> 生成回复 -> 写回记忆
+# 客服助手：组合召回 -> 组装 prompt -> 生成回复 -> 两次写入
 # ---------------------------------------------------------------------------
 
 class CustomerServiceAssistant:
@@ -401,40 +393,23 @@ class CustomerServiceAssistant:
 
     # ---- MemOS 读写 ----
 
-    def search_memory(self, query, user_id, conversation_id):
-        """分别检索用户事实/偏好，以及 Agent Skill/政策知识。"""
-        agent_data = {
-            "query": f"处理当前客服请求所需的通用方法：{query}",
-            "agent_id": AGENT_ID,
-            "knowledgebase_ids": self.knowledgebase_ids,
-            "include_memory_view": AGENT_CONTEXT_VIEWS,
-            "memory_limit_number": 9,
-        }
-        agent_res = requests.post(
-            f"{MEMOS_BASE_URL}/search/memory",
-            headers=self.headers,
-            json=agent_data,
-        )
-        agent_body = agent_res.json()
-        if agent_body.get("code") == 0:
-            agent_result = agent_body.get("data") or {}
-            policy_memories = [
-                item for item in agent_result.get("memory_detail_list", [])
-                if item.get("relativity", 0) >= RELATIVITY_THRESHOLD
-            ]
-            skills = agent_result.get("skill_detail_list", [])
-        else:
-            print(f"  [MemOS] 检索 Agent Skill 与政策失败：{agent_body.get('message')}")
-            policy_memories = []
-            skills = []
-
+    def search_memory(self, query, user_id):
+        """一次组合召回：用户事实/偏好 + Agent Skill + 政策知识。"""
         context_data = {
             "query": query,
-            "user_id": user_id,
-            "conversation_id": conversation_id,
-            "include_memory_view": USER_CONTEXT_VIEWS,
+            "agent_id": AGENT_ID,
+            "knowledgebase_ids": self.knowledgebase_ids,
+            "include_memory_view": CONTEXT_VIEWS,
             "memory_limit_number": 9,
             "preference_limit_number": 6,
+            "filter": {
+                "user": {
+                    "or": [
+                        {"related_id": [user_id]},
+                        {"memory_type": "SkillMemory"},
+                    ]
+                }
+            },
         }
         context_res = requests.post(
             f"{MEMOS_BASE_URL}/search/memory",
@@ -442,23 +417,24 @@ class CustomerServiceAssistant:
             json=context_data,
         )
         context_body = context_res.json()
-        if context_body.get("code") == 0:
-            context_result = context_body.get("data", {})
-        else:
-            print(f"  [MemOS] 检索用户上下文失败：{context_body.get('message')}")
-            context_result = {}
+        if context_body.get("code") != 0:
+            print(f"  [MemOS] 组合召回失败：{context_body.get('message')}")
+            return [], [], []
 
-        user_memories = [
+        context_result = context_body.get("data") or {}
+        memories = [
             m for m in context_result.get("memory_detail_list", [])
             if m.get("relativity", 0) >= RELATIVITY_THRESHOLD
         ]
         preferences = context_result.get("preference_detail_list", [])
-        return [*user_memories, *policy_memories], preferences, skills
+        skills = context_result.get("skill_detail_list", [])
+        return memories, preferences, skills
 
     def add_user_memories(self, messages, user_id, conversation_id, channel):
         """第一次写入：只在用户视角生成事实与偏好。"""
         user_data = {
             "user_id": user_id,
+            "agent_id": AGENT_ID,
             "conversation_id": conversation_id,
             "info": {"channel": channel, "scene": "consumer_support"},
             "allow_memory_view": USER_WRITE_VIEWS,
@@ -580,10 +556,8 @@ class CustomerServiceAssistant:
         history_key = (user_id, conversation_id)
         history = self.conversation_histories.get(history_key, [])
 
-        # 2. 检索用户事实/偏好，并单独检索 Agent Skill/政策知识
-        memories, preferences, skills = self.search_memory(
-            query, user_id, conversation_id
-        )
+        # 2. 一次组合召回：用户事实/偏好、Agent Skill 与政策知识
+        memories, preferences, skills = self.search_memory(query, user_id)
         self._print_retrieved(memories, preferences, skills)
 
         # 3. 组装当前任务轨迹，让模型基于工具结果生成最终回复
@@ -792,7 +766,7 @@ def run_demo():
     print()
     print("演示结束，三个观察点：")
     print("1. 用户 Cube 只生成事实与偏好，Agent Cube 只生成 Skill。")
-    print("2. DAY 4 从 customer_001 的用户记忆中召回事实与偏好。")
+    print("2. DAY 4 组合召回带出 customer_001 的订单、故障和通知偏好。")
     print("3. DAY 7 不应看到 customer_001 的事实与偏好，但可以召回")
     print(f"   {AGENT_ID} 已通用化的 Skill。")
 

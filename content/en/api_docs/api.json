@@ -760,7 +760,7 @@
     "/add/profile_template": {
       "post": {
         "summary": "Create Profile Template",
-        "description": "Create a Profile template in the project of the API Key and return the template ID. A template defines the field structure, default values, and whether each field can be updated by the algorithm. Once created, bind it to users or Agents via Bind Profile Template to create Profile instances. Each call creates a new template.",
+        "description": "Create a Profile template in the project and return the template ID. Once created, bind it to users or Agents via Bind Profile Template to create Profile instances.",
         "operationId": "add_profile_template",
         "requestBody": {
           "required": true,
@@ -810,7 +810,7 @@
     "/list/profile_template": {
       "post": {
         "summary": "List Profile Templates",
-        "description": "Return a paginated list of Profile template summaries in the project of the API Key, sorted by creation time descending; templates created at the same time are sorted by template ID descending. Returns an empty array when the project has no templates; when the page number is out of range, returns an empty array with the actual total and page count.",
+        "description": "Return a paginated list of Profile template summaries in the project, sorted by creation time descending; ties are sorted by template ID descending.",
         "operationId": "list_profile_template",
         "requestBody": {
           "required": true,
@@ -843,7 +843,7 @@
     "/get/profile_template": {
       "post": {
         "summary": "Get Profile Template",
-        "description": "Return the full structure and summary of a Profile template. Use instance_count to understand the template's scope of impact; read instance field values via the memory query APIs.",
+        "description": "Return the full structure and summary of a Profile template.",
         "operationId": "get_profile_template",
         "requestBody": {
           "required": true,
@@ -875,7 +875,7 @@
     "/update/profile_template": {
       "post": {
         "summary": "Update Profile Template",
-        "description": "Update the template name or attribute structure. Behaves the same as editing in the Dashboard: changes are synced to every Profile instance bound to the template. New fields are filled with the template's values and settings; modified field values or algorithm-updatable settings overwrite the corresponding fields; removed fields and their saved values are deleted; unchanged fields stay as they are.",
+        "description": "Update the template name or attribute structure. Changes are synced to every Profile instance bound to the template.",
         "operationId": "update_profile_template",
         "requestBody": {
           "required": true,
@@ -930,7 +930,7 @@
     "/delete/profile_template": {
       "post": {
         "summary": "Delete Profile Template",
-        "description": "Delete a Profile template along with all of its active instances and bindings. Other templates, instances of other templates bound to the same subjects, and other memories (facts, preferences, etc.) are unaffected. After deletion, newly added messages are no longer extracted into this template. To delete only the instance of a specific user or Agent, use /delete/profile.",
+        "description": "Delete a Profile template along with all of its active instances and bindings; other templates and memories are unaffected. To delete only the instance of a specific user or Agent, use /delete/profile.",
         "operationId": "delete_profile_template",
         "requestBody": {
           "required": true,
@@ -4147,7 +4147,7 @@
           "instance_count": {
             "type": "integer",
             "title": "Instance Count",
-            "description": "Number of active instances currently bound to the template."
+            "description": "Number of active instances currently bound to the template. Indicates the template's scope of impact; instance field values are read via the memory query APIs."
           },
           "create_time": {
             "type": "string",
@@ -4186,7 +4186,7 @@
           "instance_count": {
             "type": "integer",
             "title": "Instance Count",
-            "description": "Number of active instances currently bound to the template."
+            "description": "Number of active instances currently bound to the template. Indicates the template's scope of impact; instance field values are read via the memory query APIs."
           },
           "create_time": {
             "type": "string",
@@ -4235,7 +4235,7 @@
               "profile_templates": {
                 "type": "array",
                 "title": "Profile Templates",
-                "description": "List of template summaries.",
+                "description": "List of template summaries. Returns an empty array when the project has no templates or the page number is out of range.",
                 "items": {
                   "$ref": "#/components/schemas/ProfileTemplateSummary"
                 }
@@ -4258,7 +4258,7 @@
               "pages": {
                 "type": "integer",
                 "title": "Pages",
-                "description": "Total number of pages."
+                "description": "Total number of pages. The actual total and page count are preserved when the page number is out of range."
               }
             }
           },
@@ -4328,10 +4328,23 @@
           "name": {
             "type": "string",
             "title": "Name",
-            "description": "The new template name."
+            "description": "The new template name. When only the name changes, the attribute structure and bound instance values stay unchanged."
           },
           "metadata": {
-            "$ref": "#/components/schemas/ProfileTemplateMetadata"
+            "type": "object",
+            "title": "Metadata",
+            "description": "The full attribute tree after the update. Changes are synced to all bound instances: new fields are filled with the template's values and auto-update settings; modified field values or settings overwrite the corresponding fields; removed fields are deleted along with their saved values; unchanged fields stay as they are.",
+            "properties": {
+              "{category name}": {
+                "type": "object",
+                "description": "Attribute category (optional intermediate level); the key is a user-defined category name. Skip this level if no category is needed and pass field value objects directly.",
+                "properties": {
+                  "{field name}": {
+                    "$ref": "#/components/schemas/ProfileFieldValue"
+                  }
+                }
+              }
+            }
           }
         },
         "title": "UpdateProfileTemplateRequest"

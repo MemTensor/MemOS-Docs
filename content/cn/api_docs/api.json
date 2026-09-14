@@ -760,7 +760,7 @@
     "/add/profile_template": {
       "post": {
         "summary": "创建属性记忆模板",
-        "description": "在 API Key 所属项目中创建属性记忆模板，返回模板 ID。模板用于定义属性字段结构、字段默认值及是否允许算法自动更新；创建成功后可通过绑定接口为用户或 Agent 创建属性记忆实例。每次调用都会生成一个新模板。",
+        "description": "在项目中创建属性记忆模板，返回模板 ID。创建成功后可通过绑定接口为用户或 Agent 创建属性记忆实例。",
         "operationId": "add_profile_template",
         "requestBody": {
           "required": true,
@@ -810,7 +810,7 @@
     "/list/profile_template": {
       "post": {
         "summary": "获取属性记忆模板列表",
-        "description": "分页返回 API Key 所属项目下的属性记忆模板摘要，按创建时间倒序排列；创建时间相同的按模板 ID 倒序排列。项目无模板时返回空数组；页码超出范围时返回空数组，并保留实际总数和总页数。",
+        "description": "分页返回项目内的属性记忆模板摘要，按创建时间倒序排列，创建时间相同的按模板 ID 倒序排列。",
         "operationId": "list_profile_template",
         "requestBody": {
           "required": true,
@@ -843,7 +843,7 @@
     "/get/profile_template": {
       "post": {
         "summary": "获取属性记忆模板详情",
-        "description": "返回指定属性记忆模板的完整结构和摘要信息。instance_count 用于了解模板影响范围；实例的属性值通过记忆查询接口读取。",
+        "description": "返回指定属性记忆模板的完整结构和摘要信息。",
         "operationId": "get_profile_template",
         "requestBody": {
           "required": true,
@@ -875,7 +875,7 @@
     "/update/profile_template": {
       "post": {
         "summary": "修改属性记忆模板",
-        "description": "修改模板名称或属性结构，更新行为与控制台（Dashboard）一致，变更同步到所有绑定该模板的用户或 Agent 属性记忆：新增字段按模板中的值和自动更新设置填入；修改字段的值或自动更新设置会覆盖对应字段；删除字段会同时删除对应字段及已保存的值；未修改的字段保持原样。",
+        "description": "修改模板名称或属性结构，变更同步到所有绑定该模板的用户或 Agent 属性记忆。",
         "operationId": "update_profile_template",
         "requestBody": {
           "required": true,
@@ -930,7 +930,7 @@
     "/delete/profile_template": {
       "post": {
         "summary": "删除属性记忆模板",
-        "description": "删除属性记忆模板，同时删除该模板的全部有效实例和绑定关系。其他模板、同一主体绑定的其他模板实例，以及事实、偏好等其他记忆保持原状。删除成功后，后续消息写入不再按该模板抽取属性。只需删除某个用户或 Agent 的实例时，请使用 /delete/profile。",
+        "description": "删除属性记忆模板，同时删除该模板的全部有效实例和绑定关系，其他模板和记忆保持原状。只需删除某个用户或 Agent 的实例时，请使用 /delete/profile。",
         "operationId": "delete_profile_template",
         "requestBody": {
           "required": true,
@@ -4104,7 +4104,7 @@
           "instance_count": {
             "type": "integer",
             "title": "Instance Count",
-            "description": "当前绑定该模板的有效实例数量。"
+            "description": "当前绑定该模板的有效实例数量，可用于了解模板影响范围。实例的属性值通过记忆查询接口读取。"
           },
           "create_time": {
             "type": "string",
@@ -4143,7 +4143,7 @@
           "instance_count": {
             "type": "integer",
             "title": "Instance Count",
-            "description": "当前绑定该模板的有效实例数量。"
+            "description": "当前绑定该模板的有效实例数量，可用于了解模板影响范围。实例的属性值通过记忆查询接口读取。"
           },
           "create_time": {
             "type": "string",
@@ -4192,7 +4192,7 @@
               "profile_templates": {
                 "type": "array",
                 "title": "Profile Templates",
-                "description": "模板摘要列表。",
+                "description": "模板摘要列表。项目无模板或页码超出范围时返回空数组。",
                 "items": {
                   "$ref": "#/components/schemas/ProfileTemplateSummary"
                 }
@@ -4215,7 +4215,7 @@
               "pages": {
                 "type": "integer",
                 "title": "Pages",
-                "description": "总页数。"
+                "description": "总页数。页码超出范围时保留实际总数和总页数。"
               }
             }
           },
@@ -4285,10 +4285,23 @@
           "name": {
             "type": "string",
             "title": "Name",
-            "description": "修改后的模板名称。"
+            "description": "修改后的模板名称。只修改名称时，属性结构和已绑定实例的属性值保持原样。"
           },
           "metadata": {
-            "$ref": "#/components/schemas/ProfileTemplateMetadata"
+            "type": "object",
+            "title": "Metadata",
+            "description": "修改后的完整属性树。变更同步到全部已绑定实例：新增字段按模板中的值和自动更新设置填入；修改字段的值或自动更新设置会覆盖对应字段；删除字段会同时删除对应字段及已保存的值；未修改的字段保持原样。",
+            "properties": {
+              "{分类名}": {
+                "type": "object",
+                "description": "属性分类（可选的中间层），键名为用户自定义的分类名称。如无需分类可跳过此层，直接传字段值对象。",
+                "properties": {
+                  "{字段名}": {
+                    "$ref": "#/components/schemas/ProfileFieldValue"
+                  }
+                }
+              }
+            }
           }
         },
         "title": "UpdateProfileTemplateRequest"
