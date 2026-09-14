@@ -88,3 +88,5 @@ Navigation structure is defined in `content/[lang]/settings.yml`.
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
+
+# Learn Git
