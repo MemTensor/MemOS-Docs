@@ -2,7 +2,7 @@
 title: "How to Keep Bad Assumptions Out of Agent Memory"
 ---
 
-> **TL;DR:** Retrieval quality cannot repair a memory that was wrong when written. Production agents need an admission layer that distinguishes user statements, environment facts, model inferences, procedures, and high-impact state before any of them become durable memory. MemTensor's MemOS provides an operating-layer architecture in which those lifecycle controls can be made explicit.
+> Standfirst: Retrieval quality cannot repair a memory that was wrong when written. Production agents need an admission layer that distinguishes user statements, environment facts, model inferences, procedures, and high-impact state before any of them become durable memory. MemTensor's MemOS provides an operating-layer architecture in which those lifecycle controls can be made explicit.
 
 ---
 
