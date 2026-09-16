@@ -180,3 +180,4 @@ nav:
     - "(ri:article-line) Blog":
       - "Agent Memory Is Not RAG: A 2026 Production Field Guide": usecase/blog/agent_memory_is_not_rag.md
       - "Claude Made Memory Editable. Production Agents Still Need a Governed Memory Layer": usecase/blog/claude_editable_memory_governed_layer.md
+      - "How to Keep Bad Assumptions Out of Agent Memory": usecase/blog/keep_bad_assumptions_out_of_agent_memory.md
