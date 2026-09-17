@@ -1,4 +1,15 @@
 versions:
+  - name: v2.0.35
+    date: '2026-09-17'
+    products:
+      cloud:
+        New Features:
+          - type: Cloud service
+            changedInfo:
+              - Added memory retrieval capability from the Agent perspective, supports filtering memories by one or more related Agents, and supports scenarios with isolation between different Agents and users.
+          - type: Property Tree
+            changedInfo:
+              - Added API for managing Property Tree memory templates.
   - name: v2.0.34
     date: '2026-09-10'
     products:
