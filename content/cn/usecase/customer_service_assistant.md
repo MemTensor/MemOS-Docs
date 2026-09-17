@@ -109,19 +109,54 @@ def create_policy_knowledge_base():
         "Content-Type": "application/json",
         "Authorization": f"Token {MEMOS_API_KEY}",
     }
-    policy_kb_id = _create_kb(
-        headers,
-        "消费者售后政策知识库",
-        "消费者退换货、保修、物流与发票政策",
+
+    # 1. 创建知识库：POST /create/knowledgebase
+    res = requests.post(
+        f"{MEMOS_BASE_URL}/create/knowledgebase",
+        headers=headers,
+        json={
+            "knowledgebase_name": "消费者售后政策知识库",
+            "knowledgebase_description": "消费者退换货、保修、物流与发票政策",
+        },
     )
-    _upload_file(
-        headers,
-        policy_kb_id,
-        "consumer-after-sale-policy.md",
-        POLICY_DOC_MD,
+    body = res.json()
+    if body.get("code") != 0:
+        sys.exit(f"创建知识库失败：{body.get('message')}")
+    policy_kb_id = body["data"]["id"]
+
+    # 2. 上传政策文档：POST /add/knowledgebase-file
+    # 文件内容需要 base64 编码后以 data URL 形式传入
+    encoded = base64.b64encode(POLICY_DOC_MD.encode("utf-8")).decode("utf-8")
+    res = requests.post(
+        f"{MEMOS_BASE_URL}/add/knowledgebase-file",
+        headers=headers,
+        json={
+            "knowledgebase_id": policy_kb_id,
+            "file": [{
+                "type": "document",
+                "name": "consumer-after-sale-policy.md",
+                "content": f"data:text/markdown;base64,{encoded}",
+            }],
+        },
     )
+    if res.json().get("code") != 0:
+        sys.exit(f"上传政策文档失败：{res.json().get('message')}")
+
+    # 3. 轮询文件解析状态：POST /get/knowledgebase-file
     print("政策文档已上传，等待解析...")
-    _wait_kb_ready(headers, policy_kb_id)
+    for _ in range(40):
+        time.sleep(3)
+        res = requests.post(
+            f"{MEMOS_BASE_URL}/get/knowledgebase-file",
+            headers=headers,
+            json={"knowledgebase_id": policy_kb_id, "page": 1, "page_size": 20},
+        )
+        files = res.json().get("data", {}).get("file_detail_list", [])
+        statuses = {str(item.get("status", "")).lower() for item in files}
+        if files and statuses <= {"completed", "available", "failed"}:
+            if "failed" in statuses:
+                sys.exit("政策文档解析失败")
+            break
     print(f"政策知识库已就绪：{policy_kb_id}")
     return policy_kb_id
 ```
@@ -160,7 +195,15 @@ def add_user_memories(self, messages, user_id, conversation_id, channel):
         "allow_memory_view": USER_WRITE_VIEWS,
         "messages": messages,
     }
-    self._post_memory(user_data, "用户事实与偏好", timeout_seconds=120)
+    # POST /add/message：写入为异步任务，返回 task_id 后
+    # 用 /get/status 轮询至 completed（完整实现见文末 Demo）
+    res = requests.post(
+        f"{MEMOS_BASE_URL}/add/message",
+        headers=self.headers,
+        json=user_data,
+    )
+    if res.json().get("code") != 0:
+        print(f"  [MemOS] 写入用户事实与偏好失败：{res.json().get('message')}")
 ```
 
 记忆归属当前 `user_id`，同时挂到客服 Agent 的记忆空间下，后续才能在 Agent 视角的组合召回中通过 `related_id` 精确选中。MemOS 根据对话内容判断是否形成事实或偏好。某轮对话没有表达稳定偏好时，可以只生成事实。
@@ -180,7 +223,14 @@ def add_agent_skill(self, messages, conversation_id, channel):
         "custom_extract_prompt": {"skill": SKILL_EXTRACT_PROMPT},
         "messages": messages,
     }
-    self._post_memory(skill_data, "Agent Skill", timeout_seconds=300)
+    # 同样是 POST /add/message，只是不传 user_id 且 allow_memory_view 只含 skill
+    res = requests.post(
+        f"{MEMOS_BASE_URL}/add/message",
+        headers=self.headers,
+        json=skill_data,
+    )
+    if res.json().get("code") != 0:
+        print(f"  [MemOS] 写入 Agent Skill 失败：{res.json().get('message')}")
 ```
 
 Skill 写入不与任何用户绑定，只在 Agent 视角存在，因此可以跨用户复用。每轮回答后都会执行这次写入。调用方只声明本次写入允许生成 Skill，不根据对话内容预判是否应该沉淀；MemOS 会结合任务轨迹和已有 Skill，自行决定生成、更新或跳过。
@@ -203,22 +253,36 @@ MemOS 会结合已有 Skill 完成相似性判断和更新，调用方不需要�
 生成回复前，客服助手只调用一次 `/search/memory`，同时取回用户事实、偏好、Agent Skill 和政策知识：
 
 ```python
-context_data = {
-    "query": query,
-    "agent_id": AGENT_ID,
-    "knowledgebase_ids": self.knowledgebase_ids,
-    "include_memory_view": CONTEXT_VIEWS,
-    "memory_limit_number": 9,
-    "preference_limit_number": 6,
-    "filter": {
-        "user": {
-            "or": [
-                {"related_id": [user_id]},
-                {"memory_type": "SkillMemory"},
-            ]
-        }
-    },
-}
+def search_memory(self, query, user_id):
+    """一次组合召回：用户事实/偏好 + Agent Skill + 政策知识。"""
+    context_data = {
+        "query": query,
+        "agent_id": AGENT_ID,
+        "knowledgebase_ids": self.knowledgebase_ids,
+        "include_memory_view": CONTEXT_VIEWS,
+        "memory_limit_number": 9,
+        "preference_limit_number": 6,
+        "filter": {
+            "user": {
+                "or": [
+                    {"related_id": [user_id]},
+                    {"memory_type": "SkillMemory"},
+                ]
+            }
+        },
+    }
+    # POST /search/memory：用户事实、偏好、Agent Skill 与政策一次取回
+    res = requests.post(
+        f"{MEMOS_BASE_URL}/search/memory",
+        headers=self.headers,
+        json=context_data,
+    )
+    result = res.json().get("data") or {}
+    return (
+        result.get("memory_detail_list", []),   # 用户事实
+        result.get("preference_detail_list", []),  # 用户偏好
+        result.get("skill_detail_list", []),    # Agent Skill
+    )
 ```
 
 `filter` 中的两个条件是或关系：`related_id` 选中当前用户的记忆，保证不同用户之间的事实和偏好保持隔离；`memory_type: "SkillMemory"` 让 Agent Skill 不受用户限制、跨用户返回。政策知识库通过 `knowledgebase_ids` 加入同一次检索，不需要单独调用。
