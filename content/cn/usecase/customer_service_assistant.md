@@ -99,7 +99,7 @@ AGENT_ID = "YOUR_AGENT_ID"
 
 在控制台为当前项目开启「为 Agent 创建独立记忆」。该功能默认关闭；未开启时，`agent_id` 只能用于标记和过滤，不能作为独立主体写入或检索 Agent Skill。具体说明见[多 Agent 隔离](/cn/memos_cloud/introduction/isolation_filters#为-agent-创建独立记忆-new)。
 
-## 第一步：准备政策知识库
+## 准备政策知识库
 
 初始化时创建一个政策知识库，上传售后政策文档，并等待文件处理完成：
 
@@ -168,7 +168,60 @@ policy_kb_id = create_policy_knowledge_base()
 assistant = CustomerServiceAssistant(policy_kb_id)
 ```
 
-## 第二步：划分写入类型
+## 写回完整任务轨迹
+
+每条写入消息通过 `role_id` 标明真实发言主体。用户消息使用 `user_id`，客服回复与工具调用使用 `agent_id`：
+
+```python
+# 以 DAY 1 的换货请求为例，一轮对话写回 MemOS 的完整消息列表
+memory_messages = [
+    # 1. 用户消息：role_id 为当前用户
+    {
+        "role": "user",
+        "role_id": user_id,  # 例如 customer_001
+        "content": "我的降噪耳机左耳有电流声，想换货",
+    },
+    # 2. 工具调用：客服 Agent 查询订单，role_id 为 agent_id
+    {
+        "role": "assistant",
+        "role_id": AGENT_ID,
+        "content": "",
+        "tool_calls": [{
+            "id": "call_1",
+            "type": "function",
+            "function": {
+                "name": "query_order",
+                "arguments": '{"order_id": "20260820-88"}',
+            },
+        }],
+    },
+    # 3. 工具结果：通过 tool_call_id 与上面的调用对应，无需 role_id
+    {
+        "role": "tool",
+        "tool_call_id": "call_1",
+        "content": '{"order_id": "20260820-88", "status": "已签收"}',
+    },
+    # 4. 最终回复：同样归属客服 Agent
+    {
+        "role": "assistant",
+        "role_id": AGENT_ID,
+        "content": "已为您创建换货工单 EX20260821-03，换货双向免运费……",
+    },
+]
+```
+
+客服 Agent 在业务应用中维护当前会话历史。写回 MemOS 时，用户请求、工具调用、工具结果和最终回复组成完整任务记录：
+
+```text
+user
+→ assistant.tool_calls
+→ tool
+→ assistant
+```
+
+完整轨迹用于 Skill 提炼；用户事实和偏好则从同一份记录中生成。
+
+### 划分写入类型
 
 用户与 Agent 使用不同的写入视图；召回时三类视图一次取回：
 
@@ -235,7 +288,7 @@ def add_agent_skill(self, messages, conversation_id, channel):
 
 Skill 写入不与任何用户绑定，只在 Agent 视角存在，因此可以跨用户复用。每轮回答后都会执行这次写入。调用方只声明本次写入允许生成 Skill，不根据对话内容预判是否应该沉淀；MemOS 会结合任务轨迹和已有 Skill，自行决定生成、更新或跳过。
 
-## 第三步：让 Skill 保持通用
+## 让 Skill 保持通用
 
 Skill 抽取由 MemOS 完成。可以通过 `custom_extract_prompt.skill` 补充客服场景中的通用化要求：
 
@@ -248,7 +301,7 @@ Skill 抽取由 MemOS 完成。可以通过 `custom_extract_prompt.skill` 补充
 
 MemOS 会结合已有 Skill 完成相似性判断和更新，调用方不需要管理 Skill ID 或实现合并逻辑。
 
-## 第四步：执行一次组合召回
+## 执行一次组合召回
 
 生成回复前，客服助手只调用一次 `/search/memory`，同时取回用户事实、偏好、Agent Skill 和政策知识：
 
@@ -289,37 +342,7 @@ def search_memory(self, query, user_id):
 
 三类内容在一次召回中各回答一个问题：政策知识库回答“按规定应该怎么处理”，用户记忆回答“这位消费者已经处理到哪一步”，Agent Skill 回答“完成这类任务通常需要执行哪些步骤”。
 
-## 第五步：写回完整任务轨迹
-
-每条写入消息通过 `role_id` 标明真实发言主体。用户消息使用 `user_id`，客服回复与工具调用使用 `agent_id`：
-
-```python
-memory_messages = [
-    {"role": "user", "role_id": user_id, "content": query}
-]
-
-# 工具调用消息使用 role_id=AGENT_ID
-# 工具结果通过 tool_call_id 与调用对应
-
-memory_messages.append({
-    "role": "assistant",
-    "role_id": AGENT_ID,
-    "content": reply,
-})
-```
-
-客服 Agent 在业务应用中维护当前会话历史。写回 MemOS 时，用户请求、工具调用、工具结果和最终回复组成完整任务记录：
-
-```text
-user
-→ assistant.tool_calls
-→ tool
-→ assistant
-```
-
-完整轨迹用于 Skill 提炼；用户事实和偏好则从同一份记录中生成。
-
-## 第六步：验证记忆效果
+## 验证记忆效果
 
 接入完成后，按三个阶段验证读写与隔离是否符合预期：
 
