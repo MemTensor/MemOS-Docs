@@ -1,4 +1,15 @@
 versions:
+  - name: v2.0.35
+    date: '2026-09-17'
+    products:
+      cloud:
+        New Features:
+          - type: 云服务
+            changedInfo:
+              - 新增 Agent 视角的记忆检索能力，支持按一个或多个关联 Agent 筛选记忆，支持不同 Agent 及用户隔离场景
+          - type: 属性树
+            changedInfo:
+              - 新增属性树记忆模板管理API
   - name: v2.0.34
     date: '2026-09-10'
     products:
