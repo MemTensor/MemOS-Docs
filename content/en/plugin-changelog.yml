@@ -1,4 +1,13 @@
 versions:
+  - name: v2.0.20
+    date: '2026-09-21'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Memory Recovery and Capture Boundaries**: Fixed dirty-data recovery, orphan trace writes, and LLM empty-response retry stability issues'
+              - '**Memory Evolution and Hermes Installation Improvement**: Improved the reliability of memory evolution and Hermes installation, enhancing overall performance'
   - name: v2.0.19
     date: '2026-09-08'
     products:
