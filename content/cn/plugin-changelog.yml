@@ -1,4 +1,13 @@
 versions:
+  - name: v2.0.20
+    date: '2026-09-21'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**记忆恢复与采集边界问题**：修复脏数据恢复、孤立 trace 写入和 LLM 空响应重试等稳定性问题'
+              - '**内存演化和 Hermes 安装增强**：增强了内存演化和 Hermes 安装的可靠性，提升了整体性能'
   - name: v2.0.19
     date: '2026-09-08'
     products:
