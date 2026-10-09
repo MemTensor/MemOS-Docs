@@ -33,9 +33,10 @@ memos --help
 
 MemOS CLI 有两种使用方式：一种是安装到 Agent 中，让 Agent 自动使用记忆；另一种是在终端中手动执行 `memos` 命令。
 
+<!-- docs-freshness:cloud-cli-init-cn:start -->
 ### 3.1 在 Agent 中使用
 
-如果要让 Agent 自动检索和写入记忆，使用 `memos init` 安装记忆 Skill。当前 `--agent` 为必填参数，不传会直接报错，因为 CLI 需要知道 Skill 应该安装到哪个 Agent 目录。
+如果要让 Agent 使用 MemOS，运行 `memos init` 安装集成。`--agent` 是必填参数，因为 CLI 必须明确知道安装目标：
 
 ```bash
 memos init --agent codex
@@ -65,7 +66,7 @@ memos init --api-key YOUR_API_KEY --agent codex
 | GitHub Copilot | `copilot` |
 | DeepSeek Harness | `deepseek` |
 
-例如，为 Cursor 安装记忆 Skill：
+例如，为 Cursor 安装 MemOS 集成：
 
 ```bash
 memos init --agent cursor
@@ -77,30 +78,24 @@ memos init --agent cursor
 memos init --agent deepseek
 ```
 
-该命令会在 `~/.dsh/skills/memos-memory/` 安装 Skill；如果设置了 `DSH_HOME`，则安装到 `$DSH_HOME/skills/memos-memory/`。同时，CLI 会写入对应的 `AGENTS.md`，并注册 DeepSeek Harness 原生生命周期插件。插件会在每轮开始时检索相关记忆，将结果注入上下文；在本轮正常结束后写入新的长期记忆。重启 DeepSeek Harness 后生效。
+对于 `codex`、`claude`、`trae`、`trae-cn`、`cursor`、`hermes`、`antigravity`、`cline`、`copilot`、`opencode`、`openclaw`、`deepseek` 这些原生 Hook Agent，初始化会默认安装对应 Hook；其他 Agent 使用随 CLI 安装的 Skill 和引导文件。具体触发时机由各 Agent 支持的生命周期事件决定。
 
-安装后，Agent 启动时会自动加载该 Skill。在每轮对话中，Agent 会：
+`--memos-plugin` 可用于没有原生 Hook 的 Agent；对上述原生 Hook Agent 传入时会被忽略，避免插件引导和 Hook 同时接管记忆流程。
 
-1. **回答前**自动执行 `memos search`，检索与当前任务相关的长期记忆
-2. **回答后**自动执行 `memos add`，将本轮出现的新事实、偏好等写入 MemOS
-
-如果你已经安装了 MemOS 插件（如 OpenClaw 云插件），可以加上 `--memos-plugin` 生成插件感知的 Skill 引导：
-
-```bash
-memos init --agent openclaw --memos-plugin
-```
-
-::tip
-以 OpenClaw 为例，在 LOCOMO 评测中，单独接入 MemOS CLI 后 Token 消耗降低约 65.5%；接入 MemOS Cloud + CLI 后，正确率从 66.60% 提升到 77.27%。
-::
+DeepSeek Harness 的 Skill 默认安装到 `~/.dsh/skills/memos-memory/`；设置 `DSH_HOME` 后会改用该目录下的 `skills/memos-memory/`。
 
 | 参数 | 说明 |
 | --- | --- |
 | `-k, --api-key` | MemOS API Key |
 | `--user-id` | 默认用户 ID |
 | `--conversation-id` | 默认会话 ID |
-| `--memos-plugin` | 已安装 MemOS 插件时，生成插件感知的 Skill 引导 |
-| `--agent` | 将 Skill 安装到指定 Agent 的目录；必填 |
+| `--memos-plugin` | 为没有原生 Hook 的 Agent 生成插件感知引导 |
+| `--agent` | 指定安装目标；必填 |
+
+::tip
+以 OpenClaw 为例，在 LOCOMO 评测中，单独接入 MemOS CLI 后 Token 消耗降低约 65.5%；接入 MemOS Cloud + CLI 后，正确率从 66.60% 提升到 77.27%。
+::
+<!-- docs-freshness:cloud-cli-init-cn:end -->
 
 ### 3.2 直接在终端使用
 

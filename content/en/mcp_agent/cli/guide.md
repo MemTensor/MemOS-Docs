@@ -29,9 +29,10 @@ memos --help
 
 MemOS CLI has two usage modes: install a memory Skill for an Agent, or manually run `memos` commands in a terminal.
 
+<!-- docs-freshness:cloud-cli-init-en:start -->
 ### 3.1 Use with Agents
 
-To let an Agent automatically search and write memories, use `memos init` to install the memory Skill. `--agent` is currently required; if it is omitted, the command fails because the CLI needs to know where to install the Skill.
+Run `memos init` to install the MemOS integration for an Agent. `--agent` is required because the CLI must know the explicit installation target:
 
 ```bash
 memos init --agent codex
@@ -43,7 +44,7 @@ You can also write the API Key during initialization:
 memos init --api-key YOUR_API_KEY --agent codex
 ```
 
-The currently supported Agents are listed below. Pass the matching value via `--agent`:
+The following Agents are supported. Pass the matching value with `--agent`:
 
 | Agent | `--agent` value |
 | --- | --- |
@@ -61,42 +62,36 @@ The currently supported Agents are listed below. Pass the matching value via `--
 | GitHub Copilot | `copilot` |
 | DeepSeek Harness | `deepseek` |
 
-For example, to install the memory Skill for Cursor:
+For example, install the MemOS integration for Cursor:
 
 ```bash
 memos init --agent cursor
 ```
 
-To connect DeepSeek Harness:
+Connect DeepSeek Harness:
 
 ```bash
 memos init --agent deepseek
 ```
 
-The command installs the Skill at `~/.dsh/skills/memos-memory/`, or `$DSH_HOME/skills/memos-memory/` when `DSH_HOME` is set. It also writes the matching `AGENTS.md` and registers a native DeepSeek Harness lifecycle plugin. The plugin retrieves relevant memories and injects them into context at the beginning of each turn, then writes new long-term memories after a normally completed turn. Restart DeepSeek Harness to activate it.
+For native-Hook Agents (`codex`, `claude`, `trae`, `trae-cn`, `cursor`, `hermes`, `antigravity`, `cline`, `copilot`, `opencode`, `openclaw`, `deepseek`), initialization installs the corresponding Hook by default. Other Agents use the bundled Skill and guidance files. The exact trigger timing follows the lifecycle events supported by each Agent.
 
-Once installed, the Agent will automatically load the Skill. During each conversation turn, the Agent will:
+`--memos-plugin` remains available for Agents without a native Hook. It is ignored for the native-Hook Agents above so plugin guidance and the Hook cannot both own the memory lifecycle.
 
-1. **Before answering** — automatically run `memos search` to retrieve long-term memories related to the current task
-2. **After answering** — automatically run `memos add` to write new facts, preferences, etc. into MemOS
-
-If you already have a MemOS plugin installed (e.g. the OpenClaw cloud plugin), add `--memos-plugin` to generate plugin-aware Skill guidance:
-
-```bash
-memos init --agent openclaw --memos-plugin
-```
-
-::tip
-Using OpenClaw as an example, in the LOCOMO evaluation, using MemOS CLI alone reduced token usage by about 65.5%; integrating MemOS Cloud + CLI improved accuracy from 66.60% to 77.27%.
-::
+The DeepSeek Harness Skill is installed at `~/.dsh/skills/memos-memory/` by default. When `DSH_HOME` is set, the CLI uses `skills/memos-memory/` under that directory.
 
 | Parameter | Description |
 | --- | --- |
 | `-k, --api-key` | MemOS API Key |
 | `--user-id` | Default user ID |
 | `--conversation-id` | Default conversation ID |
-| `--memos-plugin` | Generate plugin-aware Skill guidance when a MemOS memory plugin is installed |
-| `--agent` | Install Skill to a specific Agent directory; required |
+| `--memos-plugin` | Generate plugin-aware guidance for an Agent without a native Hook |
+| `--agent` | Select the installation target; required |
+
+::tip
+Using OpenClaw as an example, in the LOCOMO evaluation, using MemOS CLI alone reduced token usage by about 65.5%; integrating MemOS Cloud + CLI improved accuracy from 66.60% to 77.27%.
+::
+<!-- docs-freshness:cloud-cli-init-en:end -->
 
 ### 3.2 Use Directly in Terminal
 
