@@ -72,6 +72,14 @@ The project supports different environments:
 
 Configure environment-specific settings in `envConfig/config.[env].ts`.
 
+## Link Checks Before Deployment
+
+After generating the site, run `pnpm run check:links` before uploading or deploying `.output/public`. The command checks internal links against the build output and probes external links. Broken links return exit code 1; an incomplete check returns 2. Reports are written to `.output/reports/link-check/`.
+
+Use `pnpm run check:links:internal` for offline checks and `pnpm run test:links` to test the checker. Install devDependencies in the build job. Generation no longer updates remote OSS metadata; run `pnpm run oss:meta` after a successful link check and upload if your deployment needs it.
+
+See [link check rules and Alibaba Cloud Flow integration](docs/link-check.md) for commands, configuration, report preservation, and deployment ordering.
+
 ## Writing Documentation
 
 Documentation is written in Markdown format and organized by language:

@@ -16,6 +16,9 @@
     "oss:meta:dry": "DRY_RUN=1 node scripts/set-oss-content-types.mjs",
     "preview": "nuxt preview",
     "check:endpoints": "node scripts/check-endpoints.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "check:links:internal": "node scripts/check-links.mjs --internal-only",
+    "test:links": "node --test scripts/link-check/*.test.mjs",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck"
   },
@@ -45,7 +48,12 @@
     "@nuxt/eslint": "^1.4.1",
     "eslint": "^9.28.0",
     "js-yaml": "^4.1.1",
+    "parse-srcset": "^1.0.2",
+    "parse5": "^7.3.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
     "typescript": "^5.8.3",
+    "unified": "^11.0.5",
     "vue-tsc": "^2.2.10"
   },
   "resolutions": {

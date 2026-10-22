@@ -1,0 +1,15 @@
+{
+  "siteUrl": "https://memos-docs.openmem.net/",
+  "internalOrigins": ["https://memos-docs.openmem.net", "http://memos-docs.openmem.net"],
+  "exampleHosts": ["localhost", "127.0.0.1", "0.0.0.0", "[::1]", "example.com", "example.org", "example.net"],
+  "timeoutMs": 10000,
+  "retries": 2,
+  "retryDelayMs": 500,
+  "maxRedirects": 5,
+  "concurrency": 8,
+  "perOriginConcurrency": 2,
+  "maxDurationMs": 600000,
+  "incompleteMinUrls": 5,
+  "incompleteRatio": 0.5,
+  "exceptions": []
+}

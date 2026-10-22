@@ -10,7 +10,7 @@ const __dirname = dirname(__filename)
 // Parse command line arguments
 const parseArgs = (args) => {
   const result = {}
-  args.forEach(arg => {
+  args.forEach((arg) => {
     if (arg.startsWith('--')) {
       const [key, value] = arg.slice(2).split('=')
       result[key] = value
@@ -69,14 +69,8 @@ try {
     env: { ...process.env }
   })
 
-  if (process.env.OSS_BUCKET) {
-    console.log('🔧 Applying OSS Content-Type metadata...')
-    execSync('node scripts/set-oss-content-types.mjs', {
-      stdio: 'inherit',
-      env: { ...process.env }
-    })
-  }
-
+  // Remote metadata is applied by the deployment job after link checks and upload.
+  // Keep generation local even when the build environment contains OSS_BUCKET.
   console.log('✨ Build process completed!')
 } catch (error) {
   console.error('❌ Build failed:', error.message)
