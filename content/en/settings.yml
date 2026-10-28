@@ -183,6 +183,8 @@ nav:
       - "(ri:device-line) Edge–Cloud Collaboration: Long-Term Memory for Smart Devices": usecase/edge_cloud_terminal_memory.md
 
     - "(ri:article-line) Blog":
+      - "Agent Memory Architecture: Building Cross-Session Memory with MemOS": usecase/blog/agent_memory_architecture.md
+      - "Why AI Agents Need to Know When a Memory Is Out of Date": usecase/blog/outdated_agent_memory.md
       - "ChatGPT Upgrades Background Memory Synthesis: Why Enterprise Agents Need Independent Long-Term Memory Infrastructure": usecase/blog/chatgpt_dreaming_long_term_memory.md
       - "Memory Poisoning: Six Long-Term Memory Controls Enterprise Agents Need": usecase/blog/memory_poisoning_controls.md
       - "Memory Management for Long-Running Agents: From Session Recovery to Reusable Experience": usecase/blog/long_task_agent_memory_management.md
