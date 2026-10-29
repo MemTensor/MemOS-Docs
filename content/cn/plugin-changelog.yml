@@ -1,4 +1,20 @@
 versions:
+  - name: v2.0.21
+    date: '2026-10-29'
+    products:
+      plugin:
+        New Features:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**本地模型设置**：Viewer 设置页现在暴露本地 embedding 的镜像地址、模型路径、缓存目录、离线模式与加载超时配置'
+        Improvements:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**运行时兼容性**：插件改用 SQLite 13.0.3 Node-API 预构建包，并要求实际宿主进程使用 Node 22 或更新版本'
+        Bug Fixes:
+          - type: MemOS 本地插件
+            changedInfo:
+              - '**记忆恢复与采集边界问题**：修复脏数据恢复、孤立 trace 写入和 LLM 空响应重试等稳定性问题'
   - name: v2.0.20
     date: '2026-09-21'
     products:
