@@ -10,8 +10,7 @@ export default {
       cloud: 'MemOS Cloud',
       openSource: 'Open Source',
       selfDevelopedModel: 'Self-developed Models',
-      openclaw: 'Agent Plugin',
-      mcpAgent: 'MCP & Agent Framework',
+      agentFramework: 'Agent Framework Support',
       apiDocs: 'API Documentation',
       bestPractices: 'Best Practices',
       changelog: 'Changelog'
@@ -66,7 +65,7 @@ export default {
     titleSuffix: '!',
     description: 'Guides from onboarding through production deployment—integrate MemOS in the shortest time.',
     buttonText: 'Write your first memory',
-    openclawButton: 'Agent Configuration',
+    openclawButton: 'Agent Framework Guide',
     items: [
       {
         title: 'Understand memory',
@@ -85,8 +84,8 @@ export default {
         description: 'Real-world examples to help you quickly build production-ready AI apps with long-term memory.'
       },
       {
-        title: 'MCP & Agent Framework',
-        description: 'One-click integration with Coze, Dify, and other Agent frameworks via MCP or SDK as a unified memory backend.'
+        title: 'Agent Framework Support',
+        description: 'Plugins, MCP, CLI and Coze tools, covering how Agent frameworks connect to MemOS.'
       },
       {
         title: 'API Documentation',

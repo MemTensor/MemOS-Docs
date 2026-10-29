@@ -1,5 +1,5 @@
 ---
-title: User Guide
+title: Coze Plugin Tools
 desc: Published plugin tools directly access the MemOS cloud service API, quickly adding long-term memory capabilities to your Agent, making conversations more considerate and continuous.
 ---
 

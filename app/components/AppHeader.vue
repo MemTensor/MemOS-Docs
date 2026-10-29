@@ -12,14 +12,24 @@ const topMenusVisible = ref(false)
 const headerOpen = ref(false)
 // docs navigation for mobile
 const navigation = inject<ContentNavigationItem[]>('navigation', [])
+interface HeaderMenu {
+  label: string
+  to: string
+  /** Tab 高亮匹配的路径前缀，缺省时按 to 的首段路径匹配 */
+  match?: string[]
+}
+
 const localizedMenus = computed(() => {
-  const menus = [
+  const menus: HeaderMenu[] = [
     { label: t('header.menus.welcome'), to: '/' },
     { label: t('header.menus.cloud'), to: '/memos_cloud/getting_started/overview' },
     { label: t('header.menus.openSource'), to: '/open_source/getting_started/installation' },
     { label: t('header.menus.selfDevelopedModel'), to: '/self_developed_model/extraction_usage_example' },
-    { label: t('header.menus.openclaw'), to: '/openclaw/guide' },
-    { label: t('header.menus.mcpAgent'), to: '/mcp_agent/mcp/guide' },
+    {
+      label: t('header.menus.agentFramework'),
+      to: '/mcp_agent/overview',
+      match: ['/mcp_agent', '/openclaw']
+    },
     { label: t('header.menus.apiDocs'), to: '/api_docs/start/overview' },
     { label: t('header.menus.bestPractices'), to: '/usecase/knowledge_qa_assistant' },
     { label: t('header.menus.changelog'), to: '/changelog' }

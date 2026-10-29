@@ -98,27 +98,23 @@ nav:
     - "(ri:sort-desc) Reranker Model":
       - "(ri:book-open-line) Usage Examples": self_developed_model/reranker_usage_example.md
 
-  - "(ri:robot-line) Agent":
-    - "(ri:book-open-line) Cloud Plugin vs Local Plugin": openclaw/plugin_compare.md
-    - "(ri:file-list-3-line) Changelog": openclaw/changes.md
-    - "(ri:download-line) Installation Guide": 
-      - "(ri:cloud-line) Cloud Plugin": openclaw/guide.md
-      - "(ri:computer-line) Local Plugin": openclaw/local_plugin.md
-    - "(ri:flask-line) Usage Examples": 
-      - "(ri:database-2-line) Knowledge Base Usage": openclaw/examples/knowledge_base.md
-      - "(ri:team-line) Multi-Agent Memory Isolation": openclaw/examples/multi_agent.md
-      - "(ri:filter-3-line) Secondary Filtering for Memory Recall": openclaw/examples/recall_filter.md
-      - "(ri:terminal-box-line) Local Plugin Usage": openclaw/examples/hermes_usage.md
-
   - "(ri:puzzle-line) Agent Framework Support":
-    - "(ri:tools-line) MCP Services":
-      - "(ri:book-open-line) Guide": mcp_agent/mcp/guide.md
+    - "(ri:compass-line) Integration Options":
+      - "(ri:book-open-line) Overview": mcp_agent/overview.md
+      - "(ri:tools-line) MCP Services": mcp_agent/mcp/guide.md
+      - "(ri:command-line) CLI": mcp_agent/cli/guide.md
+      - "(ri:puzzle-2-line) Coze Plugin Tools": mcp_agent/agent/guide.md
 
-    - "(ri:command-line) CLI":
-      - "(ri:book-open-line) Guide": mcp_agent/cli/guide.md
-
-    - "(ri:robot-line) Agent Development":
-      - "(ri:book-open-line) Guide": mcp_agent/agent/guide.md
+    - "(ri:plug-line) MemOS Plugin":
+      - "(ri:book-open-line) Cloud Plugin vs Local Plugin": openclaw/plugin_compare.md
+      - "(ri:download-line) Cloud Plugin": openclaw/guide.md
+      - "(ri:computer-line) Local Plugin": openclaw/local_plugin.md
+      - "(ri:flask-line) Usage Examples":
+        - "(ri:database-2-line) Knowledge Base Usage": openclaw/examples/knowledge_base.md
+        - "(ri:team-line) Multi-Agent Memory Isolation": openclaw/examples/multi_agent.md
+        - "(ri:filter-3-line) Secondary Filtering for Memory Recall": openclaw/examples/recall_filter.md
+        - "(ri:terminal-box-line) Local Plugin Usage": openclaw/examples/hermes_usage.md
+      - "(ri:file-list-3-line) Changelog": openclaw/changes.md
 
   - "(ri:file-code-line) API Documentation":
     - "(ri:rocket-line) Get Started":
@@ -179,7 +175,6 @@ nav:
       # - "(ri:customer-service-2-line) WeCom Customer Service": usecase/wecom_customer_service.md
       # - "(ri:chrome-line) Browser Extension": usecase/frameworks/browser_extension.md
       - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
-      - "(ri:puzzle-2-line) Coze Plugin Tools": usecase/frameworks/coze_plugin.md
       - "(ri:device-line) Edge–Cloud Collaboration: Long-Term Memory for Smart Devices": usecase/edge_cloud_terminal_memory.md
 
     - "(ri:article-line) Blog":

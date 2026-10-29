@@ -5,6 +5,8 @@ const props = defineProps<{
   items: Array<{
     label: string
     to: string
+    /** 一个 Tab 对应多个路径前缀时使用，例如合并后的 Agent框架支持 */
+    match?: string[]
   }>
 }>()
 const emit = defineEmits<{
@@ -77,6 +79,10 @@ watch([() => props.items, normalizedPath], ([list, path]) => {
     const currentRoute = localeRoute(path, defaultLocale)
 
     if (!itemRoute || !currentRoute) return false
+
+    if (i.match?.length) {
+      return i.match.some(prefix => currentRoute.path.startsWith(prefix))
+    }
 
     if (itemRoute.path === '/' && currentRoute.path === '/') return true
     if (itemRoute.path === '/') return false

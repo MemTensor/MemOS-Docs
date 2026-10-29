@@ -10,8 +10,7 @@ export default {
       cloud: '云服务',
       openSource: '开源项目',
       selfDevelopedModel: '自研模型',
-      openclaw: 'Agent插件',
-      mcpAgent: 'MCP与Agent框架支持',
+      agentFramework: 'Agent框架支持',
       apiDocs: 'API接口文档',
       bestPractices: '最佳实践',
       changelog: '更新日志'
@@ -66,7 +65,7 @@ export default {
     titleSuffix: '',
     description: '提供从上手入门到生产部署的一切指南，帮你最短时间集成 MemOS',
     buttonText: '写入你的第一条记忆',
-    openclawButton: 'OpenClaw 配置指南',
+    openclawButton: 'Agent 框架接入指南',
     items: [
       {
         title: '理解记忆机制',
@@ -85,8 +84,8 @@ export default {
         description: '面向真实业务场景的实战示例，助你快速搭建可上线的长期记忆 AI 应用。'
       },
       {
-        title: 'MCP与Agent框架支持',
-        description: '通过 MCP 或 SDK 一键接入 Coze、Dify 等主流 Agent 框架，统一记忆后端。'
+        title: 'Agent框架支持',
+        description: '插件、MCP、CLI 与 Coze 工具，覆盖主流 Agent 框架的接入方式。'
       },
       {
         title: 'API接口文档',

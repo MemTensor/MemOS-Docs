@@ -19,7 +19,7 @@ const rawItems: HomeRouteItem[] = [
   { to: '/memos_cloud/getting_started/quick_start', icon: 'i-ri-file-cloud-fill' },
   { to: '/open_source/getting_started/installation', icon: 'i-ri-open-source-fill' },
   { to: '/usecase/knowledge_qa_assistant', icon: 'i-ri-book-read-fill' },
-  { to: '/mcp_agent/mcp/guide', icon: 'material-symbols:switch-access-3' },
+  { to: '/mcp_agent/overview', icon: 'material-symbols:switch-access-3' },
   { to: '/api_docs/start/overview', icon: 'ant-design:api-filled' }
 ]
 const items = computed(() => localeItems.value.map((item, index) => ({
@@ -61,7 +61,7 @@ const items = computed(() => localeItems.value.map((item, index) => ({
         <BaseButton
           type="default"
           trailing-icon="i-ri-arrow-right-line"
-          :to="localePath('/openclaw/guide')"
+          :to="localePath('/mcp_agent/overview')"
         >
           {{ $t('homepage.openclawButton') }}
         </BaseButton>

@@ -100,26 +100,22 @@ nav:
       - "(ri:book-open-line) 使用示例": self_developed_model/reranker_usage_example.md
 
   - "(ri:puzzle-line) Agent框架支持":
-    - "(ri:tools-line) MCP 服务":
-      - "(ri:book-open-line) 使用指南": mcp_agent/mcp/guide.md
+    - "(ri:compass-line) 接入方式":
+      - "(ri:book-open-line) 接入总览": mcp_agent/overview.md
+      - "(ri:tools-line) MCP 服务": mcp_agent/mcp/guide.md
+      - "(ri:command-line) CLI": mcp_agent/cli/guide.md
+      - "(ri:puzzle-2-line) Coze 插件工具": mcp_agent/agent/guide.md
 
-    - "(ri:command-line) CLI":
-      - "(ri:book-open-line) 使用指南": mcp_agent/cli/guide.md
-
-    - "(ri:robot-line) Agent开发":
-      - "(ri:book-open-line) 使用指南": mcp_agent/agent/guide.md
-
-  - "(ri:robot-line) Agent":
-    - "(ri:book-open-line) 云插件 vs 本地插件": openclaw/plugin_compare.md
-    - "(ri:file-list-3-line) 更新日志": openclaw/changes.md
-    - "(ri:download-line) 安装指南": 
-      - "(ri:cloud-line) 云插件": openclaw/guide.md
+    - "(ri:plug-line) MemOS 插件":
+      - "(ri:book-open-line) 云插件 vs 本地插件": openclaw/plugin_compare.md
+      - "(ri:download-line) 云插件": openclaw/guide.md
       - "(ri:computer-line) 本地插件": openclaw/local_plugin.md
-    - "(ri:flask-line) 使用示例": 
-      - "(ri:database-2-line) 知识库使用": openclaw/examples/knowledge_base.md
-      - "(ri:team-line) 多智能体记忆隔离": openclaw/examples/multi_agent.md
-      - "(ri:filter-3-line) 记忆召回的二次过滤": openclaw/examples/recall_filter.md
-      - "(ri:terminal-box-line) 本地插件使用": openclaw/examples/hermes_usage.md
+      - "(ri:flask-line) 使用示例":
+        - "(ri:database-2-line) 知识库使用": openclaw/examples/knowledge_base.md
+        - "(ri:team-line) 多智能体记忆隔离": openclaw/examples/multi_agent.md
+        - "(ri:filter-3-line) 记忆召回的二次过滤": openclaw/examples/recall_filter.md
+        - "(ri:terminal-box-line) 本地插件使用": openclaw/examples/hermes_usage.md
+      - "(ri:file-list-3-line) 更新日志": openclaw/changes.md
 
   - "(ri:file-code-line) API文档":
     - "(ri:rocket-line) 开始使用":
@@ -180,7 +176,6 @@ nav:
       # - "(ri:customer-service-2-line) 企微客服": usecase/wecom_customer_service.md
       # - "(ri:chrome-line) 浏览器插件": usecase/frameworks/browser_extension.md
       - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
-      - "(ri:puzzle-2-line) Coze 插件工具": usecase/frameworks/coze_plugin.md
       - "(ri:device-line) 端云协同：为智能终端构建长期记忆": usecase/edge_cloud_terminal_memory.md
 
     - "(ri:article-line) 博客":
