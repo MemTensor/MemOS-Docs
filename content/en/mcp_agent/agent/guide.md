@@ -2,22 +2,19 @@
 title: Coze Plugin Tools
 desc: Published plugin tools directly access the MemOS cloud service API, quickly adding long-term memory capabilities to your Agent, making conversations more considerate and continuous.
 ---
-
-## Coze Platform Plugin Tools
-
-### 1. Plugin Listing Information
+## 1. Plugin Listing Information
 
 The MemOS Cloud Service Interface Plugin is now available on the Coze Store! You can directly [visit the tool link](https://www.coze.cn/store/plugin/7569918012912893995?from=store_search_suggestion) to add the plugin and achieve zero-code integration.
 
-### 2. Plugin Description
+## 2. Plugin Description
 
-#### Plugin Functions
+### Plugin Functions
 
 *   `search_memory`: This tool is used to query user memory data and can return snippets most relevant to the input. It supports real-time memory retrieval during user-AI conversations and can also perform global searches across the entire memory. It can be used to create user profiles or support personalized recommendations. Parameters such as conversation ID, user ID, and query text are required for queries, and the number of returned memory items can also be set.
 
 *   `add_memory`: This tool allows batch importing of one or more messages into the MemOS memory storage database, facilitating retrieval in future conversations to support chat history management, user behavior tracking, and personalized interaction. Information such as conversation ID, message content, sender role, conversation time, and user ID must be specified when using it.
 
-#### Interface Description
+### Interface Description
 
 *   search_memory Interface
 
@@ -39,9 +36,9 @@ The MemOS Cloud Service Interface Plugin is now available on the Coze Store! You
 | messages | Array | Array of message objects | Yes |
 | user_id | string | Unique identifier of the user associated with the memory being queried | Yes |
 
-### 3. Agent Call Example
+## 3. Agent Call Example
 
-#### Agent Persona and Reply Logic Example
+### Agent Persona and Reply Logic Example
 
 ```
 You are a Q&A robot. Every time, you read the user's memory and interests, and reply with very clear logic to gain the user's favor.
