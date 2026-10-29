@@ -1,4 +1,20 @@
 versions:
+  - name: v2.0.21
+    date: '2026-10-29'
+    products:
+      plugin:
+        New Features:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Local model settings**: The Viewer settings page now exposes mirror URL, model path, cache directory, offline mode, and load timeout for local embeddings'
+        Improvements:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Runtime compatibility**: The plugin now uses SQLite 13.0.3 Node-API prebuilds and requires Node 22 or newer in the actual host process'
+        Bug Fixes:
+          - type: MemOS Local Plugin
+            changedInfo:
+              - '**Memory Recovery and Capture Boundaries**: Fixed dirty-data recovery, orphan trace writes, and LLM empty-response retry stability issues'
   - name: v2.0.20
     date: '2026-09-21'
     products:
