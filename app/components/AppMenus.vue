@@ -73,23 +73,49 @@ function recaptureAndMeasure() {
 
 const debouncedMeasure = useDebounceFn(measureFit, 100)
 
+/** 返回该菜单项在 currentPath 上命中的最长前缀，未命中则返回空字符串 */
+function matchedPrefix(item: { to: string, match?: string[] }, currentPath: string) {
+  if (item.match?.length) {
+    const hit = item.match
+      .filter(prefix => currentPath.startsWith(prefix))
+      .sort((a, b) => b.length - a.length)[0]
+
+    return hit || ''
+  }
+
+  const itemRoute = localeRoute(item.to, defaultLocale)
+  if (!itemRoute) {
+    return ''
+  }
+
+  if (itemRoute.path === '/') {
+    return currentPath === '/' ? '/' : ''
+  }
+
+  const baseSegment = `/${itemRoute.path.split('/')[1]}`
+  return currentPath.startsWith(baseSegment) ? baseSegment : ''
+}
+
 watch([() => props.items, normalizedPath], ([list, path]) => {
-  const idx = list.findIndex((i) => {
-    const itemRoute = localeRoute(i.to, defaultLocale)
-    const currentRoute = localeRoute(path, defaultLocale)
+  const currentRoute = localeRoute(path, defaultLocale)
 
-    if (!itemRoute || !currentRoute) return false
+  if (!currentRoute) {
+    return
+  }
 
-    if (i.match?.length) {
-      return i.match.some(prefix => currentRoute.path.startsWith(prefix))
+  // 一个 Tab 可能对应多个路径前缀（例如 /usecase 与 /usecase/blog），
+  // 取命中前缀最长的那一个，避免父级前缀抢占子级页面。
+  let idx = -1
+  let matchedLength = 0
+
+  list.forEach((item, index) => {
+    const hit = matchedPrefix(item, currentRoute.path)
+    if (hit.length > matchedLength) {
+      matchedLength = hit.length
+      idx = index
     }
-
-    if (itemRoute.path === '/' && currentRoute.path === '/') return true
-    if (itemRoute.path === '/') return false
-
-    const baseSegment = itemRoute.path.split('/')[1]
-    return currentRoute.path.startsWith(`/${baseSegment}`)
   })
+
   if (idx !== -1) active.value = String(idx)
 }, { immediate: true })
 

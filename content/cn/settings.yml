@@ -42,7 +42,6 @@ nav:
       - "(ri:tools-line) 工具记忆": memos_cloud/features/tool_calling.md
       - "(ri:image-add-line) 多模态支持": memos_cloud/features/multimodal.md
 
-
     - "(ri:question-line) 支持与问题排查":
       - "(ri:question-line) 云服务 FAQs": memos_cloud/support/faq.md
       - "(ri:shield-line) 配额与限制": memos_cloud/support/limit.md
@@ -63,7 +62,6 @@ nav:
       - "(ri:calendar-line) MemScheduler 记忆调度": open_source/modules/mem_scheduler.md
       - "(ri:calendar-line) MemChat 使用记忆进行聊天": open_source/modules/mem_chat.md
       - "(ri:feedback-line) MemFeedback 记忆反馈": open_source/modules/mem_feedback.md
-
 
     - "(ri:brain-line) 记忆系统":
       - "(ri:database-2-line) 记忆模块总览": open_source/modules/memories/overview.md
@@ -164,30 +162,29 @@ nav:
     - "(ri:customer-service-line) 帮助与支持":
       - "(ri:error-warning-line) 错误码": api_docs/help/error_codes.md
 
-  - "(ri:projector-line) 最佳实践":
-    - "(ri:book-open-line) 技术教程":
-      - "(ri:book-2-line) 用 MemOS 为 AI 应用构建共享知识库": usecase/shared_knowledge_base.md
-      - "(ri:book-2-line) 在 Memmy 中集成 MemOS 知识库": usecase/memmy_knowledge_base.md
-      - "(ri:customer-service-2-line) 让知识库成为懂你的专属顾问": usecase/knowledge_qa_assistant.md
-      - "(ri:customer-service-2-line) 构建拥有长期记忆的智能客服": usecase/customer_service_assistant.md
-      - "(ri:money-dollar-circle-line) 让理财助手读懂客户偏好": usecase/financial_assistant.md
-      - "(ri:edit-line) 有记忆的写作搭子": usecase/writting_assistant.md
-      - "(ri:heart-line) 更贴心的家庭生活助手": usecase/home_assistant.md
-      # - "(ri:customer-service-2-line) 企微客服": usecase/wecom_customer_service.md
-      # - "(ri:chrome-line) 浏览器插件": usecase/frameworks/browser_extension.md
-      - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
-      - "(ri:device-line) 端云协同：为智能终端构建长期记忆": usecase/edge_cloud_terminal_memory.md
+  - "(ri:school-line) 技术教程":
+    - "(ri:book-2-line) 用 MemOS 为 AI 应用构建共享知识库": usecase/shared_knowledge_base.md
+    - "(ri:book-2-line) 在 Memmy 中集成 MemOS 知识库": usecase/memmy_knowledge_base.md
+    - "(ri:customer-service-2-line) 让知识库成为懂你的专属顾问": usecase/knowledge_qa_assistant.md
+    - "(ri:customer-service-2-line) 构建拥有长期记忆的智能客服": usecase/customer_service_assistant.md
+    - "(ri:money-dollar-circle-line) 让理财助手读懂客户偏好": usecase/financial_assistant.md
+    - "(ri:edit-line) 有记忆的写作搭子": usecase/writting_assistant.md
+    - "(ri:heart-line) 更贴心的家庭生活助手": usecase/home_assistant.md
+    # - "(ri:customer-service-2-line) 企微客服": usecase/wecom_customer_service.md
+    # - "(ri:chrome-line) 浏览器插件": usecase/frameworks/browser_extension.md
+    - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
+    - "(ri:device-line) 端云协同：为智能终端构建长期记忆": usecase/edge_cloud_terminal_memory.md
 
-    - "(ri:article-line) 博客":
-      - "企业 Agent 需要独立的长期记忆基础设施": usecase/blog/chatgpt_dreaming_long_term_memory.md
-      - "Memory Poisoning：企业 Agent 必须建立的六道长期记忆控制": usecase/blog/memory_poisoning_controls.md
-      - "长任务 Agent 的记忆管理，从会话恢复到经验复用": usecase/blog/long_task_agent_memory_management.md
-      - "从数据归属到记忆删除：企业自托管 Agent 记忆的四个关键问题": usecase/blog/self_hosted_agent_memory_four_questions.md
-      - "100 万 Token 上下文，为什么还需要长期记忆？": usecase/blog/million_token_context_long_term_memory.md
-      - "有了向量库，Agent 为什么还需要记忆管理？": usecase/blog/vector_database_memory_management.md
-      - "Agent 记忆与 RAG 的区别：2026 年生产实践指南": usecase/blog/agent_memory_is_not_rag.md
-      - "Agent 记忆可观测性：上线后值得关注的 12 项指标": usecase/blog/agent_memory_observability_12_measures.md
-      - "如何为 AI Agent 选择 MemOS 接入方式": usecase/blog/choosing_memos_integration.md
-      - "Claude 让记忆可编辑，生产 Agent 仍需要可治理的记忆层": usecase/blog/claude_editable_memory_governed_layer.md
-      - "如何让错误假设远离 Agent 记忆": usecase/blog/keep_bad_assumptions_out_of_agent_memory.md
-      - "持久化 Agent 记忆，应当让下一次任务更轻松": usecase/blog/persistent_agent_memory_next_task.md
+  - "(ri:article-line) 博客":
+    - "企业 Agent 需要独立的长期记忆基础设施": usecase/blog/chatgpt_dreaming_long_term_memory.md
+    - "Memory Poisoning：企业 Agent 必须建立的六道长期记忆控制": usecase/blog/memory_poisoning_controls.md
+    - "长任务 Agent 的记忆管理，从会话恢复到经验复用": usecase/blog/long_task_agent_memory_management.md
+    - "从数据归属到记忆删除：企业自托管 Agent 记忆的四个关键问题": usecase/blog/self_hosted_agent_memory_four_questions.md
+    - "100 万 Token 上下文，为什么还需要长期记忆？": usecase/blog/million_token_context_long_term_memory.md
+    - "有了向量库，Agent 为什么还需要记忆管理？": usecase/blog/vector_database_memory_management.md
+    - "Agent 记忆与 RAG 的区别：2026 年生产实践指南": usecase/blog/agent_memory_is_not_rag.md
+    - "Agent 记忆可观测性：上线后值得关注的 12 项指标": usecase/blog/agent_memory_observability_12_measures.md
+    - "如何为 AI Agent 选择 MemOS 接入方式": usecase/blog/choosing_memos_integration.md
+    - "Claude 让记忆可编辑，生产 Agent 仍需要可治理的记忆层": usecase/blog/claude_editable_memory_governed_layer.md
+    - "如何让错误假设远离 Agent 记忆": usecase/blog/keep_bad_assumptions_out_of_agent_memory.md
+    - "持久化 Agent 记忆，应当让下一次任务更轻松": usecase/blog/persistent_agent_memory_next_task.md

@@ -18,9 +18,13 @@ const searchNavigation = computed(() => {
 
 const normalizePath = (p: string) => p.replace(/\/$/, '')
 
+const stripLocalePrefix = (p: string) => p.replace(/^\/(cn|en)(\/|$)/, '/')
+
+/** 去掉尾斜杠与语言前缀，便于跨语言比较路径 */
+const localeFreePath = (p: string) => stripLocalePrefix(normalizePath(p))
+
 const getSegment = (p: string) => {
-  const normalized = normalizePath(p).replace(/^\/(cn|en)(\/|$)/, '/')
-  const parts = normalized.split('/').filter(Boolean)
+  const parts = localeFreePath(p).split('/').filter(Boolean)
   return parts[0]
 }
 
@@ -44,9 +48,45 @@ const filteredNavigation = computed(() => {
     return false
   }
 
+  /**
+   * 返回该分组下与当前路径最匹配的降级路径长度，用于区分首段路径相同的分组
+   * （例如 /usecase 下的技术教程与 /usecase/blog 下的博客）。
+   */
+  const matchDepth = (item: ContentNavigationItem, target: string): number => {
+    let best = -1
+
+    const visit = (node: ContentNavigationItem) => {
+      if (node.path) {
+        const path = localeFreePath(node.path)
+        if (target === path || target.startsWith(`${path}/`)) {
+          best = Math.max(best, path.length)
+        }
+      }
+      node.children?.forEach(visit)
+    }
+
+    visit(item)
+    return best
+  }
+
   if (!currentSegment.value) return []
 
-  const activeNode = nav.find(item => hasDescendantWithSegment(item, currentSegment.value))
+  const segment = currentSegment.value
+  let activeNode: ContentNavigationItem | undefined
+  let bestDepth = -1
+
+  for (const item of nav) {
+    const depth = matchDepth(item, localeFreePath(route.path))
+    if (depth > bestDepth) {
+      bestDepth = depth
+      activeNode = item
+    }
+  }
+
+  // 页面未列入导航时退回按首段路径归类
+  if (bestDepth < 0) {
+    activeNode = nav.find(item => hasDescendantWithSegment(item, segment))
+  }
 
   if (!activeNode) return []
 

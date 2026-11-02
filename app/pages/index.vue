@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getBlogLandingPath } from '~/utils'
+
 interface ItemProps {
   title: string
   description: string
@@ -9,24 +11,24 @@ interface HomeRouteItem {
   icon: string
 }
 
-const { t, rt, tm } = useI18n()
+const { t, rt, tm, locale } = useI18n()
 const localePath = useLocalePath()
 const localeItems = computed(() => tm('homepage.items') as ItemProps[])
 
 useHead({ title: () => t('homepage.title') })
-const rawItems: HomeRouteItem[] = [
+const rawItems = computed<HomeRouteItem[]>(() => [
   { to: '/memos_cloud/introduction/mem_production', icon: 'i-ri-brain-line' },
   { to: '/memos_cloud/getting_started/quick_start', icon: 'i-ri-file-cloud-fill' },
   { to: '/open_source/getting_started/installation', icon: 'i-ri-open-source-fill' },
-  { to: '/usecase/knowledge_qa_assistant', icon: 'i-ri-book-read-fill' },
+  { to: getBlogLandingPath(locale.value), icon: 'i-ri-article-fill' },
   { to: '/mcp_agent/overview', icon: 'material-symbols:switch-access-3' },
   { to: '/api_docs/start/overview', icon: 'ant-design:api-filled' }
-]
+])
 const items = computed(() => localeItems.value.map((item, index) => ({
   title: rt(item.title),
   description: rt(item.description),
-  ...rawItems[index],
-  to: localePath(rawItems[index]?.to || '/')
+  ...rawItems.value[index],
+  to: localePath(rawItems.value[index]?.to || '/')
 })))
 </script>
 

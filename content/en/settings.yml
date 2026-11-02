@@ -63,7 +63,6 @@ nav:
       - "(ri:calendar-line) MemChat": open_source/modules/mem_chat.md
       - "(ri:feedback-line) MemFeedback": open_source/modules/mem_feedback.md
 
-
     - "(ri:brain-line) Memories":
       - "(ri:database-2-line) Memory Modules Overview": open_source/modules/memories/overview.md
       - "(ri:book-2-line) Plaintext Memory":
@@ -163,32 +162,31 @@ nav:
     - "(ri:customer-service-line) Help & Support":
       - "(ri:error-warning-line) Error Codes": api_docs/help/error_codes.md
 
-  - "(ri:projector-line) Best Practices":
-    - "(ri:book-open-line) Tutorials":
-      - "(ri:book-2-line) Build a Shared Knowledge Base for AI Apps": usecase/shared_knowledge_base.md
-      - "(ri:book-2-line) Integrating MemOS Knowledge Bases into Memmy": usecase/memmy_knowledge_base.md
-      - "(ri:customer-service-2-line) Knowledge Q&A Assistant": usecase/knowledge_qa_assistant.md
-      - "(ri:customer-service-2-line) Customer Service Agent with Long-Term Memory": usecase/customer_service_assistant.md
-      - "(ri:money-dollar-circle-line) Financial Assistant": usecase/financial_assistant.md
-      - "(ri:edit-line) Writing Assistant": usecase/writting_assistant.md
-      - "(ri:heart-line) Life Assistant": usecase/home_assistant.md
-      # - "(ri:customer-service-2-line) WeCom Customer Service": usecase/wecom_customer_service.md
-      # - "(ri:chrome-line) Browser Extension": usecase/frameworks/browser_extension.md
-      - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
-      - "(ri:device-line) Edge–Cloud Collaboration: Long-Term Memory for Smart Devices": usecase/edge_cloud_terminal_memory.md
+  - "(ri:school-line) Tutorials":
+    - "(ri:book-2-line) Build a Shared Knowledge Base for AI Apps": usecase/shared_knowledge_base.md
+    - "(ri:book-2-line) Integrating MemOS Knowledge Bases into Memmy": usecase/memmy_knowledge_base.md
+    - "(ri:customer-service-2-line) Knowledge Q&A Assistant": usecase/knowledge_qa_assistant.md
+    - "(ri:customer-service-2-line) Customer Service Agent with Long-Term Memory": usecase/customer_service_assistant.md
+    - "(ri:money-dollar-circle-line) Financial Assistant": usecase/financial_assistant.md
+    - "(ri:edit-line) Writing Assistant": usecase/writting_assistant.md
+    - "(ri:heart-line) Life Assistant": usecase/home_assistant.md
+    # - "(ri:customer-service-2-line) WeCom Customer Service": usecase/wecom_customer_service.md
+    # - "(ri:chrome-line) Browser Extension": usecase/frameworks/browser_extension.md
+    - "(ri:brain-line) Claude MCP": usecase/frameworks/claude_mcp.md
+    - "(ri:device-line) Edge–Cloud Collaboration: Long-Term Memory for Smart Devices": usecase/edge_cloud_terminal_memory.md
 
-    - "(ri:article-line) Blog":
-      - "Agent Memory Architecture: Building Cross-Session Memory with MemOS": usecase/blog/agent_memory_architecture.md
-      - "Why AI Agents Need to Know When a Memory Is Out of Date": usecase/blog/outdated_agent_memory.md
-      - "ChatGPT Upgrades Background Memory Synthesis: Why Enterprise Agents Need Independent Long-Term Memory Infrastructure": usecase/blog/chatgpt_dreaming_long_term_memory.md
-      - "Memory Poisoning: Six Long-Term Memory Controls Enterprise Agents Need": usecase/blog/memory_poisoning_controls.md
-      - "Memory Management for Long-Running Agents: From Session Recovery to Reusable Experience": usecase/blog/long_task_agent_memory_management.md
-      - "From Data Ownership to Deletion: Four Questions for Self-Hosted Agent Memory": usecase/blog/self_hosted_agent_memory_four_questions.md
-      - "Why Long-Term Memory Still Matters with a Million-Token Context Window": usecase/blog/million_token_context_long_term_memory.md
-      - "Why Agents Need Memory Management Even with a Vector Database": usecase/blog/vector_database_memory_management.md
-      - "Agent Memory Is Not RAG: A 2026 Production Field Guide": usecase/blog/agent_memory_is_not_rag.md
-      - "Agent Memory Observability: 12 Measures That Matter After Launch": usecase/blog/agent_memory_observability_12_measures.md
-      - "Choosing a MemOS Integration for Your AI Agent": usecase/blog/choosing_memos_integration.md
-      - "Claude Made Memory Editable. Production Agents Still Need a Governed Memory Layer": usecase/blog/claude_editable_memory_governed_layer.md
-      - "How to Keep Bad Assumptions Out of Agent Memory": usecase/blog/keep_bad_assumptions_out_of_agent_memory.md
-      - "Persistent Agent Memory Should Make the Next Task Easier": usecase/blog/persistent_agent_memory_next_task.md
+  - "(ri:article-line) Blog":
+    - "Agent Memory Architecture: Building Cross-Session Memory with MemOS": usecase/blog/agent_memory_architecture.md
+    - "Why AI Agents Need to Know When a Memory Is Out of Date": usecase/blog/outdated_agent_memory.md
+    - "ChatGPT Upgrades Background Memory Synthesis: Why Enterprise Agents Need Independent Long-Term Memory Infrastructure": usecase/blog/chatgpt_dreaming_long_term_memory.md
+    - "Memory Poisoning: Six Long-Term Memory Controls Enterprise Agents Need": usecase/blog/memory_poisoning_controls.md
+    - "Memory Management for Long-Running Agents: From Session Recovery to Reusable Experience": usecase/blog/long_task_agent_memory_management.md
+    - "From Data Ownership to Deletion: Four Questions for Self-Hosted Agent Memory": usecase/blog/self_hosted_agent_memory_four_questions.md
+    - "Why Long-Term Memory Still Matters with a Million-Token Context Window": usecase/blog/million_token_context_long_term_memory.md
+    - "Why Agents Need Memory Management Even with a Vector Database": usecase/blog/vector_database_memory_management.md
+    - "Agent Memory Is Not RAG: A 2026 Production Field Guide": usecase/blog/agent_memory_is_not_rag.md
+    - "Agent Memory Observability: 12 Measures That Matter After Launch": usecase/blog/agent_memory_observability_12_measures.md
+    - "Choosing a MemOS Integration for Your AI Agent": usecase/blog/choosing_memos_integration.md
+    - "Claude Made Memory Editable. Production Agents Still Need a Governed Memory Layer": usecase/blog/claude_editable_memory_governed_layer.md
+    - "How to Keep Bad Assumptions Out of Agent Memory": usecase/blog/keep_bad_assumptions_out_of_agent_memory.md
+    - "Persistent Agent Memory Should Make the Next Task Easier": usecase/blog/persistent_agent_memory_next_task.md

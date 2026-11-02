@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
-import { getHomePath } from '~/utils'
+import { getBlogLandingPath, getHomePath } from '~/utils'
 
 const { t, locale } = useI18n()
 const { header } = useAppConfig()
@@ -31,7 +31,16 @@ const localizedMenus = computed(() => {
       match: ['/mcp_agent', '/openclaw']
     },
     { label: t('header.menus.apiDocs'), to: '/api_docs/start/overview' },
-    { label: t('header.menus.bestPractices'), to: '/usecase/knowledge_qa_assistant' },
+    {
+      label: t('header.menus.tutorials'),
+      to: '/usecase/knowledge_qa_assistant',
+      match: ['/usecase']
+    },
+    {
+      label: t('header.menus.blog'),
+      to: getBlogLandingPath(locale.value),
+      match: ['/usecase/blog']
+    },
     { label: t('header.menus.changelog'), to: '/changelog' }
   ]
   return menus.map(m => ({ ...m, to: localePath(m.to) }))

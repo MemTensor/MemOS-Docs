@@ -12,7 +12,8 @@ export default {
       selfDevelopedModel: 'Self-developed Models',
       agentFramework: 'Agent Framework Support',
       apiDocs: 'API Documentation',
-      bestPractices: 'Best Practices',
+      tutorials: 'Tutorials',
+      blog: 'Blog',
       changelog: 'Changelog'
     },
     community: {
@@ -80,8 +81,8 @@ export default {
         description: 'Self-hosted open-source memory—deploy privately, stay in control, customize and extend freely.'
       },
       {
-        title: 'Best Practices',
-        description: 'Real-world examples to help you quickly build production-ready AI apps with long-term memory.'
+        title: 'Blog',
+        description: 'Notes and practice on long-term memory for Agents, from architecture and governance to engineering detail.'
       },
       {
         title: 'Agent Framework Support',

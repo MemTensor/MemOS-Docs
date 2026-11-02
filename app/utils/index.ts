@@ -20,6 +20,16 @@ export function getHomePath(path: string, locale: string) {
   return locale === 'cn' ? `${homeDomain}/cn${path}` : `${homeDomain}${path}`
 }
 
+/**
+ * 博客 Tab 的落地页：各语言下最新发布的一篇。
+ * 新增博客后需要同步更新这里的路径。
+ */
+export function getBlogLandingPath(locale: string) {
+  return locale === 'cn'
+    ? '/usecase/blog/persistent_agent_memory_next_task'
+    : '/usecase/blog/agent_memory_architecture'
+}
+
 export function copyText(text: string) {
   navigator.clipboard.writeText(text)
 }
