@@ -26,7 +26,7 @@ export function getHomePath(path: string, locale: string) {
  */
 export function getBlogLandingPath(locale: string) {
   return locale === 'cn'
-    ? '/usecase/blog/revoked_access_agent_memory'
+    ? '/usecase/blog/memt_memos_agent_memory'
     : '/usecase/blog/agent_memory_architecture'
 }
 

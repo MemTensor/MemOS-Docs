@@ -176,6 +176,8 @@ nav:
     - "(ri:device-line) 端云协同：为智能终端构建长期记忆": usecase/edge_cloud_terminal_memory.md
 
   - "(ri:article-line) 博客":
+    - "MemT-1.0 与 MemOS 如何分工？从一次编码任务开始选型": usecase/blog/memt_memos_agent_memory.md
+    - "MemOS 异步写入如何验收？从 task_id 查到下一次回答": usecase/blog/memos_async_memory_write_verification.md
     - "权限撤了，Agent 为什么还记得那份报价？": usecase/blog/revoked_access_agent_memory.md
     - "企业 Agent 需要独立的长期记忆基础设施": usecase/blog/chatgpt_dreaming_long_term_memory.md
     - "Memory Poisoning：企业 Agent 必须建立的六道长期记忆控制": usecase/blog/memory_poisoning_controls.md
