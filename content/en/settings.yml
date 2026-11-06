@@ -176,6 +176,8 @@ nav:
     - "(ri:device-line) Edge–Cloud Collaboration: Long-Term Memory for Smart Devices": usecase/edge_cloud_terminal_memory.md
 
   - "(ri:article-line) Blog":
+    - "How to Measure the Cost of a Correct Memory-Assisted Task": usecase/blog/memory_assisted_task_cost.md
+    - "Choosing an Agent Memory Framework by the Code You Need to Own": usecase/blog/choosing_agent_memory_framework.md
     - "Agent Memory Architecture: Building Cross-Session Memory with MemOS": usecase/blog/agent_memory_architecture.md
     - "Why AI Agents Need to Know When a Memory Is Out of Date": usecase/blog/outdated_agent_memory.md
     - "ChatGPT Upgrades Background Memory Synthesis: Why Enterprise Agents Need Independent Long-Term Memory Infrastructure": usecase/blog/chatgpt_dreaming_long_term_memory.md
