@@ -4,18 +4,11 @@ versions:
     products:
       cloud:
         Bug Fixes:
-          - type: Memory Library Recall
+          - type: Cloud service
             changedInfo:
-              - Fixed missing recall results across multiple memory libraries by aggregating results from all queried memory libraries instead of reading only the first library.
-          - type: Group Chat Preferences
-            changedInfo:
-              - Fixed incorrect ownership of group chat preferences by preserving speaker identifiers to avoid assigning other participants' preferences to the target user.
-          - type: Knowledge Base Retrieval
-            changedInfo:
-              - Fixed an issue where knowledge base retrieval returned empty results.
-          - type: Original File Content Saving
-            changedInfo:
-              - Fixed missing original file content saving by improving original content chunk saving, file source linkage, and summary association.
+              - Aggregated results from all queried memory repositories to avoid reading only the first repository.
+              - Preserved speaker identifiers to avoid attributing other participants' preferences to the target user.
+              - Fixed empty knowledge base retrieval by resolving memory validation failures caused when PolarDB and PostgreSQL converted numeric string identifiers to integers.
   - name: v2.0.35
     date: '2026-09-17'
     products:
