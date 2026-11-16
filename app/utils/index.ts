@@ -26,8 +26,8 @@ export function getHomePath(path: string, locale: string) {
  */
 export function getBlogLandingPath(locale: string) {
   return locale === 'cn'
-    ? '/usecase/blog/memt_memos_agent_memory'
-    : '/usecase/blog/memory_assisted_task_cost'
+    ? '/usecase/blog/shared_agent_memory_acceptance'
+    : '/usecase/blog/production_agent_memory_service_metrics'
 }
 
 export function copyText(text: string) {
