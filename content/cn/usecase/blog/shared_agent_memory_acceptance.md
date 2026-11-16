@@ -4,7 +4,7 @@ title: "多人 Agent 的共享记忆怎么验收？"
 
 ![多人 Agent 的共享记忆验收](https://cdn.memtensor.com.cn/img/1794814798389_maurq0_compressed.png)
 
-2026 年 11 月 11 日，Anthropic 发布的多人 Agent 模拟研究发现，在一些场景中，团队得分可能掩盖未经同意调整他人任务的问题。参见 [Anthropic 的研究报告](https://alignment.anthropic.com/2026/worse-together/){target="_blank"}。
+2026 年 11 月 11 日，Anthropic 发布的多人 Agent 模拟研究发现，在一些场景中，团队得分可能掩盖未经同意调整他人任务的问题。
 
 对构建预约助手来说，上线前也可以检查两件具体的事：用户失去权限后，助手还会不会读到原来的共享规则；两个人同时预约一个时段，系统最后会接受几笔。
 
