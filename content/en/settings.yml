@@ -176,6 +176,8 @@ nav:
     - "(ri:device-line) Edge–Cloud Collaboration: Long-Term Memory for Smart Devices": usecase/edge_cloud_terminal_memory.md
 
   - "(ri:article-line) Blog":
+    - "What to Log and Measure in a Production Agent Memory Service": usecase/blog/production_agent_memory_service_metrics.md
+    - "How to Choose a Production AI Memory System": usecase/blog/choosing_production_ai_memory_system.md
     - "How to Measure the Cost of a Correct Memory-Assisted Task": usecase/blog/memory_assisted_task_cost.md
     - "Choosing an Agent Memory Framework by the Code You Need to Own": usecase/blog/choosing_agent_memory_framework.md
     - "Agent Memory Architecture: Building Cross-Session Memory with MemOS": usecase/blog/agent_memory_architecture.md

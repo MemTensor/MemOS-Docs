@@ -176,6 +176,8 @@ nav:
     - "(ri:device-line) 端云协同：为智能终端构建长期记忆": usecase/edge_cloud_terminal_memory.md
 
   - "(ri:article-line) 博客":
+    - "多人 Agent 的共享记忆怎么验收？": usecase/blog/shared_agent_memory_acceptance.md
+    - "Agent 工具调用失败后，哪些信息值得写进长期记忆？": usecase/blog/agent_tool_failure_memory.md
     - "MemT-1.0 与 MemOS 如何分工？从一次编码任务开始选型": usecase/blog/memt_memos_agent_memory.md
     - "MemOS 异步写入如何验收？从 task_id 查到下一次回答": usecase/blog/memos_async_memory_write_verification.md
     - "权限撤了，Agent 为什么还记得那份报价？": usecase/blog/revoked_access_agent_memory.md
