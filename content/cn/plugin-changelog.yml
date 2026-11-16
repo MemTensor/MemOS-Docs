@@ -1,4 +1,13 @@
 versions:
+  - name: v1.0.9
+    date: '2026-11-16'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS CLI
+            changedInfo:
+              - '**WorkBuddy 安装路径**：修正 WorkBuddy 技能安装位置，使用 `~/.workbuddy/skills/memos/`'
+              - '**DeepSeek 记忆注入**：修复 DeepSeek 插件在同一轮对话中重复注入记忆上下文的问题'
   - name: v2.0.21
     date: '2026-10-29'
     products:
