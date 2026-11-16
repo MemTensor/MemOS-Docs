@@ -8,7 +8,7 @@ Start with a simple question: did the information the agent needed make it from 
 
 A retrieval dashboard can look healthy while the application drops a useful record before the model call. Even when the record reaches the model, the task can still fail. To find out where to make a change, track the write, retrieval, context assembly, and final action separately.
 
-Anthropic’s November 6 agent memory study offers one example. On a CL-Bench database task, Sonnet 4.6 earned a mean reward of 0.364 with memory and 0.641 with memory and refined instructions. Those instructions asked the model to read its memory before answering and test its explanations. See [Anthropic’s agent memory study](https://www.anthropic.com/research/components-of-agent-memory){target="_blank"}.
+Anthropic’s November 6 agent memory study offers one example. On a CL-Bench database task, Sonnet 4.6 earned a mean reward of 0.364 with memory and 0.641 with memory and refined instructions. Those instructions asked the model to read its memory before answering and test its explanations.
 
 The result is specific to that task, but it illustrates why retrieval alone is not enough to evaluate an application. Teams also need to check what reaches the model and whether the resulting action succeeds.
 
@@ -37,7 +37,7 @@ For stale context, check the record against the current version or validity wind
 
 Give each user turn a trace ID. Record the write job ID when one exists, the retrieval outcome and duration, the record IDs returned and included, and the final action result. Link background jobs back to their originating turn. Keep user and memory IDs in restricted traces, and leave memory text out of routine logs. Use dimensions such as workflow, model version, and result status for aggregate metrics. The estimated prompt footprint is part of the main request. Keep it separate from provider-reported usage for memory-only calls.
 
-OpenTelemetry’s GenAI conventions can help structure model and retrieval telemetry. The application still needs to define how it labels freshness, authorization, and task success for its own workflow. See the [OpenTelemetry GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai){target="_blank"}.
+OpenTelemetry’s GenAI conventions can help structure model and retrieval telemetry. The application still needs to define how it labels freshness, authorization, and task success for its own workflow.
 
 With MemOS Cloud, keep the task ID returned for an asynchronous write and use [Task Status](/api_docs/message/get_status/) to follow processing. Once the task completes, its response can summarize memory changes and the affected IDs.
 

@@ -4,7 +4,7 @@ title: "Agent 工具调用失败后，哪些信息值得写进长期记忆？"
 
 ![Agent 工具调用失败与长期记忆](https://cdn.memtensor.com.cn/img/1794814838168_f9zw5x_compressed.png)
 
-2026 年 11 月 12 日，OpenRouter 发布了一组 Agent 重试实验。面对一个持续超时的发票查询工具，未启用重复调用检测时，18 次运行中有 4 次触到 40 步上限。启用后，18 次中有 16 次只实际调用了两次工具。参见 [OpenRouter 的实验记录](https://openrouter.ai/blog/tutorials/ai-agent-infinite-loop/){target="_blank"}。
+2026 年 11 月 12 日，OpenRouter 发布了一组 Agent 重试实验。面对一个持续超时的发票查询工具，未启用重复调用检测时，18 次运行中有 4 次触到 40 步上限。启用后，18 次中有 16 次只实际调用了两次工具。
 
 这组实验关注的是当轮能否停下来。如果助手还会跨会话保存工具轨迹，验收可以再往前走一步：下一次查询时，它会把昨天的超时当成结论，还是先查看当前结果？
 

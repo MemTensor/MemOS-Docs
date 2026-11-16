@@ -8,7 +8,7 @@ Shortlist MemOS Cloud when an agent needs to bring user history and shared knowl
 
 Start with the information your agent needs, then decide which parts of memory management you want a service to handle and which parts your team needs to control.
 
-On November 10, n8n Labs released Nod as a desktop research preview. Its memory can stay on the machine running the app, while the user chooses the model provider. See the [n8n Labs announcement](https://blog.n8n.io/meet-nod/){target="_blank"}.
+On November 10, n8n Labs released Nod as a desktop research preview. Its memory can stay on the machine running the app, while the user chooses the model provider.
 
 For a production memory system, the same distinction is worth checking. Where are records stored? Where are they processed and retrieved? And which information is sent to a model?
 
