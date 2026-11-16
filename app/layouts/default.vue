@@ -1,47 +1,87 @@
 <script setup lang="ts">
-const route = useRoute()
+const router = useRouter()
 const nuxtApp = useNuxtApp()
 
-// Handle scroll reset on page navigation finish
-nuxtApp.hook('page:finish', () => {
-  nextTick(() => {
-    // Check if there is a hash
-    if (route.hash) {
-      const el = document.querySelector(route.hash)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' })
-      }
+function getHistoryPosition() {
+  const { position } = router.options.history.state
+  return typeof position === 'number' ? position : undefined
+}
+
+if (import.meta.client) {
+  const scrollPositions = new Map<number, number>()
+  let activePosition = getHistoryPosition()
+  let historyNavigation: { fullPath: string, position: number | undefined } | undefined
+  let pendingScroll: { fullPath: string, hash: string, top: number | undefined } | undefined
+
+  function scrollPanel() {
+    const scroll = pendingScroll
+    const panel = document.getElementById('dashboard-panel-main')
+    if (!scroll || scroll.fullPath !== router.currentRoute.value.fullPath || !panel) return
+
+    pendingScroll = undefined
+    if (scroll.top !== undefined) {
+      panel.scrollTop = scroll.top
+    } else if (scroll.hash) {
+      document.getElementById(scroll.hash.slice(1))?.scrollIntoView({ behavior: 'smooth' })
     } else {
-      // Reset scroll to top if no hash
-      const el = document.getElementById('dashboard-panel-main')
-      if (el) {
-        el.scrollTop = 0
-      }
+      panel.scrollTop = 0
+    }
+  }
+
+  // Vue Router's history listener runs for browser back and forward.
+  const stopHistoryListener = router.options.history.listen((to) => {
+    historyNavigation = { fullPath: router.resolve(to).fullPath, position: getHistoryPosition() }
+  })
+
+  const stopBeforeEach = router.beforeEach(() => {
+    const panel = document.getElementById('dashboard-panel-main')
+    // The browser may already point to the destination entry during a traversal.
+    if (panel && activePosition !== undefined && !pendingScroll) {
+      scrollPositions.set(activePosition, panel.scrollTop)
     }
   })
-})
 
-watch(() => route.hash, (hash) => {
-  if (hash) {
-    nextTick(() => {
-      const el = document.querySelector(hash)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' })
-      }
-    })
-  }
-})
+  const stopAfterEach = router.afterEach((to, from, failure) => {
+    const position = getHistoryPosition()
+    const isHistoryNavigation = historyNavigation?.fullPath === to.fullPath
+      && historyNavigation.position === position
 
-onMounted(() => {
-  if (route.hash) {
-    nextTick(() => {
-      const el = document.querySelector(route.hash)
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' })
-      }
-    })
-  }
-})
+    if (isHistoryNavigation || !failure) historyNavigation = undefined
+    if (failure) return
+
+    activePosition = position
+    const top = isHistoryNavigation && position !== undefined ? scrollPositions.get(position) : undefined
+    // A new visit can reuse an index when it replaces the forward history.
+    if (!isHistoryNavigation && position !== undefined) scrollPositions.delete(position)
+
+    const samePage = to.path.replace(/\/$/, '') === from.path.replace(/\/$/, '')
+    if (samePage && to.hash === from.hash && top === undefined) {
+      if (pendingScroll?.fullPath === from.fullPath) pendingScroll.fullPath = to.fullPath
+      return
+    }
+
+    pendingScroll = { fullPath: to.fullPath, hash: to.hash, top }
+    // Navigating within a page does not require a new page render.
+    if (samePage) void nextTick(scrollPanel)
+  })
+
+  const stopPageFinish = nuxtApp.hook('page:finish', () => nextTick(scrollPanel))
+
+  onMounted(() => {
+    const { fullPath, hash } = router.currentRoute.value
+    if (hash) {
+      pendingScroll = { fullPath, hash, top: undefined }
+      void nextTick(scrollPanel)
+    }
+  })
+
+  onScopeDispose(() => {
+    stopHistoryListener()
+    stopBeforeEach()
+    stopAfterEach()
+    stopPageFinish()
+  })
+}
 </script>
 
 <template>
