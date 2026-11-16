@@ -1,4 +1,13 @@
 versions:
+  - name: v1.0.9
+    date: '2026-11-16'
+    products:
+      plugin:
+        Bug Fixes:
+          - type: MemOS CLI
+            changedInfo:
+              - '**WorkBuddy install path**: Fixed the WorkBuddy skill install location to use `~/.workbuddy/skills/memos/`'
+              - '**DeepSeek memory injection**: Fixed duplicate memory context injection in the DeepSeek plugin within the same turn'
   - name: v2.0.21
     date: '2026-10-29'
     products:
