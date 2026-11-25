@@ -26,8 +26,8 @@ export function getHomePath(path: string, locale: string) {
  */
 export function getBlogLandingPath(locale: string) {
   return locale === 'cn'
-    ? '/usecase/blog/shared_agent_memory_acceptance'
-    : '/usecase/blog/production_agent_memory_service_metrics'
+    ? '/usecase/blog/open_source_agent_memory_frameworks_for_enterprises'
+    : '/usecase/blog/long_term_ai_memory_lifecycle'
 }
 
 export function copyText(text: string) {
