@@ -176,6 +176,8 @@ nav:
     - "(ri:device-line) Edge–Cloud Collaboration: Long-Term Memory for Smart Devices": usecase/edge_cloud_terminal_memory.md
 
   - "(ri:article-line) Blog":
+    - "How Long-Term AI Memory Works, From Ingestion to Forgetting": usecase/blog/long_term_ai_memory_lifecycle.md
+    - "What Does a Production Agent Memory Architecture Need?": usecase/blog/production_agent_memory_architecture.md
     - "What to Log and Measure in a Production Agent Memory Service": usecase/blog/production_agent_memory_service_metrics.md
     - "How to Choose a Production AI Memory System": usecase/blog/choosing_production_ai_memory_system.md
     - "How to Measure the Cost of a Correct Memory-Assisted Task": usecase/blog/memory_assisted_task_cost.md
